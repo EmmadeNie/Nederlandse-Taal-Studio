@@ -1,0 +1,245 @@
+[
+  {
+    "id": "word.brood",
+    "nl": "brood",
+    "article": "het",
+    "en": "bread",
+    "partOfSpeech": "noun",
+    "introducedAtLevel": "A0",
+    "themes": ["eten"],
+    "tags": [],
+    "plural": "broden",
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "word.appel",
+    "nl": "appel",
+    "article": "de",
+    "en": "apple",
+    "partOfSpeech": "noun",
+    "introducedAtLevel": "A0",
+    "themes": ["eten", "fruit"],
+    "tags": [],
+    "plural": "appels",
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "word.kaas",
+    "nl": "kaas",
+    "article": "de",
+    "en": "cheese",
+    "partOfSpeech": "noun",
+    "introducedAtLevel": "A0",
+    "themes": ["eten"],
+    "tags": [],
+    "plural": "kazen",
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "word.hond",
+    "nl": "hond",
+    "article": "de",
+    "en": "dog",
+    "partOfSpeech": "noun",
+    "introducedAtLevel": "A0",
+    "themes": ["dieren"],
+    "tags": [],
+    "plural": "honden",
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "word.kat",
+    "nl": "kat",
+    "article": "de",
+    "en": "cat",
+    "partOfSpeech": "noun",
+    "introducedAtLevel": "A0",
+    "themes": ["dieren"],
+    "tags": [],
+    "plural": "katten",
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "word.vogel",
+    "nl": "vogel",
+    "article": "de",
+    "en": "bird",
+    "partOfSpeech": "noun",
+    "introducedAtLevel": "A1",
+    "themes": ["dieren"],
+    "tags": [],
+    "plural": "vogels",
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "word.rood",
+    "nl": "rood",
+    "en": "red",
+    "partOfSpeech": "adjective",
+    "introducedAtLevel": "A0",
+    "themes": ["kleuren"],
+    "tags": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "word.blauw",
+    "nl": "blauw",
+    "en": "blue",
+    "partOfSpeech": "adjective",
+    "introducedAtLevel": "A0",
+    "themes": ["kleuren"],
+    "tags": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "word.eten",
+    "nl": "eten",
+    "en": "to eat",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A0",
+    "themes": ["eten"],
+    "tags": ["onregelmatig-ww"],
+    "conjugation": {
+      "infinitive": "eten",
+      "stem": "eet",
+      "present": { "ik": "eet", "jij": "eet", "hij": "eet", "wij": "eten" },
+      "past": { "singular": "at", "plural": "aten" },
+      "participle": "gegeten",
+      "auxiliary": "hebben",
+      "regularity": { "present": "regular", "past": "irregular", "participle": "irregular" }
+    },
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "word.drinken",
+    "nl": "drinken",
+    "en": "to drink",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A0",
+    "themes": ["eten"],
+    "tags": ["onregelmatig-ww"],
+    "conjugation": {
+      "infinitive": "drinken",
+      "stem": "drink",
+      "present": { "ik": "drink", "jij": "drinkt", "hij": "drinkt", "wij": "drinken" },
+      "past": { "singular": "dronk", "plural": "dronken" },
+      "participle": "gedronken",
+      "auxiliary": "hebben",
+      "regularity": { "present": "regular", "past": "irregular", "participle": "irregular" }
+    },
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "word.slapen",
+    "nl": "slapen",
+    "en": "to sleep",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A1",
+    "themes": ["dagelijks-leven"],
+    "tags": ["onregelmatig-ww"],
+    "conjugation": {
+      "infinitive": "slapen",
+      "stem": "slaap",
+      "present": { "ik": "slaap", "jij": "slaapt", "hij": "slaapt", "wij": "slapen" },
+      "past": { "singular": "sliep", "plural": "sliepen" },
+      "participle": "geslapen",
+      "auxiliary": "hebben",
+      "regularity": { "present": "regular", "past": "irregular", "participle": "irregular" }
+    },
+    "reviewStatus": "ai-reviewed",
+    "reviewNotes": "Gecorrigeerd: slapen is onregelmatig (sliep/geslapen), stond eerder als regelmatig."
+  },
+  {
+    "id": "word.wassen",
+    "nl": "wassen",
+    "en": "to wash",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A1",
+    "themes": ["huishouden"],
+    "tags": ["onregelmatig-ww"],
+    "conjugation": {
+      "infinitive": "wassen",
+      "stem": "was",
+      "present": { "ik": "was", "jij": "wast", "hij": "wast", "wij": "wassen" },
+      "past": { "singular": "waste", "plural": "wasten" },
+      "participle": "gewassen",
+      "auxiliary": "hebben",
+      "regularity": { "present": "regular", "past": "regular", "participle": "irregular" }
+    },
+    "reviewStatus": "ai-reviewed",
+    "reviewNotes": "Regelmaat per vorm: verleden tijd 'waste' is regelmatig, voltooid deelwoord 'gewassen' is onregelmatig."
+  },
+  {
+    "id": "word.rennen",
+    "nl": "rennen",
+    "en": "to run",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A1",
+    "themes": ["beweging"],
+    "tags": ["regelmatig-ww"],
+    "conjugation": {
+      "infinitive": "rennen",
+      "stem": "ren",
+      "present": { "ik": "ren", "jij": "rent", "hij": "rent", "wij": "rennen" },
+      "past": { "singular": "rende", "plural": "renden" },
+      "participle": "gerend",
+      "auxiliary": "hebben",
+      "regularity": { "present": "regular", "past": "regular", "participle": "regular" }
+    },
+    "reviewStatus": "ai-reviewed",
+    "reviewNotes": "Gecorrigeerd: rennen is volledig regelmatig (zwak), stond eerder als onregelmatig."
+  },
+  {
+    "id": "word.helpen",
+    "nl": "helpen",
+    "en": "to help",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A1",
+    "themes": ["dagelijks-leven"],
+    "tags": ["onregelmatig-ww"],
+    "conjugation": {
+      "infinitive": "helpen",
+      "stem": "help",
+      "present": { "ik": "help", "jij": "helpt", "hij": "helpt", "wij": "helpen" },
+      "past": { "singular": "hielp", "plural": "hielpen" },
+      "participle": "geholpen",
+      "auxiliary": "hebben",
+      "regularity": { "present": "regular", "past": "irregular", "participle": "irregular" }
+    },
+    "reviewStatus": "ai-reviewed",
+    "reviewNotes": "Aangevuld: vervoeging ontbrak in de bronlijst."
+  },
+  {
+    "id": "word.lachen",
+    "nl": "lachen",
+    "en": "to laugh",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A1",
+    "themes": ["emoties"],
+    "tags": ["onregelmatig-ww"],
+    "conjugation": {
+      "infinitive": "lachen",
+      "stem": "lach",
+      "present": { "ik": "lach", "jij": "lacht", "hij": "lacht", "wij": "lachen" },
+      "past": { "singular": "lachte", "plural": "lachten" },
+      "participle": "gelachen",
+      "auxiliary": "hebben",
+      "regularity": { "present": "regular", "past": "regular", "participle": "irregular" }
+    },
+    "reviewStatus": "ai-reviewed",
+    "reviewNotes": "Aangevuld. Regelmaat per vorm: 'lachte' regelmatig, 'gelachen' onregelmatig."
+  },
+  {
+    "id": "word.fohn",
+    "nl": "föhn",
+    "article": "de",
+    "en": "hairdryer",
+    "partOfSpeech": "noun",
+    "introducedAtLevel": "A2",
+    "themes": ["badkamer", "apparaten"],
+    "tags": [],
+    "plural": "föhns",
+    "reviewStatus": "ai-reviewed",
+    "reviewNotes": "Gecorrigeerd: bronlijst had 'stofkam' als vertaling van hairdryer."
+  }
+]

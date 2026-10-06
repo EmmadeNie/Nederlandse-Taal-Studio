@@ -1,0 +1,79 @@
+[
+  {
+    "id": "topic.perfectum",
+    "title": "Het perfectum (voltooid tegenwoordige tijd)",
+    "introducedAtLevel": "A2",
+    "summary": "De voltooide tijd: hoe je vertelt wat er al is gebeurd.",
+    "explanation": "Het perfectum gebruik je om te vertellen over iets dat al is gebeurd.\n\n**Structuur:** onderwerp + hebben/zijn + voltooid deelwoord\n\n**Regelmatig:** ge- + stam + -t/-d (gekookt, gebeld)\n**Onregelmatig:** ge- + speciale vorm (gedronken, geschreven)\n\n**Hebben of zijn?**\n- De meeste werkwoorden → hebben\n- Werkwoorden van beweging/verandering → zijn (gegaan, gevallen, geworden)",
+    "grammarTags": ["perfectum"],
+    "themes": ["grammatica"],
+    "docLinks": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "topic.inversie",
+    "title": "Inversie (woordvolgorde)",
+    "introducedAtLevel": "A2",
+    "summary": "Als de zin niet met het onderwerp begint, draaien onderwerp en werkwoord om.",
+    "explanation": "In het Nederlands staat het werkwoord altijd op de tweede positie.\n\n**Normaal:** Ik slaap goed.\n**Inversie:** Gisteren sliep ik goed.\n\nAls iets anders dan het onderwerp vooraan staat (tijd, plaats, bijwoord), dan draait het onderwerp naar achter het werkwoord.",
+    "grammarTags": ["inversie", "woordvolgorde"],
+    "themes": ["grammatica"],
+    "docLinks": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "topic.klinkers",
+    "title": "Klinkers en tweeklanken",
+    "introducedAtLevel": "A0",
+    "summary": "Het verschil tussen korte klinkers (a, e, i, o, u), lange klinkers (aa, ee, oo, uu) en tweeklanken (au, ou, ei, ij, eu, oe, ui, ie).",
+    "explanation": "**Korte klinkers:** kat, bed, vis, bol, bus\n**Lange klinkers:** baan, been, boom, buur\n**Tweeklanken:** twee klinkers die samen één klank maken: huis (ui), muis (ui), trein (ei), hout (ou)",
+    "grammarTags": ["klinkers", "uitspraak"],
+    "themes": ["uitspraak"],
+    "docLinks": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "topic.lettergrepen",
+    "title": "Lettergrepen",
+    "introducedAtLevel": "A0",
+    "summary": "Hoe je woorden in lettergrepen splitst en of de klinker kort of lang is.",
+    "explanation": "Elke lettergreep heeft een klinker.\n\n**Open lettergreep** (eindigt op klinker) = lange klank: ma-ma, o-ma\n**Gesloten lettergreep** (eindigt op medeklinker) = korte klank: vis-je, kat-ten",
+    "grammarTags": ["lettergrepen", "uitspraak"],
+    "themes": ["uitspraak"],
+    "docLinks": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "topic.de-het",
+    "title": "De- en het-woorden",
+    "introducedAtLevel": "A0",
+    "summary": "Regels om te bepalen of een zelfstandig naamwoord 'de' of 'het' krijgt.",
+    "explanation": "**Altijd 'de':**\n- Meervoud (de boeken)\n- Personen met bekend geslacht (de man, de vrouw)\n- Beroepen (de dokter)\n- Fruit, bomen, planten (de appel, de roos)\n- Woorden op -ing, -ij, -heid, -nis (de vergadering, de gezondheid)\n\n**Altijd 'het':**\n- Verkleinwoorden (het boekje)\n- Van werkwoord gemaakt (het eten, het lopen)\n- Talen (het Nederlands)\n- Woorden op -isme, -ment (het kapitalisme, het monument)\n- Metalen (het goud)",
+    "grammarTags": ["lidwoorden", "de-het"],
+    "themes": ["grammatica"],
+    "docLinks": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "topic.werkwoorden-vervoegen",
+    "title": "Werkwoorden vervoegen (tegenwoordige tijd)",
+    "introducedAtLevel": "A0",
+    "summary": "Hoe je werkwoorden vervoegt in de tegenwoordige tijd: ik loop, jij loopt, wij lopen.",
+    "explanation": "**Stam** = hele werkwoord minus -en: lopen → loop, werken → werk\n\n**Vervoegingen:**\n- Ik → stam (ik loop)\n- Jij/u/hij/zij → stam + t (jij loopt)\n- Wij/jullie/zij → hele werkwoord (wij lopen)\n\n**Let op korte en lange klanken:** koken → ik kook (dubbel o om lang te houden), bellen → ik bel",
+    "grammarTags": ["vervoegen", "tegenwoordige-tijd"],
+    "themes": ["grammatica"],
+    "docLinks": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "topic.modale-werkwoorden",
+    "title": "Modale werkwoorden",
+    "introducedAtLevel": "A1",
+    "summary": "Kunnen, willen, moeten, mogen, zullen — en hun speciale vervoegingen.",
+    "explanation": "Modale werkwoorden zijn werkwoorden die iets zeggen over mogelijkheid, wil, noodzaak of toestemming.\n\n**Bijzonder:** Bij ik, jij, hij/zij krijgen ze dezelfde vorm:\n- Ik kan / jij kan / hij kan\n- Ik wil / jij wil / hij wil\n\n**Let op:** 'hij wilt' is FOUT! Het is 'hij wil'.",
+    "grammarTags": ["modale-werkwoorden"],
+    "themes": ["grammatica"],
+    "docLinks": [],
+    "reviewStatus": "ai-reviewed"
+  }
+]

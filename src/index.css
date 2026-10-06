@@ -1,0 +1,47 @@
+:root {
+  --bg: #0f1115;
+  --surface: #1a1d24;
+  --surface-2: #22262f;
+  --border: #2d323c;
+  --text: #e6e8ec;
+  --text-dim: #9aa0ab;
+  --accent: #4f9cf9;
+  --accent-soft: rgba(79, 156, 249, 0.15);
+  --green: #3fb950;
+  --amber: #d29922;
+  --red: #f85149;
+
+  --a0: #6ee7b7;
+  --a1: #93c5fd;
+  --a2: #c4b5fd;
+  --b1: #fbbf24;
+  --b2: #fb7185;
+
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+a {
+  color: var(--accent);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
