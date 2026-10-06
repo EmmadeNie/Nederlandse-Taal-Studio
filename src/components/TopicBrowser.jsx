@@ -2,6 +2,7 @@ import { useState } from "react";
 import { topics, querySentences } from "../data";
 import { LevelBadge, ReviewBadge, Tag } from "./Badges";
 import FeedbackButton from "../feedback/FeedbackButton";
+import Markdown from "./Markdown";
 
 export default function TopicBrowser() {
   const [expanded, setExpanded] = useState(null);
@@ -40,7 +41,7 @@ export default function TopicBrowser() {
             {isOpen && (
               <>
                 {t.explanation && (
-                  <div className="explanation">{t.explanation}</div>
+                  <Markdown className="explanation">{t.explanation}</Markdown>
                 )}
                 {relatedSentences.length > 0 && (
                   <div style={{ marginTop: "1rem" }}>

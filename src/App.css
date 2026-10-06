@@ -298,7 +298,79 @@
   margin-top: 0.75rem;
   font-size: 0.85rem;
   line-height: 1.6;
-  white-space: pre-wrap;
+}
+
+.topic-card .explanation p {
+  margin: 0 0 0.75rem 0;
+}
+
+.topic-card .explanation > div > :last-child {
+  margin-bottom: 0;
+}
+
+.topic-card .explanation ul,
+.topic-card .explanation ol {
+  margin: 0 0 0.75rem 0;
+  padding-left: 1.25rem;
+}
+
+.topic-card .explanation li {
+  margin-bottom: 0.2rem;
+}
+
+.topic-card .explanation h1,
+.topic-card .explanation h2,
+.topic-card .explanation h3,
+.topic-card .explanation h4 {
+  margin: 0.75rem 0 0.4rem 0;
+  font-size: 0.95rem;
+}
+
+.topic-card .explanation code {
+  background: var(--bg);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
+.topic-card .explanation pre {
+  background: var(--bg);
+  padding: 0.75rem;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+.topic-card .explanation pre code {
+  padding: 0;
+  background: none;
+}
+
+.topic-card .explanation table {
+  border-collapse: collapse;
+  margin: 0.5rem 0 0.75rem 0;
+  font-size: 0.85rem;
+}
+
+.topic-card .explanation th,
+.topic-card .explanation td {
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.6rem;
+  text-align: left;
+}
+
+.topic-card .explanation th {
+  background: var(--bg);
+}
+
+.topic-card .explanation a {
+  color: var(--accent);
+}
+
+.topic-card .explanation blockquote {
+  margin: 0 0 0.75rem 0;
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--border);
+  color: var(--text-dim);
 }
 
 /* Stats dashboard */
