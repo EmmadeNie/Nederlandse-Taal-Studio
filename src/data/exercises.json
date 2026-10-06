@@ -1,60 +1,11 @@
 [
-  {
-    "id": "exercise.perfectum-a2",
-    "title": "Perfectum oefenen (A2)",
-    "type": "fill-in",
-    "level": "A2",
-    "topicId": "topic.perfectum",
-    "query": {
-      "grammarTags": ["perfectum"],
-      "maxLevel": "A2",
-      "limit": 10
-    }
-  },
-  {
-    "id": "exercise.woorden-eten-a0",
-    "title": "Woordenschat: Eten (A0)",
-    "type": "flashcards",
-    "level": "A0",
-    "query": {
-      "themes": ["eten"],
-      "maxLevel": "A0",
-      "limit": 20
-    }
-  },
-  {
-    "id": "exercise.woorden-dieren-a0",
-    "title": "Woordenschat: Dieren (A0)",
-    "type": "flashcards",
-    "level": "A0",
-    "query": {
-      "themes": ["dieren"],
-      "maxLevel": "A0",
-      "limit": 20
-    }
-  },
-  {
-    "id": "exercise.inversie-herkennen-a2",
-    "title": "Inversie herkennen (A2)",
-    "type": "multiple-choice",
-    "level": "A2",
-    "topicId": "topic.inversie",
-    "query": {
-      "grammarTags": ["inversie"],
-      "maxLevel": "A2",
-      "limit": 10
-    }
-  },
-  {
-    "id": "exercise.modale-ww-vertalen-a2",
-    "title": "Modale werkwoorden vertalen (A2)",
-    "type": "translate",
-    "level": "A2",
-    "topicId": "topic.modale-werkwoorden",
-    "query": {
-      "grammarTags": ["modale-werkwoorden"],
-      "maxLevel": "A2",
-      "limit": 10
-    }
-  }
+{"id":"exercise.perfectum-a2","title":"Perfectum oefenen (A2)","type":"fill-in","level":"A2","topicId":"topic.perfectum","query":{"grammarTags":["perfectum"],"maxLevel":"A2","limit":10}},
+{"id":"exercise.woorden-eten-a0","title":"Woordenschat: Eten (A0)","type":"flashcards","level":"A0","query":{"themes":["eten"],"maxLevel":"A0","limit":20}},
+{"id":"exercise.woorden-dieren-a0","title":"Woordenschat: Dieren (A0)","type":"flashcards","level":"A0","query":{"themes":["dieren"],"maxLevel":"A0","limit":20}},
+{"id":"exercise.inversie-herkennen-a2","title":"Inversie herkennen (A2)","type":"multiple-choice","level":"A2","topicId":"topic.inversie","query":{"grammarTags":["inversie"],"maxLevel":"A2","limit":10}},
+{"id":"exercise.modale-ww-vertalen-a2","title":"Modale werkwoorden vertalen (A2)","type":"translate","level":"A2","topicId":"topic.modale-werkwoorden","query":{"grammarTags":["modale-werkwoorden"],"maxLevel":"A2","limit":10}},
+{"id":"exercise.bijzinnen-b1","title":"Bijzinnen en woordvolgorde (B1)","type":"fill-in","level":"B1","topicId":"topic.bijzinnen-b1","query":{"grammarTags":["bijzin"],"maxLevel":"B1","limit":12}},
+{"id":"exercise.voegwoorden-b1","title":"Voegwoorden kiezen (B1)","type":"multiple-choice","level":"B1","topicId":"topic.voegwoorden-b1","query":{"grammarTags":["voegwoorden"],"maxLevel":"B1","limit":12}},
+{"id":"exercise.om-te-b1","title":"Om ... te oefenen (B1)","type":"translate","level":"B1","topicId":"topic.om-te-b1","query":{"grammarTags":["om-te"],"maxLevel":"B1","limit":10}},
+{"id":"exercise.plusquamperfectum-b1","title":"Plusquamperfectum oefenen (B1)","type":"fill-in","level":"B1","topicId":"topic.plusquamperfectum-b1","query":{"grammarTags":["plusquamperfectum"],"maxLevel":"B1","limit":10}}
 ]
