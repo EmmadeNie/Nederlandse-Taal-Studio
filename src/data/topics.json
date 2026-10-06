@@ -5,75 +5,44 @@
     "introducedAtLevel": "A2",
     "summary": "De voltooide tijd: hoe je vertelt wat er al is gebeurd.",
     "explanation": "Het perfectum gebruik je om te vertellen over iets dat al is gebeurd.\n\n**Structuur:** onderwerp + hebben/zijn + voltooid deelwoord\n\n**Regelmatig:** ge- + stam + -t/-d (gekookt, gebeld)\n**Onregelmatig:** ge- + speciale vorm (gedronken, geschreven)\n\n**Hebben of zijn?**\n- De meeste werkwoorden → hebben\n- Werkwoorden van beweging/verandering → zijn (gegaan, gevallen, geworden)",
-    "grammarTags": ["perfectum"],
-    "themes": ["grammatica"],
-    "docLinks": [],
-    "reviewStatus": "ai-reviewed"
+    "grammarTags": ["perfectum"], "themes": ["grammatica"], "docLinks": [], "reviewStatus": "ai-reviewed"
   },
   {
-    "id": "topic.inversie",
-    "title": "Inversie (woordvolgorde)",
-    "introducedAtLevel": "A2",
+    "id": "topic.inversie", "title": "Inversie (woordvolgorde)", "introducedAtLevel": "A2",
     "summary": "Als de zin niet met het onderwerp begint, draaien onderwerp en werkwoord om.",
     "explanation": "In het Nederlands staat het werkwoord altijd op de tweede positie.\n\n**Normaal:** Ik slaap goed.\n**Inversie:** Gisteren sliep ik goed.\n\nAls iets anders dan het onderwerp vooraan staat (tijd, plaats, bijwoord), dan draait het onderwerp naar achter het werkwoord.",
-    "grammarTags": ["inversie", "woordvolgorde"],
-    "themes": ["grammatica"],
-    "docLinks": [],
-    "reviewStatus": "ai-reviewed"
+    "grammarTags": ["inversie", "woordvolgorde"], "themes": ["grammatica"], "docLinks": [], "reviewStatus": "ai-reviewed"
   },
   {
-    "id": "topic.klinkers",
-    "title": "Klinkers en tweeklanken",
-    "introducedAtLevel": "A0",
+    "id": "topic.klinkers", "title": "Klinkers en tweeklanken", "introducedAtLevel": "A0",
     "summary": "Het verschil tussen korte klinkers (a, e, i, o, u), lange klinkers (aa, ee, oo, uu) en tweeklanken (au, ou, ei, ij, eu, oe, ui, ie).",
     "explanation": "**Korte klinkers:** kat, bed, vis, bol, bus\n**Lange klinkers:** baan, been, boom, buur\n**Tweeklanken:** twee klinkers die samen één klank maken: huis (ui), muis (ui), trein (ei), hout (ou)",
-    "grammarTags": ["klinkers", "uitspraak"],
-    "themes": ["uitspraak"],
-    "docLinks": [],
-    "reviewStatus": "ai-reviewed"
+    "grammarTags": ["klinkers", "uitspraak"], "themes": ["uitspraak"], "docLinks": [], "reviewStatus": "ai-reviewed"
   },
   {
-    "id": "topic.lettergrepen",
-    "title": "Lettergrepen",
-    "introducedAtLevel": "A0",
+    "id": "topic.lettergrepen", "title": "Lettergrepen", "introducedAtLevel": "A0",
     "summary": "Hoe je woorden in lettergrepen splitst en of de klinker kort of lang is.",
     "explanation": "Elke lettergreep heeft een klinker.\n\n**Open lettergreep** (eindigt op klinker) = lange klank: ma-ma, o-ma\n**Gesloten lettergreep** (eindigt op medeklinker) = korte klank: vis-je, kat-ten",
-    "grammarTags": ["lettergrepen", "uitspraak"],
-    "themes": ["uitspraak"],
-    "docLinks": [],
-    "reviewStatus": "ai-reviewed"
+    "grammarTags": ["lettergrepen", "uitspraak"], "themes": ["uitspraak"], "docLinks": [], "reviewStatus": "ai-reviewed"
   },
   {
     "id": "topic.de-het",
     "title": "De- en het-woorden",
     "introducedAtLevel": "A0",
-    "summary": "Betrouwbare regels en handige vuistregels voor het gebruik van 'de' en 'het'. Leer het lidwoord bij voorkeur samen met het zelfstandig naamwoord.",
-    "explanation": "Voor veel Nederlandse zelfstandige naamwoorden kun je niet met zekerheid voorspellen of ze **de** of **het** krijgen. Leer daarom het lidwoord samen met het woord: niet alleen *huis*, maar **het huis**. De patronen hieronder helpen, maar vuistregels hebben uitzonderingen.\n\n**Betrouwbare regels**\n\n**DE**\n- Meervoud → **de**: de boeken, de huizen, de appels. Ook als het enkelvoud een het-woord is: het boek → de boeken.\n- Veel zelfstandige naamwoorden op **-ing, -ij, -heid, -nis, -te** zijn de-woorden: de vergadering, de bakkerij, de gezondheid, de kennis, de lengte.\n\n**HET**\n- Verkleinwoorden → **het**: het boekje, het stoeltje, het plantje, het appeltje.\n- Een infinitief die als zelfstandig naamwoord wordt gebruikt → **het**: het eten, het lezen, het schrijven.\n- Namen van talen → **het**: het Nederlands, het Engels, het Duits.\n- Zelfstandige naamwoorden op **-isme, -ment, -sel, -um** zijn doorgaans het-woorden: het kapitalisme, het monument, het mengsel, het museum.\n\n**Handige vuistregels**\n- Personen en beroepen zijn meestal **de**: de man, de vrouw, de dokter, de leraar, de bakker.\n- Fruit, bomen en planten zijn vaak **de**: de appel, de peer, de aardbei, de eik, de roos.\n- Metalen zijn meestal **het**: het goud, het zilver, het koper, het ijzer.\n- Veel woorden op **-ie, -iek, -iteit, -sis** zijn **de**: de chemie, de politiek, de universiteit, de analyse.\n\n**Belangrijk:** gebruik deze patronen als hulp, niet als absolute voorspeller. Bij twijfel leer of controleer je het lidwoord samen met het woord.",
-    "grammarTags": ["lidwoorden", "de-het"],
-    "themes": ["grammatica"],
-    "docLinks": [],
-    "reviewStatus": "ai-reviewed"
+    "summary": "Leer het lidwoord samen met het woord: de tafel, het huis.",
+    "explanation": "Je kunt niet altijd weten of een woord **de** of **het** krijgt. Leer daarom het lidwoord samen met het woord.\n\n**Handige regels:**\n- Meervoud → **de**: de boeken, de huizen\n- Verkleinwoord → **het**: het huisje, het meisje\n- Personen → meestal **de**: de man, de vrouw, de dokter\n- Woorden op **-ing, -heid, -ij** → meestal **de**: de vergadering, de gezondheid, de bakkerij\n- Woorden op **-isme, -ment, -um** → meestal **het**: het toerisme, het moment, het museum\n\n**Tip:** leer **de/het + woord** samen.",
+    "grammarTags": ["lidwoorden", "de-het"], "themes": ["grammatica"], "docLinks": [], "reviewStatus": "ai-reviewed"
   },
   {
-    "id": "topic.werkwoorden-vervoegen",
-    "title": "Werkwoorden vervoegen (tegenwoordige tijd)",
-    "introducedAtLevel": "A0",
+    "id": "topic.werkwoorden-vervoegen", "title": "Werkwoorden vervoegen (tegenwoordige tijd)", "introducedAtLevel": "A0",
     "summary": "Hoe je werkwoorden vervoegt in de tegenwoordige tijd: ik loop, jij loopt, wij lopen.",
     "explanation": "**Stam** = hele werkwoord minus -en: lopen → loop, werken → werk\n\n**Vervoegingen:**\n- Ik → stam (ik loop)\n- Jij/u/hij/zij → stam + t (jij loopt)\n- Wij/jullie/zij → hele werkwoord (wij lopen)\n\n**Let op korte en lange klanken:** koken → ik kook (dubbel o om lang te houden), bellen → ik bel",
-    "grammarTags": ["vervoegen", "tegenwoordige-tijd"],
-    "themes": ["grammatica"],
-    "docLinks": [],
-    "reviewStatus": "ai-reviewed"
+    "grammarTags": ["vervoegen", "tegenwoordige-tijd"], "themes": ["grammatica"], "docLinks": [], "reviewStatus": "ai-reviewed"
   },
   {
-    "id": "topic.modale-werkwoorden",
-    "title": "Modale werkwoorden",
-    "introducedAtLevel": "A1",
+    "id": "topic.modale-werkwoorden", "title": "Modale werkwoorden", "introducedAtLevel": "A1",
     "summary": "Kunnen, willen, moeten, mogen, zullen — en hun speciale vervoegingen.",
     "explanation": "Modale werkwoorden zijn werkwoorden die iets zeggen over mogelijkheid, wil, noodzaak of toestemming.\n\n**Bijzonder:** Bij ik, jij, hij/zij krijgen ze dezelfde vorm:\n- Ik kan / jij kan / hij kan\n- Ik wil / jij wil / hij wil\n\n**Let op:** 'hij wilt' is FOUT! Het is 'hij wil'.",
-    "grammarTags": ["modale-werkwoorden"],
-    "themes": ["grammatica"],
-    "docLinks": [],
-    "reviewStatus": "ai-reviewed"
+    "grammarTags": ["modale-werkwoorden"], "themes": ["grammatica"], "docLinks": [], "reviewStatus": "ai-reviewed"
   }
 ]
