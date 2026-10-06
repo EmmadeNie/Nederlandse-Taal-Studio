@@ -2,6 +2,7 @@ import { useState } from "react";
 import { queryWords } from "../data";
 import { LevelBadge, ReviewBadge, Tag } from "./Badges";
 import { WordFilters } from "./Filters";
+import FeedbackButton from "../feedback/FeedbackButton";
 
 export default function WordBrowser() {
   const [filters, setFilters] = useState({});
@@ -39,6 +40,13 @@ export default function WordBrowser() {
                 <Tag key={t}>{t}</Tag>
               ))}
               <ReviewBadge status={w.reviewStatus} />
+            </div>
+            <div className="card-footer">
+              <FeedbackButton
+                itemType="word"
+                itemId={w.id}
+                itemLabel={`${w.article ? w.article + " " : ""}${w.nl} (${w.en})`}
+              />
             </div>
           </div>
         ))}

@@ -6,6 +6,9 @@ import VerbBrowser from "./components/VerbBrowser";
 import SentenceBrowser from "./components/SentenceBrowser";
 import TopicBrowser from "./components/TopicBrowser";
 import ExerciseBrowser from "./components/ExerciseBrowser";
+import FeedbackOverview from "./feedback/FeedbackOverview";
+import FeedbackDialog from "./feedback/FeedbackDialog";
+import { useAllFeedback } from "./feedback/useFeedback";
 import { getStats } from "./data";
 
 const PAGES = [
@@ -15,11 +18,14 @@ const PAGES = [
   { id: "sentences", label: "Zinnen", icon: "💬" },
   { id: "topics", label: "Grammatica", icon: "📐" },
   { id: "exercises", label: "Oefeningen", icon: "✏️" },
+  { id: "feedback", label: "Feedback", icon: "📝" },
 ];
 
 function App() {
   const [page, setPage] = useState("dashboard");
+  const [appFeedbackOpen, setAppFeedbackOpen] = useState(false);
   const stats = getStats();
+  const allFeedback = useAllFeedback();
 
   const badges = {
     words: stats.totalWords,
@@ -27,6 +33,7 @@ function App() {
     sentences: stats.totalSentences,
     topics: stats.totalTopics,
     exercises: stats.totalExercises,
+    feedback: allFeedback.length || undefined,
   };
 
   return (
@@ -49,6 +56,15 @@ function App() {
             </button>
           ))}
         </nav>
+
+        <div className="sidebar-footer">
+          <button
+            className="app-feedback-btn"
+            onClick={() => setAppFeedbackOpen(true)}
+          >
+            💡 Feedback over de app
+          </button>
+        </div>
       </aside>
       <main className="main">
         {page === "dashboard" && <Dashboard />}
@@ -57,7 +73,17 @@ function App() {
         {page === "sentences" && <SentenceBrowser />}
         {page === "topics" && <TopicBrowser />}
         {page === "exercises" && <ExerciseBrowser />}
+        {page === "feedback" && <FeedbackOverview />}
       </main>
+
+      {appFeedbackOpen && (
+        <FeedbackDialog
+          itemType="app"
+          itemId={null}
+          itemLabel="De app in het algemeen"
+          onClose={() => setAppFeedbackOpen(false)}
+        />
+      )}
     </div>
   );
 }

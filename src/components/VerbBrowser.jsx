@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { queryWords } from "../data";
 import { LevelBadge, ReviewBadge, Tag } from "./Badges";
+import FeedbackButton from "../feedback/FeedbackButton";
 
 const LEVELS = ["A0", "A1", "A2", "B1", "B2"];
 
@@ -171,6 +172,13 @@ export default function VerbBrowser() {
                 📝 {v.reviewNotes}
               </div>
             )}
+            <div className="card-footer">
+              <FeedbackButton
+                itemType="verb"
+                itemId={v.id}
+                itemLabel={`${v.nl} (${v.en})`}
+              />
+            </div>
           </div>
         ))}
       </div>

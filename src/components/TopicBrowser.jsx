@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { topics, querySentences } from "../data";
 import { LevelBadge, ReviewBadge, Tag } from "./Badges";
+import FeedbackButton from "../feedback/FeedbackButton";
 
 export default function TopicBrowser() {
   const [expanded, setExpanded] = useState(null);
@@ -67,6 +68,13 @@ export default function TopicBrowser() {
                 )}
               </>
             )}
+            <div className="card-footer">
+              <FeedbackButton
+                itemType="topic"
+                itemId={t.id}
+                itemLabel={t.title}
+              />
+            </div>
           </div>
         );
       })}

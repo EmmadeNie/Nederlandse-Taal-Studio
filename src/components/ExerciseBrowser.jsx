@@ -5,6 +5,7 @@ import {
   queryWordsUpToLevel,
 } from "../data";
 import { LevelBadge, Tag } from "./Badges";
+import FeedbackButton from "../feedback/FeedbackButton";
 
 const TYPE_LABELS = {
   "fill-in": "Invuloefening",
@@ -86,6 +87,13 @@ export default function ExerciseBrowser() {
                     ⚠️ Nog geen matching content
                   </span>
                 )}
+              </div>
+              <div className="card-footer">
+                <FeedbackButton
+                  itemType="exercise"
+                  itemId={ex.id}
+                  itemLabel={ex.title}
+                />
               </div>
             </div>
           );

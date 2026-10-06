@@ -116,11 +116,14 @@ export function getAllGrammarTags() {
   return Array.from(tagSet).sort();
 }
 
+const isVerb = (w) => w.partOfSpeech === "verb";
+const isNonVerbWord = (w) => w.partOfSpeech !== "verb";
+
 /**
  * Stats for the dashboard.
  */
 export function getStats() {
-  const verbs = words.filter((w) => w.partOfSpeech === "verb");
+  const verbs = words.filter(isVerb);
 
   // Count verbs that are fully regular vs have any irregular form
   const fullyRegular = verbs.filter((v) => {
@@ -132,6 +135,13 @@ export function getStats() {
     return r && (r.past === "irregular" || r.participle === "irregular");
   });
 
+  // Review-status counts across ALL content types (not just words)
+  const reviewByStatus = (status) => ({
+    words: words.filter((w) => w.reviewStatus === status).length,
+    sentences: sentences.filter((s) => s.reviewStatus === status).length,
+    topics: topics.filter((t) => t.reviewStatus === status).length,
+  });
+
   return {
     totalWords: words.length,
     totalSentences: sentences.length,
@@ -140,15 +150,153 @@ export function getStats() {
     totalVerbs: verbs.length,
     fullyRegularVerbs: fullyRegular.length,
     hasIrregularVerbs: hasIrregular.length,
-    reviewDraft: words.filter((w) => w.reviewStatus === "draft").length,
-    reviewAiReviewed: words.filter((w) => w.reviewStatus === "ai-reviewed")
-      .length,
-    reviewVerified: words.filter((w) => w.reviewStatus === "human-verified")
-      .length,
+    review: {
+      draft: reviewByStatus("draft"),
+      "ai-reviewed": reviewByStatus("ai-reviewed"),
+      "human-verified": reviewByStatus("human-verified"),
+    },
     themes: getAllThemes(),
-    levels: LEVELS.map((l) => ({
-      level: l,
-      wordCount: words.filter((w) => w.introducedAtLevel === l).length,
-    })),
+  };
+}
+
+/**
+ * Content counts per CEFR level, split by content type.
+ * This is the "Content per niveau" matrix: it never combines types into one number.
+ * Words are split into vocabulary (non-verb) and verbs.
+ */
+export function getLevelMatrix() {
+  return LEVELS.map((level) => ({
+    level,
+    words: words.filter((w) => isNonVerbWord(w) && w.introducedAtLevel === level)
+      .length,
+    verbs: words.filter((w) => isVerb(w) && w.introducedAtLevel === level).length,
+    sentences: sentences.filter((s) => s.introducedAtLevel === level).length,
+    topics: topics.filter((t) => t.introducedAtLevel === level).length,
+    exercises: exercises.filter((e) => e.level === level).length,
+  }));
+}
+
+/**
+ * How many example sentences reference each grammar topic (via grammarTags).
+ * Lets us spot topics that are under-illustrated.
+ */
+export function getTopicCoverage() {
+  return topics
+    .map((t) => {
+      const count = sentences.filter((s) =>
+        (s.grammarTags || []).some((g) => (t.grammarTags || []).includes(g))
+      ).length;
+      return {
+        id: t.id,
+        title: t.title,
+        level: t.introducedAtLevel,
+        sentenceCount: count,
+      };
+    })
+    .sort((a, b) => a.sentenceCount - b.sentenceCount);
+}
+
+/**
+ * Resolve how many content items an exercise's query currently matches.
+ * Flashcard exercises match words; others match sentences.
+ */
+export function getExerciseMatchCount(exercise) {
+  const q = exercise.query || {};
+  if (exercise.type === "flashcards") {
+    return queryWordsUpToLevel(q.maxLevel || exercise.level, {
+      themes: q.themes,
+    }).length;
+  }
+  return querySentences({
+    grammarTags: q.grammarTags,
+    maxLevel: q.maxLevel || exercise.level,
+    themes: q.themes,
+    tense: q.tense,
+  }).length;
+}
+
+/**
+ * Data-quality / gap indicators. Pure read-only diagnostics — never corrects content.
+ * A threshold marks "thin" exercises/topics so gaps are easy to spot.
+ */
+export function getQualityIndicators({ thinThreshold = 3 } = {}) {
+  // Words never used in any sentence (as wordId or focusWordId)
+  const usedWordIds = new Set();
+  sentences.forEach((s) => {
+    (s.wordIds || []).forEach((id) => usedWordIds.add(id));
+    (s.focusWordIds || []).forEach((id) => usedWordIds.add(id));
+  });
+  const unusedWords = words.filter((w) => !usedWordIds.has(w.id));
+
+  // Verbs with incomplete conjugation metadata
+  const requiredConj = [
+    "infinitive",
+    "stem",
+    "present",
+    "past",
+    "participle",
+    "auxiliary",
+    "regularity",
+  ];
+  const incompleteVerbs = words.filter((w) => {
+    if (!isVerb(w)) return false;
+    const c = w.conjugation;
+    if (!c) return true;
+    if (requiredConj.some((k) => c[k] === undefined)) return true;
+    if (!c.regularity?.past || !c.regularity?.participle) return true;
+    return false;
+  });
+
+  // Topics with few example sentences
+  const thinTopics = getTopicCoverage().filter(
+    (t) => t.sentenceCount < thinThreshold
+  );
+
+  // Exercises whose query returns too little content
+  const thinExercises = exercises
+    .map((e) => ({
+      id: e.id,
+      title: e.title,
+      level: e.level,
+      matchCount: getExerciseMatchCount(e),
+    }))
+    .filter((e) => e.matchCount < thinThreshold)
+    .sort((a, b) => a.matchCount - b.matchCount);
+
+  // Broken references (orphaned IDs)
+  const wordIdSet = new Set(words.map((w) => w.id));
+  const topicIdSet = new Set(topics.map((t) => t.id));
+  const brokenRefs = [];
+  sentences.forEach((s) => {
+    (s.wordIds || []).forEach((id) => {
+      if (!wordIdSet.has(id))
+        brokenRefs.push({ from: s.id, type: "wordId", missing: id });
+    });
+    (s.focusWordIds || []).forEach((id) => {
+      if (!wordIdSet.has(id))
+        brokenRefs.push({ from: s.id, type: "focusWordId", missing: id });
+    });
+  });
+  exercises.forEach((e) => {
+    if (e.topicId && !topicIdSet.has(e.topicId))
+      brokenRefs.push({ from: e.id, type: "topicId", missing: e.topicId });
+  });
+
+  // Levels with insufficient vocabulary (words + verbs below threshold)
+  const vocabThreshold = 10;
+  const thinVocabLevels = LEVELS.map((level) => ({
+    level,
+    vocabCount: words.filter((w) => w.introducedAtLevel === level).length,
+  })).filter((l) => l.vocabCount < vocabThreshold);
+
+  return {
+    thinThreshold,
+    vocabThreshold,
+    unusedWords,
+    incompleteVerbs,
+    thinTopics,
+    thinExercises,
+    brokenRefs,
+    thinVocabLevels,
   };
 }

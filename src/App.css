@@ -14,6 +14,12 @@
   top: 0;
   height: 100vh;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-footer {
+  margin-top: auto;
 }
 
 .sidebar h1 {
@@ -365,4 +371,412 @@
   color: var(--text-dim);
   font-size: 0.85rem;
   margin-bottom: 1rem;
+}
+
+/* Level matrix table */
+.level-matrix {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+}
+
+.level-matrix th,
+.level-matrix td {
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.level-matrix th {
+  color: var(--text-dim);
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.level-matrix td:not(:first-child),
+.level-matrix th:not(:first-child) {
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.level-matrix tbody tr:hover {
+  background: var(--surface);
+}
+
+.level-matrix tfoot td {
+  border-top: 2px solid var(--border);
+  border-bottom: none;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.level-matrix .empty-cell {
+  color: var(--red);
+  opacity: 0.5;
+}
+
+/* Quality / gaps */
+.quality-ok {
+  font-size: 0.8rem;
+  color: var(--green);
+  font-weight: 500;
+}
+
+.quality-warn {
+  font-size: 0.8rem;
+  color: var(--amber);
+  font-weight: 500;
+}
+
+.quality-section {
+  margin-bottom: 1.25rem;
+}
+
+.quality-section h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.quality-section summary {
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  font-weight: 600;
+  padding: 0.25rem 0;
+}
+
+.quality-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.quality-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.quality-item.warn {
+  border-color: rgba(210, 153, 34, 0.4);
+}
+
+.quality-item.error {
+  border-color: rgba(248, 81, 73, 0.5);
+  color: var(--red);
+}
+
+.quality-item .dim {
+  color: var(--text-dim);
+}
+
+/* Sidebar footer */
+.sidebar-footer {
+  padding: 1rem 1.25rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.app-feedback-btn {
+  width: 100%;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 0.82rem;
+  padding: 0.6rem;
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+
+.app-feedback-btn:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+/* Card footer (holds the feedback button) */
+.card-footer {
+  margin-top: 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ── Feedback button ──────────────────────────────────────────── */
+.fb-button {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 99px;
+  transition: all 0.15s;
+  line-height: 1.2;
+}
+
+.fb-button:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.fb-button.has-feedback {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ── Feedback dialog ──────────────────────────────────────────── */
+.fb-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.fb-dialog {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.fb-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.fb-dialog-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.fb-close {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 1rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+}
+
+.fb-close:hover {
+  color: var(--text);
+  background: var(--surface-2);
+}
+
+.fb-item-ref {
+  font-size: 0.85rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--surface-2);
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.fb-item-ref .dim {
+  color: var(--text-dim);
+}
+
+.fb-field {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.fb-field > span {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-bottom: 0.3rem;
+}
+
+.fb-field input,
+.fb-field select,
+.fb-field textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.55rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.fb-field input:focus,
+.fb-field select:focus,
+.fb-field textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.fb-known-name {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--surface-2);
+  border-radius: 6px;
+}
+
+.fb-known-name > span {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+
+.fb-known-name strong {
+  color: var(--text);
+}
+
+.fb-link {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 0.78rem;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.fb-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.fb-btn-primary,
+.fb-btn-secondary {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  border: 1px solid var(--border);
+}
+
+.fb-btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.fb-btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.fb-btn-secondary {
+  background: var(--surface-2);
+  color: var(--text-dim);
+}
+
+.fb-btn-secondary:hover {
+  color: var(--text);
+}
+
+.fb-saved {
+  padding: 1.5rem 0.5rem;
+  text-align: center;
+  color: var(--green);
+  font-weight: 500;
+}
+
+/* ── Feedback overview page ───────────────────────────────────── */
+.fb-overview-toolbar {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.fb-entry {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  position: relative;
+}
+
+.fb-entry-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.fb-entry .fb-category {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.fb-entry .fb-author {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.fb-entry .fb-date {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-left: auto;
+  margin-right: 1.75rem;
+}
+
+.fb-entry .fb-message {
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.fb-entry .fb-item-label {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-top: 0.4rem;
+}
+
+.fb-entry-delete {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 6px;
+}
+
+.fb-entry-delete:hover {
+  color: var(--red);
+  background: var(--surface-2);
+}
+
+.fb-empty {
+  color: var(--text-dim);
+  padding: 2rem;
+  text-align: center;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
 }

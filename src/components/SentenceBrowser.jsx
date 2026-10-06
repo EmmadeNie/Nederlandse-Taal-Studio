@@ -3,6 +3,7 @@ import { querySentences, LEVELS } from "../data";
 import { LevelBadge, ReviewBadge, Tag } from "./Badges";
 import { getAllThemes, getAllGrammarTags } from "../data";
 import { TENSES, SENTENCE_TYPES, WORD_ORDERS } from "../data/schema.js";
+import FeedbackButton from "../feedback/FeedbackButton";
 
 export default function SentenceBrowser() {
   const [filters, setFilters] = useState({});
@@ -135,6 +136,13 @@ export default function SentenceBrowser() {
             <ReviewBadge status={s.reviewStatus} />
           </div>
           {s.reviewNotes && <div className="note">📝 {s.reviewNotes}</div>}
+          <div className="card-footer">
+            <FeedbackButton
+              itemType="sentence"
+              itemId={s.id}
+              itemLabel={s.nl}
+            />
+          </div>
         </div>
       ))}
     </div>
