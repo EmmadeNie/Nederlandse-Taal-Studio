@@ -7,5 +7,7 @@
 {"id":"exercise.bijzinnen-b1","title":"Bijzinnen en woordvolgorde (B1)","type":"fill-in","level":"B1","topicId":"topic.bijzinnen-b1","query":{"grammarTags":["bijzin"],"maxLevel":"B1","limit":12}},
 {"id":"exercise.voegwoorden-b1","title":"Voegwoorden kiezen (B1)","type":"multiple-choice","level":"B1","topicId":"topic.voegwoorden-b1","query":{"grammarTags":["voegwoorden"],"maxLevel":"B1","limit":12}},
 {"id":"exercise.om-te-b1","title":"Om ... te oefenen (B1)","type":"translate","level":"B1","topicId":"topic.om-te-b1","query":{"grammarTags":["om-te"],"maxLevel":"B1","limit":10}},
-{"id":"exercise.plusquamperfectum-b1","title":"Plusquamperfectum oefenen (B1)","type":"fill-in","level":"B1","topicId":"topic.plusquamperfectum-b1","query":{"grammarTags":["plusquamperfectum"],"maxLevel":"B1","limit":10}}
+{"id":"exercise.plusquamperfectum-b1","title":"Plusquamperfectum oefenen (B1)","type":"fill-in","level":"B1","topicId":"topic.plusquamperfectum-b1","query":{"grammarTags":["plusquamperfectum"],"maxLevel":"B1","limit":10}},
+{"id":"exercise.dubbele-infinitief-b1","title":"Dubbele infinitief (B1)","type":"fill-in","level":"B1","topicId":"topic.dubbele-infinitief-b1","query":{"grammarTags":["dubbele-infinitief"],"maxLevel":"B1","limit":12}},
+{"id":"exercise.passief-b1","title":"Passieve zinnen (B1)","type":"translate","level":"B1","topicId":"topic.passief-b1","query":{"grammarTags":["passief"],"maxLevel":"B1","limit":12}}
 ]
