@@ -464,3 +464,15 @@
   color: var(--green);
   font-size: 0.82rem;
 }
+
+/* "View only" marker on the lesprogramma for students and reviewers */
+.lp-view-only {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--amber);
+  background: rgba(210, 153, 34, 0.15);
+  border: 1px solid rgba(210, 153, 34, 0.4);
+  border-radius: 99px;
+  padding: 0.15rem 0.6rem;
+  white-space: nowrap;
+}

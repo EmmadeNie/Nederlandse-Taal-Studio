@@ -222,6 +222,10 @@ export const messages = {
     "lp.programIntro":
       "Het masterboard met alle lessen. Zet een les op het leerpad van een leerling; pas je de les hier aan, dan ziet die leerling dat meteen.",
     "lp.programIntroDrag": "Sleep lessen tussen lanes; het niveau blijft gewoon een label.",
+    "lp.viewOnly": "Alleen bekijken",
+    "lp.viewOnlyHint": "Je kunt het lesprogramma bekijken, maar niets aanpassen.",
+    "lp.studentIntro":
+      "Alle lessen van het lesprogramma. Je docent zet lessen op je leerpad; hier zie je wat er nog meer is.",
     "lp.searchLesson": "Zoek een les…",
     "lp.addLesson": "+ Les toevoegen",
     "lp.lessonTitle": "Titel van de les",
@@ -500,6 +504,10 @@ export const messages = {
     "lp.programIntro":
       "The master board with every lesson. Add a lesson to a student's learning path; when you change the lesson here, the student sees it right away.",
     "lp.programIntroDrag": "Drag lessons between lanes; the level stays a label.",
+    "lp.viewOnly": "View only",
+    "lp.viewOnlyHint": "You can browse the curriculum, but not change anything.",
+    "lp.studentIntro":
+      "Every lesson in the curriculum. Your teacher adds lessons to your learning path; here you can see what else there is.",
     "lp.searchLesson": "Search lessons…",
     "lp.addLesson": "+ Add lesson",
     "lp.lessonTitle": "Lesson title",

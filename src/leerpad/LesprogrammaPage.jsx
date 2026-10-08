@@ -15,6 +15,7 @@ export default function LesprogrammaPage() {
   const { role } = useAuth();
   const { t } = useI18n();
   const canEdit = role === "docent";
+  const isStudent = role === "leerling";
   const [lanes, setLanes] = useState([]);
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -74,10 +75,15 @@ export default function LesprogrammaPage() {
       <div className="lp-page-head">
         <h2>{t("nav.lesprogramma")}</h2>
         <span className="result-count">{t("lp.lessons", { n: lessons.length })}</span>
+        {!canEdit && (
+          <span className="lp-view-only" title={t("lp.viewOnlyHint")}>
+            👁 {t("lp.viewOnly")}
+          </span>
+        )}
       </div>
       <p className="lp-intro">
-        {t("lp.programIntro")}
-        {canEdit ? " " + t("lp.programIntroDrag") : ""}
+        {isStudent ? t("lp.studentIntro") : t("lp.programIntro")}
+        {canEdit ? " " + t("lp.programIntroDrag") : " " + t("lp.viewOnlyHint")}
       </p>
       <BoardFilters
         search={search}
@@ -144,6 +150,7 @@ export default function LesprogrammaPage() {
           lesson={openLesson}
           lanes={lanes}
           canEdit={canEdit}
+          isStudent={isStudent}
           onClose={() => setOpenId(null)}
           onSaved={(updated) => setLessons((ls) => ls.map((l) => (l.id === updated.id ? updated : l)))}
           onDeleted={(id) => {
@@ -156,7 +163,7 @@ export default function LesprogrammaPage() {
   );
 }
 
-function LessonDialog({ lesson, lanes, canEdit, onClose, onSaved, onDeleted }) {
+function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onDeleted }) {
   const { t } = useI18n();
   const [form, setForm] = useState({
     title: lesson.title,
@@ -176,9 +183,11 @@ function LessonDialog({ lesson, lanes, canEdit, onClose, onSaved, onDeleted }) {
   const set = (k) => (v) => setForm((f) => ({ ...f, [k]: v }));
 
   useEffect(() => {
+    // Who has this lesson is staff information; students only see the lesson.
+    if (isStudent) return;
     api.studentsWithLesson(lesson.id).then(setStudents).catch(() => setStudents([]));
     if (canEdit) api.listStudents().then(setAllStudents).catch(() => {});
-  }, [lesson.id, canEdit]);
+  }, [lesson.id, canEdit, isStudent]);
 
   const save = async () => {
     if (!form.title.trim()) {
@@ -234,14 +243,21 @@ function LessonDialog({ lesson, lanes, canEdit, onClose, onSaved, onDeleted }) {
 
   return (
     <Dialog title={canEdit ? t("lp.editLesson") : lesson.title} onClose={onClose} wide>
-      <div className="lp-source">
-        <strong>{t("lp.lessonSource")}</strong>
-        {students === null
-          ? "…"
-          : students.length
-            ? t("lp.onPaths", { names: students.map((s) => s.name).join(", ") })
-            : t("lp.onNoPath")}
-      </div>
+      {isStudent ? (
+        <div className="lp-source">
+          <strong>👁 {t("lp.viewOnly")}. </strong>
+          {t("lp.viewOnlyHint")}
+        </div>
+      ) : (
+        <div className="lp-source">
+          <strong>{t("lp.lessonSource")}</strong>
+          {students === null
+            ? "…"
+            : students.length
+              ? t("lp.onPaths", { names: students.map((s) => s.name).join(", ") })
+              : t("lp.onNoPath")}
+        </div>
+      )}
 
       {canEdit && (
         <>
