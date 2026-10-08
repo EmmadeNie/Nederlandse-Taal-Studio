@@ -23,7 +23,7 @@ import { isSupabaseConfigured } from "./lib/supabase";
 
 const PAGES = [
   { id: "leerpad", icon: "🧭", roles: ["leerling"] },
-  { id: "dashboard", icon: "📊" },
+  { id: "dashboard", icon: "📊", roles: ["docent", "reviewer"] },
   { id: "lesprogramma", icon: "🗂️", roles: ["docent", "reviewer"] },
   { id: "leerpaden", icon: "🧭", roles: ["docent", "reviewer"] },
   { id: "words", icon: "📖" },
@@ -89,6 +89,7 @@ function Studio() {
   const validPages = new Set(pages.map((p) => p.id));
 
   // The URL is the source of truth for the active page.
+  // Students start on their leerpad; the dashboard is a content-review tool for staff.
   const homePage = role === "leerling" ? "leerpad" : "dashboard";
   const page = validPages.has(urlParams.page) ? urlParams.page : homePage;
   // Clicking a nav item clears any deep-link filters from the previous page.
