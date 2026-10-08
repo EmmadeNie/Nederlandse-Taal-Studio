@@ -15,10 +15,15 @@ import { useAuth, ROLE_LABELS } from "./auth/context";
 import LoginPage from "./auth/LoginPage";
 import NameSetup from "./auth/NameSetup";
 import UserManagement from "./users/UserManagement";
+import LesprogrammaPage from "./leerpad/LesprogrammaPage";
+import LeerpadenPage, { MijnLeerpadPage } from "./leerpad/LeerpadenPage";
 import { isSupabaseConfigured } from "./lib/supabase";
 
 const PAGES = [
+  { id: "leerpad", label: "Mijn leerpad", icon: "🧭", roles: ["leerling"] },
   { id: "dashboard", label: "Dashboard", icon: "📊" },
+  { id: "lesprogramma", label: "Lesprogramma", icon: "🗂️", roles: ["docent", "reviewer"] },
+  { id: "leerpaden", label: "Leerpaden", icon: "🧭", roles: ["docent", "reviewer"] },
   { id: "words", label: "Woordenschat", icon: "📖" },
   { id: "verbs", label: "Werkwoorden", icon: "🔄" },
   { id: "sentences", label: "Zinnen", icon: "💬" },
@@ -27,6 +32,9 @@ const PAGES = [
   { id: "feedback", label: "Feedback", icon: "📝" },
   { id: "users", label: "Gebruikers", icon: "👥", roles: ["docent"] },
 ];
+
+// Pages that show a full-width board instead of a reading column.
+const BOARD_PAGES = new Set(["lesprogramma", "leerpaden", "leerpad"]);
 
 function SetupNeeded() {
   return (
@@ -76,7 +84,8 @@ function Studio() {
   const validPages = new Set(pages.map((p) => p.id));
 
   // The URL is the source of truth for the active page.
-  const page = validPages.has(urlParams.page) ? urlParams.page : "dashboard";
+  const homePage = role === "leerling" ? "leerpad" : "dashboard";
+  const page = validPages.has(urlParams.page) ? urlParams.page : homePage;
   // Clicking a nav item clears any deep-link filters from the previous page.
   const setPage = (id) =>
     setUrlParams(
@@ -90,6 +99,7 @@ function Studio() {
         search: null,
         type: null,
         sort: null,
+        student: null,
       },
       { push: true }
     );
@@ -142,7 +152,7 @@ function Studio() {
           </button>
         </div>
       </aside>
-      <main className="main">
+      <main className={BOARD_PAGES.has(page) ? "main main-board" : "main"}>
         {page === "dashboard" && <Dashboard />}
         {page === "words" && <WordBrowser />}
         {page === "verbs" && <VerbBrowser />}
@@ -151,6 +161,9 @@ function Studio() {
         {page === "exercises" && <ExerciseBrowser />}
         {page === "feedback" && <FeedbackOverview />}
         {page === "users" && <UserManagement />}
+        {page === "lesprogramma" && <LesprogrammaPage />}
+        {page === "leerpaden" && <LeerpadenPage />}
+        {page === "leerpad" && <MijnLeerpadPage />}
       </main>
 
       {appFeedbackOpen && (
