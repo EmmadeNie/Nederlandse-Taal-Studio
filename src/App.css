@@ -574,13 +574,35 @@
   border-color: var(--accent);
 }
 
-/* Card footer (holds the feedback button) */
+/* Card footer (holds the feedback + copy-link buttons) */
 .card-footer {
   margin-top: 0.75rem;
   padding-top: 0.5rem;
   border-top: 1px solid var(--border);
   display: flex;
   justify-content: flex-end;
+  gap: 0.4rem;
+}
+
+.copy-link-btn {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 99px;
+  transition: all 0.15s;
+  line-height: 1.2;
+}
+
+.copy-link-btn:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.copy-link-btn.copied {
+  color: var(--green);
+  border-color: var(--green);
 }
 
 /* ── Feedback button ──────────────────────────────────────────── */

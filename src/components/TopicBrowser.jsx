@@ -1,18 +1,40 @@
-import { useState } from "react";
+import { useEffect, useRef } from "react";
 import { topics, querySentences } from "../data";
 import { LevelBadge, ReviewBadge, Tag } from "./Badges";
 import FeedbackButton from "../feedback/FeedbackButton";
 import Markdown from "./Markdown";
+import { useUrlParams, useSetUrlParams } from "../hooks/useUrlParams";
+import CopyLinkButton from "./CopyLinkButton";
 
 export default function TopicBrowser() {
-  const [expanded, setExpanded] = useState(null);
+  const urlParams = useUrlParams();
+  const setUrlParams = useSetUrlParams();
+
+  // A topic can be deep-linked by id (?topic=topic.de-het) or by grammar tag
+  // (?grammar=perfectum), so Trello links can target either.
+  const expandedId =
+    urlParams.topic ||
+    (urlParams.grammar
+      ? topics.find((t) => (t.grammarTags || []).includes(urlParams.grammar))?.id
+      : null) ||
+    null;
+
+  const setExpanded = (id) => setUrlParams({ topic: id, grammar: null });
+
+  // Scroll the deep-linked topic into view on load / when it changes.
+  const openRef = useRef(null);
+  useEffect(() => {
+    if (expandedId && openRef.current) {
+      openRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [expandedId]);
 
   return (
     <div>
       <h2>Grammatica</h2>
       <p className="result-count">{topics.length} onderwerpen</p>
       {topics.map((t) => {
-        const isOpen = expanded === t.id;
+        const isOpen = expandedId === t.id;
         const relatedSentences = isOpen
           ? querySentences({ grammarTags: t.grammarTags })
           : [];
@@ -20,6 +42,7 @@ export default function TopicBrowser() {
         return (
           <div
             key={t.id}
+            ref={isOpen ? openRef : null}
             className="topic-card"
             onClick={() => setExpanded(isOpen ? null : t.id)}
           >
@@ -69,7 +92,8 @@ export default function TopicBrowser() {
                 )}
               </>
             )}
-            <div className="card-footer">
+            <div className="card-footer" onClick={(e) => e.stopPropagation()}>
+              <CopyLinkButton params={{ page: "topics", topic: t.id }} />
               <FeedbackButton
                 itemType="topic"
                 itemId={t.id}

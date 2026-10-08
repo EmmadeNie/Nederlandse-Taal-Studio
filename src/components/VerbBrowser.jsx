@@ -1,7 +1,7 @@
-import { useState } from "react";
 import { queryWords } from "../data";
 import { LevelBadge, ReviewBadge, Tag } from "./Badges";
 import FeedbackButton from "../feedback/FeedbackButton";
+import { useUrlParams, useSetUrlParams } from "../hooks/useUrlParams";
 
 const LEVELS = ["A0", "A1", "A2", "B1", "B2"];
 
@@ -11,9 +11,14 @@ const REGULARITY_LABELS = {
 };
 
 export default function VerbBrowser() {
-  const [search, setSearch] = useState("");
-  const [level, setLevel] = useState("");
-  const [type, setType] = useState("");
+  const urlParams = useUrlParams();
+  const setUrlParams = useSetUrlParams();
+  const search = urlParams.search || "";
+  const level = urlParams.level || "";
+  const type = urlParams.type || "";
+  const setSearch = (v) => setUrlParams({ search: v });
+  const setLevel = (v) => setUrlParams({ level: v });
+  const setType = (v) => setUrlParams({ type: v });
 
   const verbs = queryWords({ partOfSpeech: "verb" }).filter((v) => {
     if (search) {

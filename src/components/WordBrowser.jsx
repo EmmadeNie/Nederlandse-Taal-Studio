@@ -1,11 +1,27 @@
-import { useState } from "react";
 import { queryWords } from "../data";
 import { LevelBadge, ReviewBadge, Tag } from "./Badges";
 import { WordFilters } from "./Filters";
 import FeedbackButton from "../feedback/FeedbackButton";
+import { useUrlParams, useSetUrlParams } from "../hooks/useUrlParams";
 
 export default function WordBrowser() {
-  const [filters, setFilters] = useState({});
+  const urlParams = useUrlParams();
+  const setUrlParams = useSetUrlParams();
+
+  // Filters are derived from the URL so deep links work and are shareable.
+  const filters = {
+    search: urlParams.search || "",
+    level: urlParams.level || null,
+    theme: urlParams.theme || null,
+    partOfSpeech: urlParams.pos || null,
+  };
+  const setFilters = (next) =>
+    setUrlParams({
+      search: next.search,
+      level: next.level,
+      theme: next.theme,
+      pos: next.partOfSpeech,
+    });
 
   const results = queryWords({
     search: filters.search,

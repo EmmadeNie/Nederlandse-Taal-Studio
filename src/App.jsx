@@ -10,6 +10,7 @@ import FeedbackOverview from "./feedback/FeedbackOverview";
 import FeedbackDialog from "./feedback/FeedbackDialog";
 import { useAllFeedback } from "./feedback/useFeedback";
 import { getStats } from "./data";
+import { useUrlParams, useSetUrlParams } from "./hooks/useUrlParams";
 
 const PAGES = [
   { id: "dashboard", label: "Dashboard", icon: "📊" },
@@ -21,11 +22,33 @@ const PAGES = [
   { id: "feedback", label: "Feedback", icon: "📝" },
 ];
 
+const VALID_PAGES = new Set(PAGES.map((p) => p.id));
+
 function App() {
-  const [page, setPage] = useState("dashboard");
+  const urlParams = useUrlParams();
+  const setUrlParams = useSetUrlParams();
   const [appFeedbackOpen, setAppFeedbackOpen] = useState(false);
   const stats = getStats();
   const allFeedback = useAllFeedback();
+
+  // The URL is the source of truth for the active page.
+  const page = VALID_PAGES.has(urlParams.page) ? urlParams.page : "dashboard";
+  // Clicking a nav item clears any deep-link filters from the previous page.
+  const setPage = (id) =>
+    setUrlParams(
+      {
+        page: id,
+        topic: null,
+        grammar: null,
+        level: null,
+        theme: null,
+        tense: null,
+        search: null,
+        type: null,
+        sort: null,
+      },
+      { push: true }
+    );
 
   const badges = {
     words: stats.totalWords,

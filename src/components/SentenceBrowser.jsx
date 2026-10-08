@@ -1,16 +1,41 @@
-import { useState } from "react";
 import { querySentences, LEVELS } from "../data";
 import { LevelBadge, ReviewBadge, Tag } from "./Badges";
 import { getAllThemes, getAllGrammarTags } from "../data";
 import { TENSES, SENTENCE_TYPES, WORD_ORDERS } from "../data/schema.js";
 import FeedbackButton from "../feedback/FeedbackButton";
+import { useUrlParams, useSetUrlParams } from "../hooks/useUrlParams";
 
 export default function SentenceBrowser() {
-  const [filters, setFilters] = useState({});
+  const urlParams = useUrlParams();
+  const setUrlParams = useSetUrlParams();
   const themes = getAllThemes();
   const grammarTags = getAllGrammarTags();
 
-  const results = querySentences({
+  // Filters derived from the URL (deep-linkable). `grammar` is the shared
+  // param name so a Trello link like ?page=sentences&grammar=perfectum works.
+  const filters = {
+    search: urlParams.search || "",
+    level: urlParams.level || null,
+    grammarTag: urlParams.grammar || null,
+    theme: urlParams.theme || null,
+    tense: urlParams.tense || null,
+    sentenceType: urlParams.stype || null,
+    wordOrder: urlParams.order || null,
+  };
+  const setFilters = (next) =>
+    setUrlParams({
+      search: next.search,
+      level: next.level,
+      grammar: next.grammarTag,
+      theme: next.theme,
+      tense: next.tense,
+      stype: next.sentenceType,
+      order: next.wordOrder,
+    });
+
+  const sort = urlParams.sort || "default";
+
+  const found = querySentences({
     search: filters.search,
     introducedAtLevel: filters.level || undefined,
     grammarTags: filters.grammarTag ? [filters.grammarTag] : undefined,
@@ -19,6 +44,17 @@ export default function SentenceBrowser() {
     sentenceType: filters.sentenceType || undefined,
     wordOrder: filters.wordOrder || undefined,
   });
+
+  // Sort by CEFR level when requested (uses the canonical LEVELS order).
+  const results = [...found];
+  if (sort === "level-asc" || sort === "level-desc") {
+    results.sort((a, b) => {
+      const diff =
+        LEVELS.indexOf(a.introducedAtLevel) -
+        LEVELS.indexOf(b.introducedAtLevel);
+      return sort === "level-asc" ? diff : -diff;
+    });
+  }
 
   return (
     <div>
@@ -114,6 +150,15 @@ export default function SentenceBrowser() {
               {t}
             </option>
           ))}
+        </select>
+        <select
+          value={sort}
+          onChange={(e) => setUrlParams({ sort: e.target.value || null })}
+          aria-label="Sorteren"
+        >
+          <option value="default">Sorteren: standaard</option>
+          <option value="level-asc">Niveau: laag → hoog</option>
+          <option value="level-desc">Niveau: hoog → laag</option>
         </select>
       </div>
       <p className="result-count">{results.length} zinnen gevonden</p>
