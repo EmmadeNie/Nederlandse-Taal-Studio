@@ -1,11 +1,8 @@
 import { useState } from "react";
 import "./App.css";
 import Dashboard from "./components/Dashboard";
-import WordBrowser from "./components/WordBrowser";
-import VerbBrowser from "./components/VerbBrowser";
-import SentenceBrowser from "./components/SentenceBrowser";
-import TopicBrowser from "./components/TopicBrowser";
-import ExerciseBrowser from "./components/ExerciseBrowser";
+import Library from "./components/Library";
+import { LIBRARY_TAB_IDS } from "./components/libraryTabs";
 import FeedbackOverview from "./feedback/FeedbackOverview";
 import FeedbackDialog from "./feedback/FeedbackDialog";
 import { useAllFeedback } from "./feedback/useFeedback";
@@ -26,11 +23,7 @@ const PAGES = [
   { id: "dashboard", icon: "📊", roles: ["docent", "reviewer"] },
   { id: "lesprogramma", icon: "🗂️" },
   { id: "leerpaden", icon: "🧭", roles: ["docent", "reviewer"] },
-  { id: "words", icon: "📖" },
-  { id: "verbs", icon: "🔄" },
-  { id: "sentences", icon: "💬" },
-  { id: "topics", icon: "📐" },
-  { id: "exercises", icon: "✏️" },
+  { id: "library", icon: "📚" },
   { id: "feedback", icon: "📝" },
   { id: "users", icon: "👥", roles: ["docent"] },
 ];
@@ -97,7 +90,13 @@ function Studio() {
   // The URL is the source of truth for the active page.
   // Students start on their leerpad; the dashboard is a content-review tool for staff.
   const homePage = role === "leerling" ? "leerpad" : "dashboard";
-  const page = validPages.has(urlParams.page) ? urlParams.page : homePage;
+  // ?page=library opens its first tab; the tabs keep their own page ids.
+  const requested = urlParams.page === "library" ? "words" : urlParams.page;
+  const page =
+    validPages.has(requested) || (validPages.has("library") && LIBRARY_TAB_IDS.has(requested))
+      ? requested
+      : homePage;
+  const navId = LIBRARY_TAB_IDS.has(page) ? "library" : page;
   // Clicking a nav item clears any deep-link filters from the previous page.
   const setPage = (id) =>
     setUrlParams(
@@ -111,17 +110,22 @@ function Studio() {
         search: null,
         type: null,
         sort: null,
+        pos: null,
+        stype: null,
+        order: null,
         student: null,
       },
       { push: true }
     );
 
-  const badges = {
+  const libraryCounts = {
     words: stats.totalWords,
     verbs: stats.totalVerbs,
     sentences: stats.totalSentences,
     topics: stats.totalTopics,
     exercises: stats.totalExercises,
+  };
+  const badges = {
     feedback: allFeedback.length || undefined,
   };
 
@@ -134,8 +138,8 @@ function Studio() {
           {pages.map((p) => (
             <button
               key={p.id}
-              className={page === p.id ? "active" : ""}
-              onClick={() => setPage(p.id)}
+              className={navId === p.id ? "active" : ""}
+              onClick={() => setPage(p.id === "library" ? "words" : p.id)}
             >
               <span className="icon">{p.icon}</span>
               {t(`nav.${p.id}`)}
@@ -166,11 +170,9 @@ function Studio() {
       </aside>
       <main className={BOARD_PAGES.has(page) ? "main main-board" : "main"}>
         {page === "dashboard" && <Dashboard />}
-        {page === "words" && <WordBrowser />}
-        {page === "verbs" && <VerbBrowser />}
-        {page === "sentences" && <SentenceBrowser />}
-        {page === "topics" && <TopicBrowser />}
-        {page === "exercises" && <ExerciseBrowser />}
+        {LIBRARY_TAB_IDS.has(page) && (
+          <Library tab={page} onTab={setPage} counts={libraryCounts} />
+        )}
         {page === "feedback" && <FeedbackOverview />}
         {page === "users" && <UserManagement />}
         {page === "lesprogramma" && <LesprogrammaPage />}

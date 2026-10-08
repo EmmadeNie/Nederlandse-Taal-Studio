@@ -32,6 +32,9 @@ export const messages = {
     "nav.dashboard": "Dashboard",
     "nav.lesprogramma": "Lesprogramma",
     "nav.leerpaden": "Leerpaden",
+    "nav.library": "Bibliotheek",
+    "library.intro":
+      "Alle bouwstenen waar lessen naar verwijzen: woorden, werkwoorden, zinnen, grammatica en oefeningen.",
     "nav.words": "Woordenschat",
     "nav.verbs": "Werkwoorden",
     "nav.sentences": "Zinnen",
@@ -321,6 +324,9 @@ export const messages = {
     "nav.dashboard": "Dashboard",
     "nav.lesprogramma": "Curriculum",
     "nav.leerpaden": "Learning paths",
+    "nav.library": "Library",
+    "library.intro":
+      "All the building blocks lessons refer to: words, verbs, sentences, grammar and exercises.",
     "nav.words": "Vocabulary",
     "nav.verbs": "Verbs",
     "nav.sentences": "Sentences",
