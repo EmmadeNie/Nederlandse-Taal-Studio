@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "../auth/context";
+import { useI18n } from "../i18n/context";
 import Markdown from "../components/Markdown";
 import Board, { AddCardForm } from "./Board";
 import * as api from "./api";
@@ -13,6 +14,7 @@ import { LEVELS, linkCount, matchesFilter, stepContent } from "./util";
  */
 export default function LeerpadBoard({ studentId }) {
   const { role, user } = useAuth();
+  const { t } = useI18n();
   const isDocent = role === "docent";
   const isOwner = user.id === studentId;
   const canArrange = isDocent || isOwner;
@@ -52,7 +54,7 @@ export default function LeerpadBoard({ studentId }) {
     try {
       await fn();
     } catch (e) {
-      setError(e.message);
+      setError(t(e.message));
       load();
     }
   };
@@ -75,7 +77,7 @@ export default function LeerpadBoard({ studentId }) {
 
   const openStep = steps.find((s) => s.id === openId);
 
-  if (loading) return <p className="dim">Laden…</p>;
+  if (loading) return <p className="dim">{t("common.loading")}</p>;
 
   return (
     <>
@@ -84,11 +86,11 @@ export default function LeerpadBoard({ studentId }) {
         setSearch={setSearch}
         level={level}
         setLevel={setLevel}
-        placeholder="Zoek een stap…"
+        placeholder={t("lp.searchStep")}
       />
       {error && <div className="lp-error">{error}</div>}
       {lanes.length === 0 ? (
-        <p className="dim">Dit leerpad is nog niet aangemaakt.</p>
+        <p className="dim">{t("lp.notCreated")}</p>
       ) : (
         <Board
           lanes={lanes}
@@ -102,12 +104,12 @@ export default function LeerpadBoard({ studentId }) {
                 title={c.title}
                 level={c.level}
                 categories={c.categories}
-                kind={s.lesson_id ? null : "Zijpad"}
+                kind={s.lesson_id ? null : t("kind.zijpad")}
                 meta={
                   <>
-                    {linkCount(c.links.length + s.extras.length)}
-                    {s.extras.length > 0 && <span>+{s.extras.length} extra</span>}
-                    {isDocent && notes[s.id] && <span>📝 notitie</span>}
+                    {linkCount(t, c.links.length + s.extras.length)}
+                    {s.extras.length > 0 && <span>{t("lp.extraCount", { n: s.extras.length })}</span>}
+                    {isDocent && notes[s.id] && <span>{t("lp.hasNote")}</span>}
                   </>
                 }
               />
@@ -143,17 +145,17 @@ export default function LeerpadBoard({ studentId }) {
             ((lane) => (
               <>
                 <button className="board-add-btn" onClick={() => setPickerLane(lane)}>
-                  + Les uit lesprogramma
+                  {t("lp.fromProgram")}
                 </button>
                 <AddCardForm
-                  label="+ Zijpad"
-                  placeholder="Titel van het zijpad"
+                  label={t("lp.addZijpad")}
+                  placeholder={t("lp.zijpadTitle")}
                   onAdd={(title) => addStep({ lane_id: lane.id, title, position: nextPos(lane.id) })}
                 />
               </>
             ))
           }
-          emptyLaneText={canArrange ? "Sleep een stap hierheen." : "Nog leeg."}
+          emptyLaneText={canArrange ? t("board.dropHere") : t("board.empty")}
         />
       )}
 
@@ -192,6 +194,7 @@ export default function LeerpadBoard({ studentId }) {
 }
 
 function LessonPicker({ lane, plannedIds, onClose, onPick }) {
+  const { t } = useI18n();
   const [lessons, setLessons] = useState(null);
   const [search, setSearch] = useState("");
   const [level, setLevel] = useState("");
@@ -203,16 +206,16 @@ function LessonPicker({ lane, plannedIds, onClose, onPick }) {
   const shown = (lessons || []).filter((l) => matchesFilter(l, search, level)).slice(0, 60);
 
   return (
-    <Dialog title={`Les toevoegen aan “${lane.name}”`} onClose={onClose} wide>
+    <Dialog title={t("picker.title", { lane: lane.name })} onClose={onClose} wide>
       <BoardFilters
         search={search}
         setSearch={setSearch}
         level={level}
         setLevel={setLevel}
-        placeholder="Zoek in het lesprogramma…"
+        placeholder={t("picker.search")}
       />
       {lessons === null ? (
-        <p className="dim">Laden…</p>
+        <p className="dim">{t("common.loading")}</p>
       ) : (
         <div className="lp-picker">
           {shown.map((l) => (
@@ -228,11 +231,11 @@ function LessonPicker({ lane, plannedIds, onClose, onPick }) {
                 title={l.title}
                 level={l.level}
                 categories={l.categories}
-                kind={plannedIds.has(l.id) ? "staat er al op" : null}
+                kind={plannedIds.has(l.id) ? t("kind.alreadyOn") : null}
               />
             </button>
           ))}
-          {shown.length === 0 && <p className="dim lp-empty">Geen lessen gevonden.</p>}
+          {shown.length === 0 && <p className="dim lp-empty">{t("picker.none")}</p>}
         </div>
       )}
     </Dialog>
@@ -240,6 +243,7 @@ function LessonPicker({ lane, plannedIds, onClose, onPick }) {
 }
 
 function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose, onChanged, onRemoved }) {
+  const { t } = useI18n();
   const content = stepContent(step);
   const isZijpad = !step.lesson_id;
   const [laneId, setLaneId] = useState(step.lane_id);
@@ -266,7 +270,7 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
       if (isDocent) {
         const fields = { extras };
         if (isZijpad) {
-          if (!zijpad.title.trim()) throw new Error("Geef het zijpad een titel.");
+          if (!zijpad.title.trim()) throw new Error("step.needTitle");
           Object.assign(fields, {
             title: zijpad.title.trim(),
             level: zijpad.level || null,
@@ -280,34 +284,35 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
       onChanged(patch, isDocent ? noteText : undefined);
       onClose();
     } catch (e) {
-      setError(e.message);
+      setError(t(e.message));
       setBusy(false);
     }
   };
 
   const remove = async () => {
-    if (!window.confirm(`“${content.title}” van dit leerpad halen?`)) return;
+    if (!window.confirm(t("step.confirmRemove", { title: content.title }))) return;
     try {
       await api.deleteStep(step.id);
       onRemoved();
     } catch (e) {
-      setError(e.message);
+      setError(t(e.message));
     }
   };
 
   return (
     <Dialog title={content.title} onClose={onClose} wide>
-      <Chips level={content.level} categories={content.categories} kind={isZijpad ? "Zijpad" : "Stap"} />
+      <Chips level={content.level} categories={content.categories} kind={isZijpad ? t("kind.zijpad") : t("kind.stap")} />
       {isDocent && (
         <div className="lp-source">
           {isZijpad ? (
             <>
-              <strong>Zijpad. </strong>Bestaat alleen op dit leerpad, niet in het lesprogramma.
+              <strong>{t("step.zijpadSource")}</strong>
+              {t("step.zijpadSourceText")}
             </>
           ) : (
             <>
-              <strong>Stap, gekoppeld aan een les. </strong>Titel, labels, uitleg en verwijzingen komen uit het
-              lesprogramma. Lane, extra&apos;s en notitie horen bij deze leerling.
+              <strong>{t("step.stapSource")}</strong>
+              {t("step.stapSourceText")}
             </>
           )}
         </div>
@@ -317,13 +322,13 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
         <>
           <div className="lp-row">
             <label className="fb-field" style={{ flex: "3 1 200px" }}>
-              <span>Titel</span>
+              <span>{t("lp.title")}</span>
               <input value={zijpad.title} onChange={(e) => setZijpad({ ...zijpad, title: e.target.value })} />
             </label>
             <label className="fb-field" style={{ flex: "1 1 100px" }}>
-              <span>Niveau</span>
+              <span>{t("lp.level")}</span>
               <select value={zijpad.level} onChange={(e) => setZijpad({ ...zijpad, level: e.target.value })}>
-                <option value="">Geen</option>
+                <option value="">{t("step.levelNone")}</option>
                 {LEVELS.map((l) => (
                   <option key={l} value={l}>
                     {l}
@@ -333,38 +338,38 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
             </label>
           </div>
           <label className="fb-field">
-            <span>Uitleg</span>
+            <span>{t("lp.explanation")}</span>
             <textarea
               rows={5}
               value={zijpad.explanation}
               onChange={(e) => setZijpad({ ...zijpad, explanation: e.target.value })}
-              placeholder="Wat moet de leerling doen?"
+              placeholder={t("step.zijpadPh")}
             />
           </label>
         </>
       ) : (
         content.explanation.trim() && (
           <div className="lp-section">
-            <h4>Uitleg</h4>
+            <h4>{t("lp.explanation")}</h4>
             <Markdown className="lp-explanation">{content.explanation}</Markdown>
           </div>
         )
       )}
 
       <div className="lp-section">
-        <h4>Verwijzingen</h4>
+        <h4>{t("lp.links")}</h4>
         <LinkList links={content.links} extras={isDocent ? [] : step.extras} />
         {isDocent && (
           <>
-            <h4>Extra&apos;s voor deze leerling</h4>
-            <LinksEditor value={extras} onChange={setExtras} addLabel="+ Extra" />
+            <h4>{t("step.extras")}</h4>
+            <LinksEditor value={extras} onChange={setExtras} addLabel={t("links.addExtra")} />
           </>
         )}
       </div>
 
       {canArrange && (
         <label className="fb-field">
-          <span>Lane</span>
+          <span>{t("lp.lane")}</span>
           <select value={laneId} onChange={(e) => setLaneId(e.target.value)}>
             {lanes.map((l) => (
               <option key={l.id} value={l.id}>
@@ -377,12 +382,12 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
 
       {isDocent && (
         <label className="fb-field">
-          <span>Notitie (alleen voor docenten)</span>
+          <span>{t("step.note")}</span>
           <textarea
             rows={3}
             value={noteText}
             onChange={(e) => setNoteText(e.target.value)}
-            placeholder="Bijv. twijfelt nog bij hebben/zijn"
+            placeholder={t("step.notePh")}
           />
         </label>
       )}
@@ -392,14 +397,14 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
       {canArrange ? (
         <div className="lp-actions">
           <button className="fb-btn-primary" onClick={save} disabled={busy}>
-            Opslaan
+            {t("common.save")}
           </button>
           <button className="fb-btn-secondary" onClick={onClose}>
-            Annuleren
+            {t("common.cancel")}
           </button>
           {isDocent && (
             <button className="lp-danger" onClick={remove}>
-              Van leerpad halen
+              {t("step.remove")}
             </button>
           )}
         </div>

@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { LevelBadge, Tag } from "../components/Badges";
 
 import { LEVELS } from "./util";
+import { useI18n } from "../i18n/context";
 
 /** Level + category labels (+ optional kind, e.g. "Zijpad"). */
 export function Chips({ level, categories = [], kind }) {
+  const { t } = useI18n();
   return (
     <div className="board-card-chips">
-      {level ? <LevelBadge level={level} /> : <span className="tag dim">geen niveau</span>}
+      {level ? <LevelBadge level={level} /> : <span className="tag dim">{t("level.noneTag")}</span>}
       {categories.map((c) => (
         <Tag key={c}>{c}</Tag>
       ))}
@@ -29,6 +31,7 @@ export function CardBody({ title, level, categories, kind, meta }) {
 
 /** Modal dialog in the same style as the feedback dialog. */
 export function Dialog({ title, onClose, children, wide }) {
+  const { t } = useI18n();
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
@@ -45,7 +48,7 @@ export function Dialog({ title, onClose, children, wide }) {
       >
         <div className="fb-dialog-header">
           <h3>{title}</h3>
-          <button className="fb-close" onClick={onClose} aria-label="Sluiten">
+          <button className="fb-close" onClick={onClose} aria-label={t("common.close")}>
             ✕
           </button>
         </div>
@@ -57,8 +60,9 @@ export function Dialog({ title, onClose, children, wide }) {
 
 /** Read-only list of links; extras are marked as "only for this student". */
 export function LinkList({ links = [], extras = [] }) {
+  const { t } = useI18n();
   if (!links.length && !extras.length) {
-    return <p className="dim lp-empty">Nog geen verwijzingen.</p>;
+    return <p className="dim lp-empty">{t("lp.noLinks")}</p>;
   }
   return (
     <ul className="lp-links">
@@ -74,7 +78,7 @@ export function LinkList({ links = [], extras = [] }) {
           <a href={l.url} target="_blank" rel="noopener noreferrer">
             ↗ {l.label || l.url}
           </a>
-          <span className="dim">extra, alleen voor deze leerling</span>
+          <span className="dim">{t("lp.extraOnly")}</span>
         </li>
       ))}
     </ul>
@@ -82,7 +86,8 @@ export function LinkList({ links = [], extras = [] }) {
 }
 
 /** Editable list of { label, url } links. */
-export function LinksEditor({ value, onChange, addLabel = "+ Link" }) {
+export function LinksEditor({ value, onChange, addLabel }) {
+  const { t } = useI18n();
   const [label, setLabel] = useState("");
   const [url, setUrl] = useState("");
   const [error, setError] = useState(null);
@@ -90,7 +95,7 @@ export function LinksEditor({ value, onChange, addLabel = "+ Link" }) {
   const add = () => {
     const u = url.trim();
     if (!/^https?:\/\/\S+$/.test(u)) {
-      setError("Vul een link in die begint met https://");
+      setError(t("links.invalid"));
       return;
     }
     onChange([...value, { label: label.trim() || u, url: u }]);
@@ -111,7 +116,7 @@ export function LinksEditor({ value, onChange, addLabel = "+ Link" }) {
               <button
                 type="button"
                 className="board-icon-btn"
-                aria-label={`Verwijder ${l.label}`}
+                aria-label={t("links.remove", { name: l.label })}
                 onClick={() => onChange(value.filter((_, j) => j !== i))}
               >
                 ✕
@@ -124,14 +129,14 @@ export function LinksEditor({ value, onChange, addLabel = "+ Link" }) {
         <input
           value={label}
           onChange={(e) => setLabel(e.target.value)}
-          placeholder="Naam, bijv. Google Doc"
-          aria-label="Naam van de link"
+          placeholder={t("links.labelPh")}
+          aria-label={t("links.labelAria")}
         />
         <input
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           placeholder="https://…"
-          aria-label="Adres van de link"
+          aria-label={t("links.urlAria")}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
@@ -140,7 +145,7 @@ export function LinksEditor({ value, onChange, addLabel = "+ Link" }) {
           }}
         />
         <button type="button" className="fb-btn-secondary" onClick={add}>
-          {addLabel}
+          {addLabel || t("links.add")}
         </button>
       </div>
       {error && <div className="auth-error">{error}</div>}
@@ -150,6 +155,7 @@ export function LinksEditor({ value, onChange, addLabel = "+ Link" }) {
 
 /** Search + level filter used above both boards. */
 export function BoardFilters({ search, setSearch, level, setLevel, placeholder }) {
+  const { t } = useI18n();
   return (
     <div className="filters lp-filters">
       <input
@@ -157,16 +163,16 @@ export function BoardFilters({ search, setSearch, level, setLevel, placeholder }
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         placeholder={placeholder}
-        aria-label="Zoeken"
+        aria-label={t("common.search")}
       />
-      <select value={level} onChange={(e) => setLevel(e.target.value)} aria-label="Niveau">
-        <option value="">Alle niveaus</option>
+      <select value={level} onChange={(e) => setLevel(e.target.value)} aria-label={t("lp.level")}>
+        <option value="">{t("level.all")}</option>
         {LEVELS.map((l) => (
           <option key={l} value={l}>
             {l}
           </option>
         ))}
-        <option value="none">Geen niveau</option>
+        <option value="none">{t("level.none")}</option>
       </select>
     </div>
   );

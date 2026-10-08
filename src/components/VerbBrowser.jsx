@@ -2,15 +2,12 @@ import { queryWords } from "../data";
 import { LevelBadge, ReviewBadge, Tag } from "./Badges";
 import FeedbackButton from "../feedback/FeedbackButton";
 import { useUrlParams, useSetUrlParams } from "../hooks/useUrlParams";
+import { useI18n } from "../i18n/context";
 
 const LEVELS = ["A0", "A1", "A2", "B1", "B2"];
 
-const REGULARITY_LABELS = {
-  regular: "regelmatig",
-  irregular: "onregelmatig",
-};
-
 export default function VerbBrowser() {
+  const { t } = useI18n();
   const urlParams = useUrlParams();
   const setUrlParams = useSetUrlParams();
   const search = urlParams.search || "";
@@ -41,21 +38,21 @@ export default function VerbBrowser() {
 
   return (
     <div>
-      <h2>Werkwoorden</h2>
+      <h2>{t("nav.verbs")}</h2>
       <div className="filters">
         <input
           type="text"
-          placeholder="Zoek werkwoord..."
+          placeholder={t("verbs.search")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          aria-label="Zoek werkwoord"
+          aria-label={t("verbs.searchAria")}
         />
         <select
           value={level}
           onChange={(e) => setLevel(e.target.value)}
-          aria-label="Filter op niveau"
+          aria-label={t("filter.level")}
         >
-          <option value="">Alle niveaus</option>
+          <option value="">{t("level.all")}</option>
           {LEVELS.map((l) => (
             <option key={l} value={l}>
               {l}
@@ -65,14 +62,14 @@ export default function VerbBrowser() {
         <select
           value={type}
           onChange={(e) => setType(e.target.value)}
-          aria-label="Filter op type"
+          aria-label={t("verbs.typeAria")}
         >
-          <option value="">Alle types</option>
-          <option value="fully-regular">Volledig regelmatig</option>
-          <option value="has-irregular">Met onregelmatige vorm</option>
+          <option value="">{t("verbs.allTypes")}</option>
+          <option value="fully-regular">{t("dash.fullyRegular")}</option>
+          <option value="has-irregular">{t("dash.hasIrregular")}</option>
         </select>
       </div>
-      <p className="result-count">{verbs.length} werkwoorden gevonden</p>
+      <p className="result-count">{t("verbs.found", { n: verbs.length })}</p>
       <div className="card-grid">
         {verbs.map((v) => (
           <div key={v.id} className="card">
@@ -88,7 +85,7 @@ export default function VerbBrowser() {
                 {Object.entries(v.conjugation.regularity).map(
                   ([form, reg]) => (
                     <Tag key={form}>
-                      {form}: {REGULARITY_LABELS[reg]}
+                      {t(`verbs.form.${form}`)}: {t(`verbs.${reg}`)}
                     </Tag>
                   )
                 )}
@@ -100,7 +97,7 @@ export default function VerbBrowser() {
                 <strong
                   style={{ fontSize: "0.75rem", color: "var(--text-dim)" }}
                 >
-                  Tegenwoordige tijd:
+                  {t("verbs.present")}
                 </strong>
                 {v.conjugation.present &&
                   Object.entries(v.conjugation.present).map(
@@ -121,16 +118,16 @@ export default function VerbBrowser() {
                   <strong
                     style={{ fontSize: "0.75rem", color: "var(--text-dim)" }}
                   >
-                    Verleden tijd:
+                    {t("verbs.past")}
                   </strong>
                   {v.conjugation.past && (
                     <>
                       <div className="row">
-                        <span className="label">enk.</span>
+                        <span className="label">{t("verbs.sg")}</span>
                         <span>{v.conjugation.past.singular}</span>
                       </div>
                       <div className="row">
-                        <span className="label">mv.</span>
+                        <span className="label">{t("verbs.pl")}</span>
                         <span>{v.conjugation.past.plural}</span>
                       </div>
                     </>
@@ -144,12 +141,12 @@ export default function VerbBrowser() {
                     borderTop: "1px solid var(--border)",
                   }}
                 >
-                  <span className="label">v.d.</span>
+                  <span className="label">{t("verbs.participle")}</span>
                   <span>{v.conjugation.participle}</span>
                 </div>
                 {v.conjugation.auxiliary && (
                   <div className="row">
-                    <span className="label">hulpww.</span>
+                    <span className="label">{t("verbs.aux")}</span>
                     <span>{v.conjugation.auxiliary}</span>
                   </div>
                 )}
@@ -157,11 +154,11 @@ export default function VerbBrowser() {
             )}
 
             <div className="meta" style={{ marginTop: "0.5rem" }}>
-              {v.tags?.map((t) => (
-                <Tag key={t}>{t}</Tag>
+              {v.tags?.map((tag) => (
+                <Tag key={tag}>{tag}</Tag>
               ))}
-              {v.themes?.map((t) => (
-                <Tag key={t}>{t}</Tag>
+              {v.themes?.map((tag) => (
+                <Tag key={tag}>{tag}</Tag>
               ))}
               <ReviewBadge status={v.reviewStatus} />
             </div>

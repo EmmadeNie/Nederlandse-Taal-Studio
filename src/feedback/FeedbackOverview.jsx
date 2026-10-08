@@ -6,22 +6,14 @@ import {
   importFeedbackJson,
   getLegacyLocalFeedback,
   migrateLegacyLocalFeedback,
-  CATEGORY_LABELS,
 } from "./store";
 import { useAuth } from "../auth/context";
+import { useI18n } from "../i18n/context";
 
-const ITEM_TYPE_LABELS = {
-  word: "Woord",
-  verb: "Werkwoord",
-  sentence: "Zin",
-  topic: "Grammatica",
-  exercise: "Oefening",
-  app: "Over de app",
-  overig: "Overig",
-};
+const ITEM_TYPES = new Set(["word", "verb", "sentence", "topic", "exercise", "app", "overig"]);
 
-function formatDate(ts) {
-  return new Date(ts).toLocaleString("nl-NL", {
+function formatDate(ts, locale) {
+  return new Date(ts).toLocaleString(locale, {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -33,6 +25,7 @@ function formatDate(ts) {
 export default function FeedbackOverview() {
   const feedback = useAllFeedback();
   const { user, role } = useAuth();
+  const { t, locale } = useI18n();
   const isDocent = role === "docent";
   const fileInput = useRef(null);
   const [notice, setNotice] = useState(null);
@@ -44,7 +37,7 @@ export default function FeedbackOverview() {
     try {
       await deleteFeedback(id);
     } catch (err) {
-      setNotice({ type: "error", text: err.message });
+      setNotice({ type: "error", text: t(err.message) });
     }
   };
 
@@ -54,10 +47,10 @@ export default function FeedbackOverview() {
       setLegacyCount(0);
       setNotice({
         type: "ok",
-        text: `Overgezet: ${result.added} nieuw, ${result.skipped} overgeslagen (dubbel of ongeldig).`,
+        text: t("fb.migrated", result),
       });
     } catch (err) {
-      setNotice({ type: "error", text: err.message });
+      setNotice({ type: "error", text: t(err.message) });
     }
   };
 
@@ -84,10 +77,10 @@ export default function FeedbackOverview() {
         const result = await importFeedbackJson(String(reader.result));
         setNotice({
           type: "ok",
-          text: `Geïmporteerd: ${result.added} nieuw, ${result.skipped} overgeslagen (dubbel of ongeldig).`,
+          text: t("fb.imported", result),
         });
       } catch (err) {
-        setNotice({ type: "error", text: err.message });
+        setNotice({ type: "error", text: t(err.message) });
       }
       // reset so the same file can be chosen again
       e.target.value = "";
@@ -101,12 +94,12 @@ export default function FeedbackOverview() {
 
       <div className="fb-overview-toolbar">
         <button className="fb-btn-primary" onClick={handleExport} disabled={feedback.length === 0}>
-          ⬇ Exporteren ({feedback.length})
+          {t("fb.export", { n: feedback.length })}
         </button>
         {isDocent && (
           <>
             <button className="fb-btn-secondary" onClick={handleImportClick}>
-              ⬆ Importeren
+              {t("fb.import")}
             </button>
             <input
               ref={fileInput}
@@ -121,10 +114,9 @@ export default function FeedbackOverview() {
 
       {legacyCount > 0 && (
         <div className="fb-legacy">
-          Er staat nog <strong>{legacyCount}</strong> feedback lokaal in deze browser
-          (van vóór de accounts).
+          {t("fb.legacy", { n: legacyCount })}
           <button className="fb-btn-primary" onClick={handleMigrate}>
-            Overzetten naar je account
+            {t("fb.migrate")}
           </button>
         </div>
       )}
@@ -142,8 +134,7 @@ export default function FeedbackOverview() {
 
       {feedback.length === 0 ? (
         <div className="fb-empty">
-          Nog geen feedback. Klik op het 💬-knopje bij een woord, zin, werkwoord,
-          grammatica-onderwerp of oefening om feedback te geven.
+          {t("fb.empty")}
         </div>
       ) : (
         feedback.map((f) => (
@@ -152,8 +143,8 @@ export default function FeedbackOverview() {
               <button
                 className="fb-entry-delete"
                 onClick={() => handleDelete(f.id)}
-                aria-label="Feedback verwijderen"
-                title="Verwijderen"
+                aria-label={t("fb.deleteAria")}
+                title={t("fb.delete")}
               >
                 ✕
               </button>
@@ -161,12 +152,12 @@ export default function FeedbackOverview() {
             <div className="fb-entry-header">
               {f.author && <span className="fb-author">{f.author}</span>}
               <span className="fb-category">
-                {CATEGORY_LABELS[f.category] || f.category}
+                {t(`fb.cat.${f.category}`)}
               </span>
               <span className="tag">
-                {ITEM_TYPE_LABELS[f.itemType] || f.itemType}
+                {ITEM_TYPES.has(f.itemType) ? t(`fb.item.${f.itemType}`) : f.itemType}
               </span>
-              <span className="fb-date">{formatDate(f.createdAt)}</span>
+              <span className="fb-date">{formatDate(f.createdAt, locale)}</span>
             </div>
             <div className="fb-message">{f.message}</div>
             {f.itemLabel && (

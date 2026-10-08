@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { positionBetween } from "./api";
+import { useI18n } from "../i18n/context";
 import "./leerpad.css";
 
 /**
@@ -32,8 +33,9 @@ export default function Board({
   onRenameLane,
   onDeleteLane,
   laneFooter,
-  emptyLaneText = "Nog leeg.",
+  emptyLaneText,
 }) {
+  const { t } = useI18n();
   const [dragId, setDragId] = useState(null);
   const [dropLane, setDropLane] = useState(null);
 
@@ -117,7 +119,7 @@ export default function Board({
                 ))}
                 {shown.length === 0 && (
                   <div className="board-empty">
-                    {all.length ? "Geen kaarten die passen bij je filter." : emptyLaneText}
+                    {all.length ? t("board.filterEmpty") : emptyLaneText || t("board.empty")}
                   </div>
                 )}
               </div>
@@ -132,6 +134,7 @@ export default function Board({
 }
 
 function LaneHeader({ lane, count, onRename, onDelete }) {
+  const { t } = useI18n();
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(lane.name);
 
@@ -148,7 +151,7 @@ function LaneHeader({ lane, count, onRename, onDelete }) {
         <input
           autoFocus
           value={name}
-          aria-label="Naam van de lane"
+          aria-label={t("board.laneName")}
           onChange={(e) => setName(e.target.value)}
           onBlur={save}
           onKeyDown={(e) => {
@@ -166,8 +169,8 @@ function LaneHeader({ lane, count, onRename, onDelete }) {
       {onRename && !editing && (
         <button
           className="board-icon-btn"
-          title="Hernoemen"
-          aria-label={`Hernoem ${lane.name}`}
+          title={t("common.rename")}
+          aria-label={t("board.renameLane", { name: lane.name })}
           onClick={() => setEditing(true)}
         >
           ✎
@@ -176,8 +179,8 @@ function LaneHeader({ lane, count, onRename, onDelete }) {
       {onDelete && !editing && (
         <button
           className="board-icon-btn"
-          title="Lege lane verwijderen"
-          aria-label={`Verwijder ${lane.name}`}
+          title={t("board.deleteLane")}
+          aria-label={t("board.deleteLaneAria", { name: lane.name })}
           onClick={() => onDelete(lane)}
         >
           ✕
@@ -188,6 +191,7 @@ function LaneHeader({ lane, count, onRename, onDelete }) {
 }
 
 function AddLane({ onAdd }) {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const submit = (e) => {
@@ -204,21 +208,21 @@ function AddLane({ onAdd }) {
           <input
             autoFocus
             value={name}
-            placeholder="Naam, bijv. Huiswerk"
-            aria-label="Naam van de nieuwe lane"
+            placeholder={t("board.newLane")}
+            aria-label={t("board.laneName")}
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => e.key === "Escape" && setOpen(false)}
           />
           <div className="board-inline-actions">
-            <button type="submit" className="fb-btn-primary">Toevoegen</button>
+            <button type="submit" className="fb-btn-primary">{t("common.add")}</button>
             <button type="button" className="fb-btn-secondary" onClick={() => setOpen(false)}>
-              Annuleer
+              {t("common.cancelShort")}
             </button>
           </div>
         </form>
       ) : (
         <button className="board-add-btn" onClick={() => setOpen(true)}>
-          + Lane toevoegen
+          {t("board.addLane")}
         </button>
       )}
     </div>
@@ -227,6 +231,7 @@ function AddLane({ onAdd }) {
 
 /** Small inline "add a card" form for a lane footer. */
 export function AddCardForm({ label, placeholder, onAdd, extra }) {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const submit = (e) => {
@@ -255,9 +260,9 @@ export function AddCardForm({ label, placeholder, onAdd, extra }) {
       />
       {extra}
       <div className="board-inline-actions">
-        <button type="submit" className="fb-btn-primary">Toevoegen</button>
+        <button type="submit" className="fb-btn-primary">{t("common.add")}</button>
         <button type="button" className="fb-btn-secondary" onClick={() => setOpen(false)}>
-          Annuleer
+          {t("common.cancelShort")}
         </button>
       </div>
     </form>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/context";
+import { useI18n } from "../i18n/context";
 import { useSetUrlParams, useUrlParams } from "../hooks/useUrlParams";
 import LeerpadBoard from "./LeerpadBoard";
 import { listStudents } from "./api";
@@ -7,6 +8,7 @@ import { listStudents } from "./api";
 /** Docent and reviewers: pick a student and see their leerpad (?student=<id>). */
 export default function LeerpadenPage() {
   const { role } = useAuth();
+  const { t } = useI18n();
   const { student: studentParam } = useUrlParams();
   const setUrlParams = useSetUrlParams();
   const [students, setStudents] = useState(null);
@@ -26,25 +28,22 @@ export default function LeerpadenPage() {
   return (
     <>
       <div className="lp-page-head">
-        <h2>Leerpaden</h2>
-        {students && <span className="result-count">{students.length} leerlingen</span>}
+        <h2>{t("nav.leerpaden")}</h2>
+        {students && <span className="result-count">{t("lpd.students", { n: students.length })}</span>}
       </div>
       <p className="lp-intro">
-        Elke leerling heeft een eigen leerpad.{" "}
-        {role === "docent"
-          ? "Zet lessen uit het lesprogramma erop, voeg zijpaden en extra's toe en houd notities bij. Leerlingen kunnen zelf lanes maken en stappen verslepen."
-          : "Je kunt meekijken, maar niets aanpassen."}
+        {t("lpd.intro")} {role === "docent" ? t("lpd.introDocent") : t("lpd.introReviewer")}
       </p>
       {error && <div className="lp-error">{error}</div>}
       {students === null ? (
-        <p className="dim">Laden…</p>
+        <p className="dim">{t("common.loading")}</p>
       ) : students.length === 0 ? (
         <p className="dim">
-          Nog geen leerlingen. Iedereen die inlogt wordt automatisch leerling; je ziet ze dan hier.
+          {t("lpd.none")}
         </p>
       ) : (
         <>
-          <div className="lp-students" role="group" aria-label="Leerling">
+          <div className="lp-students" role="group" aria-label={t("lp.student")}>
             {students.map((s) => (
               <button
                 key={s.id}
@@ -66,14 +65,14 @@ export default function LeerpadenPage() {
 /** A student's own leerpad. */
 export function MijnLeerpadPage() {
   const { user } = useAuth();
+  const { t } = useI18n();
   return (
     <>
       <div className="lp-page-head">
-        <h2>Mijn leerpad</h2>
+        <h2>{t("nav.leerpad")}</h2>
       </div>
       <p className="lp-intro">
-        Je stappen voor de komende tijd. Sleep ze naar een andere lane als je ermee bezig of
-        klaar bent, of maak je eigen lanes.
+        {t("mine.intro")}
       </p>
       <LeerpadBoard studentId={user.id} />
     </>

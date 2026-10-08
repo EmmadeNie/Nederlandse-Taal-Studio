@@ -4,9 +4,11 @@ import {
   getTopicCoverage,
   getQualityIndicators,
 } from "../data";
-import { LevelBadge, Tag } from "./Badges";
+import { LevelBadge, ReviewBadge, Tag } from "./Badges";
+import { useI18n } from "../i18n/context";
 
 export default function Dashboard() {
+  const { t } = useI18n();
   const stats = getStats();
   const matrix = getLevelMatrix();
   const quality = getQualityIndicators();
@@ -34,16 +36,16 @@ export default function Dashboard() {
       <h2>Dashboard</h2>
 
       {/* ── Content per niveau (the matrix) ─────────────────────── */}
-      <h3>Content per niveau</h3>
+      <h3>{t("dash.perLevel")}</h3>
       <table className="level-matrix">
         <thead>
           <tr>
-            <th>Niveau</th>
-            <th>Woorden</th>
-            <th>Werkwoorden</th>
-            <th>Zinnen</th>
-            <th>Grammatica</th>
-            <th>Oefeningen</th>
+            <th>{t("col.level")}</th>
+            <th>{t("col.words")}</th>
+            <th>{t("col.verbs")}</th>
+            <th>{t("col.sentences")}</th>
+            <th>{t("col.grammar")}</th>
+            <th>{t("col.exercises")}</th>
           </tr>
         </thead>
         <tbody>
@@ -73,7 +75,7 @@ export default function Dashboard() {
         <tfoot>
           <tr>
             <td>
-              <strong>Totaal</strong>
+              <strong>{t("dash.total")}</strong>
             </td>
             <td>{totalRow.words}</td>
             <td>{totalRow.verbs}</td>
@@ -85,41 +87,41 @@ export default function Dashboard() {
       </table>
 
       {/* ── Werkwoorden ──────────────────────────────────────────── */}
-      <h3>Werkwoorden</h3>
+      <h3>{t("dash.verbs")}</h3>
       <div className="stats-grid">
         <div className="stat-card">
           <div className="number">{stats.totalVerbs}</div>
-          <div className="label">Totaal</div>
+          <div className="label">{t("dash.total")}</div>
         </div>
         <div className="stat-card">
           <div className="number" style={{ color: "var(--green)" }}>
             {stats.fullyRegularVerbs}
           </div>
-          <div className="label">Volledig regelmatig</div>
+          <div className="label">{t("dash.fullyRegular")}</div>
         </div>
         <div className="stat-card">
           <div className="number" style={{ color: "var(--amber)" }}>
             {stats.hasIrregularVerbs}
           </div>
-          <div className="label">Met onregelmatige vorm</div>
+          <div className="label">{t("dash.hasIrregular")}</div>
         </div>
       </div>
 
       {/* ── Review-status (all content) ──────────────────────────── */}
-      <h3>Review-status (alle content)</h3>
+      <h3>{t("dash.review")}</h3>
       <table className="level-matrix" style={{ maxWidth: 500 }}>
         <thead>
           <tr>
-            <th>Status</th>
-            <th>Woorden</th>
-            <th>Zinnen</th>
-            <th>Grammatica</th>
+            <th>{t("col.status")}</th>
+            <th>{t("col.words")}</th>
+            <th>{t("col.sentences")}</th>
+            <th>{t("col.grammar")}</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>
-              <span className="review-badge draft">concept</span>
+              <ReviewBadge status="draft" />
             </td>
             <td>{stats.review.draft.words}</td>
             <td>{stats.review.draft.sentences}</td>
@@ -127,7 +129,7 @@ export default function Dashboard() {
           </tr>
           <tr>
             <td>
-              <span className="review-badge ai-reviewed">AI-gecheckt</span>
+              <ReviewBadge status="ai-reviewed" />
             </td>
             <td>{stats.review["ai-reviewed"].words}</td>
             <td>{stats.review["ai-reviewed"].sentences}</td>
@@ -135,7 +137,7 @@ export default function Dashboard() {
           </tr>
           <tr>
             <td>
-              <span className="review-badge human-verified">geverifieerd</span>
+              <ReviewBadge status="human-verified" />
             </td>
             <td>{stats.review["human-verified"].words}</td>
             <td>{stats.review["human-verified"].sentences}</td>
@@ -145,30 +147,30 @@ export default function Dashboard() {
       </table>
 
       {/* ── Thema's ──────────────────────────────────────────────── */}
-      <h3>Thema's ({stats.themes.length})</h3>
+      <h3>{t("dash.themes", { n: stats.themes.length })}</h3>
       <div className="themes-list">
-        {stats.themes.map((t) => (
-          <Tag key={t}>{t}</Tag>
+        {stats.themes.map((theme) => (
+          <Tag key={theme}>{theme}</Tag>
         ))}
       </div>
 
       {/* ── Data-kwaliteit & gaps ────────────────────────────────── */}
       <h3>
-        Data-kwaliteit{" "}
+        {t("dash.quality")}{" "}
         {issueCount === 0 ? (
-          <span className="quality-ok">✓ alles in orde</span>
+          <span className="quality-ok">{t("dash.allGood")}</span>
         ) : (
-          <span className="quality-warn">⚠ {issueCount} aandachtspunt(en)</span>
+          <span className="quality-warn">{t("dash.issues", { n: issueCount })}</span>
         )}
       </h3>
 
       {quality.thinVocabLevels.length > 0 && (
         <div className="quality-section">
-          <h4>📉 Niveaus met weinig woordenschat (&lt;{quality.vocabThreshold})</h4>
+          <h4>{t("dash.thinVocab", { n: quality.vocabThreshold })}</h4>
           <div className="quality-items">
             {quality.thinVocabLevels.map((l) => (
               <div key={l.level} className="quality-item warn">
-                <LevelBadge level={l.level} /> {l.vocabCount} woorden
+                <LevelBadge level={l.level} /> {t("dash.words", { n: l.vocabCount })}
               </div>
             ))}
           </div>
@@ -177,14 +179,12 @@ export default function Dashboard() {
 
       {quality.thinTopics.length > 0 && (
         <div className="quality-section">
-          <h4>📐 Topics met weinig voorbeeldzinnen (&lt;{quality.thinThreshold})</h4>
+          <h4>{t("dash.thinTopics", { n: quality.thinThreshold })}</h4>
           <div className="quality-items">
-            {quality.thinTopics.map((t) => (
-              <div key={t.id} className="quality-item warn">
-                {t.title} <LevelBadge level={t.level} />{" "}
-                <span className="dim">
-                  {t.sentenceCount} zin{t.sentenceCount !== 1 ? "nen" : ""}
-                </span>
+            {quality.thinTopics.map((topic) => (
+              <div key={topic.id} className="quality-item warn">
+                {topic.title} <LevelBadge level={topic.level} />{" "}
+                <span className="dim">{t("dash.sentences", { n: topic.sentenceCount })}</span>
               </div>
             ))}
           </div>
@@ -193,12 +193,12 @@ export default function Dashboard() {
 
       {quality.thinExercises.length > 0 && (
         <div className="quality-section">
-          <h4>✏️ Oefeningen met te weinig content (&lt;{quality.thinThreshold})</h4>
+          <h4>{t("dash.thinExercises", { n: quality.thinThreshold })}</h4>
           <div className="quality-items">
             {quality.thinExercises.map((e) => (
               <div key={e.id} className="quality-item warn">
                 {e.title} <LevelBadge level={e.level} />{" "}
-                <span className="dim">{e.matchCount} items</span>
+                <span className="dim">{t("dash.items", { n: e.matchCount })}</span>
               </div>
             ))}
           </div>
@@ -207,7 +207,7 @@ export default function Dashboard() {
 
       {quality.incompleteVerbs.length > 0 && (
         <div className="quality-section">
-          <h4>🔄 Werkwoorden met onvolledige vervoeging</h4>
+          <h4>{t("dash.incompleteVerbs")}</h4>
           <div className="quality-items">
             {quality.incompleteVerbs.map((v) => (
               <div key={v.id} className="quality-item warn">
@@ -220,7 +220,7 @@ export default function Dashboard() {
 
       {quality.brokenRefs.length > 0 && (
         <div className="quality-section">
-          <h4>🔗 Ongeldige referenties</h4>
+          <h4>{t("dash.brokenRefs")}</h4>
           <div className="quality-items">
             {quality.brokenRefs.map((r, i) => (
               <div key={i} className="quality-item error">
@@ -234,7 +234,7 @@ export default function Dashboard() {
       {quality.unusedWords.length > 0 && (
         <details className="quality-section">
           <summary>
-            📖 Woorden niet gebruikt in zinnen ({quality.unusedWords.length})
+            {t("dash.unusedWords", { n: quality.unusedWords.length })}
           </summary>
           <div className="quality-items" style={{ marginTop: "0.5rem" }}>
             {quality.unusedWords.map((w) => (

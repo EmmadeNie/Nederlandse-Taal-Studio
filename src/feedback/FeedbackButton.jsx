@@ -1,6 +1,7 @@
 import { useState } from "react";
 import FeedbackDialog from "./FeedbackDialog";
 import { useFeedbackCount } from "./useFeedback";
+import { useI18n } from "../i18n/context";
 
 /**
  * Small feedback button to attach to any content card.
@@ -13,6 +14,7 @@ import { useFeedbackCount } from "./useFeedback";
 export default function FeedbackButton({ itemType, itemId, itemLabel }) {
   const [open, setOpen] = useState(false);
   const count = useFeedbackCount(itemId);
+  const { t } = useI18n();
 
   return (
     <>
@@ -22,8 +24,8 @@ export default function FeedbackButton({ itemType, itemId, itemLabel }) {
           e.stopPropagation();
           setOpen(true);
         }}
-        title="Feedback geven"
-        aria-label={`Feedback geven over ${itemLabel}`}
+        title={t("fb.title")}
+        aria-label={t("fb.aboutItem", { label: itemLabel })}
       >
         💬{count > 0 ? ` ${count}` : ""}
       </button>

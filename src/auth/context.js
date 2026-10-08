@@ -1,11 +1,7 @@
 import { createContext, useContext } from "react";
 
-/** Human-readable role names, also used by the user management page. */
-export const ROLE_LABELS = {
-  docent: "Docent",
-  reviewer: "Reviewer",
-  leerling: "Leerling",
-};
+/** The app roles, in the order they are offered on the user management page. */
+export const ROLES = ["docent", "reviewer", "leerling"];
 
 export const AuthContext = createContext(null);
 

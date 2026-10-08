@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
-import { useAuth, ROLE_LABELS } from "../auth/context";
+import { useAuth, ROLES } from "../auth/context";
+import { useI18n } from "../i18n/context";
 
-const ROLES = Object.keys(ROLE_LABELS);
-
-function formatDate(iso) {
-  return new Date(iso).toLocaleDateString("nl-NL", {
+function formatDate(iso, locale) {
+  return new Date(iso).toLocaleDateString(locale, {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -19,6 +18,7 @@ function formatDate(iso) {
  */
 export default function UserManagement() {
   const { user } = useAuth();
+  const { t, locale } = useI18n();
   const [profiles, setProfiles] = useState([]);
   const [error, setError] = useState(null);
 
@@ -51,25 +51,22 @@ export default function UserManagement() {
 
   return (
     <div>
-      <h2>Gebruikers</h2>
+      <h2>{t("nav.users")}</h2>
       <p className="result-count">
-        {profiles.length} gebruikers ·{" "}
-        {ROLES.map((r) => `${counts[r]} ${ROLE_LABELS[r].toLowerCase()}`).join(" · ")}
+        {t("users.count", { n: profiles.length })} ·{" "}
+        {ROLES.map((r) => `${counts[r]} ${t(`role.${r}`).toLowerCase()}`).join(" · ")}
       </p>
-      <p className="dim users-hint">
-        Iedereen kan inloggen met een e-mailadres en wordt dan automatisch
-        leerling. Maak hier iemand reviewer of docent.
-      </p>
+      <p className="dim users-hint">{t("users.hint")}</p>
 
       {error && <div className="auth-error">{error}</div>}
 
       <table className="users-table">
         <thead>
           <tr>
-            <th>Naam</th>
-            <th>E-mail</th>
-            <th>Sinds</th>
-            <th>Rol</th>
+            <th>{t("users.name")}</th>
+            <th>{t("users.email")}</th>
+            <th>{t("users.since")}</th>
+            <th>{t("users.role")}</th>
           </tr>
         </thead>
         <tbody>
@@ -77,19 +74,19 @@ export default function UserManagement() {
             <tr key={p.id}>
               <td>{p.display_name || <span className="dim">—</span>}</td>
               <td>{p.email}</td>
-              <td className="dim">{formatDate(p.created_at)}</td>
+              <td className="dim">{formatDate(p.created_at, locale)}</td>
               <td>
                 {p.id === user.id ? (
-                  <span className="tag">{ROLE_LABELS[p.role]} (jij)</span>
+                  <span className="tag">{t(`role.${p.role}`)} {t("users.you")}</span>
                 ) : (
                   <select
                     value={p.role}
                     onChange={(e) => changeRole(p.id, e.target.value)}
-                    aria-label={`Rol van ${p.display_name || p.email}`}
+                    aria-label={t("users.roleOf", { name: p.display_name || p.email })}
                   >
                     {ROLES.map((r) => (
                       <option key={r} value={r}>
-                        {ROLE_LABELS[r]}
+                        {t(`role.${r}`)}
                       </option>
                     ))}
                   </select>

@@ -11,7 +11,9 @@ import FeedbackDialog from "./feedback/FeedbackDialog";
 import { useAllFeedback } from "./feedback/useFeedback";
 import { getStats } from "./data";
 import { useUrlParams, useSetUrlParams } from "./hooks/useUrlParams";
-import { useAuth, ROLE_LABELS } from "./auth/context";
+import { useAuth } from "./auth/context";
+import { useI18n } from "./i18n/context";
+import LanguageToggle from "./i18n/LanguageToggle";
 import LoginPage from "./auth/LoginPage";
 import NameSetup from "./auth/NameSetup";
 import UserManagement from "./users/UserManagement";
@@ -20,31 +22,29 @@ import LeerpadenPage, { MijnLeerpadPage } from "./leerpad/LeerpadenPage";
 import { isSupabaseConfigured } from "./lib/supabase";
 
 const PAGES = [
-  { id: "leerpad", label: "Mijn leerpad", icon: "🧭", roles: ["leerling"] },
-  { id: "dashboard", label: "Dashboard", icon: "📊" },
-  { id: "lesprogramma", label: "Lesprogramma", icon: "🗂️", roles: ["docent", "reviewer"] },
-  { id: "leerpaden", label: "Leerpaden", icon: "🧭", roles: ["docent", "reviewer"] },
-  { id: "words", label: "Woordenschat", icon: "📖" },
-  { id: "verbs", label: "Werkwoorden", icon: "🔄" },
-  { id: "sentences", label: "Zinnen", icon: "💬" },
-  { id: "topics", label: "Grammatica", icon: "📐" },
-  { id: "exercises", label: "Oefeningen", icon: "✏️" },
-  { id: "feedback", label: "Feedback", icon: "📝" },
-  { id: "users", label: "Gebruikers", icon: "👥", roles: ["docent"] },
+  { id: "leerpad", icon: "🧭", roles: ["leerling"] },
+  { id: "dashboard", icon: "📊" },
+  { id: "lesprogramma", icon: "🗂️", roles: ["docent", "reviewer"] },
+  { id: "leerpaden", icon: "🧭", roles: ["docent", "reviewer"] },
+  { id: "words", icon: "📖" },
+  { id: "verbs", icon: "🔄" },
+  { id: "sentences", icon: "💬" },
+  { id: "topics", icon: "📐" },
+  { id: "exercises", icon: "✏️" },
+  { id: "feedback", icon: "📝" },
+  { id: "users", icon: "👥", roles: ["docent"] },
 ];
 
 // Pages that show a full-width board instead of a reading column.
 const BOARD_PAGES = new Set(["lesprogramma", "leerpaden", "leerpad"]);
 
 function SetupNeeded() {
+  const { t } = useI18n();
   return (
     <div className="auth-screen">
       <div className="auth-card">
-        <h1>Supabase niet geconfigureerd</h1>
-        <p className="dim">
-          Kopieer <code>.env.example</code> naar <code>.env.local</code>, vul de
-          Supabase URL en anon key in en herstart <code>npm run dev</code>.
-        </p>
+        <h1>{t("setup.title")}</h1>
+        <p className="dim">{t("setup.body")}</p>
       </div>
     </div>
   );
@@ -57,14 +57,18 @@ function App() {
 }
 
 function AuthGate() {
-  const { session, profile, loading } = useAuth();
-  if (loading) return <div className="auth-screen dim">Laden…</div>;
+  const { session, profile, loading, signOut } = useAuth();
+  const { t } = useI18n();
+  if (loading) return <div className="auth-screen dim">{t("common.loading")}</div>;
   if (!session) return <LoginPage />;
   if (!profile) {
     return (
       <div className="auth-screen">
         <div className="auth-card">
-          <p className="auth-error">Je profiel kon niet worden geladen.</p>
+          <p className="auth-error">{t("app.profileError")}</p>
+          <button className="fb-link" onClick={signOut}>
+            {t("app.signOut")}
+          </button>
         </div>
       </div>
     );
@@ -80,6 +84,7 @@ function Studio() {
   const stats = getStats();
   const allFeedback = useAllFeedback();
   const { profile, role, signOut } = useAuth();
+  const { t } = useI18n();
   const pages = PAGES.filter((p) => !p.roles || p.roles.includes(role));
   const validPages = new Set(pages.map((p) => p.id));
 
@@ -126,7 +131,7 @@ function Studio() {
               onClick={() => setPage(p.id)}
             >
               <span className="icon">{p.icon}</span>
-              {p.label}
+              {t(`nav.${p.id}`)}
               {badges[p.id] !== undefined && (
                 <span className="badge">{badges[p.id]}</span>
               )}
@@ -136,19 +141,24 @@ function Studio() {
 
         <div className="sidebar-footer">
           <div className="sidebar-user">
-            <div className="sidebar-user-name">{profile.display_name}</div>
-            <div className="sidebar-user-meta">
-              {ROLE_LABELS[role]} ·{" "}
-              <button className="fb-link" onClick={signOut}>
-                Uitloggen
-              </button>
+            <div className="sidebar-user-row">
+              <div>
+                <div className="sidebar-user-name">{profile.display_name}</div>
+                <div className="sidebar-user-meta">
+                  {t(`role.${role}`)} ·{" "}
+                  <button className="fb-link" onClick={signOut}>
+                    {t("app.signOut")}
+                  </button>
+                </div>
+              </div>
+              <LanguageToggle />
             </div>
           </div>
           <button
             className="app-feedback-btn"
             onClick={() => setAppFeedbackOpen(true)}
           >
-            💡 Feedback over de app
+            {t("app.feedbackButton")}
           </button>
         </div>
       </aside>
@@ -170,7 +180,7 @@ function Studio() {
         <FeedbackDialog
           itemType="app"
           itemId={null}
-          itemLabel="De app in het algemeen"
+          itemLabel={t("app.feedbackLabel")}
           onClose={() => setAppFeedbackOpen(false)}
         />
       )}

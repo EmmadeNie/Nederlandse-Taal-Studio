@@ -1,20 +1,13 @@
+import { useI18n } from "../i18n/context";
+
 export function LevelBadge({ level }) {
   return <span className={`level-badge ${level}`}>{level}</span>;
 }
 
-const REVIEW_LABELS = {
-  draft: "concept",
-  "ai-reviewed": "AI-gecheckt",
-  "human-verified": "geverifieerd",
-};
-
 export function ReviewBadge({ status }) {
+  const { t } = useI18n();
   if (!status) return null;
-  return (
-    <span className={`review-badge ${status}`}>
-      {REVIEW_LABELS[status] || status}
-    </span>
-  );
+  return <span className={`review-badge ${status}`}>{t(`review.${status}`)}</span>;
 }
 
 export function Tag({ children }) {

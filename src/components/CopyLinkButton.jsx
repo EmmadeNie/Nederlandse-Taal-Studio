@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { buildDeepLink } from "../hooks/useUrlParams";
+import { useI18n } from "../i18n/context";
 
 /**
  * Copies a deep link (for use on a Trello card) to the clipboard.
@@ -7,9 +8,10 @@ import { buildDeepLink } from "../hooks/useUrlParams";
  * Props:
  *   params - object of URL params that recreates this view,
  *            e.g. { page: "topics", topic: "topic.de-het" }
- *   label  - optional button text (defaults to "Kopieer link")
+ *   label  - optional button text (defaults to "Kopieer link" / "Copy link")
  */
-export default function CopyLinkButton({ params, label = "Kopieer link" }) {
+export default function CopyLinkButton({ params, label }) {
+  const { t } = useI18n();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async (e) => {
@@ -34,9 +36,9 @@ export default function CopyLinkButton({ params, label = "Kopieer link" }) {
     <button
       className={`copy-link-btn ${copied ? "copied" : ""}`}
       onClick={handleCopy}
-      title="Kopieer een link naar dit onderwerp (voor Trello)"
+      title={t("copy.title")}
     >
-      {copied ? "✓ Gekopieerd" : `🔗 ${label}`}
+      {copied ? t("copy.done") : `🔗 ${label || t("copy.label")}`}
     </button>
   );
 }
