@@ -1,33 +1,12 @@
 import { useSyncExternalStore } from "react";
-import { getAllFeedback } from "./store";
-
-function subscribe(callback) {
-  window.addEventListener("nts-feedback-changed", callback);
-  window.addEventListener("storage", callback);
-  return () => {
-    window.removeEventListener("nts-feedback-changed", callback);
-    window.removeEventListener("storage", callback);
-  };
-}
-
-// Cache so getSnapshot returns a stable reference between changes
-let cache = null;
-let cacheRaw = null;
-function getSnapshot() {
-  const raw = localStorage.getItem("nts-feedback-v1") || "[]";
-  if (raw !== cacheRaw) {
-    cacheRaw = raw;
-    cache = getAllFeedback();
-  }
-  return cache;
-}
+import { getAllFeedback, subscribe } from "./store";
 
 /**
- * Live list of all feedback entries. Re-renders when feedback changes
- * (same tab via custom event, other tabs via storage event).
+ * Live list of all feedback entries visible to the current user.
+ * Re-renders when the store refreshes (after writes and on Realtime events).
  */
 export function useAllFeedback() {
-  return useSyncExternalStore(subscribe, getSnapshot, () => []);
+  return useSyncExternalStore(subscribe, getAllFeedback, getAllFeedback);
 }
 
 /** Count of feedback for a single item (for the badge on the button). */

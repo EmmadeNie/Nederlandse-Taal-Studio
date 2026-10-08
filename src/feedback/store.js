@@ -1,17 +1,22 @@
 /**
- * Feedback store — localStorage-based, no backend.
+ * Feedback store — backed by the Supabase `feedback` table.
  *
- * Feedback entries are keyed by a generated id and reference the content item
- * they belong to (itemType + itemId + a human-readable itemLabel), so the
- * exported JSON is meaningful to the teacher and to ChatGPT during review.
+ * Entries reference the content item they belong to (itemType + itemId + a
+ * human-readable itemLabel), so the exported JSON is meaningful to the
+ * teacher and to ChatGPT during review.
  *
  * An entry with itemType "app" is general feedback about the application
  * itself rather than a specific piece of content.
+ *
+ * What a user can see is decided by RLS: leerlingen see their own feedback,
+ * docent and reviewers see everything. The store keeps an in-memory copy that
+ * is refreshed after every write and on Realtime change events, so components
+ * can read it synchronously via useSyncExternalStore (see useFeedback.js).
  */
 
-const STORAGE_KEY = "nts-feedback-v1";
+import { supabase } from "../lib/supabase";
 
-/** Feedback categories shown in the dialog. */
+/** Feedback categories shown in the dialog. Keep in sync with the DB check constraint. */
 export const FEEDBACK_CATEGORIES = [
   { value: "taalfout", label: "Taalfout" },
   { value: "verkeerd-niveau", label: "Verkeerd niveau" },
@@ -27,74 +32,152 @@ export const CATEGORY_LABELS = Object.fromEntries(
   FEEDBACK_CATEGORIES.map((c) => [c.value, c.label])
 );
 
-const NAME_KEY = "nts-feedback-name-v1";
+const VALID_CATEGORIES = new Set(FEEDBACK_CATEGORIES.map((c) => c.value));
 
-function read() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
+// Old localStorage key, only read to offer a one-time migration.
+const LEGACY_STORAGE_KEY = "nts-feedback-v1";
+
+// ----- In-memory snapshot + subscriptions -----
+
+const EMPTY = [];
+let entries = EMPTY;
+let currentUserId = null;
+let channel = null;
+const listeners = new Set();
+
+function setEntries(next) {
+  entries = next;
+  listeners.forEach((l) => l());
 }
 
-/** The reviewer's name is remembered so it doesn't have to be re-typed. */
-export function getReviewerName() {
-  return localStorage.getItem(NAME_KEY) || "";
+export function subscribe(listener) {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
 }
 
-export function setReviewerName(name) {
-  localStorage.setItem(NAME_KEY, name.trim());
-  window.dispatchEvent(new Event("nts-feedback-changed"));
-}
-
-function write(entries) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
-  // Notify listeners in the same tab (storage event only fires cross-tab)
-  window.dispatchEvent(new Event("nts-feedback-changed"));
-}
-
+/** Current snapshot, newest first. Stable reference between changes. */
 export function getAllFeedback() {
-  return read().sort((a, b) => b.createdAt - a.createdAt);
+  return entries;
 }
 
-export function getFeedbackForItem(itemId) {
-  return read().filter((f) => f.itemId === itemId);
+function fromRow(row) {
+  return {
+    id: row.id,
+    authorId: row.author_id,
+    author: row.author_name || row.profile?.display_name || row.profile?.email || null,
+    itemType: row.item_type,
+    itemId: row.item_id,
+    itemLabel: row.item_label,
+    category: row.category,
+    message: row.message,
+    createdAt: new Date(row.created_at).getTime(),
+  };
 }
 
-export function addFeedback({ itemType, itemId, itemLabel, category, message }) {
-  const entries = read();
-  const entry = {
-    id:
-      typeof crypto !== "undefined" && crypto.randomUUID
-        ? crypto.randomUUID()
-        : "fb-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8),
-    author: getReviewerName() || null,
-    itemType,
-    itemId: itemId || null,
-    itemLabel: itemLabel || null,
+export async function refreshFeedback() {
+  const { data, error } = await supabase
+    .from("feedback")
+    .select("*, profile:profiles(display_name, email)")
+    .order("created_at", { ascending: false });
+  if (error) {
+    console.error("Feedback laden mislukt:", error.message);
+    return;
+  }
+  setEntries(data.map(fromRow));
+}
+
+/** Called by AuthProvider after login: initial load + live updates. */
+export function startFeedbackSync(userId) {
+  if (currentUserId === userId && channel) return;
+  stopFeedbackSync();
+  currentUserId = userId;
+  refreshFeedback();
+  channel = supabase
+    .channel("feedback-changes")
+    .on("postgres_changes", { event: "*", schema: "public", table: "feedback" }, () =>
+      refreshFeedback()
+    )
+    .subscribe();
+}
+
+/** Called on logout. */
+export function stopFeedbackSync() {
+  if (channel) supabase.removeChannel(channel);
+  channel = null;
+  currentUserId = null;
+  setEntries(EMPTY);
+}
+
+// ----- Writes -----
+
+export async function addFeedback({ itemType, itemId, itemLabel, category, message }) {
+  const { error } = await supabase.from("feedback").insert({
+    item_type: itemType,
+    item_id: itemId || null,
+    item_label: itemLabel || null,
     category,
     message: message.trim(),
-    createdAt: Date.now(),
-  };
-  entries.push(entry);
-  write(entries);
-  return entry;
+  });
+  if (error) throw new Error(error.message);
+  await refreshFeedback();
 }
 
-export function deleteFeedback(id) {
-  write(read().filter((f) => f.id !== id));
+export async function deleteFeedback(id) {
+  const { error } = await supabase.from("feedback").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+  await refreshFeedback();
 }
 
-export function clearAllFeedback() {
-  write([]);
-}
+// ----- Import / export -----
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
- * Import feedback from an exported JSON string.
- * Merges by entry id: existing ids are skipped, new ones are added.
- * Returns { added, skipped, total } or throws on invalid input.
+ * Insert raw entries in the old export shape. Duplicate ids are skipped, so
+ * importing the same file twice is harmless.
+ * keepAuthorNames stores the original author name per entry; RLS only allows
+ * that for the docent. Without it the entries are attributed to the importer.
+ * Returns { added, skipped, total }.
  */
+async function importEntries(incoming, { keepAuthorNames }) {
+  let skipped = 0;
+  const rows = [];
+  incoming.forEach((raw) => {
+    // Minimal validation: an entry needs a message to be useful.
+    if (!raw || typeof raw.message !== "string" || !raw.message.trim()) {
+      skipped++;
+      return;
+    }
+    rows.push({
+      // Old ids were "fb-..." or crypto.randomUUID(); keep real UUIDs for dedupe.
+      id: UUID_RE.test(raw.id ?? "") ? raw.id : crypto.randomUUID(),
+      author_name: keepAuthorNames ? raw.author || "Onbekend" : null,
+      item_type: raw.itemType ?? "overig",
+      item_id: raw.itemId ?? null,
+      item_label: raw.itemLabel ?? null,
+      category: VALID_CATEGORIES.has(raw.category) ? raw.category : "overig",
+      message: raw.message.trim(),
+      created_at: new Date(
+        typeof raw.createdAt === "number" ? raw.createdAt : Date.now()
+      ).toISOString(),
+    });
+  });
+
+  let added = 0;
+  if (rows.length) {
+    const { data, error } = await supabase
+      .from("feedback")
+      .upsert(rows, { onConflict: "id", ignoreDuplicates: true })
+      .select("id");
+    if (error) throw new Error(error.message);
+    added = data.length;
+    skipped += rows.length - added;
+  }
+  await refreshFeedback();
+  return { added, skipped, total: incoming.length };
+}
+
+/** Import feedback from an exported JSON string (old file format). Docent only. */
 export function importFeedbackJson(jsonText) {
   let parsed;
   try {
@@ -113,59 +196,39 @@ export function importFeedbackJson(jsonText) {
   if (!incoming) {
     throw new Error("Geen feedback gevonden in dit bestand.");
   }
+  return importEntries(incoming, { keepAuthorNames: true });
+}
 
-  const existing = read();
-  const existingIds = new Set(existing.map((f) => f.id));
-
-  let added = 0;
-  let skipped = 0;
-
-  incoming.forEach((raw) => {
-    // Minimal validation: an entry needs a message to be useful.
-    if (!raw || typeof raw.message !== "string" || !raw.message.trim()) {
-      skipped++;
-      return;
-    }
-    const id =
-      raw.id && !existingIds.has(raw.id)
-        ? raw.id
-        : raw.id && existingIds.has(raw.id)
-          ? null
-          : "fb-import-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8);
-
-    if (id === null) {
-      skipped++; // duplicate id already present
-      return;
-    }
-
-    existing.push({
-      id,
-      author: raw.author ?? null,
-      itemType: raw.itemType ?? "overig",
-      itemId: raw.itemId ?? null,
-      itemLabel: raw.itemLabel ?? null,
-      category: raw.category ?? "overig",
-      message: raw.message.trim(),
-      createdAt: typeof raw.createdAt === "number" ? raw.createdAt : Date.now(),
-    });
-    existingIds.add(id);
-    added++;
-  });
-
-  write(existing);
-  return { added, skipped, total: incoming.length };
+/** Feedback still sitting in this browser's localStorage from before accounts existed. */
+export function getLegacyLocalFeedback() {
+  try {
+    return JSON.parse(localStorage.getItem(LEGACY_STORAGE_KEY) || "[]");
+  } catch {
+    return [];
+  }
 }
 
 /**
- * Export all feedback as a formatted JSON string, ready to download and share.
+ * Move old localStorage feedback into Supabase, then clear it locally.
+ * Pass keepAuthorNames=true for the docent (entries may have been written by
+ * several people on a shared device); otherwise they become the user's own.
+ */
+export async function migrateLegacyLocalFeedback({ keepAuthorNames = false } = {}) {
+  const result = await importEntries(getLegacyLocalFeedback(), { keepAuthorNames });
+  localStorage.removeItem(LEGACY_STORAGE_KEY);
+  return result;
+}
+
+/**
+ * Export the feedback visible to this user as a formatted JSON string,
+ * ready to download and share (e.g. with ChatGPT).
  */
 export function exportFeedbackJson() {
   const payload = {
     exportedAt: new Date().toISOString(),
     appVersion: "nts-v2",
-    reviewer: getReviewerName() || null,
-    count: read().length,
-    feedback: getAllFeedback().map((f) => ({
+    count: entries.length,
+    feedback: entries.map((f) => ({
       ...f,
       createdAtISO: new Date(f.createdAt).toISOString(),
     })),
