@@ -1,0 +1,466 @@
+/* ----- Boards (lesprogramma + leerpad) ----- */
+.main.main-board {
+  max-width: none;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding-bottom: 1rem;
+}
+
+.lp-page-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.lp-page-head h2 {
+  margin: 0 !important;
+}
+
+.lp-intro {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  margin: 0 0 1rem 0;
+  max-width: 70ch;
+  line-height: 1.5;
+}
+
+.lp-filters {
+  margin-bottom: 1rem;
+}
+
+.lp-error {
+  color: var(--red);
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+}
+
+.board {
+  flex: 1;
+  min-height: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 0.5rem;
+}
+
+.board-lanes {
+  display: flex;
+  gap: 0.75rem;
+  height: 100%;
+  align-items: flex-start;
+}
+
+.board-lane {
+  flex: 0 0 280px;
+  width: 280px;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.board-lane.is-drop {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.board-lane-head {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.7rem 0.75rem 0.4rem;
+}
+
+.board-lane-head h3 {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+
+.board-lane-head input {
+  flex: 1;
+  min-width: 0;
+  background: var(--surface-2);
+  border: 1px solid var(--accent);
+  border-radius: 5px;
+  color: var(--text);
+  padding: 0.2rem 0.4rem;
+  font-weight: 600;
+}
+
+.board-count {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.board-icon-btn {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.board-icon-btn:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.board-cards {
+  flex: 1;
+  min-height: 2.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.25rem 0.5rem 0.5rem;
+}
+
+.board-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.6rem 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  cursor: pointer;
+  transition: border-color 0.12s;
+}
+
+.board-card:hover,
+.board-card:focus-visible {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.board-card[draggable="true"] {
+  cursor: grab;
+}
+
+.board-card.is-dragging {
+  opacity: 0.4;
+}
+
+.board-card.is-zijpad {
+  border-style: dashed;
+}
+
+.board-card-title {
+  font-size: 0.85rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.board-card-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.board-card-chips .tag,
+.board-card-chips .level-badge {
+  font-size: 0.68rem;
+}
+
+.board-kind {
+  font-size: 0.68rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.board-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+
+.board-empty {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  padding: 0.5rem 0.25rem;
+}
+
+.board-lane-footer {
+  padding: 0 0.5rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.board-add-btn {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  padding: 0.45rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+
+.board-add-btn:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.board-add-lane {
+  flex: 0 0 280px;
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  padding: 0.25rem;
+}
+
+.board-inline-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.25rem;
+}
+
+.board-inline-form input,
+.board-inline-form select {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  padding: 0.4rem 0.5rem;
+  font-size: 0.85rem;
+}
+
+.board-inline-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+/* ----- Dialogs ----- */
+.lp-dialog {
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.lp-dialog.is-wide {
+  max-width: 640px;
+}
+
+.lp-dialog .fb-dialog-header {
+  margin-bottom: 0;
+}
+
+.lp-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.lp-section > h4 {
+  margin: 0;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.lp-source {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  background: var(--accent-soft);
+  border-radius: 6px;
+  padding: 0.5rem 0.65rem;
+  line-height: 1.45;
+}
+
+.lp-source strong {
+  color: var(--accent);
+}
+
+.lp-explanation {
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.lp-explanation p {
+  margin: 0 0 0.6rem;
+}
+
+.lp-explanation a {
+  color: var(--accent);
+}
+
+.lp-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.lp-links li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.82rem;
+  min-width: 0;
+}
+
+.lp-links li.is-extra {
+  border-color: var(--green);
+}
+
+.lp-links li .dim {
+  margin-left: auto;
+  font-size: 0.7rem;
+  flex: none;
+}
+
+.lp-links a {
+  color: var(--text);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.lp-links a:hover {
+  color: var(--accent);
+}
+
+.lp-links li .board-icon-btn {
+  margin-left: auto;
+}
+
+.lp-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.lp-row > input,
+.lp-row > select {
+  flex: 1 1 140px;
+  min-width: 0;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  padding: 0.45rem 0.6rem;
+  font-size: 0.85rem;
+}
+
+.lp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.lp-danger {
+  margin-left: auto;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--red);
+  border-radius: 6px;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.85rem;
+}
+
+.lp-danger:hover {
+  border-color: var(--red);
+}
+
+.lp-empty {
+  margin: 0;
+  font-size: 0.82rem;
+}
+
+.lp-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.lp-picker button {
+  text-align: left;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 0.65rem;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.lp-picker button:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.lp-picker button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.lp-students {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.lp-students button {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  border-radius: 99px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.82rem;
+}
+
+.lp-students button.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+@media (max-width: 700px) {
+  .main.main-board {
+    height: auto;
+    min-height: 100vh;
+  }
+  .board {
+    overflow-y: visible;
+  }
+}
+
+.note-ok {
+  color: var(--green);
+  font-size: 0.82rem;
+}

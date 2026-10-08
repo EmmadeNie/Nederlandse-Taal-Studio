@@ -29,6 +29,24 @@ Inloggen via Supabase Auth (magic link). Elke gebruiker heeft een profiel met ee
 - Rechten worden afgedwongen in de database (RLS), zie `supabase/migrations/`.
 - Content (woorden, zinnen, …) staat nog steeds in JSON; alleen gebruikers en feedback staan in Supabase.
 
+## Lesprogramma & leerpaden
+
+De app vervangt het Trello-bord. Termen (NL / EN):
+
+| Term | Engels | Wat |
+|------|--------|-----|
+| **Lesprogramma** | Curriculum | Het masterboard, met vrije lanes (zoals Trello) |
+| **Les** | Lesson | Kaart in het lesprogramma: titel, niveau, labels, uitleg, verwijzingen |
+| **Leerpad** | Learning path | Het bord van één leerling, met eigen lanes |
+| **Stap** | Step | Kaart op een leerpad die naar een les verwijst; inhoud komt uit de les |
+| **Zijpad** | Side path | Eigen kaart op een leerpad, alleen voor die leerling |
+| **Extra's** | Extras | Extra links op een stap, alleen voor die leerling |
+
+- Pas je een les aan, dan zien alle leerlingen met die stap dat meteen (verwijzen, niet kopiëren).
+- Leerling en docent mogen lanes maken en stappen slepen; alleen de docent plant lessen in, maakt zijpaden en schrijft notities (die ziet de leerling niet).
+- Het lesprogramma is eenmalig geïmporteerd uit Trello (`supabase/migrations/*_import_trello_lesprogramma.sql`).
+- Koppelingen naar app-content (grammatica, oefeningen) komen later.
+
 ## Supabase (hosted)
 
 ```bash
