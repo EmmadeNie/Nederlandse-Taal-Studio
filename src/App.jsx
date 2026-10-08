@@ -24,7 +24,7 @@ import { isSupabaseConfigured } from "./lib/supabase";
 const PAGES = [
   { id: "leerpad", icon: "🧭", roles: ["leerling"] },
   { id: "dashboard", icon: "📊", roles: ["docent", "reviewer"] },
-  { id: "lesprogramma", icon: "🗂️", roles: ["docent", "reviewer"] },
+  { id: "lesprogramma", icon: "🗂️" },
   { id: "leerpaden", icon: "🧭", roles: ["docent", "reviewer"] },
   { id: "words", icon: "📖" },
   { id: "verbs", icon: "🔄" },
