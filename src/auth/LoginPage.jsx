@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { supabase } from "../lib/supabase";
 import { useI18n } from "../i18n/context";
-import LanguageToggle from "../i18n/LanguageToggle";
 
 /**
  * Magic-link login: enter an email, receive a link, click it, done.
@@ -33,7 +32,6 @@ export default function LoginPage() {
   return (
     <div className="auth-screen">
       <div className="auth-card">
-        <LanguageToggle />
         <h1>🇳🇱 NL Studio</h1>
         <p className="subtitle">Nederlandse Taal Studio</p>
 

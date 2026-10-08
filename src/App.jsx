@@ -50,10 +50,16 @@ function SetupNeeded() {
   );
 }
 
-/** Auth gate: setup → loading → login → name → the app. */
+/** Auth gate: setup → loading → login → name → the app. The language switch sits top right on every screen. */
 function App() {
-  if (!isSupabaseConfigured) return <SetupNeeded />;
-  return <AuthGate />;
+  return (
+    <>
+      <div className="lang-corner">
+        <LanguageToggle />
+      </div>
+      {isSupabaseConfigured ? <AuthGate /> : <SetupNeeded />}
+    </>
+  );
 }
 
 function AuthGate() {
@@ -142,17 +148,12 @@ function Studio() {
 
         <div className="sidebar-footer">
           <div className="sidebar-user">
-            <div className="sidebar-user-row">
-              <div>
-                <div className="sidebar-user-name">{profile.display_name}</div>
-                <div className="sidebar-user-meta">
-                  {t(`role.${role}`)} ·{" "}
-                  <button className="fb-link" onClick={signOut}>
-                    {t("app.signOut")}
-                  </button>
-                </div>
-              </div>
-              <LanguageToggle />
+            <div className="sidebar-user-name">{profile.display_name}</div>
+            <div className="sidebar-user-meta">
+              {t(`role.${role}`)} ·{" "}
+              <button className="fb-link" onClick={signOut}>
+                {t("app.signOut")}
+              </button>
             </div>
           </div>
           <button

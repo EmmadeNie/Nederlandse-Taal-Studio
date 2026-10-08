@@ -1020,13 +1020,15 @@
   color: var(--accent);
 }
 
-.auth-card .lang-toggle {
-  float: right;
+/* Fixed top-right corner, above page content on every screen */
+.lang-corner {
+  position: fixed;
+  top: calc(0.75rem + env(safe-area-inset-top, 0px));
+  right: 1rem;
+  z-index: 20;
 }
 
-.sidebar-user-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.5rem;
+.lang-corner .lang-toggle {
+  background: var(--surface);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
