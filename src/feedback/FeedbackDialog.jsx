@@ -1,10 +1,6 @@
 import { useState, useEffect } from "react";
-import {
-  FEEDBACK_CATEGORIES,
-  addFeedback,
-  getReviewerName,
-  setReviewerName,
-} from "./store";
+import { FEEDBACK_CATEGORIES, addFeedback } from "./store";
+import { useAuth } from "../auth/context";
 
 /**
  * Modal dialog to add feedback for a content item (or the app in general).
@@ -16,15 +12,14 @@ import {
  *   onClose   - called when the dialog should close
  */
 export default function FeedbackDialog({ itemType, itemId, itemLabel, onClose }) {
-  const knownName = getReviewerName();
-  const [name, setName] = useState(knownName);
-  // Only show the name field if we don't know the reviewer yet, or they choose to change it.
-  const [editingName, setEditingName] = useState(!knownName);
+  const { profile } = useAuth();
   const [category, setCategory] = useState(
     itemType === "app" ? "app" : "taalfout"
   );
   const [message, setMessage] = useState("");
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
 
   // Close on Escape
   useEffect(() => {
@@ -35,15 +30,21 @@ export default function FeedbackDialog({ itemType, itemId, itemLabel, onClose })
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
-  const canSubmit = message.trim().length > 0;
+  const canSubmit = message.trim().length > 0 && !saving;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!canSubmit) return;
-    if (name.trim()) setReviewerName(name);
-    addFeedback({ itemType, itemId, itemLabel, category, message });
-    setSaved(true);
-    setTimeout(onClose, 700);
+    setSaving(true);
+    setError(null);
+    try {
+      await addFeedback({ itemType, itemId, itemLabel, category, message });
+      setSaved(true);
+      setTimeout(onClose, 700);
+    } catch (err) {
+      setError(err.message);
+      setSaving(false);
+    }
   };
 
   return (
@@ -72,34 +73,11 @@ export default function FeedbackDialog({ itemType, itemId, itemLabel, onClose })
           <div className="fb-saved">✓ Bedankt, je feedback is opgeslagen!</div>
         ) : (
           <form onSubmit={handleSubmit}>
-            {editingName ? (
-              <label className="fb-field">
-                <span>Je naam</span>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Bijv. Mama"
-                  autoFocus
-                />
-              </label>
-            ) : (
-              <div className="fb-field fb-known-name">
-                <span>
-                  Feedback van <strong>{knownName}</strong>
-                </span>
-                <button
-                  type="button"
-                  className="fb-link"
-                  onClick={() => {
-                    setEditingName(true);
-                    setName("");
-                  }}
-                >
-                  Ik ben iemand anders
-                </button>
-              </div>
-            )}
+            <div className="fb-field fb-known-name">
+              <span>
+                Feedback van <strong>{profile?.display_name || profile?.email}</strong>
+              </span>
+            </div>
 
             <label className="fb-field">
               <span>Soort feedback</span>
@@ -122,9 +100,11 @@ export default function FeedbackDialog({ itemType, itemId, itemLabel, onClose })
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Wat valt je op?"
                 rows={4}
-                autoFocus={!editingName}
+                autoFocus
               />
             </label>
+
+            {error && <div className="auth-error">{error}</div>}
 
             <div className="fb-actions">
               <button type="button" className="fb-btn-secondary" onClick={onClose}>

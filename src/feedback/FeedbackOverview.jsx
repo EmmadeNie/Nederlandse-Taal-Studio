@@ -2,11 +2,13 @@ import { useRef, useState } from "react";
 import { useAllFeedback } from "./useFeedback";
 import {
   deleteFeedback,
-  clearAllFeedback,
   exportFeedbackJson,
   importFeedbackJson,
+  getLegacyLocalFeedback,
+  migrateLegacyLocalFeedback,
   CATEGORY_LABELS,
 } from "./store";
+import { useAuth } from "../auth/context";
 
 const ITEM_TYPE_LABELS = {
   word: "Woord",
@@ -30,8 +32,34 @@ function formatDate(ts) {
 
 export default function FeedbackOverview() {
   const feedback = useAllFeedback();
+  const { user, role } = useAuth();
+  const isDocent = role === "docent";
   const fileInput = useRef(null);
   const [notice, setNotice] = useState(null);
+  const [legacyCount, setLegacyCount] = useState(() => getLegacyLocalFeedback().length);
+
+  const canDelete = (f) => isDocent || f.authorId === user?.id;
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteFeedback(id);
+    } catch (err) {
+      setNotice({ type: "error", text: err.message });
+    }
+  };
+
+  const handleMigrate = async () => {
+    try {
+      const result = await migrateLegacyLocalFeedback({ keepAuthorNames: isDocent });
+      setLegacyCount(0);
+      setNotice({
+        type: "ok",
+        text: `Overgezet: ${result.added} nieuw, ${result.skipped} overgeslagen (dubbel of ongeldig).`,
+      });
+    } catch (err) {
+      setNotice({ type: "error", text: err.message });
+    }
+  };
 
   const handleExport = () => {
     const json = exportFeedbackJson();
@@ -51,9 +79,9 @@ export default function FeedbackOverview() {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = () => {
+    reader.onload = async () => {
       try {
-        const result = importFeedbackJson(String(reader.result));
+        const result = await importFeedbackJson(String(reader.result));
         setNotice({
           type: "ok",
           text: `Geïmporteerd: ${result.added} nieuw, ${result.skipped} overgeslagen (dubbel of ongeldig).`,
@@ -67,17 +95,6 @@ export default function FeedbackOverview() {
     reader.readAsText(file);
   };
 
-  const handleClearAll = () => {
-    if (
-      window.confirm(
-        "Weet je zeker dat je ALLE feedback wilt verwijderen? Dit kan niet ongedaan worden gemaakt."
-      )
-    ) {
-      clearAllFeedback();
-      setNotice({ type: "ok", text: "Alle feedback verwijderd." });
-    }
-  };
-
   return (
     <div>
       <h2>Feedback</h2>
@@ -86,26 +103,31 @@ export default function FeedbackOverview() {
         <button className="fb-btn-primary" onClick={handleExport} disabled={feedback.length === 0}>
           ⬇ Exporteren ({feedback.length})
         </button>
-        <button className="fb-btn-secondary" onClick={handleImportClick}>
-          ⬆ Importeren
-        </button>
-        <input
-          ref={fileInput}
-          type="file"
-          accept="application/json,.json"
-          style={{ display: "none" }}
-          onChange={handleImportFile}
-        />
-        {feedback.length > 0 && (
-          <button
-            className="fb-btn-secondary"
-            onClick={handleClearAll}
-            style={{ marginLeft: "auto", color: "var(--red)" }}
-          >
-            Alles wissen
-          </button>
+        {isDocent && (
+          <>
+            <button className="fb-btn-secondary" onClick={handleImportClick}>
+              ⬆ Importeren
+            </button>
+            <input
+              ref={fileInput}
+              type="file"
+              accept="application/json,.json"
+              style={{ display: "none" }}
+              onChange={handleImportFile}
+            />
+          </>
         )}
       </div>
+
+      {legacyCount > 0 && (
+        <div className="fb-legacy">
+          Er staat nog <strong>{legacyCount}</strong> feedback lokaal in deze browser
+          (van vóór de accounts).
+          <button className="fb-btn-primary" onClick={handleMigrate}>
+            Overzetten naar je account
+          </button>
+        </div>
+      )}
 
       {notice && (
         <div
@@ -121,20 +143,21 @@ export default function FeedbackOverview() {
       {feedback.length === 0 ? (
         <div className="fb-empty">
           Nog geen feedback. Klik op het 💬-knopje bij een woord, zin, werkwoord,
-          grammatica-onderwerp of oefening om feedback te geven. Of importeer een
-          feedbackbestand dat iemand anders heeft gedeeld.
+          grammatica-onderwerp of oefening om feedback te geven.
         </div>
       ) : (
         feedback.map((f) => (
           <div key={f.id} className="fb-entry">
-            <button
-              className="fb-entry-delete"
-              onClick={() => deleteFeedback(f.id)}
-              aria-label="Feedback verwijderen"
-              title="Verwijderen"
-            >
-              ✕
-            </button>
+            {canDelete(f) && (
+              <button
+                className="fb-entry-delete"
+                onClick={() => handleDelete(f.id)}
+                aria-label="Feedback verwijderen"
+                title="Verwijderen"
+              >
+                ✕
+              </button>
+            )}
             <div className="fb-entry-header">
               {f.author && <span className="fb-author">{f.author}</span>}
               <span className="fb-category">
