@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { supabase } from "../lib/supabase";
+import { useI18n } from "../i18n/context";
+import LanguageToggle from "../i18n/LanguageToggle";
 
 /**
  * Magic-link login: enter an email, receive a link, click it, done.
  * New email addresses get an account automatically (role: leerling).
  */
 export default function LoginPage() {
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState("idle"); // idle | sending | sent | error
   const [error, setError] = useState(null);
@@ -30,30 +33,31 @@ export default function LoginPage() {
   return (
     <div className="auth-screen">
       <div className="auth-card">
+        <LanguageToggle />
         <h1>🇳🇱 NL Studio</h1>
         <p className="subtitle">Nederlandse Taal Studio</p>
 
         {status === "sent" ? (
           <div className="auth-sent">
             <p>
-              ✉️ We hebben een inloglink gestuurd naar <strong>{email}</strong>.
+              ✉️ {t("login.sent")} <strong>{email}</strong>.
             </p>
-            <p className="dim">Open de e-mail en klik op de link om in te loggen.</p>
+            <p className="dim">{t("login.sentHint")}</p>
             <button className="fb-link" onClick={() => setStatus("idle")}>
-              Ander e-mailadres gebruiken
+              {t("login.otherEmail")}
             </button>
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
             <label className="fb-field">
-              <span>E-mailadres</span>
+              <span>{t("login.email")}</span>
               <input
                 type="email"
                 required
                 autoFocus
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="naam@voorbeeld.nl"
+                placeholder={t("login.placeholder")}
               />
             </label>
             {error && <div className="auth-error">{error}</div>}
@@ -62,7 +66,7 @@ export default function LoginPage() {
               className="fb-btn-primary auth-submit"
               disabled={status === "sending" || !email.trim()}
             >
-              {status === "sending" ? "Versturen…" : "Stuur inloglink"}
+              {status === "sending" ? t("login.sending") : t("login.send")}
             </button>
           </form>
         )}

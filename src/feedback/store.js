@@ -16,23 +16,22 @@
 
 import { supabase } from "../lib/supabase";
 
-/** Feedback categories shown in the dialog. Keep in sync with the DB check constraint. */
+/**
+ * Feedback categories shown in the dialog (labels: "fb.cat.<value>" in
+ * src/i18n/messages.js). Keep in sync with the DB check constraint.
+ */
 export const FEEDBACK_CATEGORIES = [
-  { value: "taalfout", label: "Taalfout" },
-  { value: "verkeerd-niveau", label: "Verkeerd niveau" },
-  { value: "te-moeilijk", label: "Te moeilijk" },
-  { value: "te-makkelijk", label: "Te makkelijk" },
-  { value: "vertaling", label: "Vertaling klopt niet" },
-  { value: "tag-metadata", label: "Tag / metadata" },
-  { value: "app", label: "Over de app" },
-  { value: "overig", label: "Overig" },
+  "taalfout",
+  "verkeerd-niveau",
+  "te-moeilijk",
+  "te-makkelijk",
+  "vertaling",
+  "tag-metadata",
+  "app",
+  "overig",
 ];
 
-export const CATEGORY_LABELS = Object.fromEntries(
-  FEEDBACK_CATEGORIES.map((c) => [c.value, c.label])
-);
-
-const VALID_CATEGORIES = new Set(FEEDBACK_CATEGORIES.map((c) => c.value));
+const VALID_CATEGORIES = new Set(FEEDBACK_CATEGORIES);
 
 // Old localStorage key, only read to offer a one-time migration.
 const LEGACY_STORAGE_KEY = "nts-feedback-v1";
@@ -183,7 +182,7 @@ export function importFeedbackJson(jsonText) {
   try {
     parsed = JSON.parse(jsonText);
   } catch {
-    throw new Error("Dit is geen geldig JSON-bestand.");
+    throw new Error("fb.err.invalidJson");
   }
 
   // Accept either our export shape ({ feedback: [...] }) or a bare array.
@@ -194,7 +193,7 @@ export function importFeedbackJson(jsonText) {
       : null;
 
   if (!incoming) {
-    throw new Error("Geen feedback gevonden in dit bestand.");
+    throw new Error("fb.err.noFeedback");
   }
   return importEntries(incoming, { keepAuthorNames: true });
 }

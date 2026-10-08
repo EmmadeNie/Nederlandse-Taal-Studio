@@ -4,8 +4,10 @@ import { getAllThemes, getAllGrammarTags } from "../data";
 import { TENSES, SENTENCE_TYPES, WORD_ORDERS } from "../data/schema.js";
 import FeedbackButton from "../feedback/FeedbackButton";
 import { useUrlParams, useSetUrlParams } from "../hooks/useUrlParams";
+import { useI18n } from "../i18n/context";
 
 export default function SentenceBrowser() {
+  const { t } = useI18n();
   const urlParams = useUrlParams();
   const setUrlParams = useSetUrlParams();
   const themes = getAllThemes();
@@ -58,23 +60,23 @@ export default function SentenceBrowser() {
 
   return (
     <div>
-      <h2>Zinnen</h2>
+      <h2>{t("nav.sentences")}</h2>
       <div className="filters">
         <input
           type="text"
-          placeholder="Zoek zin..."
+          placeholder={t("sent.search")}
           value={filters.search || ""}
           onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-          aria-label="Zoek zin"
+          aria-label={t("sent.searchAria")}
         />
         <select
           value={filters.level || ""}
           onChange={(e) =>
             setFilters({ ...filters, level: e.target.value || null })
           }
-          aria-label="Filter op niveau"
+          aria-label={t("filter.level")}
         >
-          <option value="">Alle niveaus</option>
+          <option value="">{t("level.all")}</option>
           {LEVELS.map((l) => (
             <option key={l} value={l}>
               {l}
@@ -86,12 +88,12 @@ export default function SentenceBrowser() {
           onChange={(e) =>
             setFilters({ ...filters, grammarTag: e.target.value || null })
           }
-          aria-label="Filter op grammatica"
+          aria-label={t("filter.grammar")}
         >
-          <option value="">Alle grammatica</option>
-          {grammarTags.map((t) => (
-            <option key={t} value={t}>
-              {t}
+          <option value="">{t("filter.allGrammar")}</option>
+          {grammarTags.map((x) => (
+            <option key={x} value={x}>
+              {x}
             </option>
           ))}
         </select>
@@ -100,12 +102,12 @@ export default function SentenceBrowser() {
           onChange={(e) =>
             setFilters({ ...filters, tense: e.target.value || null })
           }
-          aria-label="Filter op tijd"
+          aria-label={t("filter.tense")}
         >
-          <option value="">Alle tijden</option>
-          {TENSES.map((t) => (
-            <option key={t} value={t}>
-              {t}
+          <option value="">{t("filter.allTenses")}</option>
+          {TENSES.map((x) => (
+            <option key={x} value={x}>
+              {x}
             </option>
           ))}
         </select>
@@ -114,12 +116,12 @@ export default function SentenceBrowser() {
           onChange={(e) =>
             setFilters({ ...filters, sentenceType: e.target.value || null })
           }
-          aria-label="Filter op zinstype"
+          aria-label={t("filter.stype")}
         >
-          <option value="">Alle zinstypes</option>
-          {SENTENCE_TYPES.map((t) => (
-            <option key={t} value={t}>
-              {t}
+          <option value="">{t("filter.allStypes")}</option>
+          {SENTENCE_TYPES.map((x) => (
+            <option key={x} value={x}>
+              {x}
             </option>
           ))}
         </select>
@@ -128,12 +130,12 @@ export default function SentenceBrowser() {
           onChange={(e) =>
             setFilters({ ...filters, wordOrder: e.target.value || null })
           }
-          aria-label="Filter op woordvolgorde"
+          aria-label={t("filter.order")}
         >
-          <option value="">Alle woordvolgorde</option>
-          {WORD_ORDERS.map((t) => (
-            <option key={t} value={t}>
-              {t}
+          <option value="">{t("filter.allOrders")}</option>
+          {WORD_ORDERS.map((x) => (
+            <option key={x} value={x}>
+              {x}
             </option>
           ))}
         </select>
@@ -142,41 +144,41 @@ export default function SentenceBrowser() {
           onChange={(e) =>
             setFilters({ ...filters, theme: e.target.value || null })
           }
-          aria-label="Filter op thema"
+          aria-label={t("filter.theme")}
         >
-          <option value="">Alle thema's</option>
-          {themes.map((t) => (
-            <option key={t} value={t}>
-              {t}
+          <option value="">{t("filter.allThemes")}</option>
+          {themes.map((x) => (
+            <option key={x} value={x}>
+              {x}
             </option>
           ))}
         </select>
         <select
           value={sort}
           onChange={(e) => setUrlParams({ sort: e.target.value || null })}
-          aria-label="Sorteren"
+          aria-label={t("sort.aria")}
         >
-          <option value="default">Sorteren: standaard</option>
-          <option value="level-asc">Niveau: laag → hoog</option>
-          <option value="level-desc">Niveau: hoog → laag</option>
+          <option value="default">{t("sort.default")}</option>
+          <option value="level-asc">{t("sort.levelAsc")}</option>
+          <option value="level-desc">{t("sort.levelDesc")}</option>
         </select>
       </div>
-      <p className="result-count">{results.length} zinnen gevonden</p>
+      <p className="result-count">{t("sent.found", { n: results.length })}</p>
       {results.map((s) => (
         <div key={s.id} className="sentence-card">
           <div className="nl">{s.nl}</div>
           <div className="en">{s.en}</div>
           <div className="meta">
             <LevelBadge level={s.introducedAtLevel} />
-            {s.difficulty && <Tag>moeilijkheid: {s.difficulty}/5</Tag>}
+            {s.difficulty && <Tag>{t("sent.difficulty", { n: s.difficulty })}</Tag>}
             {s.tense && <Tag>{s.tense}</Tag>}
             {s.sentenceType && <Tag>{s.sentenceType}</Tag>}
             {s.wordOrder && s.wordOrder !== "svo" && <Tag>{s.wordOrder}</Tag>}
-            {s.grammarTags?.map((t) => (
-              <Tag key={t}>{t}</Tag>
+            {s.grammarTags?.map((x) => (
+              <Tag key={x}>{x}</Tag>
             ))}
-            {s.themes?.map((t) => (
-              <Tag key={t}>{t}</Tag>
+            {s.themes?.map((x) => (
+              <Tag key={x}>{x}</Tag>
             ))}
             <ReviewBadge status={s.reviewStatus} />
           </div>

@@ -6,13 +6,7 @@ import {
 } from "../data";
 import { LevelBadge, Tag } from "./Badges";
 import FeedbackButton from "../feedback/FeedbackButton";
-
-const TYPE_LABELS = {
-  "fill-in": "Invuloefening",
-  "multiple-choice": "Meerkeuze",
-  translate: "Vertalen",
-  flashcards: "Flashcards",
-};
+import { useI18n } from "../i18n/context";
 
 const TYPE_ICONS = {
   "fill-in": "✍️",
@@ -22,16 +16,17 @@ const TYPE_ICONS = {
 };
 
 export default function ExerciseBrowser() {
+  const { t } = useI18n();
   return (
     <div>
-      <h2>Oefeningen</h2>
+      <h2>{t("nav.exercises")}</h2>
       <p className="result-count">
-        {exercises.length} oefeningen beschikbaar
+        {t("ex.count", { n: exercises.length })}
       </p>
       <div className="card-grid">
         {exercises.map((ex) => {
           const topic = ex.topicId
-            ? topics.find((t) => t.id === ex.topicId)
+            ? topics.find((tag) => tag.id === ex.topicId)
             : null;
 
           // Show how many items the query would match
@@ -58,16 +53,16 @@ export default function ExerciseBrowser() {
                 <span className="word">{ex.title}</span>
               </div>
               <div className="translation">
-                {TYPE_LABELS[ex.type] || ex.type}
+                {TYPE_ICONS[ex.type] ? t(`ex.type.${ex.type}`) : ex.type}
               </div>
               <div className="meta">
                 <LevelBadge level={ex.level} />
                 {topic && <Tag>{topic.title}</Tag>}
-                {ex.query.themes?.map((t) => (
-                  <Tag key={t}>{t}</Tag>
+                {ex.query.themes?.map((tag) => (
+                  <Tag key={tag}>{tag}</Tag>
                 ))}
-                {ex.query.grammarTags?.map((t) => (
-                  <Tag key={t}>{t}</Tag>
+                {ex.query.grammarTags?.map((tag) => (
+                  <Tag key={tag}>{tag}</Tag>
                 ))}
               </div>
               <div
@@ -79,12 +74,12 @@ export default function ExerciseBrowser() {
               >
                 {matchCount > 0 ? (
                   <span>
-                    📦 {matchCount} items beschikbaar
-                    {ex.query.limit && ` (max ${ex.query.limit} per sessie)`}
+                    {t("ex.items", { n: matchCount })}
+                    {ex.query.limit && t("ex.max", { n: ex.query.limit })}
                   </span>
                 ) : (
                   <span style={{ color: "var(--amber)" }}>
-                    ⚠️ Nog geen matching content
+                    {t("ex.noContent")}
                   </span>
                 )}
               </div>

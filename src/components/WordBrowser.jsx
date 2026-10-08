@@ -3,8 +3,10 @@ import { LevelBadge, ReviewBadge, Tag } from "./Badges";
 import { WordFilters } from "./Filters";
 import FeedbackButton from "../feedback/FeedbackButton";
 import { useUrlParams, useSetUrlParams } from "../hooks/useUrlParams";
+import { useI18n } from "../i18n/context";
 
 export default function WordBrowser() {
+  const { t } = useI18n();
   const urlParams = useUrlParams();
   const setUrlParams = useSetUrlParams();
 
@@ -32,9 +34,9 @@ export default function WordBrowser() {
 
   return (
     <div>
-      <h2>Woordenschat</h2>
+      <h2>{t("nav.words")}</h2>
       <WordFilters filters={filters} onChange={setFilters} />
-      <p className="result-count">{results.length} woorden gevonden</p>
+      <p className="result-count">{t("words.found", { n: results.length })}</p>
       <div className="card-grid">
         {results.map((w) => (
           <div key={w.id} className="card">
@@ -47,13 +49,13 @@ export default function WordBrowser() {
               {w.en}
               {w.plural && (
                 <span style={{ marginLeft: "0.5rem", opacity: 0.6 }}>
-                  mv: {w.plural}
+                  {t("words.plural")} {w.plural}
                 </span>
               )}
             </div>
             <div className="meta">
-              {w.themes?.map((t) => (
-                <Tag key={t}>{t}</Tag>
+              {w.themes?.map((theme) => (
+                <Tag key={theme}>{theme}</Tag>
               ))}
               <ReviewBadge status={w.reviewStatus} />
             </div>

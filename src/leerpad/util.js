@@ -2,7 +2,8 @@
 
 export const LEVELS = ["A0", "A1", "A2", "B1", "B2"];
 
-export const linkCount = (n) => (n ? `${n} ${n === 1 ? "link" : "links"}` : null);
+/** "3 links" in the current language, or null for none. */
+export const linkCount = (t, n) => (n ? t("board.links", { n }) : null);
 
 export function matchesFilter({ title, level }, search, levelFilter) {
   if (search && !title.toLowerCase().includes(search.toLowerCase())) return false;

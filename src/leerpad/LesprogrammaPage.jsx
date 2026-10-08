@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "../auth/context";
+import { useI18n } from "../i18n/context";
 import Markdown from "../components/Markdown";
 import Board, { AddCardForm } from "./Board";
 import * as api from "./api";
@@ -12,6 +13,7 @@ import { LEVELS, linkCount, matchesFilter } from "./util";
  */
 export default function LesprogrammaPage() {
   const { role } = useAuth();
+  const { t } = useI18n();
   const canEdit = role === "docent";
   const [lanes, setLanes] = useState([]);
   const [lessons, setLessons] = useState([]);
@@ -43,7 +45,7 @@ export default function LesprogrammaPage() {
     try {
       await fn();
     } catch (e) {
-      setError(e.message);
+      setError(t(e.message));
       load();
     }
   };
@@ -70,24 +72,23 @@ export default function LesprogrammaPage() {
   return (
     <>
       <div className="lp-page-head">
-        <h2>Lesprogramma</h2>
-        <span className="result-count">{lessons.length} lessen</span>
+        <h2>{t("nav.lesprogramma")}</h2>
+        <span className="result-count">{t("lp.lessons", { n: lessons.length })}</span>
       </div>
       <p className="lp-intro">
-        Het masterboard met alle lessen. Zet een les op het leerpad van een leerling;
-        pas je de les hier aan, dan ziet die leerling dat meteen.
-        {canEdit ? " Sleep lessen tussen lanes; het niveau blijft gewoon een label." : ""}
+        {t("lp.programIntro")}
+        {canEdit ? " " + t("lp.programIntroDrag") : ""}
       </p>
       <BoardFilters
         search={search}
         setSearch={setSearch}
         level={level}
         setLevel={setLevel}
-        placeholder="Zoek een les…"
+        placeholder={t("lp.searchLesson")}
       />
       {error && <div className="lp-error">{error}</div>}
       {loading ? (
-        <p className="dim">Laden…</p>
+        <p className="dim">{t("common.loading")}</p>
       ) : (
         <Board
           lanes={lanes}
@@ -98,7 +99,7 @@ export default function LesprogrammaPage() {
               title={l.title}
               level={l.level}
               categories={l.categories}
-              meta={linkCount(l.links.length)}
+              meta={linkCount(t, l.links.length)}
             />
           )}
           onOpenCard={(l) => setOpenId(l.id)}
@@ -129,13 +130,13 @@ export default function LesprogrammaPage() {
             canEdit &&
             ((lane) => (
               <AddCardForm
-                label="+ Les toevoegen"
-                placeholder="Titel van de les"
+                label={t("lp.addLesson")}
+                placeholder={t("lp.lessonTitle")}
                 onAdd={(title) => addLesson(lane, title)}
               />
             ))
           }
-          emptyLaneText="Nog geen lessen in deze lane."
+          emptyLaneText={t("lp.emptyLessons")}
         />
       )}
       {openLesson && (
@@ -156,6 +157,7 @@ export default function LesprogrammaPage() {
 }
 
 function LessonDialog({ lesson, lanes, canEdit, onClose, onSaved, onDeleted }) {
+  const { t } = useI18n();
   const [form, setForm] = useState({
     title: lesson.title,
     level: lesson.level || "",
@@ -180,7 +182,7 @@ function LessonDialog({ lesson, lanes, canEdit, onClose, onSaved, onDeleted }) {
 
   const save = async () => {
     if (!form.title.trim()) {
-      setError("Geef de les een titel.");
+      setError(t("lp.needTitle"));
       return;
     }
     setBusy(true);
@@ -197,19 +199,19 @@ function LessonDialog({ lesson, lanes, canEdit, onClose, onSaved, onDeleted }) {
       onSaved(updated);
       onClose();
     } catch (e) {
-      setError(e.message);
+      setError(t(e.message));
       setBusy(false);
     }
   };
 
   const remove = async () => {
-    if (!window.confirm(`“${lesson.title}” uit het lesprogramma verwijderen?`)) return;
+    if (!window.confirm(t("lp.confirmDeleteLesson", { title: lesson.title }))) return;
     setError(null);
     try {
       await api.deleteLesson(lesson.id);
       onDeleted(lesson.id);
     } catch (e) {
-      setError(e.message);
+      setError(t(e.message));
     }
   };
 
@@ -220,38 +222,38 @@ function LessonDialog({ lesson, lanes, canEdit, onClose, onSaved, onDeleted }) {
     try {
       await api.planLesson(lesson.id, planFor);
       const s = allStudents.find((x) => x.id === planFor);
-      setMessage(`Staat nu op het leerpad van ${s?.display_name || s?.email}.`);
+      setMessage(t("lp.planned", { name: s?.display_name || s?.email }));
       setPlanFor("");
       setStudents(await api.studentsWithLesson(lesson.id));
     } catch (e) {
-      setError(e.message);
+      setError(t(e.message));
     }
   };
 
   const planned = new Set((students || []).map((s) => s.id));
 
   return (
-    <Dialog title={canEdit ? "Les bewerken" : lesson.title} onClose={onClose} wide>
+    <Dialog title={canEdit ? t("lp.editLesson") : lesson.title} onClose={onClose} wide>
       <div className="lp-source">
-        <strong>Les in het lesprogramma. </strong>
+        <strong>{t("lp.lessonSource")}</strong>
         {students === null
           ? "…"
           : students.length
-            ? `Staat op het leerpad van ${students.map((s) => s.name).join(", ")}. Wijzigingen zien zij meteen.`
-            : "Staat nog op geen enkel leerpad."}
+            ? t("lp.onPaths", { names: students.map((s) => s.name).join(", ") })
+            : t("lp.onNoPath")}
       </div>
 
       {canEdit && (
         <>
           <label className="fb-field">
-            <span>Titel</span>
+            <span>{t("lp.title")}</span>
             <input value={form.title} onChange={(e) => set("title")(e.target.value)} />
           </label>
           <div className="lp-row">
             <label className="fb-field" style={{ flex: "1 1 120px" }}>
-              <span>Niveau</span>
+              <span>{t("lp.level")}</span>
               <select value={form.level} onChange={(e) => set("level")(e.target.value)}>
-                <option value="">Geen niveau</option>
+                <option value="">{t("level.none")}</option>
                 {LEVELS.map((l) => (
                   <option key={l} value={l}>
                     {l}
@@ -260,7 +262,7 @@ function LessonDialog({ lesson, lanes, canEdit, onClose, onSaved, onDeleted }) {
               </select>
             </label>
             <label className="fb-field" style={{ flex: "1 1 120px" }}>
-              <span>Lane</span>
+              <span>{t("lp.lane")}</span>
               <select value={form.lane_id} onChange={(e) => set("lane_id")(e.target.value)}>
                 {lanes.map((l) => (
                   <option key={l.id} value={l.id}>
@@ -271,7 +273,7 @@ function LessonDialog({ lesson, lanes, canEdit, onClose, onSaved, onDeleted }) {
             </label>
           </div>
           <label className="fb-field">
-            <span>Labels (komma-gescheiden)</span>
+            <span>{t("lp.labels")}</span>
             <input
               value={form.categories}
               onChange={(e) => set("categories")(e.target.value)}
@@ -283,10 +285,10 @@ function LessonDialog({ lesson, lanes, canEdit, onClose, onSaved, onDeleted }) {
 
       <div className="lp-section">
         <h4>
-          Uitleg{" "}
+          {t("lp.explanation")}{" "}
           {canEdit && (
             <button type="button" className="fb-link" onClick={() => setPreview((p) => !p)}>
-              {preview ? "bewerken" : "voorbeeld"}
+              {preview ? t("lp.edit") : t("lp.preview")}
             </button>
           )}
         </h4>
@@ -294,7 +296,7 @@ function LessonDialog({ lesson, lanes, canEdit, onClose, onSaved, onDeleted }) {
           form.explanation.trim() ? (
             <Markdown className="lp-explanation">{form.explanation}</Markdown>
           ) : (
-            <p className="dim lp-empty">Geen uitleg.</p>
+            <p className="dim lp-empty">{t("lp.noExplanation")}</p>
           )
         ) : (
           <label className="fb-field">
@@ -302,15 +304,15 @@ function LessonDialog({ lesson, lanes, canEdit, onClose, onSaved, onDeleted }) {
               rows={8}
               value={form.explanation}
               onChange={(e) => set("explanation")(e.target.value)}
-              aria-label="Uitleg (Markdown)"
-              placeholder="Uitleg in Markdown: **vet**, lijstjes, links…"
+              aria-label={t("lp.explanation")}
+              placeholder={t("lp.explanationPh")}
             />
           </label>
         )}
       </div>
 
       <div className="lp-section">
-        <h4>Verwijzingen</h4>
+        <h4>{t("lp.links")}</h4>
         {canEdit ? (
           <LinksEditor value={form.links} onChange={set("links")} />
         ) : (
@@ -320,25 +322,25 @@ function LessonDialog({ lesson, lanes, canEdit, onClose, onSaved, onDeleted }) {
 
       {canEdit && (
         <div className="lp-section">
-          <h4>Op leerpad zetten</h4>
+          <h4>{t("lp.plan")}</h4>
           {allStudents.length ? (
             <div className="lp-row">
-              <select value={planFor} onChange={(e) => setPlanFor(e.target.value)} aria-label="Leerling">
-                <option value="">Kies een leerling…</option>
+              <select value={planFor} onChange={(e) => setPlanFor(e.target.value)} aria-label={t("lp.student")}>
+                <option value="">{t("lp.chooseStudent")}</option>
                 {allStudents.map((s) => (
                   <option key={s.id} value={s.id} disabled={planned.has(s.id)}>
                     {s.display_name || s.email}
-                    {planned.has(s.id) ? " (staat er al op)" : ""}
+                    {planned.has(s.id) ? t("lp.alreadyOn") : ""}
                   </option>
                 ))}
               </select>
               <button type="button" className="fb-btn-secondary" onClick={plan} disabled={!planFor}>
-                Inplannen
+                {t("lp.planButton")}
               </button>
             </div>
           ) : (
             <p className="dim lp-empty">
-              Nog geen leerlingen. Iemand wordt leerling zodra die voor het eerst inlogt.
+              {t("lp.noStudents")}
             </p>
           )}
           {message && <div className="note-ok">{message}</div>}
@@ -350,13 +352,13 @@ function LessonDialog({ lesson, lanes, canEdit, onClose, onSaved, onDeleted }) {
       {canEdit && (
         <div className="lp-actions">
           <button className="fb-btn-primary" onClick={save} disabled={busy}>
-            Opslaan
+            {t("common.save")}
           </button>
           <button className="fb-btn-secondary" onClick={onClose}>
-            Annuleren
+            {t("common.cancel")}
           </button>
           <button className="lp-danger" onClick={remove}>
-            Les verwijderen
+            {t("lp.deleteLesson")}
           </button>
         </div>
       )}

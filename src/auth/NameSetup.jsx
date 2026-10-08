@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useAuth } from "./context";
+import { useI18n } from "../i18n/context";
 
 /** Shown once after first login, so feedback has a recognizable author. */
 export default function NameSetup() {
   const { profile, updateDisplayName, signOut } = useAuth();
+  const { t } = useI18n();
   const [name, setName] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
@@ -23,18 +25,18 @@ export default function NameSetup() {
   return (
     <div className="auth-screen">
       <div className="auth-card">
-        <h1>Welkom! 👋</h1>
-        <p className="subtitle">Ingelogd als {profile?.email}</p>
+        <h1>{t("name.welcome")}</h1>
+        <p className="subtitle">{t("name.signedInAs", { email: profile?.email })}</p>
         <form onSubmit={handleSubmit}>
           <label className="fb-field">
-            <span>Hoe mogen we je noemen?</span>
+            <span>{t("name.question")}</span>
             <input
               type="text"
               required
               autoFocus
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Je naam"
+              placeholder={t("name.placeholder")}
             />
           </label>
           {error && <div className="auth-error">{error}</div>}
@@ -43,11 +45,11 @@ export default function NameSetup() {
             className="fb-btn-primary auth-submit"
             disabled={saving || !name.trim()}
           >
-            Verder
+            {t("name.continue")}
           </button>
         </form>
         <button className="fb-link" onClick={signOut}>
-          Uitloggen
+          {t("app.signOut")}
         </button>
       </div>
     </div>

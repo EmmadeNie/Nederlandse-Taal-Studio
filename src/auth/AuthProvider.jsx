@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { startFeedbackSync, stopFeedbackSync } from "../feedback/store";
 import { AuthContext } from "./context";
+import { useI18n } from "../i18n/context";
 
 /**
  * Holds the Supabase session and the user's profile (name + role).
@@ -11,11 +12,12 @@ export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { lang, setLang } = useI18n();
 
   const loadProfile = useCallback(async (userId) => {
     const { data, error } = await supabase
       .from("profiles")
-      .select("id, email, display_name, role")
+      .select("id, email, display_name, role, language")
       .eq("id", userId)
       .single();
     if (error) console.error("Profiel laden mislukt:", error.message);
@@ -53,6 +55,29 @@ export function AuthProvider({ children }) {
     await loadProfile(session.user.id);
   };
 
+  // Language: the profile wins once it has one; a new profile takes the
+  // language the app already picked (browser default or the login screen toggle).
+  useEffect(() => {
+    if (!profile) return;
+    if (profile.language) {
+      setLang(profile.language);
+    } else {
+      supabase.from("profiles").update({ language: lang }).eq("id", profile.id).then(() => {});
+      setProfile((p) => ({ ...p, language: lang }));
+    }
+    // Only when a (different) profile loads; later toggles go through saveLanguage.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile?.id]);
+
+  const saveLanguage = async (language) => {
+    setProfile((p) => (p ? { ...p, language } : p));
+    const { error } = await supabase
+      .from("profiles")
+      .update({ language })
+      .eq("id", session.user.id);
+    if (error) console.error("Taal opslaan mislukt:", error.message);
+  };
+
   const signOut = () => supabase.auth.signOut();
 
   const value = {
@@ -62,6 +87,7 @@ export function AuthProvider({ children }) {
     role: profile?.role ?? null,
     loading,
     updateDisplayName,
+    saveLanguage,
     signOut,
   };
 

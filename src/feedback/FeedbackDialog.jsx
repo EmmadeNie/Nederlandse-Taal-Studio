@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { FEEDBACK_CATEGORIES, addFeedback } from "./store";
 import { useAuth } from "../auth/context";
+import { useI18n } from "../i18n/context";
 
 /**
  * Modal dialog to add feedback for a content item (or the app in general).
@@ -13,6 +14,7 @@ import { useAuth } from "../auth/context";
  */
 export default function FeedbackDialog({ itemType, itemId, itemLabel, onClose }) {
   const { profile } = useAuth();
+  const { t } = useI18n();
   const [category, setCategory] = useState(
     itemType === "app" ? "app" : "taalfout"
   );
@@ -54,51 +56,51 @@ export default function FeedbackDialog({ itemType, itemId, itemLabel, onClose })
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
-        aria-label="Feedback geven"
+        aria-label={t("fb.title")}
       >
         <div className="fb-dialog-header">
-          <h3>Feedback geven</h3>
-          <button className="fb-close" onClick={onClose} aria-label="Sluiten">
+          <h3>{t("fb.title")}</h3>
+          <button className="fb-close" onClick={onClose} aria-label={t("common.close")}>
             ✕
           </button>
         </div>
 
         {itemLabel && (
           <div className="fb-item-ref">
-            <span className="dim">Over:</span> <strong>{itemLabel}</strong>
+            <span className="dim">{t("fb.about")}</span> <strong>{itemLabel}</strong>
           </div>
         )}
 
         {saved ? (
-          <div className="fb-saved">✓ Bedankt, je feedback is opgeslagen!</div>
+          <div className="fb-saved">{t("fb.saved")}</div>
         ) : (
           <form onSubmit={handleSubmit}>
             <div className="fb-field fb-known-name">
               <span>
-                Feedback van <strong>{profile?.display_name || profile?.email}</strong>
+                {t("fb.from")} <strong>{profile?.display_name || profile?.email}</strong>
               </span>
             </div>
 
             <label className="fb-field">
-              <span>Soort feedback</span>
+              <span>{t("fb.kind")}</span>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
               >
                 {FEEDBACK_CATEGORIES.map((c) => (
-                  <option key={c.value} value={c.value}>
-                    {c.label}
+                  <option key={c} value={c}>
+                    {t(`fb.cat.${c}`)}
                   </option>
                 ))}
               </select>
             </label>
 
             <label className="fb-field">
-              <span>Opmerking</span>
+              <span>{t("fb.comment")}</span>
               <textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="Wat valt je op?"
+                placeholder={t("fb.placeholder")}
                 rows={4}
                 autoFocus
               />
@@ -108,14 +110,14 @@ export default function FeedbackDialog({ itemType, itemId, itemLabel, onClose })
 
             <div className="fb-actions">
               <button type="button" className="fb-btn-secondary" onClick={onClose}>
-                Annuleren
+                {t("common.cancel")}
               </button>
               <button
                 type="submit"
                 className="fb-btn-primary"
                 disabled={!canSubmit}
               >
-                Opslaan
+                {t("common.save")}
               </button>
             </div>
           </form>

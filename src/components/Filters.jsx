@@ -1,23 +1,25 @@
 import { LEVELS, getAllThemes } from "../data";
+import { useI18n } from "../i18n/context";
 
 export function WordFilters({ filters, onChange }) {
+  const { t } = useI18n();
   const themes = getAllThemes();
 
   return (
     <div className="filters">
       <input
         type="text"
-        placeholder="Zoek woord (NL of EN)..."
+        placeholder={t("words.search")}
         value={filters.search || ""}
         onChange={(e) => onChange({ ...filters, search: e.target.value })}
-        aria-label="Zoek woord"
+        aria-label={t("words.searchAria")}
       />
       <select
         value={filters.level || ""}
         onChange={(e) => onChange({ ...filters, level: e.target.value || null })}
-        aria-label="Filter op niveau"
+        aria-label={t("filter.level")}
       >
-        <option value="">Alle niveaus</option>
+        <option value="">{t("level.all")}</option>
         {LEVELS.map((l) => (
           <option key={l} value={l}>
             {l}
@@ -32,12 +34,12 @@ export function WordFilters({ filters, onChange }) {
             theme: e.target.value || null,
           })
         }
-        aria-label="Filter op thema"
+        aria-label={t("filter.theme")}
       >
-        <option value="">Alle thema's</option>
-        {themes.map((t) => (
-          <option key={t} value={t}>
-            {t}
+        <option value="">{t("filter.allThemes")}</option>
+        {themes.map((theme) => (
+          <option key={theme} value={theme}>
+            {theme}
           </option>
         ))}
       </select>
@@ -46,15 +48,14 @@ export function WordFilters({ filters, onChange }) {
         onChange={(e) =>
           onChange({ ...filters, partOfSpeech: e.target.value || null })
         }
-        aria-label="Filter op woordsoort"
+        aria-label={t("filter.pos")}
       >
-        <option value="">Alle woordsoorten</option>
-        <option value="noun">Zelfstandig naamwoord</option>
-        <option value="verb">Werkwoord</option>
-        <option value="adjective">Bijvoeglijk naamwoord</option>
-        <option value="adverb">Bijwoord</option>
-        <option value="preposition">Voorzetsel</option>
-        <option value="pronoun">Voornaamwoord</option>
+        <option value="">{t("filter.allPos")}</option>
+        {["noun", "verb", "adjective", "adverb", "preposition", "pronoun"].map((pos) => (
+          <option key={pos} value={pos}>
+            {t(`pos.${pos}`)}
+          </option>
+        ))}
       </select>
     </div>
   );

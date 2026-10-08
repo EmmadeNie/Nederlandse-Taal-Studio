@@ -61,7 +61,7 @@ export const updateLesson = (id, patch) =>
 export async function deleteLesson(id) {
   const { error } = await supabase.from("lessons").delete().eq("id", id);
   if (error?.code === "23503") {
-    throw new Error("Deze les staat nog op een leerpad. Haal hem daar eerst af.");
+    throw new Error("lp.err.lessonInUse");
   }
   if (error) throw new Error(error.message);
 }
@@ -160,7 +160,7 @@ export async function planLesson(lessonId, studentId) {
   await ensureLeerpad(studentId);
   const { lanes, steps } = await loadLeerpad(studentId);
   if (steps.some((s) => s.lesson_id === lessonId)) {
-    throw new Error("Deze les staat al op dit leerpad.");
+    throw new Error("lp.err.alreadyPlanned");
   }
   const lane = lanes[0];
   const inLane = steps.filter((s) => s.lane_id === lane.id);
