@@ -1,34 +1,1338 @@
 [
-{"id":"sentence.hij-wil-eten-bestellen","nl":"Hij wil eten bestellen.","en":"He wants to order food.","introducedAtLevel":"A2","difficulty":2,"themes":["eten"],"grammarTags":["modale-werkwoorden","tegenwoordige-tijd"],"tense":"tegenwoordige-tijd","sentenceType":"statement","wordOrder":"svo","wordIds":["word.willen","word.eten"],"focusWordIds":["word.willen"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.zij-drinken-een-biertje","nl":"Zij drinken een biertje.","en":"They are drinking a beer.","introducedAtLevel":"A1","difficulty":1,"themes":["eten"],"grammarTags":["tegenwoordige-tijd"],"tense":"tegenwoordige-tijd","sentenceType":"statement","wordOrder":"svo","wordIds":["word.drinken","word.bier"],"focusWordIds":["word.drinken"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.wij-zien-de-vogels","nl":"Wij zien de vogels in de lucht.","en":"We see the birds in the sky.","introducedAtLevel":"A1","difficulty":2,"themes":["dieren","natuur"],"grammarTags":["tegenwoordige-tijd"],"tense":"tegenwoordige-tijd","sentenceType":"statement","wordOrder":"svo","wordIds":["word.zien","word.vogel"],"focusWordIds":["word.zien"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.wij-hebben-zonsondergang-gezien","nl":"We hebben een prachtige zonsondergang gezien.","en":"We saw a beautiful sunset.","introducedAtLevel":"A2","difficulty":3,"themes":["natuur"],"grammarTags":["perfectum"],"tense":"perfectum","sentenceType":"statement","wordOrder":"svo","wordIds":["word.zien"],"focusWordIds":["word.zien"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.meisje-heeft-tanden-gepoetst","nl":"Het meisje heeft haar tanden gepoetst.","en":"The girl brushed her teeth.","introducedAtLevel":"A2","difficulty":2,"themes":["dagelijks-leven","badkamer"],"grammarTags":["perfectum"],"tense":"perfectum","sentenceType":"statement","wordOrder":"svo","wordIds":["word.meisje"],"focusWordIds":[],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.gisteren-slecht-geslapen","nl":"Gisteren heb ik slecht geslapen.","en":"Yesterday I slept badly.","introducedAtLevel":"A2","difficulty":3,"themes":["dagelijks-leven"],"grammarTags":["perfectum","inversie"],"tense":"perfectum","sentenceType":"statement","wordOrder":"inversion","wordIds":["word.slapen","word.slecht"],"focusWordIds":["word.slapen"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.jongen-en-meisje-moeten-lachen","nl":"De jongen en het meisje moeten lachen.","en":"The boy and the girl have to laugh.","introducedAtLevel":"A2","difficulty":2,"themes":["emoties"],"grammarTags":["modale-werkwoorden"],"tense":"tegenwoordige-tijd","sentenceType":"statement","wordOrder":"svo","wordIds":["word.jongen","word.meisje","word.lachen"],"focusWordIds":["word.lachen"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.moeder-kookt-voor-gasten","nl":"Mijn moeder kookt een diner voor haar gasten.","en":"My mother is cooking dinner for her guests.","introducedAtLevel":"A2","difficulty":2,"themes":["eten","familie"],"grammarTags":["tegenwoordige-tijd"],"tense":"tegenwoordige-tijd","sentenceType":"statement","wordOrder":"svo","wordIds":["word.moeder","word.koken"],"focusWordIds":["word.koken"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.zijn-de-hemden-gestreken","nl":"Zijn de hemden gestreken?","en":"Have the shirts been ironed?","introducedAtLevel":"B1","difficulty":4,"themes":["huishouden"],"grammarTags":["perfectum","vragen","inversie"],"tense":"perfectum","sentenceType":"question","wordOrder":"inversion","wordIds":["word.hemd"],"focusWordIds":[],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.hoe-heet-je","nl":"Hoe heet je?","en":"What's your name?","introducedAtLevel":"A0","difficulty":1,"themes":["communicatie"],"grammarTags":["vragen","tegenwoordige-tijd"],"tense":"tegenwoordige-tijd","sentenceType":"question","wordOrder":"inversion","wordIds":["word.naam"],"focusWordIds":[],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.mijn-naam-is-emma","nl":"Mijn naam is Emma.","en":"My name is Emma.","introducedAtLevel":"A0","difficulty":1,"themes":["communicatie"],"grammarTags":["tegenwoordige-tijd"],"tense":"tegenwoordige-tijd","sentenceType":"statement","wordOrder":"svo","wordIds":["word.naam","word.zijn"],"focusWordIds":["word.naam"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.waar-woon-je","nl":"Waar woon je?","en":"Where do you live?","introducedAtLevel":"A0","difficulty":1,"themes":["plaatsen","communicatie"],"grammarTags":["vragen","tegenwoordige-tijd"],"tense":"tegenwoordige-tijd","sentenceType":"question","wordOrder":"inversion","wordIds":["word.wonen"],"focusWordIds":["word.wonen"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.ik-woon-in-rotterdam","nl":"Ik woon in Rotterdam.","en":"I live in Rotterdam.","introducedAtLevel":"A0","difficulty":1,"themes":["plaatsen"],"grammarTags":["tegenwoordige-tijd"],"tense":"tegenwoordige-tijd","sentenceType":"statement","wordOrder":"svo","wordIds":["word.wonen"],"focusWordIds":["word.wonen"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.wat-is-je-adres","nl":"Wat is je adres?","en":"What is your address?","introducedAtLevel":"A0","difficulty":1,"themes":["communicatie","plaatsen"],"grammarTags":["vragen","tegenwoordige-tijd"],"tense":"tegenwoordige-tijd","sentenceType":"question","wordOrder":"inversion","wordIds":["word.adres","word.zijn"],"focusWordIds":["word.adres"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.woon-je-in-de-buurt","nl":"Woon je in de buurt?","en":"Do you live nearby?","introducedAtLevel":"A0","difficulty":1,"themes":["plaatsen"],"grammarTags":["vragen","tegenwoordige-tijd"],"tense":"tegenwoordige-tijd","sentenceType":"question","wordOrder":"inversion","wordIds":["word.wonen","word.buurt"],"focusWordIds":["word.wonen"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.ik-versta-je-niet","nl":"Ik versta je niet.","en":"I don't understand you.","introducedAtLevel":"A0","difficulty":1,"themes":["communicatie"],"grammarTags":["ontkenning","tegenwoordige-tijd"],"tense":"tegenwoordige-tijd","sentenceType":"negation","wordOrder":"svo","wordIds":["word.verstaan"],"focusWordIds":["word.verstaan"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.ik-spreek-geen-nederlands","nl":"Ik spreek geen Nederlands.","en":"I don't speak Dutch.","introducedAtLevel":"A0","difficulty":1,"themes":["communicatie"],"grammarTags":["ontkenning","tegenwoordige-tijd"],"tense":"tegenwoordige-tijd","sentenceType":"negation","wordOrder":"svo","wordIds":["word.spreken"],"focusWordIds":["word.spreken"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.spreek-je-nederlands","nl":"Spreek je Nederlands?","en":"Do you speak Dutch?","introducedAtLevel":"A0","difficulty":1,"themes":["communicatie"],"grammarTags":["vragen","tegenwoordige-tijd"],"tense":"tegenwoordige-tijd","sentenceType":"question","wordOrder":"inversion","wordIds":["word.spreken"],"focusWordIds":["word.spreken"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.wat-een-mooi-weer-vandaag","nl":"Wat een mooi weer vandaag!","en":"What nice weather today!","introducedAtLevel":"A0","difficulty":2,"themes":["weer","dagelijks-leven"],"grammarTags":[],"tense":"tegenwoordige-tijd","sentenceType":"statement","wordOrder":"svo","wordIds":["word.mooi","word.weer","word.vandaag"],"focusWordIds":["word.weer"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.kom-je-hier-vaak","nl":"Kom je hier vaak?","en":"Do you come here often?","introducedAtLevel":"A0","difficulty":2,"themes":["communicatie","dagelijks-leven"],"grammarTags":["vragen","tegenwoordige-tijd"],"tense":"tegenwoordige-tijd","sentenceType":"question","wordOrder":"inversion","wordIds":["word.komen","word.vaak"],"focusWordIds":["word.komen"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.ik-wandel-hier-bijna-elke-dag","nl":"Ik wandel hier bijna elke dag.","en":"I walk here almost every day.","introducedAtLevel":"A0","difficulty":2,"themes":["beweging","dagelijks-leven"],"grammarTags":["tegenwoordige-tijd"],"tense":"tegenwoordige-tijd","sentenceType":"statement","wordOrder":"svo","wordIds":["word.wandelen","word.bijna","word.dag"],"focusWordIds":["word.wandelen"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.heb-je-een-hond","nl":"Heb je een hond?","en":"Do you have a dog?","introducedAtLevel":"A0","difficulty":1,"themes":["dieren","communicatie"],"grammarTags":["vragen","tegenwoordige-tijd"],"tense":"tegenwoordige-tijd","sentenceType":"question","wordOrder":"inversion","wordIds":["word.hebben","word.hond"],"focusWordIds":["word.hebben"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.wat-doe-je-voor-werk","nl":"Wat doe je voor werk?","en":"What do you do for work?","introducedAtLevel":"A0","difficulty":2,"themes":["werk","communicatie"],"grammarTags":["vragen","tegenwoordige-tijd"],"tense":"tegenwoordige-tijd","sentenceType":"question","wordOrder":"inversion","wordIds":["word.doen","word.werk"],"focusWordIds":["word.doen"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.ik-werk-in-een-cafe","nl":"Ik werk in een café in het centrum.","en":"I work in a café in the city centre.","introducedAtLevel":"A0","difficulty":2,"themes":["werk","plaatsen"],"grammarTags":["tegenwoordige-tijd"],"tense":"tegenwoordige-tijd","sentenceType":"statement","wordOrder":"svo","wordIds":["word.werken","word.cafe","word.centrum"],"focusWordIds":["word.werken"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.b1-omdat-morgen-werken","nl":"Ik ga vanavond vroeg naar bed, omdat ik morgen vroeg moet werken.","en":"I'm going to bed early tonight because I have to work early tomorrow.","introducedAtLevel":"B1","difficulty":3,"themes":["werk","dagelijks-leven"],"grammarTags":["bijzin","voegwoorden","modale-werkwoorden","woordvolgorde"],"tense":"tegenwoordige-tijd","sentenceType":"statement","wordOrder":"subordinate","wordIds":["word.gaan","word.werken"],"focusWordIds":["word.werken"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.b1-hoewel-moe-wandelen","nl":"Hoewel ik moe ben, ga ik toch wandelen.","en":"Although I'm tired, I'm still going for a walk.","introducedAtLevel":"B1","difficulty":3,"themes":["dagelijks-leven","beweging"],"grammarTags":["bijzin","voegwoorden","inversie","woordvolgorde"],"tense":"tegenwoordige-tijd","sentenceType":"statement","wordOrder":"subordinate","wordIds":["word.zijn","word.gaan","word.wandelen"],"focusWordIds":["word.wandelen"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.b1-terwijl-koffie-krant","nl":"Terwijl ik koffie drink, lees ik de krant.","en":"While I drink coffee, I read the newspaper.","introducedAtLevel":"B1","difficulty":3,"themes":["dagelijks-leven"],"grammarTags":["bijzin","voegwoorden","inversie","woordvolgorde"],"tense":"tegenwoordige-tijd","sentenceType":"statement","wordOrder":"subordinate","wordIds":["word.drinken","word.koffie","word.lezen","word.krant"],"focusWordIds":["word.lezen"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.b1-tenzij-slecht-weer","nl":"We gaan wandelen, tenzij het slecht weer is.","en":"We're going for a walk unless the weather is bad.","introducedAtLevel":"B1","difficulty":4,"themes":["weer","beweging"],"grammarTags":["bijzin","voegwoorden","woordvolgorde"],"tense":"tegenwoordige-tijd","sentenceType":"statement","wordOrder":"subordinate","wordIds":["word.gaan","word.wandelen","word.slecht","word.weer","word.zijn"],"focusWordIds":["word.wandelen"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.b1-daarom-werk-ik-thuis","nl":"Het weer is slecht, daarom werk ik vandaag thuis.","en":"The weather is bad, so I'm working from home today.","introducedAtLevel":"B1","difficulty":3,"themes":["werk","weer"],"grammarTags":["voegwoorden","inversie"],"tense":"tegenwoordige-tijd","sentenceType":"statement","wordOrder":"inversion","wordIds":["word.weer","word.slecht","word.werken","word.vandaag"],"focusWordIds":["word.werken"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.b1-om-beter-te-communiceren","nl":"Ik leer Nederlands om beter te kunnen communiceren.","en":"I'm learning Dutch in order to communicate better.","introducedAtLevel":"B1","difficulty":4,"themes":["school","communicatie"],"grammarTags":["om-te","te-infinitief","modale-werkwoorden"],"tense":"tegenwoordige-tijd","sentenceType":"statement","wordOrder":"svo","wordIds":["word.leren","word.kunnen"],"focusWordIds":["word.leren"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.b1-had-boek-gelezen","nl":"Ik had het boek al gelezen voordat we erover spraken.","en":"I had already read the book before we talked about it.","introducedAtLevel":"B1","difficulty":4,"themes":["communicatie","vrije-tijd"],"grammarTags":["plusquamperfectum","bijzin","voegwoorden"],"tense":"plusquamperfectum","sentenceType":"statement","wordOrder":"subordinate","wordIds":["word.hebben","word.boek","word.lezen","word.spreken"],"focusWordIds":["word.lezen"],"reviewStatus":"ai-reviewed"},
-{"id":"sentence.b1-als-meer-tijd-had","nl":"Als ik meer tijd had, zou ik vaker sporten.","en":"If I had more time, I would exercise more often.","introducedAtLevel":"B1","difficulty":4,"themes":["sport","dagelijks-leven"],"grammarTags":["bijzin","voegwoorden","woordvolgorde"],"tense":"verleden-tijd","sentenceType":"statement","wordOrder":"subordinate","wordIds":["word.hebben","word.vaak"],"focusWordIds":[],"reviewStatus":"ai-reviewed"}
+  {
+    "id": "sentence.hij-wil-eten-bestellen",
+    "nl": "Hij wil eten bestellen.",
+    "en": "He wants to order food.",
+    "introducedAtLevel": "A2",
+    "difficulty": 2,
+    "themes": [
+      "eten"
+    ],
+    "grammarTags": [
+      "modale-werkwoorden",
+      "tegenwoordige-tijd"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.willen",
+      "word.eten"
+    ],
+    "focusWordIds": [
+      "word.willen"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.zij-drinken-een-biertje",
+    "nl": "Zij drinken een biertje.",
+    "en": "They are drinking a beer.",
+    "introducedAtLevel": "A1",
+    "difficulty": 1,
+    "themes": [
+      "eten"
+    ],
+    "grammarTags": [
+      "tegenwoordige-tijd"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.drinken",
+      "word.bier"
+    ],
+    "focusWordIds": [
+      "word.drinken"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.wij-zien-de-vogels",
+    "nl": "Wij zien de vogels in de lucht.",
+    "en": "We see the birds in the sky.",
+    "introducedAtLevel": "A1",
+    "difficulty": 2,
+    "themes": [
+      "dieren",
+      "natuur"
+    ],
+    "grammarTags": [
+      "tegenwoordige-tijd"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.zien",
+      "word.vogel"
+    ],
+    "focusWordIds": [
+      "word.zien"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.wij-hebben-zonsondergang-gezien",
+    "nl": "We hebben een prachtige zonsondergang gezien.",
+    "en": "We saw a beautiful sunset.",
+    "introducedAtLevel": "A2",
+    "difficulty": 3,
+    "themes": [
+      "natuur"
+    ],
+    "grammarTags": [
+      "perfectum"
+    ],
+    "tense": "perfectum",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.zien"
+    ],
+    "focusWordIds": [
+      "word.zien"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.meisje-heeft-tanden-gepoetst",
+    "nl": "Het meisje heeft haar tanden gepoetst.",
+    "en": "The girl brushed her teeth.",
+    "introducedAtLevel": "A2",
+    "difficulty": 2,
+    "themes": [
+      "dagelijks-leven",
+      "badkamer"
+    ],
+    "grammarTags": [
+      "perfectum"
+    ],
+    "tense": "perfectum",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.meisje"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.gisteren-slecht-geslapen",
+    "nl": "Gisteren heb ik slecht geslapen.",
+    "en": "Yesterday I slept badly.",
+    "introducedAtLevel": "A2",
+    "difficulty": 3,
+    "themes": [
+      "dagelijks-leven"
+    ],
+    "grammarTags": [
+      "perfectum",
+      "inversie"
+    ],
+    "tense": "perfectum",
+    "sentenceType": "statement",
+    "wordOrder": "inversion",
+    "wordIds": [
+      "word.slapen",
+      "word.slecht"
+    ],
+    "focusWordIds": [
+      "word.slapen"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.jongen-en-meisje-moeten-lachen",
+    "nl": "De jongen en het meisje moeten lachen.",
+    "en": "The boy and the girl have to laugh.",
+    "introducedAtLevel": "A2",
+    "difficulty": 2,
+    "themes": [
+      "emoties"
+    ],
+    "grammarTags": [
+      "modale-werkwoorden"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.jongen",
+      "word.meisje",
+      "word.lachen"
+    ],
+    "focusWordIds": [
+      "word.lachen"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.moeder-kookt-voor-gasten",
+    "nl": "Mijn moeder kookt een diner voor haar gasten.",
+    "en": "My mother is cooking dinner for her guests.",
+    "introducedAtLevel": "A2",
+    "difficulty": 2,
+    "themes": [
+      "eten",
+      "familie"
+    ],
+    "grammarTags": [
+      "tegenwoordige-tijd"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.moeder",
+      "word.koken"
+    ],
+    "focusWordIds": [
+      "word.koken"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.zijn-de-hemden-gestreken",
+    "nl": "Zijn de hemden gestreken?",
+    "en": "Have the shirts been ironed?",
+    "introducedAtLevel": "B1",
+    "difficulty": 4,
+    "themes": [
+      "huishouden"
+    ],
+    "grammarTags": [
+      "perfectum",
+      "vragen",
+      "inversie"
+    ],
+    "tense": "perfectum",
+    "sentenceType": "question",
+    "wordOrder": "inversion",
+    "wordIds": [
+      "word.hemd"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.hoe-heet-je",
+    "nl": "Hoe heet je?",
+    "en": "What's your name?",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "communicatie"
+    ],
+    "grammarTags": [
+      "vragen",
+      "tegenwoordige-tijd"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "question",
+    "wordOrder": "inversion",
+    "wordIds": [
+      "word.naam"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.mijn-naam-is-emma",
+    "nl": "Mijn naam is Emma.",
+    "en": "My name is Emma.",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "communicatie"
+    ],
+    "grammarTags": [
+      "tegenwoordige-tijd"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.naam",
+      "word.zijn"
+    ],
+    "focusWordIds": [
+      "word.naam"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.waar-woon-je",
+    "nl": "Waar woon je?",
+    "en": "Where do you live?",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "plaatsen",
+      "communicatie"
+    ],
+    "grammarTags": [
+      "vragen",
+      "tegenwoordige-tijd"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "question",
+    "wordOrder": "inversion",
+    "wordIds": [
+      "word.wonen"
+    ],
+    "focusWordIds": [
+      "word.wonen"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.ik-woon-in-rotterdam",
+    "nl": "Ik woon in Rotterdam.",
+    "en": "I live in Rotterdam.",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "plaatsen"
+    ],
+    "grammarTags": [
+      "tegenwoordige-tijd"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.wonen"
+    ],
+    "focusWordIds": [
+      "word.wonen"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.wat-is-je-adres",
+    "nl": "Wat is je adres?",
+    "en": "What is your address?",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "communicatie",
+      "plaatsen"
+    ],
+    "grammarTags": [
+      "vragen",
+      "tegenwoordige-tijd"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "question",
+    "wordOrder": "inversion",
+    "wordIds": [
+      "word.adres",
+      "word.zijn"
+    ],
+    "focusWordIds": [
+      "word.adres"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.woon-je-in-de-buurt",
+    "nl": "Woon je in de buurt?",
+    "en": "Do you live nearby?",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "plaatsen"
+    ],
+    "grammarTags": [
+      "vragen",
+      "tegenwoordige-tijd"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "question",
+    "wordOrder": "inversion",
+    "wordIds": [
+      "word.wonen",
+      "word.buurt"
+    ],
+    "focusWordIds": [
+      "word.wonen"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.ik-versta-je-niet",
+    "nl": "Ik versta je niet.",
+    "en": "I don't understand you.",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "communicatie"
+    ],
+    "grammarTags": [
+      "ontkenning",
+      "tegenwoordige-tijd"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "negation",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.verstaan"
+    ],
+    "focusWordIds": [
+      "word.verstaan"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.ik-spreek-geen-nederlands",
+    "nl": "Ik spreek geen Nederlands.",
+    "en": "I don't speak Dutch.",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "communicatie"
+    ],
+    "grammarTags": [
+      "ontkenning",
+      "tegenwoordige-tijd"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "negation",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.spreken"
+    ],
+    "focusWordIds": [
+      "word.spreken"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.spreek-je-nederlands",
+    "nl": "Spreek je Nederlands?",
+    "en": "Do you speak Dutch?",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "communicatie"
+    ],
+    "grammarTags": [
+      "vragen",
+      "tegenwoordige-tijd"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "question",
+    "wordOrder": "inversion",
+    "wordIds": [
+      "word.spreken"
+    ],
+    "focusWordIds": [
+      "word.spreken"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.wat-een-mooi-weer-vandaag",
+    "nl": "Wat een mooi weer vandaag!",
+    "en": "What nice weather today!",
+    "introducedAtLevel": "A0",
+    "difficulty": 2,
+    "themes": [
+      "weer",
+      "dagelijks-leven"
+    ],
+    "grammarTags": [],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.mooi",
+      "word.weer",
+      "word.vandaag"
+    ],
+    "focusWordIds": [
+      "word.weer"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.kom-je-hier-vaak",
+    "nl": "Kom je hier vaak?",
+    "en": "Do you come here often?",
+    "introducedAtLevel": "A0",
+    "difficulty": 2,
+    "themes": [
+      "communicatie",
+      "dagelijks-leven"
+    ],
+    "grammarTags": [
+      "vragen",
+      "tegenwoordige-tijd"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "question",
+    "wordOrder": "inversion",
+    "wordIds": [
+      "word.komen",
+      "word.vaak"
+    ],
+    "focusWordIds": [
+      "word.komen"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.ik-wandel-hier-bijna-elke-dag",
+    "nl": "Ik wandel hier bijna elke dag.",
+    "en": "I walk here almost every day.",
+    "introducedAtLevel": "A0",
+    "difficulty": 2,
+    "themes": [
+      "beweging",
+      "dagelijks-leven"
+    ],
+    "grammarTags": [
+      "tegenwoordige-tijd"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.wandelen",
+      "word.bijna",
+      "word.dag"
+    ],
+    "focusWordIds": [
+      "word.wandelen"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.heb-je-een-hond",
+    "nl": "Heb je een hond?",
+    "en": "Do you have a dog?",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "dieren",
+      "communicatie"
+    ],
+    "grammarTags": [
+      "vragen",
+      "tegenwoordige-tijd"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "question",
+    "wordOrder": "inversion",
+    "wordIds": [
+      "word.hebben",
+      "word.hond"
+    ],
+    "focusWordIds": [
+      "word.hebben"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.wat-doe-je-voor-werk",
+    "nl": "Wat doe je voor werk?",
+    "en": "What do you do for work?",
+    "introducedAtLevel": "A0",
+    "difficulty": 2,
+    "themes": [
+      "werk",
+      "communicatie"
+    ],
+    "grammarTags": [
+      "vragen",
+      "tegenwoordige-tijd"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "question",
+    "wordOrder": "inversion",
+    "wordIds": [
+      "word.doen",
+      "word.werk"
+    ],
+    "focusWordIds": [
+      "word.doen"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.ik-werk-in-een-cafe",
+    "nl": "Ik werk in een café in het centrum.",
+    "en": "I work in a café in the city centre.",
+    "introducedAtLevel": "A0",
+    "difficulty": 2,
+    "themes": [
+      "werk",
+      "plaatsen"
+    ],
+    "grammarTags": [
+      "tegenwoordige-tijd"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.werken",
+      "word.cafe",
+      "word.centrum"
+    ],
+    "focusWordIds": [
+      "word.werken"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.b1-omdat-morgen-werken",
+    "nl": "Ik ga vanavond vroeg naar bed, omdat ik morgen vroeg moet werken.",
+    "en": "I'm going to bed early tonight because I have to work early tomorrow.",
+    "introducedAtLevel": "B1",
+    "difficulty": 3,
+    "themes": [
+      "werk",
+      "dagelijks-leven"
+    ],
+    "grammarTags": [
+      "bijzin",
+      "voegwoorden",
+      "modale-werkwoorden",
+      "woordvolgorde"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "subordinate",
+    "wordIds": [
+      "word.gaan",
+      "word.werken"
+    ],
+    "focusWordIds": [
+      "word.werken"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.b1-hoewel-moe-wandelen",
+    "nl": "Hoewel ik moe ben, ga ik toch wandelen.",
+    "en": "Although I'm tired, I'm still going for a walk.",
+    "introducedAtLevel": "B1",
+    "difficulty": 3,
+    "themes": [
+      "dagelijks-leven",
+      "beweging"
+    ],
+    "grammarTags": [
+      "bijzin",
+      "voegwoorden",
+      "inversie",
+      "woordvolgorde"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "subordinate",
+    "wordIds": [
+      "word.zijn",
+      "word.gaan",
+      "word.wandelen"
+    ],
+    "focusWordIds": [
+      "word.wandelen"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.b1-terwijl-koffie-krant",
+    "nl": "Terwijl ik koffie drink, lees ik de krant.",
+    "en": "While I drink coffee, I read the newspaper.",
+    "introducedAtLevel": "B1",
+    "difficulty": 3,
+    "themes": [
+      "dagelijks-leven"
+    ],
+    "grammarTags": [
+      "bijzin",
+      "voegwoorden",
+      "inversie",
+      "woordvolgorde"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "subordinate",
+    "wordIds": [
+      "word.drinken",
+      "word.koffie",
+      "word.lezen",
+      "word.krant"
+    ],
+    "focusWordIds": [
+      "word.lezen"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.b1-tenzij-slecht-weer",
+    "nl": "We gaan wandelen, tenzij het slecht weer is.",
+    "en": "We're going for a walk unless the weather is bad.",
+    "introducedAtLevel": "B1",
+    "difficulty": 4,
+    "themes": [
+      "weer",
+      "beweging"
+    ],
+    "grammarTags": [
+      "bijzin",
+      "voegwoorden",
+      "woordvolgorde"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "subordinate",
+    "wordIds": [
+      "word.gaan",
+      "word.wandelen",
+      "word.slecht",
+      "word.weer",
+      "word.zijn"
+    ],
+    "focusWordIds": [
+      "word.wandelen"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.b1-daarom-werk-ik-thuis",
+    "nl": "Het weer is slecht, daarom werk ik vandaag thuis.",
+    "en": "The weather is bad, so I'm working from home today.",
+    "introducedAtLevel": "B1",
+    "difficulty": 3,
+    "themes": [
+      "werk",
+      "weer"
+    ],
+    "grammarTags": [
+      "voegwoorden",
+      "inversie"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "inversion",
+    "wordIds": [
+      "word.weer",
+      "word.slecht",
+      "word.werken",
+      "word.vandaag"
+    ],
+    "focusWordIds": [
+      "word.werken"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.b1-om-beter-te-communiceren",
+    "nl": "Ik leer Nederlands om beter te kunnen communiceren.",
+    "en": "I'm learning Dutch in order to communicate better.",
+    "introducedAtLevel": "B1",
+    "difficulty": 4,
+    "themes": [
+      "school",
+      "communicatie"
+    ],
+    "grammarTags": [
+      "om-te",
+      "te-infinitief",
+      "modale-werkwoorden"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.leren",
+      "word.kunnen"
+    ],
+    "focusWordIds": [
+      "word.leren"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.b1-had-boek-gelezen",
+    "nl": "Ik had het boek al gelezen voordat we erover spraken.",
+    "en": "I had already read the book before we talked about it.",
+    "introducedAtLevel": "B1",
+    "difficulty": 4,
+    "themes": [
+      "communicatie",
+      "vrije-tijd"
+    ],
+    "grammarTags": [
+      "plusquamperfectum",
+      "bijzin",
+      "voegwoorden"
+    ],
+    "tense": "plusquamperfectum",
+    "sentenceType": "statement",
+    "wordOrder": "subordinate",
+    "wordIds": [
+      "word.hebben",
+      "word.boek",
+      "word.lezen",
+      "word.spreken"
+    ],
+    "focusWordIds": [
+      "word.lezen"
+    ],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.b1-als-meer-tijd-had",
+    "nl": "Als ik meer tijd had, zou ik vaker sporten.",
+    "en": "If I had more time, I would exercise more often.",
+    "introducedAtLevel": "B1",
+    "difficulty": 4,
+    "themes": [
+      "sport",
+      "dagelijks-leven"
+    ],
+    "grammarTags": [
+      "bijzin",
+      "voegwoorden",
+      "woordvolgorde"
+    ],
+    "tense": "verleden-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "subordinate",
+    "wordIds": [
+      "word.hebben",
+      "word.vaak"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.hoi",
+    "nl": "Hoi!",
+    "en": "Hi!",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "communicatie"
+    ],
+    "grammarTags": [],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.hoi"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.hoe-gaat-het",
+    "nl": "Hoe gaat het?",
+    "en": "How are you?",
+    "introducedAtLevel": "A0",
+    "difficulty": 2,
+    "themes": [
+      "communicatie"
+    ],
+    "grammarTags": [
+      "vragen"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "question",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.hoe"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.weet-je-waar-de-supermarkt-is",
+    "nl": "Weet je waar de supermarkt is?",
+    "en": "Do you know where the supermarket is?",
+    "introducedAtLevel": "A0",
+    "difficulty": 2,
+    "themes": [
+      "plaatsen"
+    ],
+    "grammarTags": [
+      "vragen"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "question",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.waar",
+      "word.supermarkt"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.aan-het-einde-van-de-straat-aan-je-linkerkant",
+    "nl": "Aan het einde van de straat, aan je linkerkant.",
+    "en": "At the end of the street, on your left.",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "plaatsen"
+    ],
+    "grammarTags": [],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.straat"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.ja",
+    "nl": "Ja.",
+    "en": "Yes.",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "communicatie"
+    ],
+    "grammarTags": [],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.ja"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.nee",
+    "nl": "Nee.",
+    "en": "No.",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "communicatie"
+    ],
+    "grammarTags": [],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.nee"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.alsjeblieft",
+    "nl": "Alsjeblieft.",
+    "en": "Please / Here you go.",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "communicatie"
+    ],
+    "grammarTags": [],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.alsjeblieft"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.dankjewel",
+    "nl": "Dankjewel.",
+    "en": "Thank you.",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "communicatie"
+    ],
+    "grammarTags": [],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.dankjewel"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.goedenavond",
+    "nl": "Goedenavond.",
+    "en": "Good evening.",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "communicatie"
+    ],
+    "grammarTags": [],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.goedenavond"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.goedemorgen",
+    "nl": "Goedemorgen.",
+    "en": "Good morning.",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "communicatie"
+    ],
+    "grammarTags": [],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.goedemorgen"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.pardon",
+    "nl": "Pardon.",
+    "en": "Excuse me.",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "communicatie"
+    ],
+    "grammarTags": [],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.pardon"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.het-spijt-me",
+    "nl": "Het spijt me.",
+    "en": "I'm sorry.",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "communicatie"
+    ],
+    "grammarTags": [],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.spijt"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.welterusten",
+    "nl": "Welterusten.",
+    "en": "Good night.",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "communicatie"
+    ],
+    "grammarTags": [],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.welterusten"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.slaap-lekker",
+    "nl": "Slaap lekker.",
+    "en": "Sleep well.",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "communicatie"
+    ],
+    "grammarTags": [],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.tot-ziens",
+    "nl": "Tot ziens!",
+    "en": "Goodbye!",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "communicatie"
+    ],
+    "grammarTags": [],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.ik-versta-nederlands",
+    "nl": "Ik versta Nederlands.",
+    "en": "I understand Dutch.",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "communicatie"
+    ],
+    "grammarTags": [],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.maar-ik-spreek-geen-nederlands",
+    "nl": "Maar ik spreek geen Nederlands.",
+    "en": "But I don't speak Dutch.",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "communicatie"
+    ],
+    "grammarTags": [],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.maar",
+      "word.geen"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.mag-ik-hier-zitten",
+    "nl": "Mag ik hier zitten?",
+    "en": "May I sit here?",
+    "introducedAtLevel": "A0",
+    "difficulty": 2,
+    "themes": [
+      "communicatie"
+    ],
+    "grammarTags": [
+      "vragen"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "question",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.hier",
+      "word.zitten"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.natuurlijk-ga-je-gang",
+    "nl": "Natuurlijk, ga je gang.",
+    "en": "Of course, go ahead.",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "communicatie"
+    ],
+    "grammarTags": [],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.natuurlijk"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.ja-hij-heet-max",
+    "nl": "Ja, hij heet Max.",
+    "en": "Yes, his name is Max.",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "dieren"
+    ],
+    "grammarTags": [],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.ja"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.hoe-oud-is-hij",
+    "nl": "Hoe oud is hij?",
+    "en": "How old is he?",
+    "introducedAtLevel": "A0",
+    "difficulty": 2,
+    "themes": [
+      "communicatie"
+    ],
+    "grammarTags": [
+      "vragen"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "question",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.hoe",
+      "word.oud"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.hij-is-drie-jaar-oud",
+    "nl": "Hij is drie jaar oud.",
+    "en": "He is three years old.",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "dieren"
+    ],
+    "grammarTags": [],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.drie",
+      "word.oud"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.mooie-dag-om-te-wandelen-he",
+    "nl": "Mooie dag om te wandelen, hè?",
+    "en": "Nice day for a walk, isn't it?",
+    "introducedAtLevel": "A0",
+    "difficulty": 2,
+    "themes": [
+      "weer"
+    ],
+    "grammarTags": [
+      "vragen"
+    ],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "question",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.dag",
+      "word.wandelen"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.ja-vijf-minuten-hier-vandaan",
+    "nl": "Ja, vijf minuten hier vandaan.",
+    "en": "Yes, five minutes from here.",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "plaatsen"
+    ],
+    "grammarTags": [],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.ja",
+      "word.vijf",
+      "word.hier"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.fijne-dag-nog",
+    "nl": "Fijne dag nog!",
+    "en": "Have a nice day!",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "communicatie"
+    ],
+    "grammarTags": [],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.dag"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.jij-ook-tot-ziens",
+    "nl": "Jij ook, tot ziens!",
+    "en": "You too, goodbye!",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "communicatie"
+    ],
+    "grammarTags": [],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "sentence.mijn-adres-is-voorbeeldstraat-12",
+    "nl": "Mijn adres is Voorbeeldstraat 12.",
+    "en": "My address is 12 Voorbeeldstraat.",
+    "introducedAtLevel": "A0",
+    "difficulty": 1,
+    "themes": [
+      "plaatsen"
+    ],
+    "grammarTags": [],
+    "tense": "tegenwoordige-tijd",
+    "sentenceType": "statement",
+    "wordOrder": "svo",
+    "wordIds": [
+      "word.adres"
+    ],
+    "focusWordIds": [],
+    "reviewStatus": "ai-reviewed"
+  }
 ]
