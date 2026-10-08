@@ -1032,3 +1032,47 @@
   background: var(--surface);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
+
+/* ----- Bibliotheek / Library ----- */
+.library-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.25rem;
+}
+
+.library-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  padding: 0.55rem 0.8rem;
+  color: var(--text-dim);
+  font-size: 0.875rem;
+}
+
+.library-tabs button:hover {
+  color: var(--text);
+}
+
+.library-tabs button.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.library-tabs .badge {
+  font-size: 0.7rem;
+  background: var(--surface-2);
+  color: var(--text-dim);
+  padding: 0.05rem 0.4rem;
+  border-radius: 99px;
+}
+
+/* The tab names the section, so the browser's own page title is not repeated. */
+.library-panel > div > h2:first-child {
+  display: none;
+}
