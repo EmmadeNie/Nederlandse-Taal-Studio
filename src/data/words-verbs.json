@@ -33,7 +33,11 @@
         "participle": "regular"
       }
     },
-    "reviewStatus": "ai-reviewed"
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
   },
   {
     "id": "word.bellen",
@@ -139,7 +143,11 @@
         "participle": "irregular"
       }
     },
-    "reviewStatus": "ai-reviewed"
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
   },
   {
     "id": "word.schrijven",
@@ -351,7 +359,11 @@
         "participle": "regular"
       }
     },
-    "reviewStatus": "ai-reviewed"
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
   },
   {
     "id": "word.springen",
@@ -422,7 +434,11 @@
       }
     },
     "reviewStatus": "ai-reviewed",
-    "reviewNotes": "Gemengd werkwoord: klinkerwisseling (bracht) maar dentale uitgang -t/-cht."
+    "reviewNotes": "Gemengd werkwoord: klinkerwisseling (bracht) maar dentale uitgang -t/-cht.",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
   },
   {
     "id": "word.vallen",
@@ -922,7 +938,11 @@
         "participle": "irregular"
       }
     },
-    "reviewStatus": "ai-reviewed"
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
   },
   {
     "id": "word.lezen",
@@ -957,7 +977,11 @@
         "participle": "irregular"
       }
     },
-    "reviewStatus": "ai-reviewed"
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
   },
   {
     "id": "word.spreken",
@@ -1034,7 +1058,7 @@
     "nl": "werken",
     "en": "to work",
     "partOfSpeech": "verb",
-    "introducedAtLevel": "A0",
+    "introducedAtLevel": "A1",
     "themes": [
       "werk"
     ],
@@ -1062,7 +1086,11 @@
         "participle": "regular"
       }
     },
-    "reviewStatus": "ai-reviewed"
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
   },
   {
     "id": "word.leren",
@@ -1097,14 +1125,18 @@
         "participle": "regular"
       }
     },
-    "reviewStatus": "ai-reviewed"
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
   },
   {
     "id": "word.wonen",
     "nl": "wonen",
     "en": "to live",
     "partOfSpeech": "verb",
-    "introducedAtLevel": "A0",
+    "introducedAtLevel": "A1",
     "themes": [
       "dagelijks-leven",
       "plaatsen"
@@ -1133,7 +1165,11 @@
         "participle": "regular"
       }
     },
-    "reviewStatus": "ai-reviewed"
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
   },
   {
     "id": "word.afwassen",
@@ -1248,7 +1284,7 @@
     "nl": "spelen",
     "en": "to play",
     "partOfSpeech": "verb",
-    "introducedAtLevel": "A0",
+    "introducedAtLevel": "A1",
     "themes": [
       "vrije-tijd"
     ],
@@ -1276,6 +1312,829 @@
         "participle": "regular"
       }
     },
-    "reviewStatus": "ai-reviewed"
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
+  },
+  {
+    "id": "word.praten",
+    "nl": "praten",
+    "en": "to talk",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A1",
+    "themes": [
+      "communicatie"
+    ],
+    "tags": [
+      "regelmatig-ww"
+    ],
+    "conjugation": {
+      "infinitive": "praten",
+      "stem": "praat",
+      "present": {
+        "ik": "praat",
+        "jij": "praat",
+        "hij": "praat",
+        "wij": "praten"
+      },
+      "past": {
+        "singular": "praatte",
+        "plural": "praatten"
+      },
+      "participle": "gepraat",
+      "auxiliary": "hebben",
+      "regularity": {
+        "present": "regular",
+        "past": "regular",
+        "participle": "regular"
+      }
+    },
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
+  },
+  {
+    "id": "word.luisteren",
+    "nl": "luisteren",
+    "en": "to listen",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A1",
+    "themes": [
+      "communicatie"
+    ],
+    "tags": [
+      "regelmatig-ww"
+    ],
+    "conjugation": {
+      "infinitive": "luisteren",
+      "stem": "luister",
+      "present": {
+        "ik": "luister",
+        "jij": "luistert",
+        "hij": "luistert",
+        "wij": "luisteren"
+      },
+      "past": {
+        "singular": "luisterde",
+        "plural": "luisterden"
+      },
+      "participle": "geluisterd",
+      "auxiliary": "hebben",
+      "regularity": {
+        "present": "regular",
+        "past": "regular",
+        "participle": "regular"
+      }
+    },
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
+  },
+  {
+    "id": "word.openen",
+    "nl": "openen",
+    "en": "to open",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A1",
+    "themes": [
+      "dagelijks-leven"
+    ],
+    "tags": [
+      "regelmatig-ww"
+    ],
+    "conjugation": {
+      "infinitive": "openen",
+      "stem": "open",
+      "present": {
+        "ik": "open",
+        "jij": "opent",
+        "hij": "opent",
+        "wij": "openen"
+      },
+      "past": {
+        "singular": "opende",
+        "plural": "openden"
+      },
+      "participle": "geopend",
+      "auxiliary": "hebben",
+      "regularity": {
+        "present": "regular",
+        "past": "regular",
+        "participle": "regular"
+      }
+    },
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
+  },
+  {
+    "id": "word.rennen",
+    "nl": "rennen",
+    "en": "to run",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A1",
+    "themes": [
+      "beweging"
+    ],
+    "tags": [
+      "regelmatig-ww"
+    ],
+    "conjugation": {
+      "infinitive": "rennen",
+      "stem": "ren",
+      "present": {
+        "ik": "ren",
+        "jij": "rent",
+        "hij": "rent",
+        "wij": "rennen"
+      },
+      "past": {
+        "singular": "rende",
+        "plural": "renden"
+      },
+      "participle": "gerend",
+      "auxiliary": "hebben",
+      "regularity": {
+        "present": "regular",
+        "past": "regular",
+        "participle": "regular"
+      }
+    },
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
+  },
+  {
+    "id": "word.bestellen",
+    "nl": "bestellen",
+    "en": "to order",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A1",
+    "themes": [
+      "eten"
+    ],
+    "tags": [
+      "regelmatig-ww"
+    ],
+    "conjugation": {
+      "infinitive": "bestellen",
+      "stem": "bestel",
+      "present": {
+        "ik": "bestel",
+        "jij": "bestelt",
+        "hij": "bestelt",
+        "wij": "bestellen"
+      },
+      "past": {
+        "singular": "bestelde",
+        "plural": "bestelden"
+      },
+      "participle": "besteld",
+      "auxiliary": "hebben",
+      "regularity": {
+        "present": "regular",
+        "past": "regular",
+        "participle": "regular"
+      }
+    },
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
+  },
+  {
+    "id": "word.reizen",
+    "nl": "reizen",
+    "en": "to travel",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A1",
+    "themes": [
+      "vervoer"
+    ],
+    "tags": [
+      "regelmatig-ww"
+    ],
+    "conjugation": {
+      "infinitive": "reizen",
+      "stem": "reis",
+      "present": {
+        "ik": "reis",
+        "jij": "reist",
+        "hij": "reist",
+        "wij": "reizen"
+      },
+      "past": {
+        "singular": "reisde",
+        "plural": "reisden"
+      },
+      "participle": "gereisd",
+      "auxiliary": "hebben",
+      "regularity": {
+        "present": "regular",
+        "past": "regular",
+        "participle": "regular"
+      }
+    },
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
+  },
+  {
+    "id": "word.wassen",
+    "nl": "wassen",
+    "en": "to wash",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A1",
+    "themes": [
+      "huishouden"
+    ],
+    "tags": [
+      "onregelmatig-ww"
+    ],
+    "conjugation": {
+      "infinitive": "wassen",
+      "stem": "was",
+      "present": {
+        "ik": "was",
+        "jij": "wast",
+        "hij": "wast",
+        "wij": "wassen"
+      },
+      "past": {
+        "singular": "waste",
+        "plural": "wasten"
+      },
+      "participle": "gewassen",
+      "auxiliary": "hebben",
+      "regularity": {
+        "present": "regular",
+        "past": "regular",
+        "participle": "irregular"
+      }
+    },
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
+  },
+  {
+    "id": "word.zetten",
+    "nl": "zetten",
+    "en": "to put / place",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A1",
+    "themes": [
+      "dagelijks-leven"
+    ],
+    "tags": [
+      "regelmatig-ww"
+    ],
+    "conjugation": {
+      "infinitive": "zetten",
+      "stem": "zet",
+      "present": {
+        "ik": "zet",
+        "jij": "zet",
+        "hij": "zet",
+        "wij": "zetten"
+      },
+      "past": {
+        "singular": "zette",
+        "plural": "zetten"
+      },
+      "participle": "gezet",
+      "auxiliary": "hebben",
+      "regularity": {
+        "present": "regular",
+        "past": "regular",
+        "participle": "regular"
+      }
+    },
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
+  },
+  {
+    "id": "word.huilen",
+    "nl": "huilen",
+    "en": "to cry",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A1",
+    "themes": [
+      "emoties"
+    ],
+    "tags": [
+      "regelmatig-ww"
+    ],
+    "conjugation": {
+      "infinitive": "huilen",
+      "stem": "huil",
+      "present": {
+        "ik": "huil",
+        "jij": "huilt",
+        "hij": "huilt",
+        "wij": "huilen"
+      },
+      "past": {
+        "singular": "huilde",
+        "plural": "huilden"
+      },
+      "participle": "gehuild",
+      "auxiliary": "hebben",
+      "regularity": {
+        "present": "regular",
+        "past": "regular",
+        "participle": "regular"
+      }
+    },
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
+  },
+  {
+    "id": "word.tekenen",
+    "nl": "tekenen",
+    "en": "to draw",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A1",
+    "themes": [
+      "vrije-tijd"
+    ],
+    "tags": [
+      "regelmatig-ww"
+    ],
+    "conjugation": {
+      "infinitive": "tekenen",
+      "stem": "teken",
+      "present": {
+        "ik": "teken",
+        "jij": "tekent",
+        "hij": "tekent",
+        "wij": "tekenen"
+      },
+      "past": {
+        "singular": "tekende",
+        "plural": "tekenden"
+      },
+      "participle": "getekend",
+      "auxiliary": "hebben",
+      "regularity": {
+        "present": "regular",
+        "past": "regular",
+        "participle": "regular"
+      }
+    },
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
+  },
+  {
+    "id": "word.rusten",
+    "nl": "rusten",
+    "en": "to rest",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A1",
+    "themes": [
+      "dagelijks-leven"
+    ],
+    "tags": [
+      "regelmatig-ww"
+    ],
+    "conjugation": {
+      "infinitive": "rusten",
+      "stem": "rust",
+      "present": {
+        "ik": "rust",
+        "jij": "rust",
+        "hij": "rust",
+        "wij": "rusten"
+      },
+      "past": {
+        "singular": "rustte",
+        "plural": "rustten"
+      },
+      "participle": "gerust",
+      "auxiliary": "hebben",
+      "regularity": {
+        "present": "regular",
+        "past": "regular",
+        "participle": "regular"
+      }
+    },
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
+  },
+  {
+    "id": "word.schudden",
+    "nl": "schudden",
+    "en": "to shake",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A1",
+    "themes": [
+      "beweging"
+    ],
+    "tags": [
+      "regelmatig-ww"
+    ],
+    "conjugation": {
+      "infinitive": "schudden",
+      "stem": "schud",
+      "present": {
+        "ik": "schud",
+        "jij": "schudt",
+        "hij": "schudt",
+        "wij": "schudden"
+      },
+      "past": {
+        "singular": "schudde",
+        "plural": "schudden"
+      },
+      "participle": "geschud",
+      "auxiliary": "hebben",
+      "regularity": {
+        "present": "regular",
+        "past": "regular",
+        "participle": "regular"
+      }
+    },
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
+  },
+  {
+    "id": "word.wachten",
+    "nl": "wachten",
+    "en": "to wait",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A1",
+    "themes": [
+      "dagelijks-leven"
+    ],
+    "tags": [
+      "regelmatig-ww"
+    ],
+    "conjugation": {
+      "infinitive": "wachten",
+      "stem": "wacht",
+      "present": {
+        "ik": "wacht",
+        "jij": "wacht",
+        "hij": "wacht",
+        "wij": "wachten"
+      },
+      "past": {
+        "singular": "wachtte",
+        "plural": "wachtten"
+      },
+      "participle": "gewacht",
+      "auxiliary": "hebben",
+      "regularity": {
+        "present": "regular",
+        "past": "regular",
+        "participle": "regular"
+      }
+    },
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
+  },
+  {
+    "id": "word.bakken",
+    "nl": "bakken",
+    "en": "to bake",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A1",
+    "themes": [
+      "eten"
+    ],
+    "tags": [
+      "onregelmatig-ww"
+    ],
+    "conjugation": {
+      "infinitive": "bakken",
+      "stem": "bak",
+      "present": {
+        "ik": "bak",
+        "jij": "bakt",
+        "hij": "bakt",
+        "wij": "bakken"
+      },
+      "past": {
+        "singular": "bakte",
+        "plural": "bakten"
+      },
+      "participle": "gebakken",
+      "auxiliary": "hebben",
+      "regularity": {
+        "present": "regular",
+        "past": "regular",
+        "participle": "irregular"
+      }
+    },
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
+  },
+  {
+    "id": "word.liggen",
+    "nl": "liggen",
+    "en": "to lie",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A1",
+    "themes": [
+      "dagelijks-leven"
+    ],
+    "tags": [
+      "onregelmatig-ww"
+    ],
+    "conjugation": {
+      "infinitive": "liggen",
+      "stem": "lig",
+      "present": {
+        "ik": "lig",
+        "jij": "ligt",
+        "hij": "ligt",
+        "wij": "liggen"
+      },
+      "past": {
+        "singular": "lag",
+        "plural": "lagen"
+      },
+      "participle": "gelegen",
+      "auxiliary": "hebben",
+      "regularity": {
+        "present": "irregular",
+        "past": "irregular",
+        "participle": "irregular"
+      }
+    },
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
+  },
+  {
+    "id": "word.schilderen",
+    "nl": "schilderen",
+    "en": "to paint",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A1",
+    "themes": [
+      "vrije-tijd"
+    ],
+    "tags": [
+      "regelmatig-ww"
+    ],
+    "conjugation": {
+      "infinitive": "schilderen",
+      "stem": "schilder",
+      "present": {
+        "ik": "schilder",
+        "jij": "schildert",
+        "hij": "schildert",
+        "wij": "schilderen"
+      },
+      "past": {
+        "singular": "schilderde",
+        "plural": "schilderden"
+      },
+      "participle": "geschilderd",
+      "auxiliary": "hebben",
+      "regularity": {
+        "present": "regular",
+        "past": "regular",
+        "participle": "regular"
+      }
+    },
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
+  },
+  {
+    "id": "word.winkelen",
+    "nl": "winkelen",
+    "en": "to shop",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A1",
+    "themes": [
+      "dagelijks-leven"
+    ],
+    "tags": [
+      "regelmatig-ww"
+    ],
+    "conjugation": {
+      "infinitive": "winkelen",
+      "stem": "winkel",
+      "present": {
+        "ik": "winkel",
+        "jij": "winkelt",
+        "hij": "winkelt",
+        "wij": "winkelen"
+      },
+      "past": {
+        "singular": "winkelde",
+        "plural": "winkelden"
+      },
+      "participle": "gewinkeld",
+      "auxiliary": "hebben",
+      "regularity": {
+        "present": "regular",
+        "past": "regular",
+        "participle": "regular"
+      }
+    },
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
+  },
+  {
+    "id": "word.studeren",
+    "nl": "studeren",
+    "en": "to study",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A1",
+    "themes": [
+      "school"
+    ],
+    "tags": [
+      "regelmatig-ww"
+    ],
+    "conjugation": {
+      "infinitive": "studeren",
+      "stem": "studeer",
+      "present": {
+        "ik": "studeer",
+        "jij": "studeert",
+        "hij": "studeert",
+        "wij": "studeren"
+      },
+      "past": {
+        "singular": "studeerde",
+        "plural": "studeerden"
+      },
+      "participle": "gestudeerd",
+      "auxiliary": "hebben",
+      "regularity": {
+        "present": "regular",
+        "past": "regular",
+        "participle": "regular"
+      }
+    },
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
+  },
+  {
+    "id": "word.kammen",
+    "nl": "kammen",
+    "en": "to comb",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A1",
+    "themes": [
+      "dagelijks-leven"
+    ],
+    "tags": [
+      "regelmatig-ww"
+    ],
+    "conjugation": {
+      "infinitive": "kammen",
+      "stem": "kam",
+      "present": {
+        "ik": "kam",
+        "jij": "kamt",
+        "hij": "kamt",
+        "wij": "kammen"
+      },
+      "past": {
+        "singular": "kamde",
+        "plural": "kamden"
+      },
+      "participle": "gekamd",
+      "auxiliary": "hebben",
+      "regularity": {
+        "present": "regular",
+        "past": "regular",
+        "participle": "regular"
+      }
+    },
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
+  },
+  {
+    "id": "word.bezoeken",
+    "nl": "bezoeken",
+    "en": "to visit",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A1",
+    "themes": [
+      "dagelijks-leven"
+    ],
+    "tags": [
+      "onregelmatig-ww"
+    ],
+    "conjugation": {
+      "infinitive": "bezoeken",
+      "stem": "bezoek",
+      "present": {
+        "ik": "bezoek",
+        "jij": "bezoekt",
+        "hij": "bezoekt",
+        "wij": "bezoeken"
+      },
+      "past": {
+        "singular": "bezocht",
+        "plural": "bezochten"
+      },
+      "participle": "bezocht",
+      "auxiliary": "hebben",
+      "regularity": {
+        "present": "regular",
+        "past": "irregular",
+        "participle": "irregular"
+      }
+    },
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
+  },
+  {
+    "id": "word.vertellen",
+    "nl": "vertellen",
+    "en": "to tell",
+    "partOfSpeech": "verb",
+    "introducedAtLevel": "A1",
+    "themes": [
+      "communicatie"
+    ],
+    "tags": [
+      "regelmatig-ww"
+    ],
+    "conjugation": {
+      "infinitive": "vertellen",
+      "stem": "vertel",
+      "present": {
+        "ik": "vertel",
+        "jij": "vertelt",
+        "hij": "vertelt",
+        "wij": "vertellen"
+      },
+      "past": {
+        "singular": "vertelde",
+        "plural": "vertelden"
+      },
+      "participle": "verteld",
+      "auxiliary": "hebben",
+      "regularity": {
+        "present": "regular",
+        "past": "regular",
+        "participle": "regular"
+      }
+    },
+    "reviewStatus": "ai-reviewed",
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ]
   }
 ]
