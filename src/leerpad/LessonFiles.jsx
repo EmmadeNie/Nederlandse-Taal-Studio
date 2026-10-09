@@ -11,6 +11,9 @@ import {
 } from "./files";
 import { DownloadSimple, X, fileIconFor } from "../icons";
 
+/** "PDF", "DOCX", … from the file name, shown next to the size. */
+const fileKind = (name) => (name.includes(".") ? name.split(".").pop().toUpperCase() : "");
+
 /**
  * The files of a lesson. Everyone can open/download them; the docent
  * (canEdit) can upload and delete. onChange receives the new list.
@@ -75,15 +78,18 @@ export default function LessonFiles({ lessonId, attachments = [], canEdit, onCha
     <div className="lp-files">
       {sorted.length === 0 && !canEdit && <p className="dim lp-empty">{t("files.none")}</p>}
       {sorted.length > 0 && (
-        <ul className="lp-links lp-file-list">
+        <ul className="lp-file-list">
           {sorted.map((a) => {
             const FileIcon = fileIconFor(a.mime_type);
             return (
             <li key={a.id}>
+              <FileIcon className="lp-file-icon" weight="duotone" aria-hidden="true" />
               <button type="button" className="lp-file-name" onClick={() => open(a, false)}>
-                <FileIcon aria-hidden="true" /> {a.file_name}
+                <span className="lp-file-title">{a.file_name}</span>
+                <span className="dim lp-file-size">
+                  {fileKind(a.file_name)} · {formatSize(a.size_bytes)}
+                </span>
               </button>
-              <span className="dim lp-file-size">{formatSize(a.size_bytes)}</span>
               <button
                 type="button"
                 className="board-icon-btn"

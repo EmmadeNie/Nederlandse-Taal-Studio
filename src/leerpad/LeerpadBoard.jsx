@@ -372,15 +372,16 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
         )
       )}
 
+      {content.attachments.length > 0 && (
+        <div className="lp-section">
+          <h4>{t("files.title")}</h4>
+          <LessonFiles attachments={content.attachments} canEdit={false} />
+        </div>
+      )}
+
       <div className="lp-section">
         <h4>{t("lp.links")}</h4>
         <LinkList links={content.links} extras={isDocent ? [] : step.extras} />
-        {content.attachments.length > 0 && (
-          <>
-            <h4>{t("files.title")}</h4>
-            <LessonFiles attachments={content.attachments} canEdit={false} />
-          </>
-        )}
         {isDocent && (
           <>
             <h4>{t("step.extras")}</h4>

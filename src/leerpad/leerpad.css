@@ -561,39 +561,71 @@
   font-size: 1.05rem;
 }
 
-/* ----- Files on a lesson ----- */
+/* ----- Files on a lesson -----
+   Files look like files (a tile with type icon, kind and size, download
+   button), clearly different from the plain link rows under Verwijzingen. */
 .lp-files {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
+.lp-file-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.5rem;
+}
+
+.lp-file-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem 0.6rem;
+}
+
 .lp-file-list .lp-file-name {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
   background: none;
   border: none;
   padding: 0;
   color: var(--text);
   font-size: 0.82rem;
   text-align: left;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   min-width: 0;
   flex: 1;
+  cursor: pointer;
 }
 
-.lp-file-list .lp-file-name:hover {
+.lp-file-list .lp-file-icon {
+  font-size: 1.9rem;
   color: var(--accent);
-}
-
-.lp-file-list .lp-file-size {
-  margin-left: auto;
-  font-size: 0.72rem;
   flex: none;
 }
 
-.lp-file-list li .board-icon-btn {
-  margin-left: 0;
+.lp-file-list .lp-file-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.lp-file-list .lp-file-name:hover .lp-file-title {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.lp-file-list .lp-file-size {
+  font-size: 0.7rem;
 }
 
 .lp-file-upload {
@@ -602,72 +634,4 @@
   align-items: center;
   gap: 0.6rem;
   font-size: 0.75rem;
-}
-
-/* ----- Select mode (lesprogramma) ----- */
-.board-card.is-selectable {
-  position: relative;
-  padding-left: 2rem;
-  cursor: pointer;
-}
-
-.board-card-check {
-  position: absolute;
-  left: 0.6rem;
-  top: 0.65rem;
-  width: 1rem;
-  height: 1rem;
-  border: 1.5px solid var(--text-dim);
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #fff;
-}
-
-.board-card.is-selected {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-}
-
-.board-card.is-selected .board-card-check {
-  background: var(--accent);
-  border-color: var(--accent);
-}
-
-.board-lane-select {
-  accent-color: var(--accent);
-  margin: 0;
-}
-
-.selection-bar {
-  position: sticky;
-  bottom: 0;
-  z-index: 5;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.6rem 0.8rem;
-  margin-top: 0.75rem;
-  padding: 0.7rem 1rem;
-  background: var(--surface);
-  border: 1px solid var(--accent);
-  border-radius: 10px;
-  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.25);
-  font-size: 0.85rem;
-}
-
-.selection-bar-spacer {
-  flex: 1;
-}
-
-.selection-bar select {
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  color: var(--text);
-  padding: 0.4rem 0.5rem;
-  max-width: 14rem;
 }

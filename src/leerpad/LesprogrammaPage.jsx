@@ -414,15 +414,6 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
       </div>
 
       <div className="lp-section">
-        <h4>{t("lp.links")}</h4>
-        {canEdit ? (
-          <LinksEditor value={form.links} onChange={set("links")} />
-        ) : (
-          <LinkList links={lesson.links} />
-        )}
-      </div>
-
-      <div className="lp-section">
         <h4>{t("files.title")}</h4>
         <LessonFiles
           lessonId={lesson.id}
@@ -430,6 +421,15 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
           canEdit={canEdit}
           onChange={(attachments) => onSaved({ ...lesson, attachments })}
         />
+      </div>
+
+      <div className="lp-section">
+        <h4>{t("lp.links")}</h4>
+        {canEdit ? (
+          <LinksEditor value={form.links} onChange={set("links")} />
+        ) : (
+          <LinkList links={lesson.links} />
+        )}
       </div>
 
       {canEdit && (
