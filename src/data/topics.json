@@ -81,9 +81,9 @@
   {
     "id": "topic.werkwoorden-vervoegen",
     "title": "Werkwoorden vervoegen (tegenwoordige tijd)",
-    "introducedAtLevel": "A0",
-    "summary": "Ik loop, jij loopt, wij lopen.",
-    "explanation": "**Stam** = hele werkwoord zonder -en.\n- ik → stam\n- jij/hij/zij → stam + t\n- wij/jullie/zij → infinitief",
+    "introducedAtLevel": "A1",
+    "summary": "Ik speel, jij speelt, wij spelen.",
+    "explanation": "**Tegenwoordige tijd**: de vorm van het werkwoord verandert met de persoon.\n\n| Regel | Voorbeeld: spelen |\n| --- | --- |\n| **Stam**: haal `-en` van het hele werkwoord af en pas zo nodig de spelling aan. | spelen → **speel** |\n| **ik** → stam | ik **speel** |\n| **jij / hij / zij** → stam + t | jij **speelt** |\n| **wij / jullie / zij** → hele werkwoord | wij **spelen** |\n\n**Let op:** bij een vraag met **jij** achter het werkwoord vervalt de **-t**: *Speel jij?*",
     "grammarTags": [
       "vervoegen",
       "tegenwoordige-tijd"
@@ -92,7 +92,12 @@
       "grammatica"
     ],
     "docLinks": [],
-    "reviewStatus": "ai-reviewed"
+    "reviewStatus": "ai-reviewed",
+    "relatedWordIds": [
+      "word.spelen",
+      "word.bellen",
+      "word.schrijven"
+    ]
   },
   {
     "id": "topic.modale-werkwoorden",
