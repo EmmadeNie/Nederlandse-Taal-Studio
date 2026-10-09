@@ -64,7 +64,7 @@ export default function SelectionBar({ lessonIds, onClear }) {
         {students.map((s) => (
           <option key={s.id} value={s.id}>
             {s.display_name || s.email}
-            {s.user_id ? "" : " ✉"}
+            {s.user_id ? "" : ` (${t("users.pending")})`}
           </option>
         ))}
       </select>

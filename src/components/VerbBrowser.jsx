@@ -3,6 +3,7 @@ import { LevelBadge, ReviewBadge, Tag } from "./Badges";
 import FeedbackButton from "../feedback/FeedbackButton";
 import { useUrlParams, useSetUrlParams } from "../hooks/useUrlParams";
 import { useI18n } from "../i18n/context";
+import { Note } from "../icons";
 
 const LEVELS = ["A0", "A1", "A2", "B1", "B2"];
 
@@ -171,7 +172,7 @@ export default function VerbBrowser() {
                   marginTop: "0.5rem",
                 }}
               >
-                📝 {v.reviewNotes}
+                <Note /> {v.reviewNotes}
               </div>
             )}
             <div className="card-footer">

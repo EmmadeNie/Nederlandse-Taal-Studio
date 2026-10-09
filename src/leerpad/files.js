@@ -39,15 +39,6 @@ export const ACCEPT = Object.keys(TYPES).map((ext) => `.${ext}`).join(",");
 const extension = (name) => name.split(".").pop().toLowerCase();
 export const mimeFor = (file) => TYPES[extension(file.name)] || null;
 
-export function fileIcon(mime) {
-  if (mime.startsWith("image/")) return "🖼";
-  if (mime.startsWith("audio/")) return "🎧";
-  if (mime === "application/pdf") return "📕";
-  if (mime.includes("presentation") || mime.includes("powerpoint")) return "📊";
-  if (mime.includes("sheet") || mime.includes("excel")) return "📈";
-  return "📄";
-}
-
 export function formatSize(bytes) {
   if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1).replace(".0", "")} MB`;

@@ -4,12 +4,12 @@ import {
   ACCEPT,
   MAX_FILE_BYTES,
   deleteLessonFile,
-  fileIcon,
   fileUrl,
   formatSize,
   mimeFor,
   uploadLessonFile,
 } from "./files";
+import { DownloadSimple, X, fileIconFor } from "../icons";
 
 /**
  * The files of a lesson. Everyone can open/download them; the docent
@@ -76,10 +76,12 @@ export default function LessonFiles({ lessonId, attachments = [], canEdit, onCha
       {sorted.length === 0 && !canEdit && <p className="dim lp-empty">{t("files.none")}</p>}
       {sorted.length > 0 && (
         <ul className="lp-links lp-file-list">
-          {sorted.map((a) => (
+          {sorted.map((a) => {
+            const FileIcon = fileIconFor(a.mime_type);
+            return (
             <li key={a.id}>
               <button type="button" className="lp-file-name" onClick={() => open(a, false)}>
-                <span aria-hidden="true">{fileIcon(a.mime_type)}</span> {a.file_name}
+                <FileIcon aria-hidden="true" /> {a.file_name}
               </button>
               <span className="dim lp-file-size">{formatSize(a.size_bytes)}</span>
               <button
@@ -89,7 +91,7 @@ export default function LessonFiles({ lessonId, attachments = [], canEdit, onCha
                 aria-label={t("files.downloadAria", { name: a.file_name })}
                 onClick={() => open(a, true)}
               >
-                ⬇
+                <DownloadSimple />
               </button>
               {canEdit && (
                 <button
@@ -99,11 +101,12 @@ export default function LessonFiles({ lessonId, attachments = [], canEdit, onCha
                   aria-label={t("files.delete", { name: a.file_name })}
                   onClick={() => remove(a)}
                 >
-                  ✕
+                  <X />
                 </button>
               )}
             </li>
-          ))}
+            );
+          })}
         </ul>
       )}
       {canEdit && (

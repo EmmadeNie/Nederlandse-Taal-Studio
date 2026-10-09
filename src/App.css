@@ -1076,3 +1076,21 @@
 .library-panel > div > h2:first-child {
   display: none;
 }
+
+/* Phosphor icons inline with text */
+svg[class^="ph"], button svg, h4 svg, .board-meta-item svg {
+  vertical-align: -0.18em;
+  flex: none;
+}
+
+.board-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.sidebar nav button .icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

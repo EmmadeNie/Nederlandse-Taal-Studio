@@ -1,5 +1,6 @@
 import { useI18n } from "../i18n/context";
 import { LIBRARY_TABS } from "./libraryTabs";
+import { ICONS } from "../icons";
 import WordBrowser from "./WordBrowser";
 import VerbBrowser from "./VerbBrowser";
 import SentenceBrowser from "./SentenceBrowser";
@@ -27,7 +28,9 @@ export default function Library({ tab, onTab, counts }) {
       <h2>{t("nav.library")}</h2>
       <p className="lp-intro">{t("library.intro")}</p>
       <div className="library-tabs" role="tablist" aria-label={t("nav.library")}>
-        {LIBRARY_TABS.map((item) => (
+        {LIBRARY_TABS.map((item) => {
+          const Icon = ICONS[item.id];
+          return (
           <button
             key={item.id}
             role="tab"
@@ -35,10 +38,11 @@ export default function Library({ tab, onTab, counts }) {
             className={tab === item.id ? "active" : ""}
             onClick={() => onTab(item.id)}
           >
-            <span aria-hidden="true">{item.icon}</span> {t(`nav.${item.id}`)}
+            <Icon weight={tab === item.id ? "fill" : "regular"} aria-hidden="true" /> {t(`nav.${item.id}`)}
             {counts[item.id] !== undefined && <span className="badge">{counts[item.id]}</span>}
           </button>
-        ))}
+          );
+        })}
       </div>
       <div className="library-panel" role="tabpanel">
         <Panel />

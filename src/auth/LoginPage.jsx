@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { supabase } from "../lib/supabase";
 import { useI18n } from "../i18n/context";
+import { EnvelopeSimple } from "../icons";
 
 /**
  * Magic-link login: enter an email, receive a link, click it, done.
@@ -39,7 +40,7 @@ export default function LoginPage({ invited = false }) {
         {status === "sent" ? (
           <div className="auth-sent">
             <p>
-              ✉️ {t("login.sent")} <strong>{email}</strong>.
+              <EnvelopeSimple /> {t("login.sent")} <strong>{email}</strong>.
             </p>
             <p className="dim">{t("login.sentHint")}</p>
             <button className="fb-link" onClick={() => setStatus("idle")}>

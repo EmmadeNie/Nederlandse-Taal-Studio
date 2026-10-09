@@ -6,6 +6,7 @@ import {
 } from "../data";
 import { LevelBadge, ReviewBadge, Tag } from "./Badges";
 import { useI18n } from "../i18n/context";
+import { ChartLineDown, CheckCircle, ICONS, LinkBreak, Warning } from "../icons";
 
 export default function Dashboard() {
   const { t } = useI18n();
@@ -158,15 +159,15 @@ export default function Dashboard() {
       <h3>
         {t("dash.quality")}{" "}
         {issueCount === 0 ? (
-          <span className="quality-ok">{t("dash.allGood")}</span>
+          <span className="quality-ok"><CheckCircle weight="fill" /> {t("dash.allGood")}</span>
         ) : (
-          <span className="quality-warn">{t("dash.issues", { n: issueCount })}</span>
+          <span className="quality-warn"><Warning weight="fill" /> {t("dash.issues", { n: issueCount })}</span>
         )}
       </h3>
 
       {quality.thinVocabLevels.length > 0 && (
         <div className="quality-section">
-          <h4>{t("dash.thinVocab", { n: quality.vocabThreshold })}</h4>
+          <h4><ChartLineDown /> {t("dash.thinVocab", { n: quality.vocabThreshold })}</h4>
           <div className="quality-items">
             {quality.thinVocabLevels.map((l) => (
               <div key={l.level} className="quality-item warn">
@@ -179,7 +180,7 @@ export default function Dashboard() {
 
       {quality.thinTopics.length > 0 && (
         <div className="quality-section">
-          <h4>{t("dash.thinTopics", { n: quality.thinThreshold })}</h4>
+          <h4><ICONS.topics /> {t("dash.thinTopics", { n: quality.thinThreshold })}</h4>
           <div className="quality-items">
             {quality.thinTopics.map((topic) => (
               <div key={topic.id} className="quality-item warn">
@@ -193,7 +194,7 @@ export default function Dashboard() {
 
       {quality.thinExercises.length > 0 && (
         <div className="quality-section">
-          <h4>{t("dash.thinExercises", { n: quality.thinThreshold })}</h4>
+          <h4><ICONS.exercises /> {t("dash.thinExercises", { n: quality.thinThreshold })}</h4>
           <div className="quality-items">
             {quality.thinExercises.map((e) => (
               <div key={e.id} className="quality-item warn">
@@ -207,7 +208,7 @@ export default function Dashboard() {
 
       {quality.incompleteVerbs.length > 0 && (
         <div className="quality-section">
-          <h4>{t("dash.incompleteVerbs")}</h4>
+          <h4><ICONS.verbs /> {t("dash.incompleteVerbs")}</h4>
           <div className="quality-items">
             {quality.incompleteVerbs.map((v) => (
               <div key={v.id} className="quality-item warn">
@@ -220,7 +221,7 @@ export default function Dashboard() {
 
       {quality.brokenRefs.length > 0 && (
         <div className="quality-section">
-          <h4>{t("dash.brokenRefs")}</h4>
+          <h4><LinkBreak /> {t("dash.brokenRefs")}</h4>
           <div className="quality-items">
             {quality.brokenRefs.map((r, i) => (
               <div key={i} className="quality-item error">
@@ -234,7 +235,7 @@ export default function Dashboard() {
       {quality.unusedWords.length > 0 && (
         <details className="quality-section">
           <summary>
-            {t("dash.unusedWords", { n: quality.unusedWords.length })}
+            <ICONS.words /> {t("dash.unusedWords", { n: quality.unusedWords.length })}
           </summary>
           <div className="quality-items" style={{ marginTop: "0.5rem" }}>
             {quality.unusedWords.map((w) => (

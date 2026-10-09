@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { FEEDBACK_CATEGORIES, addFeedback } from "./store";
 import { useAuth } from "../auth/context";
 import { useI18n } from "../i18n/context";
+import { CheckCircle, X } from "../icons";
 
 /**
  * Modal dialog to add feedback for a content item (or the app in general).
@@ -61,7 +62,7 @@ export default function FeedbackDialog({ itemType, itemId, itemLabel, onClose })
         <div className="fb-dialog-header">
           <h3>{t("fb.title")}</h3>
           <button className="fb-close" onClick={onClose} aria-label={t("common.close")}>
-            ✕
+            <X />
           </button>
         </div>
 
@@ -72,7 +73,7 @@ export default function FeedbackDialog({ itemType, itemId, itemLabel, onClose })
         )}
 
         {saved ? (
-          <div className="fb-saved">{t("fb.saved")}</div>
+          <div className="fb-saved"><CheckCircle weight="fill" /> {t("fb.saved")}</div>
         ) : (
           <form onSubmit={handleSubmit}>
             <div className="fb-field fb-known-name">

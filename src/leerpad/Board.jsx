@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { positionBetween, laneDropPosition, laneShiftPosition } from "./positions";
 import { useI18n } from "../i18n/context";
+import { CaretLeft, CaretRight, Check, DotsSixVertical, PencilSimple, X } from "../icons";
 import "./leerpad.css";
 
 /**
@@ -206,7 +207,7 @@ export default function Board({
                       } else if (e.key === "Enter") onOpenCard?.(card);
                     }}
                   >
-                    {selection && <span className="board-card-check" aria-hidden="true">{selected ? "✓" : ""}</span>}
+                    {selection && <span className="board-card-check" aria-hidden="true">{selected ? <Check weight="bold" /> : null}</span>}
                     {renderCard(card)}
                   </div>
                   );
@@ -272,7 +273,7 @@ function LaneHeader({
           onDragStart={onDragStart}
           onDragEnd={onDragEnd}
         >
-          ⠿
+          <DotsSixVertical weight="bold" />
         </span>
       )}
       {editing ? (
@@ -303,7 +304,7 @@ function LaneHeader({
             disabled={!onMoveLeft}
             onClick={() => onMoveLeft?.()}
           >
-            ‹
+            <CaretLeft weight="bold" />
           </button>
           <button
             className="board-icon-btn"
@@ -312,7 +313,7 @@ function LaneHeader({
             disabled={!onMoveRight}
             onClick={() => onMoveRight?.()}
           >
-            ›
+            <CaretRight weight="bold" />
           </button>
         </span>
       )}
@@ -323,7 +324,7 @@ function LaneHeader({
           aria-label={t("board.renameLane", { name: lane.name })}
           onClick={() => setEditing(true)}
         >
-          ✎
+          <PencilSimple />
         </button>
       )}
       {onDelete && !editing && (
@@ -333,7 +334,7 @@ function LaneHeader({
           aria-label={t("board.deleteLaneAria", { name: lane.name })}
           onClick={() => onDelete(lane)}
         >
-          ✕
+          <X />
         </button>
       )}
     </div>

@@ -7,13 +7,8 @@ import {
 import { LevelBadge, Tag } from "./Badges";
 import FeedbackButton from "../feedback/FeedbackButton";
 import { useI18n } from "../i18n/context";
+import { EXERCISE_ICONS, ICONS, Package, Warning } from "../icons";
 
-const TYPE_ICONS = {
-  "fill-in": "✍️",
-  "multiple-choice": "🔘",
-  translate: "🔀",
-  flashcards: "🃏",
-};
 
 export default function ExerciseBrowser() {
   const { t } = useI18n();
@@ -47,13 +42,16 @@ export default function ExerciseBrowser() {
           return (
             <div key={ex.id} className="card">
               <div className="card-header">
-                <span style={{ fontSize: "1.5rem" }}>
-                  {TYPE_ICONS[ex.type] || "📝"}
+                <span style={{ fontSize: "1.5rem", display: "inline-flex", color: "var(--accent)" }}>
+                  {(() => {
+                    const TypeIcon = EXERCISE_ICONS[ex.type] || ICONS.exercises;
+                    return <TypeIcon aria-hidden="true" />;
+                  })()}
                 </span>
                 <span className="word">{ex.title}</span>
               </div>
               <div className="translation">
-                {TYPE_ICONS[ex.type] ? t(`ex.type.${ex.type}`) : ex.type}
+                {EXERCISE_ICONS[ex.type] ? t(`ex.type.${ex.type}`) : ex.type}
               </div>
               <div className="meta">
                 <LevelBadge level={ex.level} />
@@ -74,12 +72,12 @@ export default function ExerciseBrowser() {
               >
                 {matchCount > 0 ? (
                   <span>
-                    {t("ex.items", { n: matchCount })}
+                    <Package /> {t("ex.items", { n: matchCount })}
                     {ex.query.limit && t("ex.max", { n: ex.query.limit })}
                   </span>
                 ) : (
                   <span style={{ color: "var(--amber)" }}>
-                    {t("ex.noContent")}
+                    <Warning /> {t("ex.noContent")}
                   </span>
                 )}
               </div>
