@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "../auth/context";
 import { useI18n } from "../i18n/context";
 import Markdown from "../components/Markdown";
@@ -6,6 +6,8 @@ import LessonFiles from "./LessonFiles";
 import { WordListView } from "./WordList";
 import { hasWordList, wordsForList } from "./wordLists";
 import { SentenceListView } from "./SentenceList";
+import SaveStatus from "./SaveStatus";
+import { useAutosave } from "./useAutosave";
 import { hasSentenceList, sentencesForList } from "./sentenceLists";
 import Board, { AddCardForm } from "./Board";
 import * as api from "./api";
@@ -286,39 +288,66 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
     level: step.level || "",
     explanation: step.explanation || "",
   });
-  const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
+  const autosave = useAutosave();
+  // Text as last sent to the database, so blur + close don't save twice.
+  const sent = useRef({ title: zijpad.title, explanation: zijpad.explanation, note });
 
-  const save = async () => {
-    setBusy(true);
-    setError(null);
-    try {
-      const patch = {};
-      if (laneId !== step.lane_id) {
-        const position = nextPos(laneId);
-        await api.moveStep(step.id, laneId, position);
-        Object.assign(patch, { lane_id: laneId, position });
+  const saveFields = (fields) =>
+    autosave.save(async () => {
+      await api.updateStep(step.id, fields);
+      onChanged(fields);
+    });
+
+  const moveTo = (lane) => {
+    setLaneId(lane);
+    const position = nextPos(lane);
+    autosave.save(async () => {
+      await api.moveStep(step.id, lane, position);
+      onChanged({ lane_id: lane, position });
+    });
+  };
+
+  const changeExtras = (next) => {
+    setExtras(next);
+    saveFields({ extras: next });
+  };
+
+  const changeLevel = (level) => {
+    setZijpad((z) => ({ ...z, level }));
+    saveFields({ level: level || null });
+  };
+
+  /** Text fields save when you leave them (or close the dialog). */
+  const saveText = () => {
+    const saves = [];
+    if (isDocent && isZijpad) {
+      const fields = {};
+      const title = zijpad.title.trim();
+      if (!title) setZijpad((z) => ({ ...z, title: sent.current.title })); // an empty title is not saved
+      else if (title !== sent.current.title) fields.title = title;
+      if (zijpad.explanation !== sent.current.explanation) fields.explanation = zijpad.explanation;
+      if (Object.keys(fields).length) {
+        Object.assign(sent.current, fields);
+        saves.push(saveFields(fields));
       }
-      if (isDocent) {
-        const fields = { extras };
-        if (isZijpad) {
-          if (!zijpad.title.trim()) throw new Error("step.needTitle");
-          Object.assign(fields, {
-            title: zijpad.title.trim(),
-            level: zijpad.level || null,
-            explanation: zijpad.explanation,
-          });
-        }
-        await api.updateStep(step.id, fields);
-        Object.assign(patch, fields);
-        if (noteText !== note) await api.saveStepNote(step.id, noteText);
-      }
-      onChanged(patch, isDocent ? noteText : undefined);
-      onClose();
-    } catch (e) {
-      setError(t(e.message));
-      setBusy(false);
     }
+    if (isDocent && noteText !== sent.current.note) {
+      const text = noteText;
+      sent.current.note = text;
+      saves.push(
+        autosave.save(async () => {
+          await api.saveStepNote(step.id, text);
+          onChanged({}, text);
+        })
+      );
+    }
+    return saves.length ? saves[saves.length - 1] : autosave.settled();
+  };
+
+  const close = async () => {
+    if (!(await saveText())) return; // keep the dialog open to show the error
+    onClose();
   };
 
   const remove = async () => {
@@ -332,7 +361,7 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
   };
 
   return (
-    <Dialog title={content.title} onClose={onClose} wide>
+    <Dialog title={content.title} onClose={close} wide>
       <Chips level={content.level} labelIds={content.labelIds} categories={content.categories} kind={isZijpad ? t("kind.zijpad") : t("kind.stap")} />
       {isDocent && (
         <div className="lp-source">
@@ -355,11 +384,15 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
           <div className="lp-row">
             <label className="fb-field" style={{ flex: "3 1 200px" }}>
               <span>{t("lp.title")}</span>
-              <input value={zijpad.title} onChange={(e) => setZijpad({ ...zijpad, title: e.target.value })} />
+              <input
+                value={zijpad.title}
+                onChange={(e) => setZijpad({ ...zijpad, title: e.target.value })}
+                onBlur={saveText}
+              />
             </label>
             <label className="fb-field" style={{ flex: "1 1 100px" }}>
               <span>{t("lp.level")}</span>
-              <select value={zijpad.level} onChange={(e) => setZijpad({ ...zijpad, level: e.target.value })}>
+              <select value={zijpad.level} onChange={(e) => changeLevel(e.target.value)}>
                 <option value="">{t("step.levelNone")}</option>
                 {LEVELS.map((l) => (
                   <option key={l} value={l}>
@@ -375,6 +408,7 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
               rows={5}
               value={zijpad.explanation}
               onChange={(e) => setZijpad({ ...zijpad, explanation: e.target.value })}
+              onBlur={saveText}
               placeholder={t("step.zijpadPh")}
             />
           </label>
@@ -414,7 +448,7 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
         <div className="lp-section">
           <h4>{t("step.extras")}</h4>
           {isDocent ? (
-            <LinksEditor value={extras} onChange={setExtras} addLabel={t("links.addExtra")} />
+            <LinksEditor value={extras} onChange={changeExtras} addLabel={t("links.addExtra")} />
           ) : (
             <LinkList extras={step.extras} />
           )}
@@ -424,7 +458,7 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
       {canArrange && (
         <label className="fb-field">
           <span>{t("lp.lane")}</span>
-          <select value={laneId} onChange={(e) => setLaneId(e.target.value)}>
+          <select value={laneId} onChange={(e) => moveTo(e.target.value)}>
             {lanes.map((l) => (
               <option key={l.id} value={l.id}>
                 {l.name}
@@ -441,6 +475,7 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
             rows={3}
             value={noteText}
             onChange={(e) => setNoteText(e.target.value)}
+            onBlur={saveText}
             placeholder={t("step.notePh")}
           />
         </label>
@@ -448,21 +483,15 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
 
       {error && <div className="auth-error">{error}</div>}
 
-      {canArrange ? (
+      {canArrange && <SaveStatus status={autosave.status} error={autosave.error} />}
+
+      {isDocent && (
         <div className="lp-actions">
-          <button className="fb-btn-primary" onClick={save} disabled={busy}>
-            {t("common.save")}
+          <button className="lp-danger" onClick={remove}>
+            {t("step.remove")}
           </button>
-          <button className="fb-btn-secondary" onClick={onClose}>
-            {t("common.cancel")}
-          </button>
-          {isDocent && (
-            <button className="lp-danger" onClick={remove}>
-              {t("step.remove")}
-            </button>
-          )}
         </div>
-      ) : null}
+      )}
     </Dialog>
   );
 }
