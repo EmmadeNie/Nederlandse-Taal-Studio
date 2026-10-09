@@ -47,21 +47,51 @@ const TYPES = {
   webm: "audio/webm",
 };
 
-/** Ask a question; hidden input for secrets. */
-function ask(question, { hidden = false } = {}) {
+/** Ask a question (visible answer). */
+function ask(question) {
   return new Promise((resolve) => {
     const rl = createInterface({ input: process.stdin, output: process.stdout, terminal: true });
-    if (hidden) {
-      rl._writeToOutput = (s) => {
-        if (s.includes(question)) rl.output.write(s);
-        else rl.output.write("*".repeat(Math.min(s.length, 1)));
-      };
-    }
     rl.question(question, (answer) => {
       rl.close();
-      if (hidden) process.stdout.write("\n");
       resolve(answer.trim());
     });
+  });
+}
+
+/**
+ * Ask for a secret: nothing is echoed (not even while pasting); afterwards
+ * only "✓ received (n characters)" is shown.
+ */
+function askSecret(question) {
+  return new Promise((resolve) => {
+    const stdin = process.stdin;
+    process.stdout.write(question);
+    stdin.setRawMode(true);
+    stdin.resume();
+    stdin.setEncoding("utf8");
+    let value = "";
+    const onData = (chunk) => {
+      // Bracketed-paste markers some terminals add around pasted text.
+      chunk = chunk.replace(/\x1b\[20[01]~/g, "");
+      for (const ch of chunk) {
+        if (ch === "\r" || ch === "\n") {
+          stdin.off("data", onData);
+          stdin.setRawMode(false);
+          stdin.pause();
+          const v = value.trim();
+          process.stdout.write(v ? `✓ ontvangen (${v.length} tekens)\n` : "(leeg)\n");
+          resolve(v);
+          return;
+        }
+        if (ch === "\u0003") {
+          process.stdout.write("\n");
+          process.exit(130);
+        }
+        if (ch === "\u007f" || ch === "\b") value = value.slice(0, -1);
+        else if (ch >= " ") value += ch;
+      }
+    };
+    stdin.on("data", onData);
   });
 }
 
@@ -70,9 +100,9 @@ const fmt = (bytes) =>
 
 async function main() {
   console.log(`\nTrello-bijlagen → lesprogramma (bord ${BOARD})\n`);
-  const key = await ask("Trello API key: ", { hidden: true });
-  const token = await ask("Trello token: ", { hidden: true });
-  const secret = await ask("Supabase secret key (sb_secret_…): ", { hidden: true });
+  const key = await askSecret("Trello API key: ");
+  const token = await askSecret("Trello token: ");
+  const secret = await askSecret("Supabase secret key (sb_secret_…): ");
   if (!key || !token || !secret) throw new Error("Niet alle sleutels ingevuld.");
 
   // 1. Cards with uploaded files
