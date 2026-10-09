@@ -2,6 +2,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "../auth/context";
 import { useI18n } from "../i18n/context";
 import Markdown from "../components/Markdown";
+import { InternalLinkContext } from "../components/internalLinks";
+import { navigate, useRoute } from "../hooks/useRoute";
+import { PATHS, pathFor } from "../routes";
+import LessonLinkPicker from "./LessonLinkPicker";
+import { insertAtCursor, lessonLinkMarkdown, rememberCursor } from "./lessonLink";
 import LessonFiles from "./LessonFiles";
 import { WordListEditor, WordListView } from "./WordList";
 import { LabelPicker } from "./Labels";
@@ -35,7 +40,10 @@ export default function LesprogrammaPage() {
   const [search, setSearch] = useState("");
   const [level, setLevel] = useState("");
   const [label, setLabel] = useState("");
-  const [openId, setOpenId] = useState(null);
+  // The open lesson lives in the URL (/lesprogramma/<id>), so lessons can link to each other.
+  const route = useRoute();
+  const openId = route.page === "lesprogramma" ? route.param : null;
+  const setOpenId = (id) => navigate(id ? pathFor("lesprogramma", id) : PATHS.lesprogramma);
   // Select mode (docent): pick many lessons and put them on a leerpad at once.
   const [selecting, setSelecting] = useState(false);
   const [selected, setSelected] = useState(() => new Set());
@@ -251,9 +259,19 @@ export default function LesprogrammaPage() {
       {selecting && (
         <SelectionBar lessonIds={selectedInOrder} onClear={() => setSelected(new Set())} />
       )}
+      {openId && !loading && !openLesson && (
+        <div className="lp-error">
+          {t("lp.lessonGone")}{" "}
+          <button type="button" className="fb-link" onClick={() => setOpenId(null)}>
+            {t("common.close")}
+          </button>
+        </div>
+      )}
       {openLesson && (
         <LessonDialog
+          key={openLesson.id}
           lesson={openLesson}
+          lessons={lessons}
           lanes={lanes}
           canEdit={canEdit}
           isStudent={isStudent}
@@ -269,7 +287,7 @@ export default function LesprogrammaPage() {
   );
 }
 
-function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onDeleted }) {
+function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onSaved, onDeleted }) {
   const { t } = useI18n();
   const [form, setForm] = useState({
     title: lesson.title,
@@ -328,6 +346,18 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
   const close = async () => {
     if (canEdit && !(await saveText())) return; // keep the dialog open to show the error
     onClose();
+  };
+
+  // A link to another lesson in the uitleg: save pending text, then open that lesson.
+  const followLink = async (href) => {
+    if (canEdit && !(await saveText())) return;
+    navigate(href);
+  };
+
+  const explanationRef = useRef(null);
+  const linkLesson = (target) => {
+    set("explanation")(insertAtCursor(explanationRef.current, form.explanation, lessonLinkMarkdown(target)));
+    setPreview(false);
   };
 
   const remove = async () => {
@@ -420,16 +450,21 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
               {preview ? t("lp.edit") : t("lp.preview")}
             </button>
           )}
+          {canEdit && <LessonLinkPicker lessons={lessons} excludeId={lesson.id} onPick={linkLesson} />}
         </h4>
         {preview ? (
           form.explanation.trim() ? (
-            <Markdown className="lp-explanation">{form.explanation}</Markdown>
+            <InternalLinkContext.Provider value={followLink}>
+              <Markdown className="lp-explanation">{form.explanation}</Markdown>
+            </InternalLinkContext.Provider>
           ) : (
             <p className="dim lp-empty">{t("lp.noExplanation")}</p>
           )
         ) : (
           <label className="fb-field">
             <textarea
+              ref={explanationRef}
+              onFocus={rememberCursor}
               rows={8}
               value={form.explanation}
               onChange={(e) => set("explanation")(e.target.value)}
