@@ -6,19 +6,18 @@ import { DownloadSimple } from "../icons";
 /** One CSV field; quoted only when needed (Quizlet reads plain "term,definition" lines). */
 const field = (s) => (/[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s);
 
-/** "de hond" or, with plurals, "de hond (honden)". */
-const term = (w, withPlural) =>
-  `${w.article ? w.article + " " : ""}${w.nl}${withPlural && w.plural ? ` (${w.plural})` : ""}`;
+/** "de hond (honden)"; words without a plural (and sentences) stay as they are. */
+const term = (w) => `${w.article ? w.article + " " : ""}${w.nl}${w.plural ? ` (${w.plural})` : ""}`;
 
-function wordsToCsv(words, { withPlural = false } = {}) {
-  return words.map((w) => `${field(term(w, withPlural))},${field(w.en)}`).join("\n") + "\n";
+function wordsToCsv(words) {
+  return words.map((w) => `${field(term(w))},${field(w.en)}`).join("\n") + "\n";
 }
 
 /**
  * "CSV for Quizlet": pick the levels to include, then download a
  * term,definition file (Dutch → English) to import in Quizlet.
  */
-export default function QuizletExport({ words, filename = "woorden" }) {
+export default function QuizletExport({ words, filename = "woorden", downloadKey = "qz.download" }) {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const counts = Object.fromEntries(
@@ -26,7 +25,6 @@ export default function QuizletExport({ words, filename = "woorden" }) {
   );
   const available = Object.keys(counts);
   const [levels, setLevels] = useState(null); // null = all available
-  const [withPlural, setWithPlural] = useState(false);
   const chosen = (levels ?? available).filter((l) => available.includes(l));
   const selected = words.filter((w) => chosen.includes(w.introducedAtLevel));
 
@@ -36,7 +34,7 @@ export default function QuizletExport({ words, filename = "woorden" }) {
     setLevels(chosen.includes(level) ? chosen.filter((l) => l !== level) : [...chosen, level]);
 
   const download = () => {
-    const blob = new Blob([wordsToCsv(selected, { withPlural })], { type: "text/csv;charset=utf-8" });
+    const blob = new Blob([wordsToCsv(selected)], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -64,13 +62,9 @@ export default function QuizletExport({ words, filename = "woorden" }) {
           </label>
         ))}
       </div>
-      <label className="qz-plural">
-        <input type="checkbox" checked={withPlural} onChange={(e) => setWithPlural(e.target.checked)} />{" "}
-        {t("qz.plural")}
-      </label>
       <div className="qz-actions">
         <button type="button" className="fb-btn-primary" disabled={selected.length === 0} onClick={download}>
-          <DownloadSimple aria-hidden="true" /> {t("qz.download", { n: selected.length })}
+          <DownloadSimple aria-hidden="true" /> {t(downloadKey, { n: selected.length })}
         </button>
         <button type="button" className="fb-btn-secondary" onClick={() => setOpen(false)}>
           {t("qz.close")}

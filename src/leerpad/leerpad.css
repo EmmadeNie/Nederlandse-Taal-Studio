@@ -860,3 +860,36 @@
 .label-dot {
   display: inline-block;
 }
+
+/* ----- Sentence list on a lesson ----- */
+.sl-list {
+  margin: 0;
+  padding: 0.4rem 0.6rem 0.4rem 2rem;
+  max-height: 360px;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.sl-nl {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.sl-nl .level-badge {
+  font-size: 0.62rem;
+}
+
+.sl-en {
+  font-size: 0.78rem;
+}
+
+.sl-set-input {
+  flex: 2 1 220px;
+}

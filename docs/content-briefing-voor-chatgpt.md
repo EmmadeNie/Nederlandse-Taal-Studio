@@ -107,6 +107,10 @@ Zet NIETS op `human-verified` — dat doet alleen de docent.
 ```
 `difficulty`: 1-5. `tense`: zie lijst. `sentenceType`: statement | question | imperative | negation.
 `wordOrder`: svo | inversion | subordinate. `focusWordIds` = kernwoord(en) voor invuloefeningen.
+`sets` (optioneel): zinnen die bij elkaar horen, bv. een gesprek uit een les:
+`"sets": ["mijn-eerste-ontmoetingsgesprek"]` (kleine letters, streepjes). Een les met die
+set toont precies die zinnen, in de volgorde van het bestand — zet de zinnen van een
+gesprek dus in de juiste volgorde achter elkaar.
 
 ## Grammatica (topic)
 
