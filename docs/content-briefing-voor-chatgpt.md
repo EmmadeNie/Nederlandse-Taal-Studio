@@ -59,6 +59,11 @@ Zet NIETS op `human-verified` — dat doet alleen de docent.
 ```
 `partOfSpeech`: noun | verb | adjective | adverb | preposition | pronoun | conjunction | numeral | other.
 `article` en `plural` alleen bij zelfstandige naamwoorden.
+`sets` (optioneel): woorden die bij elkaar horen, bv. de werkwoorden van een oefening:
+`"sets": ["intro-tegenwoordige-tijd"]`. Een les met die set toont precies die woorden
+(alfabetisch). Elk woord-ID mag maar één keer voorkomen in alle woordbestanden
+samen: staat een woord al ergens, voeg dan de set toe aan dat bestaande item in plaats van
+het opnieuw op te nemen.
 
 ## Werkwoord (word met conjugation)
 

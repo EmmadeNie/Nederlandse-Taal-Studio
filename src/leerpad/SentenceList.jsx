@@ -1,7 +1,7 @@
-import { useState } from "react";
 import { useI18n } from "../i18n/context";
 import { LevelBadge } from "../components/Badges";
 import QuizletExport from "../components/QuizletExport";
+import SetInput from "./SetInput";
 import { LEVELS } from "./util";
 import { THEMES, themeLabel } from "./wordLists";
 import { GRAMMAR_TAGS, SENTENCE_SETS, hasSentenceList, sentencesForList, slugLabel } from "./sentenceLists";
@@ -17,15 +17,6 @@ function Summary({ spec }) {
   ].filter(Boolean);
   return <span className="dim">{parts.join(" · ")}</span>;
 }
-
-/** "Mijn eerste ontmoetingsgesprek" → "mijn-eerste-ontmoetingsgesprek" */
-const toSlug = (text) =>
-  text
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
 
 /** File name for the export: "zinnen-mijn-eerste-ontmoetingsgesprek", "zinnen-communicatie-A1". */
 const exportName = (spec) =>
@@ -69,35 +60,17 @@ export function SentenceListEditor({ value, onChange }) {
     if (!next.level) delete next.upTo;
     onChange(hasSentenceList(next) ? next : null);
   };
-  const [setText, setSetText] = useState(spec.set ? slugLabel(spec.set) : "");
-  const commitSet = () => {
-    const slug = toSlug(setText);
-    setSetText(slug ? slugLabel(slug) : "");
-    if (slug !== (spec.set || "")) set("set", slug);
-  };
   return (
     <div className="wl-editor">
       <div className="lp-row">
-        <input
-          list="sentence-sets"
-          className="sl-set-input"
-          value={setText}
-          onChange={(e) => setSetText(e.target.value)}
-          onBlur={commitSet}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              commitSet();
-            }
-          }}
+        <SetInput
+          value={spec.set}
+          onChange={(v) => set("set", v)}
+          sets={SENTENCE_SETS}
+          listId="sentence-sets"
           placeholder={t("sl.setPh")}
-          aria-label={t("sl.set")}
+          label={t("sl.set")}
         />
-        <datalist id="sentence-sets">
-          {SENTENCE_SETS.map((x) => (
-            <option key={x} value={slugLabel(x)} />
-          ))}
-        </datalist>
         <select value={spec.theme || ""} onChange={(e) => set("theme", e.target.value)} aria-label={t("wl.theme")}>
           <option value="">{t("filter.allThemes")}</option>
           {THEMES.map((th) => (

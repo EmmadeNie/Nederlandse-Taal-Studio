@@ -247,6 +247,10 @@
         "participle": "irregular"
       }
     },
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ],
     "reviewStatus": "ai-reviewed",
     "reviewNotes": "Regelmaat per vorm: verleden tijd 'waste' is regelmatig, voltooid deelwoord 'gewassen' is onregelmatig."
   },
@@ -283,6 +287,10 @@
         "participle": "regular"
       }
     },
+    "sets": [
+      "intro-tegenwoordige-tijd",
+      "intro-verleden-tijd"
+    ],
     "reviewStatus": "ai-reviewed",
     "reviewNotes": "Gecorrigeerd: rennen is volledig regelmatig (zwak), stond eerder als onregelmatig."
   },
