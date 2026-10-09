@@ -111,6 +111,9 @@ sentences.forEach((s) => {
   (s.grammarTags || []).forEach((t) => {
     if (!vGrammar.has(t)) warn(`Unknown grammarTag "${t}" on ${s.id}`);
   });
+  (s.sets || []).forEach((set) => {
+    if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(set)) warn(`Set "${set}" on ${s.id} is not a slug (lowercase-with-dashes)`);
+  });
 });
 topics.forEach((t) => {
   (t.grammarTags || []).forEach((g) => {

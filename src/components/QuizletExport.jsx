@@ -18,7 +18,7 @@ function wordsToCsv(words, { withPlural = false } = {}) {
  * "CSV for Quizlet": pick the levels to include, then download a
  * term,definition file (Dutch → English) to import in Quizlet.
  */
-export default function QuizletExport({ words, filename = "woorden" }) {
+export default function QuizletExport({ words, filename = "woorden", downloadKey = "qz.download" }) {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const counts = Object.fromEntries(
@@ -64,13 +64,15 @@ export default function QuizletExport({ words, filename = "woorden" }) {
           </label>
         ))}
       </div>
+      {words.some((w) => w.plural) && (
       <label className="qz-plural">
         <input type="checkbox" checked={withPlural} onChange={(e) => setWithPlural(e.target.checked)} />{" "}
         {t("qz.plural")}
       </label>
+      )}
       <div className="qz-actions">
         <button type="button" className="fb-btn-primary" disabled={selected.length === 0} onClick={download}>
-          <DownloadSimple aria-hidden="true" /> {t("qz.download", { n: selected.length })}
+          <DownloadSimple aria-hidden="true" /> {t(downloadKey, { n: selected.length })}
         </button>
         <button type="button" className="fb-btn-secondary" onClick={() => setOpen(false)}>
           {t("qz.close")}

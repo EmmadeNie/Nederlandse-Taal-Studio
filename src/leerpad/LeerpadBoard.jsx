@@ -5,6 +5,8 @@ import Markdown from "../components/Markdown";
 import LessonFiles from "./LessonFiles";
 import { WordListView } from "./WordList";
 import { hasWordList, wordsForList } from "./wordLists";
+import { SentenceListView } from "./SentenceList";
+import { hasSentenceList, sentencesForList } from "./sentenceLists";
 import Board, { AddCardForm } from "./Board";
 import * as api from "./api";
 import { BoardFilters, CardBody, Chips, Dialog, LinkList, LinksEditor, MetaItem } from "./shared";
@@ -118,6 +120,9 @@ export default function LeerpadBoard({ studentId }) {
                     <MetaItem icon={ICONS.link}>{linkCount(t, s.extras.length)}</MetaItem>
                     <MetaItem icon={ICONS.words}>
                       {hasWordList(c.wordList) && t("wl.count", { n: wordsForList(c.wordList).length })}
+                    </MetaItem>
+                    <MetaItem icon={ICONS.sentences}>
+                      {hasSentenceList(c.sentenceList) && t("sl.count", { n: sentencesForList(c.sentenceList).length })}
                     </MetaItem>
                     <MetaItem icon={ICONS.bestand}>
                       {c.attachments.length > 0 && t("files.count", { n: c.attachments.length })}
@@ -387,6 +392,13 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
         <div className="lp-section">
           <h4>{t("wl.title")}</h4>
           <WordListView spec={content.wordList} />
+        </div>
+      )}
+
+      {hasSentenceList(content.sentenceList) && (
+        <div className="lp-section">
+          <h4>{t("sl.title")}</h4>
+          <SentenceListView spec={content.sentenceList} />
         </div>
       )}
 

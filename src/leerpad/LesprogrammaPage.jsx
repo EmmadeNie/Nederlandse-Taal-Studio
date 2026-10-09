@@ -6,6 +6,8 @@ import LessonFiles from "./LessonFiles";
 import { WordListEditor, WordListView } from "./WordList";
 import { LabelPicker } from "./Labels";
 import { hasWordList, wordsForList } from "./wordLists";
+import { SentenceListEditor, SentenceListView } from "./SentenceList";
+import { hasSentenceList, sentencesForList } from "./sentenceLists";
 import SelectionBar from "./SelectionBar";
 import Board, { AddCardForm } from "./Board";
 import * as api from "./api";
@@ -176,6 +178,9 @@ export default function LesprogrammaPage() {
                   <MetaItem icon={ICONS.words}>
                     {hasWordList(l.word_list) && t("wl.count", { n: wordsForList(l.word_list).length })}
                   </MetaItem>
+                  <MetaItem icon={ICONS.sentences}>
+                    {hasSentenceList(l.sentence_list) && t("sl.count", { n: sentencesForList(l.sentence_list).length })}
+                  </MetaItem>
                   <MetaItem icon={ICONS.bestand}>
                     {l.attachments?.length > 0 && t("files.count", { n: l.attachments.length })}
                   </MetaItem>
@@ -267,6 +272,7 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
     links: lesson.links,
     lane_id: lesson.lane_id,
     word_list: lesson.word_list || null,
+    sentence_list: lesson.sentence_list || null,
   });
   const [preview, setPreview] = useState(!canEdit);
   const [students, setStudents] = useState(null); // students with this lesson
@@ -300,6 +306,7 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
         links: form.links,
         lane_id: form.lane_id,
         word_list: form.word_list,
+        sentence_list: form.sentence_list,
       });
       onSaved(updated);
       onClose();
@@ -424,6 +431,14 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
           <h4>{t("wl.title")}</h4>
           {canEdit && <WordListEditor value={form.word_list} onChange={set("word_list")} />}
           <WordListView spec={canEdit ? form.word_list : lesson.word_list} />
+        </div>
+      )}
+
+      {(canEdit || hasSentenceList(lesson.sentence_list)) && (
+        <div className="lp-section">
+          <h4>{t("sl.title")}</h4>
+          {canEdit && <SentenceListEditor value={form.sentence_list} onChange={set("sentence_list")} />}
+          <SentenceListView spec={canEdit ? form.sentence_list : lesson.sentence_list} />
         </div>
       )}
 
