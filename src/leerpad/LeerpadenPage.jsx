@@ -7,6 +7,7 @@ import { pathFor, slugify } from "../routes";
 import LeerpadBoard from "./LeerpadBoard";
 import { AddStudentDialog, PendingStudentPanel } from "./StudentPanels";
 import { listStudents } from "./api";
+import { EnvelopeSimple } from "../icons";
 
 /** Many students → a searchable list instead of a row of buttons. */
 const PICKER_THRESHOLD = 8;
@@ -141,7 +142,7 @@ export default function LeerpadenPage() {
                     onClick={() => choose(s)}
                   >
                     {s.name}
-                    {s.pending ? " ✉" : ""}
+                    {s.pending && <> <EnvelopeSimple aria-label={t("users.pending")} /></>}
                   </button>
                 ))}
               </div>

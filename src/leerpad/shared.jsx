@@ -3,6 +3,17 @@ import { LevelBadge, Tag } from "../components/Badges";
 
 import { LEVELS } from "./util";
 import { useI18n } from "../i18n/context";
+import { ArrowSquareOut, ICONS, X } from "../icons";
+
+/** Icon + text in a card's meta row (links, files, note). Renders nothing without text. */
+export function MetaItem({ icon: Icon, children }) {
+  if (children == null || children === false || children === "") return null;
+  return (
+    <span className="board-meta-item">
+      <Icon aria-hidden="true" /> {children}
+    </span>
+  );
+}
 
 /** Level + category labels (+ optional kind, e.g. "Zijpad"). */
 export function Chips({ level, categories = [], kind }) {
@@ -13,7 +24,11 @@ export function Chips({ level, categories = [], kind }) {
       {categories.map((c) => (
         <Tag key={c}>{c}</Tag>
       ))}
-      {kind && <span className="board-kind">{kind}</span>}
+      {kind && (
+        <span className="board-kind">
+          {kind === t("kind.zijpad") && <ICONS.zijpad aria-hidden="true" />} {kind}
+        </span>
+      )}
     </div>
   );
 }
@@ -49,7 +64,7 @@ export function Dialog({ title, onClose, children, wide }) {
         <div className="fb-dialog-header">
           <h3>{title}</h3>
           <button className="fb-close" onClick={onClose} aria-label={t("common.close")}>
-            ✕
+            <X />
           </button>
         </div>
         {children}
@@ -69,14 +84,14 @@ export function LinkList({ links = [], extras = [] }) {
       {links.map((l, i) => (
         <li key={"l" + i}>
           <a href={l.url} target="_blank" rel="noopener noreferrer">
-            ↗ {l.label || l.url}
+            <ArrowSquareOut aria-hidden="true" /> {l.label || l.url}
           </a>
         </li>
       ))}
       {extras.map((l, i) => (
         <li key={"e" + i} className="is-extra">
           <a href={l.url} target="_blank" rel="noopener noreferrer">
-            ↗ {l.label || l.url}
+            <ArrowSquareOut aria-hidden="true" /> {l.label || l.url}
           </a>
           <span className="dim">{t("lp.extraOnly")}</span>
         </li>
@@ -111,7 +126,7 @@ export function LinksEditor({ value, onChange, addLabel }) {
           {value.map((l, i) => (
             <li key={i}>
               <a href={l.url} target="_blank" rel="noopener noreferrer">
-                ↗ {l.label || l.url}
+                <ArrowSquareOut aria-hidden="true" /> {l.label || l.url}
               </a>
               <button
                 type="button"
@@ -119,7 +134,7 @@ export function LinksEditor({ value, onChange, addLabel }) {
                 aria-label={t("links.remove", { name: l.label })}
                 onClick={() => onChange(value.filter((_, j) => j !== i))}
               >
-                ✕
+                <X />
               </button>
             </li>
           ))}

@@ -9,6 +9,7 @@ import {
 } from "./store";
 import { useAuth } from "../auth/context";
 import { useI18n } from "../i18n/context";
+import { ArrowElbowDownRight, DownloadSimple, UploadSimple, X } from "../icons";
 
 const ITEM_TYPES = new Set(["word", "verb", "sentence", "topic", "exercise", "app", "overig"]);
 
@@ -94,12 +95,12 @@ export default function FeedbackOverview() {
 
       <div className="fb-overview-toolbar">
         <button className="fb-btn-primary" onClick={handleExport} disabled={feedback.length === 0}>
-          {t("fb.export", { n: feedback.length })}
+          <DownloadSimple /> {t("fb.export", { n: feedback.length })}
         </button>
         {isDocent && (
           <>
             <button className="fb-btn-secondary" onClick={handleImportClick}>
-              {t("fb.import")}
+              <UploadSimple /> {t("fb.import")}
             </button>
             <input
               ref={fileInput}
@@ -146,7 +147,7 @@ export default function FeedbackOverview() {
                 aria-label={t("fb.deleteAria")}
                 title={t("fb.delete")}
               >
-                ✕
+                <X />
               </button>
             )}
             <div className="fb-entry-header">
@@ -161,7 +162,7 @@ export default function FeedbackOverview() {
             </div>
             <div className="fb-message">{f.message}</div>
             {f.itemLabel && (
-              <div className="fb-item-label">↳ {f.itemLabel}</div>
+              <div className="fb-item-label"><ArrowElbowDownRight /> {f.itemLabel}</div>
             )}
           </div>
         ))

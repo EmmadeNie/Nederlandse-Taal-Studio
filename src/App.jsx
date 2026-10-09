@@ -9,6 +9,7 @@ import { useAllFeedback } from "./feedback/useFeedback";
 import { getStats } from "./data";
 import { navigate, useRoute } from "./hooks/useRoute";
 import { PATHS } from "./routes";
+import { ICONS, Lightbulb } from "./icons";
 import { useAuth } from "./auth/context";
 import { useI18n } from "./i18n/context";
 import LanguageToggle from "./i18n/LanguageToggle";
@@ -21,17 +22,23 @@ import LeerpadenPage, { MijnLeerpadPage } from "./leerpad/LeerpadenPage";
 import { isSupabaseConfigured } from "./lib/supabase";
 
 const PAGES = [
-  { id: "leerpad", icon: "🧭", roles: ["leerling"] },
-  { id: "dashboard", icon: "📊", roles: ["docent", "reviewer"] },
-  { id: "lesprogramma", icon: "🗂️" },
-  { id: "leerpaden", icon: "🧭", roles: ["docent", "reviewer"] },
-  { id: "library", icon: "📚" },
-  { id: "feedback", icon: "📝" },
-  { id: "users", icon: "👥", roles: ["docent"] },
+  { id: "leerpad", roles: ["leerling"] },
+  { id: "dashboard", roles: ["docent", "reviewer"] },
+  { id: "lesprogramma" },
+  { id: "leerpaden", roles: ["docent", "reviewer"] },
+  { id: "library" },
+  { id: "feedback" },
+  { id: "users", roles: ["docent"] },
 ];
 
 // Pages that show a full-width board instead of a reading column.
 const BOARD_PAGES = new Set(["lesprogramma", "leerpaden", "leerpad"]);
+
+/** Menu icon; the active page gets the filled variant. */
+function NavIcon({ id, active }) {
+  const Icon = ICONS[id];
+  return <Icon weight={active ? "fill" : "regular"} size={20} aria-hidden="true" />;
+}
 
 function SetupNeeded() {
   const { t } = useI18n();
@@ -131,7 +138,9 @@ function Studio() {
               className={navId === p.id ? "active" : ""}
               onClick={() => setPage(p.id)}
             >
-              <span className="icon">{p.icon}</span>
+              <span className="icon">
+                <NavIcon id={p.id} active={navId === p.id} />
+              </span>
               {t(`nav.${p.id}`)}
               {badges[p.id] !== undefined && (
                 <span className="badge">{badges[p.id]}</span>
@@ -154,7 +163,7 @@ function Studio() {
             className="app-feedback-btn"
             onClick={() => setAppFeedbackOpen(true)}
           >
-            {t("app.feedbackButton")}
+            <Lightbulb /> {t("app.feedbackButton")}
           </button>
         </div>
       </aside>

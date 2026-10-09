@@ -2,6 +2,7 @@ import { useState } from "react";
 import FeedbackDialog from "./FeedbackDialog";
 import { useFeedbackCount } from "./useFeedback";
 import { useI18n } from "../i18n/context";
+import { ICONS } from "../icons";
 
 /**
  * Small feedback button to attach to any content card.
@@ -27,7 +28,8 @@ export default function FeedbackButton({ itemType, itemId, itemLabel }) {
         title={t("fb.title")}
         aria-label={t("fb.aboutItem", { label: itemLabel })}
       >
-        💬{count > 0 ? ` ${count}` : ""}
+        <ICONS.feedback weight={count > 0 ? "fill" : "regular"} />
+        {count > 0 ? ` ${count}` : ""}
       </button>
       {open && (
         <FeedbackDialog

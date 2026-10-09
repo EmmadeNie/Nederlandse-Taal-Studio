@@ -5,7 +5,8 @@ import Markdown from "../components/Markdown";
 import LessonFiles from "./LessonFiles";
 import Board, { AddCardForm } from "./Board";
 import * as api from "./api";
-import { BoardFilters, CardBody, Chips, Dialog, LinkList, LinksEditor } from "./shared";
+import { BoardFilters, CardBody, Chips, Dialog, LinkList, LinksEditor, MetaItem } from "./shared";
+import { ICONS } from "../icons";
 import { LEVELS, linkCount, matchesFilter, stepContent } from "./util";
 
 /**
@@ -108,10 +109,12 @@ export default function LeerpadBoard({ studentId }) {
                 kind={s.lesson_id ? null : t("kind.zijpad")}
                 meta={
                   <>
-                    {linkCount(t, c.links.length + s.extras.length)}
-                    {c.attachments.length > 0 && <span>{t("files.count", { n: c.attachments.length })}</span>}
+                    <MetaItem icon={ICONS.link}>{linkCount(t, c.links.length + s.extras.length)}</MetaItem>
+                    <MetaItem icon={ICONS.bestand}>
+                      {c.attachments.length > 0 && t("files.count", { n: c.attachments.length })}
+                    </MetaItem>
                     {s.extras.length > 0 && <span>{t("lp.extraCount", { n: s.extras.length })}</span>}
-                    {isDocent && notes[s.id] && <span>{t("lp.hasNote")}</span>}
+                    <MetaItem icon={ICONS.notitie}>{isDocent && notes[s.id] && t("lp.hasNote")}</MetaItem>
                   </>
                 }
               />

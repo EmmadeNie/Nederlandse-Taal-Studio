@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useI18n } from "../i18n/context";
+import { Check, LinkSimple } from "../icons";
 
 /**
  * Copies a deep link (for use on a Trello card) to the clipboard.
@@ -36,7 +37,7 @@ export default function CopyLinkButton({ path, label }) {
       onClick={handleCopy}
       title={t("copy.title")}
     >
-      {copied ? t("copy.done") : `🔗 ${label || t("copy.label")}`}
+      {copied ? <Check /> : <LinkSimple />} {copied ? t("copy.done") : label || t("copy.label")}
     </button>
   );
 }

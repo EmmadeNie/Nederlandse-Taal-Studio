@@ -6,7 +6,8 @@ import LessonFiles from "./LessonFiles";
 import SelectionBar from "./SelectionBar";
 import Board, { AddCardForm } from "./Board";
 import * as api from "./api";
-import { BoardFilters, CardBody, Dialog, LinkList, LinksEditor } from "./shared";
+import { BoardFilters, CardBody, Dialog, LinkList, LinksEditor, MetaItem } from "./shared";
+import { CheckSquare, Eye, ICONS } from "../icons";
 import { LEVELS, linkCount, matchesFilter } from "./util";
 
 /**
@@ -125,12 +126,12 @@ export default function LesprogrammaPage() {
             className={selecting ? "fb-btn-primary" : "fb-btn-secondary"}
             onClick={() => (selecting ? stopSelecting() : setSelecting(true))}
           >
-            {selecting ? t("select.done") : t("select.start")}
+            {selecting ? t("select.done") : <><CheckSquare /> {t("select.start")}</>}
           </button>
         )}
         {!canEdit && (
           <span className="lp-view-only" title={t("lp.viewOnlyHint")}>
-            👁 {t("lp.viewOnly")}
+            <Eye /> {t("lp.viewOnly")}
           </span>
         )}
       </div>
@@ -166,8 +167,10 @@ export default function LesprogrammaPage() {
               categories={l.categories}
               meta={
                 <>
-                  {linkCount(t, l.links.length)}
-                  {l.attachments?.length > 0 && <span>{t("files.count", { n: l.attachments.length })}</span>}
+                  <MetaItem icon={ICONS.link}>{linkCount(t, l.links.length)}</MetaItem>
+                  <MetaItem icon={ICONS.bestand}>
+                    {l.attachments?.length > 0 && t("files.count", { n: l.attachments.length })}
+                  </MetaItem>
                 </>
               }
             />
@@ -328,7 +331,7 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
     <Dialog title={canEdit ? t("lp.editLesson") : lesson.title} onClose={onClose} wide>
       {isStudent ? (
         <div className="lp-source">
-          <strong>👁 {t("lp.viewOnly")}. </strong>
+          <strong><Eye /> {t("lp.viewOnly")}. </strong>
           {t("lp.viewOnlyHint")}
         </div>
       ) : (
