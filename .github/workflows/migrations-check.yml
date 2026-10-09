@@ -1,0 +1,20 @@
+name: Migrations check
+
+# Pull requests: check that all migrations apply cleanly on a fresh database.
+# Production deploys (migrations, then the app) live in deploy.yml.
+
+on:
+  pull_request:
+    paths:
+      - "supabase/**"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.75.0
+      - name: Apply migrations to a fresh local database
+        run: supabase db start
