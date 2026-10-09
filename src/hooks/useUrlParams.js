@@ -1,13 +1,11 @@
 import { useCallback, useSyncExternalStore } from "react";
 
 /**
- * Deep-link support via the URL query string, dependency-free.
- *
- * The URL is the single source of truth for which page is open and which
- * filters are active. A Trello card can link to e.g.
- *   https://app.example.com/?page=topics&topic=topic.de-het
- *   https://app.example.com/?page=sentences&grammar=perfectum&level=A2
- *   https://app.example.com/?page=words&theme=eten&level=A0
+ * Filters in the URL query string, dependency-free. Which page is open comes
+ * from the path (see src/routes.js and useRoute); the filters live here, so a
+ * Trello card can link to e.g.
+ *   https://mijntaalstudio.nl/bibliotheek/zinnen?grammar=perfectum&level=A2
+ *   https://mijntaalstudio.nl/bibliotheek/woorden?theme=eten&level=A0
  *
  * Reading is reactive (components re-render on back/forward and on updates).
  */
@@ -69,18 +67,4 @@ export function useSetUrlParams() {
     }
     window.dispatchEvent(new Event("nts-url-changed"));
   }, []);
-}
-
-/**
- * Build an absolute deep-link URL from a params object (for "copy link").
- */
-export function buildDeepLink(params) {
-  const search = new URLSearchParams();
-  Object.entries(params).forEach(([k, v]) => {
-    if (v !== null && v !== undefined && v !== "") search.set(k, v);
-  });
-  const qs = search.toString();
-  return (
-    window.location.origin + window.location.pathname + (qs ? "?" + qs : "")
-  );
 }

@@ -476,3 +476,8 @@
   padding: 0.15rem 0.6rem;
   white-space: nowrap;
 }
+
+.lp-board-title {
+  margin: 0 0 0.75rem;
+  font-size: 1.05rem;
+}

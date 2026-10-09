@@ -1,8 +1,7 @@
 # Trello deep links
 
-De app leest de URL om te bepalen welke pagina open is en welke filters actief zijn.
-Zo kun je op een Trello-kaart een link zetten die de leerling direct op het juiste
-onderwerp opent. Geen AI nodig, puur URL-parameters.
+Elke pagina in de app heeft een eigen adres. Zo kun je op een Trello-kaart (of in een
+bericht) een link zetten die de leerling direct op het juiste onderwerp opent.
 
 ## Hoe je een link maakt
 
@@ -11,58 +10,57 @@ de grammatica-kaart, en plak die link op het Trello-kaartje. Klaar.
 
 Je kunt links ook met de hand opbouwen (zie hieronder).
 
-## De basis
+## Pagina's
 
-```
-https://JOUW-APP.vercel.app/?page=<pagina>&<filter>=<waarde>
-```
+| Pad | Opent |
+|-----|-------|
+| `/leerpad` | Mijn leerpad (leerling) |
+| `/dashboard` | Dashboard (docent/reviewer) |
+| `/lesprogramma` | Lesprogramma |
+| `/leerpaden/<leerling>` | Leerpad van een leerling, bv. `/leerpaden/dimitrios` |
+| `/bibliotheek/woorden` | Bibliotheek → Woordenschat |
+| `/bibliotheek/werkwoorden` | Bibliotheek → Werkwoorden |
+| `/bibliotheek/zinnen` | Bibliotheek → Zinnen |
+| `/bibliotheek/grammatica` | Bibliotheek → Grammatica |
+| `/bibliotheek/grammatica/<onderwerp>` | Eén grammatica-onderwerp, bv. `/bibliotheek/grammatica/perfectum` |
+| `/bibliotheek/oefeningen` | Bibliotheek → Oefeningen |
+| `/feedback` | Feedback-overzicht |
+| `/gebruikers` | Gebruikers (docent) |
 
-Vervang `JOUW-APP.vercel.app` door je echte Vercel-URL.
+## Filters (achter het vraagteken)
 
-## Pagina's (`page`)
+**Grammatica** — `grammar=<tag>` opent het eerste onderwerp met die grammaticatag, bv.
+`/bibliotheek/grammatica?grammar=perfectum`
 
-| Waarde | Opent |
-|--------|-------|
-| `dashboard` | Dashboard |
-| `words` | Woordenschat |
-| `verbs` | Werkwoorden |
-| `sentences` | Zinnen |
-| `topics` | Grammatica |
-| `exercises` | Oefeningen |
-| `feedback` | Feedback-overzicht |
-
-## Filters per pagina
-
-**Grammatica (`page=topics`)**
-- `topic=<id>` — opent en scrollt naar een specifiek onderwerp, bv. `topic=topic.de-het`
-- `grammar=<tag>` — opent het eerste onderwerp met die grammaticatag, bv. `grammar=perfectum`
-
-**Zinnen (`page=sentences`)**
+**Zinnen**
 - `grammar=<tag>` — bv. `perfectum`, `inversie`, `modale-werkwoorden`
 - `level=<niveau>` — `A0` t/m `B2`
 - `theme=<thema>` — bv. `eten`, `dieren`
 - `tense=<tijd>` — bv. `perfectum`, `tegenwoordige-tijd`
 
-**Woordenschat (`page=words`)**
-- `level=<niveau>`, `theme=<thema>`, `pos=<woordsoort>` (noun/verb/adjective/...), `search=<tekst>`
+**Woordenschat** — `level=<niveau>`, `theme=<thema>`, `pos=<woordsoort>` (noun/verb/adjective/...), `search=<tekst>`
 
-**Werkwoorden (`page=verbs`)**
-- `level=<niveau>`, `type=fully-regular` of `type=has-irregular`, `search=<tekst>`
+**Werkwoorden** — `level=<niveau>`, `type=fully-regular` of `type=has-irregular`, `search=<tekst>`
 
 ## Voorbeelden voor Trello-kaarten
 
 | Kaartje | Link |
 |---------|------|
-| "De of het" | `?page=topics&topic=topic.de-het` |
-| "Het perfectum" | `?page=topics&grammar=perfectum` |
-| "Oefen perfectum-zinnen A2" | `?page=sentences&grammar=perfectum&level=A2` |
-| "Woorden: Eten (A0)" | `?page=words&theme=eten&level=A0` |
-| "Onregelmatige werkwoorden" | `?page=verbs&type=has-irregular` |
+| "De of het" | `https://mijntaalstudio.nl/bibliotheek/grammatica/de-het` |
+| "Het perfectum" | `https://mijntaalstudio.nl/bibliotheek/grammatica?grammar=perfectum` |
+| "Oefen perfectum-zinnen A2" | `https://mijntaalstudio.nl/bibliotheek/zinnen?grammar=perfectum&level=A2` |
+| "Woorden: Eten (A0)" | `https://mijntaalstudio.nl/bibliotheek/woorden?theme=eten&level=A0` |
+| "Onregelmatige werkwoorden" | `https://mijntaalstudio.nl/bibliotheek/werkwoorden?type=has-irregular` |
+
+## Oude links
+
+Links in de oude vorm (`?page=topics&topic=topic.de-het`, `?page=sentences&…`) blijven
+werken: de app zet ze bij het openen automatisch om naar het nieuwe pad.
 
 ## Hoe het werkt (technisch)
 
-- De URL is de bron van waarheid. Bij laden leest de app de parameters en zet de juiste
-  pagina + filters. Terug/vooruit in de browser werkt ook.
-- Onbekende of ongeldige waarden vallen terug op standaard (dashboard, geen filter).
-- De topic-id's staan in `src/data/topics.json` (veld `id`), bv. `topic.perfectum`.
-  De grammaticatags staan in `src/data/schema.js` onder `GRAMMAR_TAGS`.
+- Het pad bepaalt de pagina (`src/routes.js`), de query string de filters
+  (`src/hooks/useUrlParams.js`). Terug/vooruit in de browser werkt.
+- `vercel.json` stuurt elk pad naar de app, zodat herladen geen 404 geeft.
+- Onbekende paden vallen terug op de startpagina (leerling: `/leerpad`, docent: `/dashboard`).
+- De topic-id's staan in `src/data/topics.json` (veld `id`), bv. `topic.perfectum` → pad `/bibliotheek/grammatica/perfectum`.
