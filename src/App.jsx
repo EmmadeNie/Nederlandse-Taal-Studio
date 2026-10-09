@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import Dashboard from "./components/Dashboard";
 import Library from "./components/Library";
@@ -7,7 +7,8 @@ import FeedbackOverview from "./feedback/FeedbackOverview";
 import FeedbackDialog from "./feedback/FeedbackDialog";
 import { useAllFeedback } from "./feedback/useFeedback";
 import { getStats } from "./data";
-import { useUrlParams, useSetUrlParams } from "./hooks/useUrlParams";
+import { navigate, useRoute } from "./hooks/useRoute";
+import { PATHS } from "./routes";
 import { useAuth } from "./auth/context";
 import { useI18n } from "./i18n/context";
 import LanguageToggle from "./i18n/LanguageToggle";
@@ -77,8 +78,7 @@ function AuthGate() {
 }
 
 function Studio() {
-  const urlParams = useUrlParams();
-  const setUrlParams = useSetUrlParams();
+  const route = useRoute();
   const [appFeedbackOpen, setAppFeedbackOpen] = useState(false);
   const stats = getStats();
   const allFeedback = useAllFeedback();
@@ -87,36 +87,21 @@ function Studio() {
   const pages = PAGES.filter((p) => !p.roles || p.roles.includes(role));
   const validPages = new Set(pages.map((p) => p.id));
 
-  // The URL is the source of truth for the active page.
+  // The path is the source of truth for the active page (see src/routes.js).
   // Students start on their leerpad; the dashboard is a content-review tool for staff.
   const homePage = role === "leerling" ? "leerpad" : "dashboard";
-  // ?page=library opens its first tab; the tabs keep their own page ids.
-  const requested = urlParams.page === "library" ? "words" : urlParams.page;
-  const page =
-    validPages.has(requested) || (validPages.has("library") && LIBRARY_TAB_IDS.has(requested))
-      ? requested
-      : homePage;
+  const allowed = (id) =>
+    validPages.has(id) || (validPages.has("library") && LIBRARY_TAB_IDS.has(id));
+  const page = route.page && allowed(route.page) ? route.page : homePage;
   const navId = LIBRARY_TAB_IDS.has(page) ? "library" : page;
-  // Clicking a nav item clears any deep-link filters from the previous page.
-  const setPage = (id) =>
-    setUrlParams(
-      {
-        page: id,
-        topic: null,
-        grammar: null,
-        level: null,
-        theme: null,
-        tense: null,
-        search: null,
-        type: null,
-        sort: null,
-        pos: null,
-        stype: null,
-        order: null,
-        student: null,
-      },
-      { push: true }
-    );
+
+  // "/" or a page this role can't open: show the home page under its own path.
+  useEffect(() => {
+    if (page !== route.page) navigate(PATHS[page], { replace: true });
+  }, [page, route.page]);
+
+  // Clicking a nav item drops the previous page's filters.
+  const setPage = (id) => navigate(PATHS[id === "library" ? "words" : id]);
 
   const libraryCounts = {
     words: stats.totalWords,
@@ -139,7 +124,7 @@ function Studio() {
             <button
               key={p.id}
               className={navId === p.id ? "active" : ""}
-              onClick={() => setPage(p.id === "library" ? "words" : p.id)}
+              onClick={() => setPage(p.id)}
             >
               <span className="icon">{p.icon}</span>
               {t(`nav.${p.id}`)}

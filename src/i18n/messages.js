@@ -272,6 +272,8 @@ export const messages = {
     // Leerpaden
     "lpd.students": plural("{n} leerling", "{n} leerlingen"),
     "lpd.intro": "Elke leerling heeft een eigen leerpad.",
+    "lpd.pathOf": "Leerpad van {name}",
+    "lpd.searchStudent": "Zoek een leerling…",
     "lpd.introDocent":
       "Zet lessen uit het lesprogramma erop, voeg zijpaden en extra's toe en houd notities bij. Leerlingen kunnen zelf lanes maken en stappen verslepen.",
     "lpd.introReviewer": "Je kunt meekijken, maar niets aanpassen.",
@@ -556,6 +558,8 @@ export const messages = {
 
     "lpd.students": plural("{n} student", "{n} students"),
     "lpd.intro": "Every student has their own learning path.",
+    "lpd.pathOf": "{name}'s learning path",
+    "lpd.searchStudent": "Search for a student…",
     "lpd.introDocent":
       "Add lessons from the curriculum, add side paths and extras, and keep notes. Students can make their own lanes and drag steps.",
     "lpd.introReviewer": "You can look, but not change anything.",

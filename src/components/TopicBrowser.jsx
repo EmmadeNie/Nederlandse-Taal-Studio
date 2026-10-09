@@ -3,25 +3,28 @@ import { topics, querySentences } from "../data";
 import { LevelBadge, ReviewBadge, Tag } from "./Badges";
 import FeedbackButton from "../feedback/FeedbackButton";
 import Markdown from "./Markdown";
-import { useUrlParams, useSetUrlParams } from "../hooks/useUrlParams";
+import { useUrlParams } from "../hooks/useUrlParams";
+import { navigate, useRoute } from "../hooks/useRoute";
+import { pathFor, topicIdFromSlug, topicSlug } from "../routes";
 import CopyLinkButton from "./CopyLinkButton";
 import { useI18n } from "../i18n/context";
 
 export default function TopicBrowser() {
   const { t } = useI18n();
   const urlParams = useUrlParams();
-  const setUrlParams = useSetUrlParams();
+  const route = useRoute();
 
-  // A topic can be deep-linked by id (?topic=topic.de-het) or by grammar tag
-  // (?grammar=perfectum), so Trello links can target either.
+  // A topic can be deep-linked by path (/bibliotheek/grammatica/perfectum) or
+  // by grammar tag (?grammar=perfectum), so Trello links can target either.
   const expandedId =
-    urlParams.topic ||
+    (route.param && topicIdFromSlug(route.param)) ||
     (urlParams.grammar
       ? topics.find((topic) => (topic.grammarTags || []).includes(urlParams.grammar))?.id
       : null) ||
     null;
 
-  const setExpanded = (id) => setUrlParams({ topic: id, grammar: null });
+  const setExpanded = (id) =>
+    navigate(id ? pathFor("topics", topicSlug(id)) : pathFor("topics"), { replace: true });
 
   // Scroll the deep-linked topic into view on load / when it changes.
   const openRef = useRef(null);
@@ -95,7 +98,7 @@ export default function TopicBrowser() {
               </>
             )}
             <div className="card-footer" onClick={(e) => e.stopPropagation()}>
-              <CopyLinkButton params={{ page: "topics", topic: topic.id }} />
+              <CopyLinkButton path={pathFor("topics", topicSlug(topic.id))} />
               <FeedbackButton
                 itemType="topic"
                 itemId={topic.id}
