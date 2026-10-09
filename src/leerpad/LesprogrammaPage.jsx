@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "../auth/context";
 import { useI18n } from "../i18n/context";
 import Markdown from "../components/Markdown";
+import LessonFiles from "./LessonFiles";
 import Board, { AddCardForm } from "./Board";
 import * as api from "./api";
 import { BoardFilters, CardBody, Dialog, LinkList, LinksEditor } from "./shared";
@@ -105,7 +106,12 @@ export default function LesprogrammaPage() {
               title={l.title}
               level={l.level}
               categories={l.categories}
-              meta={linkCount(t, l.links.length)}
+              meta={
+                <>
+                  {linkCount(t, l.links.length)}
+                  {l.attachments?.length > 0 && <span>{t("files.count", { n: l.attachments.length })}</span>}
+                </>
+              }
             />
           )}
           onOpenCard={(l) => setOpenId(l.id)}
@@ -345,6 +351,16 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
         ) : (
           <LinkList links={lesson.links} />
         )}
+      </div>
+
+      <div className="lp-section">
+        <h4>{t("files.title")}</h4>
+        <LessonFiles
+          lessonId={lesson.id}
+          attachments={lesson.attachments}
+          canEdit={canEdit}
+          onChange={(attachments) => onSaved({ ...lesson, attachments })}
+        />
       </div>
 
       {canEdit && (

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "../auth/context";
 import { useI18n } from "../i18n/context";
 import Markdown from "../components/Markdown";
+import LessonFiles from "./LessonFiles";
 import Board, { AddCardForm } from "./Board";
 import * as api from "./api";
 import { BoardFilters, CardBody, Chips, Dialog, LinkList, LinksEditor } from "./shared";
@@ -108,6 +109,7 @@ export default function LeerpadBoard({ studentId }) {
                 meta={
                   <>
                     {linkCount(t, c.links.length + s.extras.length)}
+                    {c.attachments.length > 0 && <span>{t("files.count", { n: c.attachments.length })}</span>}
                     {s.extras.length > 0 && <span>{t("lp.extraCount", { n: s.extras.length })}</span>}
                     {isDocent && notes[s.id] && <span>{t("lp.hasNote")}</span>}
                   </>
@@ -370,6 +372,12 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
       <div className="lp-section">
         <h4>{t("lp.links")}</h4>
         <LinkList links={content.links} extras={isDocent ? [] : step.extras} />
+        {content.attachments.length > 0 && (
+          <>
+            <h4>{t("files.title")}</h4>
+            <LessonFiles attachments={content.attachments} canEdit={false} />
+          </>
+        )}
         {isDocent && (
           <>
             <h4>{t("step.extras")}</h4>

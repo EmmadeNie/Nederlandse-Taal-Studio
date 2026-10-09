@@ -560,3 +560,46 @@
   margin: 0 0 0.75rem;
   font-size: 1.05rem;
 }
+
+/* ----- Files on a lesson ----- */
+.lp-files {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.lp-file-list .lp-file-name {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--text);
+  font-size: 0.82rem;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  flex: 1;
+}
+
+.lp-file-list .lp-file-name:hover {
+  color: var(--accent);
+}
+
+.lp-file-list .lp-file-size {
+  margin-left: auto;
+  font-size: 0.72rem;
+  flex: none;
+}
+
+.lp-file-list li .board-icon-btn {
+  margin-left: 0;
+}
+
+.lp-file-upload {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.75rem;
+}

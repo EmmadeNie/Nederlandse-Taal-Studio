@@ -3,13 +3,16 @@
  * Permissions are enforced by RLS; see supabase/migrations/*_lesprogramma_and_leerpad.sql.
  */
 import { supabase } from "../lib/supabase";
+import { removeStoredFiles } from "./files";
 
 function check({ data, error }) {
   if (error) throw new Error(error.message);
   return data;
 }
 
-const LESSON_FIELDS = "id, lane_id, position, title, level, categories, explanation, links";
+const LESSON_FIELDS =
+  "id, lane_id, position, title, level, categories, explanation, links, " +
+  "attachments:lesson_attachments(id, file_name, mime_type, size_bytes, storage_path, created_at)";
 
 export { positionBetween } from "./positions";
 
@@ -56,11 +59,18 @@ export const updateLesson = (id, patch) =>
     .then(check);
 
 export async function deleteLesson(id) {
+  // Remember the stored files; their rows go with the lesson (cascade).
+  const files = await supabase
+    .from("lesson_attachments")
+    .select("storage_path")
+    .eq("lesson_id", id)
+    .then(check);
   const { error } = await supabase.from("lessons").delete().eq("id", id);
   if (error?.code === "23503") {
     throw new Error("lp.err.lessonInUse");
   }
   if (error) throw new Error(error.message);
+  await removeStoredFiles(files.map((f) => f.storage_path));
 }
 
 /** Students that have this lesson on their leerpad: [{ id, name }]. */
