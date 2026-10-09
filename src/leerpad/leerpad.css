@@ -753,7 +753,7 @@
   margin-bottom: 1rem;
 }
 
-/* ----- Lesson labels: subtle tinted pills with a colour dot ----- */
+/* ----- Lesson labels: just a subtle colour, no background ----- */
 .label-gray { --lc: #9aa0ab; }
 .label-blue { --lc: #4f9cf9; }
 .label-green { --lc: #3fbf7f; }
@@ -767,19 +767,13 @@
 .label-chip {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
   font-size: 0.7rem;
   line-height: 1.4;
-  padding: 0.05rem 0.45rem 0.05rem 0.4rem;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--lc) 14%, transparent);
-  color: color-mix(in srgb, var(--lc) 55%, var(--text));
+  color: color-mix(in srgb, var(--lc) 75%, var(--text));
   white-space: nowrap;
 }
 
-.label-chip::before,
 .label-dot {
-  content: "";
   width: 0.45rem;
   height: 0.45rem;
   border-radius: 50%;
@@ -804,25 +798,23 @@
 }
 
 .label-toggle {
-  border: 1px solid transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
   cursor: pointer;
   font: inherit;
   font-size: 0.78rem;
-  padding: 0.15rem 0.6rem 0.15rem 0.5rem;
-  opacity: 0.55;
-  background: var(--surface-2);
+  padding: 0.15rem 0.6rem;
+  background: none;
   color: var(--text-dim);
 }
 
 .label-toggle[aria-pressed="true"] {
-  opacity: 1;
-  background: color-mix(in srgb, var(--lc) 18%, transparent);
-  border-color: color-mix(in srgb, var(--lc) 45%, transparent);
-  color: color-mix(in srgb, var(--lc) 55%, var(--text));
+  border-color: color-mix(in srgb, var(--lc) 50%, transparent);
+  color: color-mix(in srgb, var(--lc) 75%, var(--text));
 }
 
 .label-toggle:hover {
-  opacity: 1;
+  color: color-mix(in srgb, var(--lc) 75%, var(--text));
 }
 
 .label-toggle:focus-visible {
