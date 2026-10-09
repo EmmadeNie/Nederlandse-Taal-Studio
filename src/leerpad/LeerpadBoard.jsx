@@ -6,6 +6,8 @@ import LessonFiles from "./LessonFiles";
 import { WordListView } from "./WordList";
 import { hasWordList, wordsForList } from "./wordLists";
 import { SentenceListView } from "./SentenceList";
+import { GrammarView } from "./LessonGrammar";
+import { grammarCount } from "./grammarTopics";
 import SaveStatus from "./SaveStatus";
 import { useAutosave } from "./useAutosave";
 import { hasSentenceList, sentencesForList } from "./sentenceLists";
@@ -120,6 +122,9 @@ export default function LeerpadBoard({ studentId }) {
                 meta={
                   <>
                     <MetaItem icon={ICONS.link}>{linkCount(t, s.extras.length)}</MetaItem>
+                    <MetaItem icon={ICONS.topics}>
+                      {grammarCount(c.topicIds) > 0 && t("lg.count", { n: grammarCount(c.topicIds) })}
+                    </MetaItem>
                     <MetaItem icon={ICONS.words}>
                       {hasWordList(c.wordList) && t("wl.count", { n: wordsForList(c.wordList).length })}
                     </MetaItem>
@@ -420,6 +425,13 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
             <Markdown className="lp-explanation">{content.explanation}</Markdown>
           </div>
         )
+      )}
+
+      {grammarCount(content.topicIds) > 0 && (
+        <div className="lp-section">
+          <h4>{t("lg.title")}</h4>
+          <GrammarView ids={content.topicIds} />
+        </div>
       )}
 
       {hasWordList(content.wordList) && (

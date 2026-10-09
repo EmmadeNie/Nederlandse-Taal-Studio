@@ -5,6 +5,8 @@ import Markdown from "../components/Markdown";
 import LessonFiles from "./LessonFiles";
 import { WordListEditor, WordListView } from "./WordList";
 import { LabelPicker } from "./Labels";
+import { GrammarPicker, GrammarView } from "./LessonGrammar";
+import { grammarCount } from "./grammarTopics";
 import SaveStatus from "./SaveStatus";
 import { useAutosave } from "./useAutosave";
 import { hasWordList, wordsForList } from "./wordLists";
@@ -177,6 +179,9 @@ export default function LesprogrammaPage() {
               labelIds={l.label_ids}
               meta={
                 <>
+                  <MetaItem icon={ICONS.topics}>
+                    {grammarCount(l.topic_ids) > 0 && t("lg.count", { n: grammarCount(l.topic_ids) })}
+                  </MetaItem>
                   <MetaItem icon={ICONS.words}>
                     {hasWordList(l.word_list) && t("wl.count", { n: wordsForList(l.word_list).length })}
                   </MetaItem>
@@ -274,6 +279,7 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
     lane_id: lesson.lane_id,
     word_list: lesson.word_list || null,
     sentence_list: lesson.sentence_list || null,
+    topic_ids: lesson.topic_ids || [],
   });
   const [preview, setPreview] = useState(!canEdit);
   const [students, setStudents] = useState(null); // students with this lesson
@@ -434,6 +440,14 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
           </label>
         )}
       </div>
+
+      {(canEdit || grammarCount(lesson.topic_ids) > 0) && (
+        <div className="lp-section">
+          <h4>{t("lg.title")}</h4>
+          {canEdit && <GrammarPicker value={form.topic_ids} onChange={choose("topic_ids")} />}
+          <GrammarView ids={canEdit ? form.topic_ids : lesson.topic_ids} />
+        </div>
+      )}
 
       {(canEdit || hasWordList(lesson.word_list)) && (
         <div className="lp-section">
