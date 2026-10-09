@@ -132,6 +132,17 @@ export default function LeerpadBoard({ studentId }) {
               run(() => api.renameLeerpadLane(lane.id, name));
             })
           }
+          onMoveLane={
+            canArrange &&
+            ((lane, position) => {
+              setLanes((ls) =>
+                ls
+                  .map((l) => (l.id === lane.id ? { ...l, position } : l))
+                  .sort((a, b) => a.position - b.position)
+              );
+              run(() => api.moveLeerpadLane(lane.id, position));
+            })
+          }
           onDeleteLane={
             canArrange &&
             lanes.length > 1 &&

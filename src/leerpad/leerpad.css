@@ -62,11 +62,90 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 10px;
+  position: relative;
 }
 
 .board-lane.is-drop {
   border-color: var(--accent);
   background: var(--accent-soft);
+}
+
+/* Lane reordering: the lane being dragged fades, a bar shows where it lands. */
+.board-lane.is-lane-dragging {
+  opacity: 0.4;
+}
+
+.board-lane.is-lane-drop-before::before,
+.board-lane.is-lane-drop-after::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--accent);
+  pointer-events: none;
+}
+
+/* Centered in the 0.75rem gap between lanes (border is 1px). */
+.board-lane.is-lane-drop-before::before {
+  left: calc(-0.375rem - 2.5px);
+}
+
+.board-lane.is-lane-drop-after::after {
+  right: calc(-0.375rem - 2.5px);
+}
+
+/* The board scrolls horizontally and would clip a bar outside the outer lanes. */
+.board-lane:first-child.is-lane-drop-before::before {
+  left: 0;
+}
+
+.board-lane:last-child.is-lane-drop-after::after {
+  right: 0;
+}
+
+.board-lane-handle {
+  color: var(--text-dim);
+  cursor: grab;
+  font-size: 0.85rem;
+  line-height: 1;
+  padding: 0.1rem 0.15rem;
+  border-radius: 4px;
+  user-select: none;
+}
+
+.board-lane-handle:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.board-lane-handle:active {
+  cursor: grabbing;
+}
+
+/* Move-left/right buttons: shown on hover or focus, always on touch screens. */
+.board-lane-move {
+  display: inline-flex;
+  opacity: 0;
+}
+
+.board-lane-head:hover .board-lane-move,
+.board-lane-move:focus-within {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .board-lane-move {
+    opacity: 1;
+  }
+}
+
+.board-icon-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+  background: none;
+  color: var(--text-dim);
 }
 
 .board-lane-head {
