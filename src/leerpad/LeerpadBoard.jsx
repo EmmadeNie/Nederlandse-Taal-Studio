@@ -109,11 +109,10 @@ export default function LeerpadBoard({ studentId }) {
                 kind={s.lesson_id ? null : t("kind.zijpad")}
                 meta={
                   <>
-                    <MetaItem icon={ICONS.link}>{linkCount(t, c.links.length + s.extras.length)}</MetaItem>
+                    <MetaItem icon={ICONS.link}>{linkCount(t, s.extras.length)}</MetaItem>
                     <MetaItem icon={ICONS.bestand}>
                       {c.attachments.length > 0 && t("files.count", { n: c.attachments.length })}
                     </MetaItem>
-                    {s.extras.length > 0 && <span>{t("lp.extraCount", { n: s.extras.length })}</span>}
                     <MetaItem icon={ICONS.notitie}>{isDocent && notes[s.id] && t("lp.hasNote")}</MetaItem>
                   </>
                 }
@@ -379,16 +378,17 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
         </div>
       )}
 
-      <div className="lp-section">
-        <h4>{t("lp.links")}</h4>
-        <LinkList links={content.links} extras={isDocent ? [] : step.extras} />
-        {isDocent && (
-          <>
-            <h4>{t("step.extras")}</h4>
+      {/* Extra links for this one student (the lesson's own links live in the uitleg). */}
+      {(isDocent || step.extras.length > 0) && (
+        <div className="lp-section">
+          <h4>{t("step.extras")}</h4>
+          {isDocent ? (
             <LinksEditor value={extras} onChange={setExtras} addLabel={t("links.addExtra")} />
-          </>
-        )}
-      </div>
+          ) : (
+            <LinkList extras={step.extras} />
+          )}
+        </div>
+      )}
 
       {canArrange && (
         <label className="fb-field">

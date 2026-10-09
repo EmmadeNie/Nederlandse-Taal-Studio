@@ -6,9 +6,9 @@ import LessonFiles from "./LessonFiles";
 import SelectionBar from "./SelectionBar";
 import Board, { AddCardForm } from "./Board";
 import * as api from "./api";
-import { BoardFilters, CardBody, Dialog, LinkList, LinksEditor, MetaItem } from "./shared";
+import { BoardFilters, CardBody, Dialog, MetaItem } from "./shared";
 import { CheckSquare, Eye, ICONS } from "../icons";
-import { LEVELS, linkCount, matchesFilter } from "./util";
+import { LEVELS, matchesFilter } from "./util";
 
 /**
  * Lesprogramma: the master board. Lanes are free (like Trello); the CEFR
@@ -167,7 +167,6 @@ export default function LesprogrammaPage() {
               categories={l.categories}
               meta={
                 <>
-                  <MetaItem icon={ICONS.link}>{linkCount(t, l.links.length)}</MetaItem>
                   <MetaItem icon={ICONS.bestand}>
                     {l.attachments?.length > 0 && t("files.count", { n: l.attachments.length })}
                   </MetaItem>
@@ -423,14 +422,6 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
         />
       </div>
 
-      <div className="lp-section">
-        <h4>{t("lp.links")}</h4>
-        {canEdit ? (
-          <LinksEditor value={form.links} onChange={set("links")} />
-        ) : (
-          <LinkList links={lesson.links} />
-        )}
-      </div>
 
       {canEdit && (
         <div className="lp-section">
