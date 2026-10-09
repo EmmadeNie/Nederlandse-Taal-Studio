@@ -704,3 +704,51 @@
   margin: 0;
   font-size: 0.75rem;
 }
+
+/* ----- CSV export for Quizlet ----- */
+.qz-toggle,
+.qz-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  align-self: flex-start;
+}
+
+.qz {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  font-size: 0.82rem;
+}
+
+.qz legend {
+  font-weight: 600;
+  padding: 0 0.25rem;
+}
+
+.qz-levels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+}
+
+.qz-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.qz-hint {
+  margin: 0;
+  font-size: 0.75rem;
+}
+
+.qz-library {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
