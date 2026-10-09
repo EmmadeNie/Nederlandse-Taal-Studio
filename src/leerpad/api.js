@@ -181,3 +181,34 @@ export async function planLesson(lessonId, studentId) {
     position: nextPosition(inLane),
   });
 }
+
+/** The lanes of a leerpad, creating the default ones if it doesn't have any yet. */
+export async function leerpadLanes(studentId) {
+  await ensureLeerpad(studentId);
+  return supabase
+    .from("leerpad_lanes")
+    .select("id, name, position")
+    .eq("student_id", studentId)
+    .order("position")
+    .then(check);
+}
+
+/**
+ * Put several lessons on a leerpad at the end of one lane, in the given order.
+ * Lessons already on that leerpad are skipped. Returns { added, skipped }.
+ */
+export async function planLessons(lessonIds, studentId, laneId) {
+  await ensureLeerpad(studentId);
+  const { lanes, steps } = await loadLeerpad(studentId);
+  const lane = lanes.find((l) => l.id === laneId) || lanes[0];
+  const planned = new Set(steps.map((s) => s.lesson_id).filter(Boolean));
+  const todo = lessonIds.filter((id) => !planned.has(id));
+  if (todo.length) {
+    let position = nextPosition(steps.filter((s) => s.lane_id === lane.id)) - 1;
+    await supabase
+      .from("steps")
+      .insert(todo.map((id) => ({ student_id: studentId, lane_id: lane.id, lesson_id: id, position: ++position })))
+      .then(check);
+  }
+  return { added: todo.length, skipped: lessonIds.length - todo.length };
+}

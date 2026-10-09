@@ -3,6 +3,7 @@ import { useAuth } from "../auth/context";
 import { useI18n } from "../i18n/context";
 import Markdown from "../components/Markdown";
 import LessonFiles from "./LessonFiles";
+import SelectionBar from "./SelectionBar";
 import Board, { AddCardForm } from "./Board";
 import * as api from "./api";
 import { BoardFilters, CardBody, Dialog, LinkList, LinksEditor } from "./shared";
@@ -24,6 +25,10 @@ export default function LesprogrammaPage() {
   const [search, setSearch] = useState("");
   const [level, setLevel] = useState("");
   const [openId, setOpenId] = useState(null);
+  // Select mode (docent): pick many lessons and put them on a leerpad at once.
+  const [selecting, setSelecting] = useState(false);
+  const [selected, setSelected] = useState(() => new Set());
+  const [anchor, setAnchor] = useState(null); // last clicked card, for shift-click ranges
 
   const load = useCallback(async () => {
     try {
@@ -71,11 +76,58 @@ export default function LesprogrammaPage() {
 
   const openLesson = lessons.find((l) => l.id === openId);
 
+  const toggleCard = (card, e, laneCards) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      const ids = laneCards.map((c) => c.id);
+      if (e.shiftKey && anchor && ids.includes(anchor)) {
+        // Shift-click: select everything between the last clicked card and this one.
+        const [a, b] = [ids.indexOf(anchor), ids.indexOf(card.id)].sort((x, y) => x - y);
+        ids.slice(a, b + 1).forEach((id) => next.add(id));
+      } else if (next.has(card.id)) {
+        next.delete(card.id);
+      } else {
+        next.add(card.id);
+      }
+      return next;
+    });
+    setAnchor(card.id);
+  };
+
+  const toggleLane = (lane, laneCards) =>
+    setSelected((prev) => {
+      const next = new Set(prev);
+      const all = laneCards.every((c) => next.has(c.id));
+      laneCards.forEach((c) => (all ? next.delete(c.id) : next.add(c.id)));
+      return next;
+    });
+
+  const stopSelecting = () => {
+    setSelecting(false);
+    setSelected(new Set());
+    setAnchor(null);
+  };
+
+  // Selected lessons in board order (lane order, then position in the lane).
+  const laneOrder = new Map(lanes.map((l, i) => [l.id, i]));
+  const selectedInOrder = lessons
+    .filter((l) => selected.has(l.id))
+    .sort((a, b) => laneOrder.get(a.lane_id) - laneOrder.get(b.lane_id) || a.position - b.position)
+    .map((l) => l.id);
+
   return (
     <>
       <div className="lp-page-head">
         <h2>{t("nav.lesprogramma")}</h2>
         <span className="result-count">{t("lp.lessons", { n: lessons.length })}</span>
+        {canEdit && (
+          <button
+            className={selecting ? "fb-btn-primary" : "fb-btn-secondary"}
+            onClick={() => (selecting ? stopSelecting() : setSelecting(true))}
+          >
+            {selecting ? t("select.done") : t("select.start")}
+          </button>
+        )}
         {!canEdit && (
           <span className="lp-view-only" title={t("lp.viewOnlyHint")}>
             👁 {t("lp.viewOnly")}
@@ -83,8 +135,14 @@ export default function LesprogrammaPage() {
         )}
       </div>
       <p className="lp-intro">
-        {isStudent ? t("lp.studentIntro") : t("lp.programIntro")}
-        {canEdit ? " " + t("lp.programIntroDrag") : " " + t("lp.viewOnlyHint")}
+        {selecting ? (
+          t("select.hint")
+        ) : (
+          <>
+            {isStudent ? t("lp.studentIntro") : t("lp.programIntro")}
+            {canEdit ? " " + t("lp.programIntroDrag") : " " + t("lp.viewOnlyHint")}
+          </>
+        )}
       </p>
       <BoardFilters
         search={search}
@@ -116,6 +174,11 @@ export default function LesprogrammaPage() {
           )}
           onOpenCard={(l) => setOpenId(l.id)}
           onMoveCard={canEdit ? moveLesson : undefined}
+          selection={
+            selecting
+              ? { selectedIds: selected, onToggle: toggleCard, onToggleLane: toggleLane }
+              : undefined
+          }
           onAddLane={
             canEdit &&
             ((name) =>
@@ -161,6 +224,9 @@ export default function LesprogrammaPage() {
           }
           emptyLaneText={t("lp.emptyLessons")}
         />
+      )}
+      {selecting && (
+        <SelectionBar lessonIds={selectedInOrder} onClear={() => setSelected(new Set())} />
       )}
       {openLesson && (
         <LessonDialog

@@ -22,6 +22,9 @@ import "./leerpad.css";
  *                 The caller must keep `lanes` sorted by position afterwards.
  *   laneFooter    (lane) => node, e.g. an "add card" form
  *   emptyLaneText text for a lane without cards
+ *   selection     optional select mode: { selectedIds: Set, onToggle(card, event, laneCards),
+ *                 onToggleLane(lane, laneCards) }. While set, clicking a card selects it
+ *                 instead of opening it, and cards can't be dragged.
  */
 export default function Board({
   lanes,
@@ -37,6 +40,7 @@ export default function Board({
   onMoveLane,
   laneFooter,
   emptyLaneText,
+  selection,
 }) {
   const { t } = useI18n();
   const [dragId, setDragId] = useState(null);
@@ -138,6 +142,14 @@ export default function Board({
               <LaneHeader
                 lane={lane}
                 count={all.length}
+                selectState={
+                  selection &&
+                  shown.length > 0 && {
+                    checked: shown.every((c) => selection.selectedIds.has(c.id)),
+                    some: shown.some((c) => selection.selectedIds.has(c.id)),
+                    onToggle: () => selection.onToggleLane(lane, shown),
+                  }
+                }
                 onRename={onRenameLane}
                 onDelete={all.length === 0 ? onDeleteLane : null}
                 onDragStart={
@@ -164,14 +176,17 @@ export default function Board({
                 }
               />
               <div className="board-cards">
-                {shown.map((card) => (
+                {shown.map((card) => {
+                  const selected = selection?.selectedIds.has(card.id);
+                  return (
                   <div
                     key={card.id}
                     data-card-id={card.id}
-                    className={`board-card ${cardClass(card)} ${dragId === card.id ? "is-dragging" : ""}`}
-                    role="button"
+                    className={`board-card ${cardClass(card)} ${dragId === card.id ? "is-dragging" : ""} ${selection ? "is-selectable" : ""} ${selected ? "is-selected" : ""}`}
+                    role={selection ? "checkbox" : "button"}
+                    aria-checked={selection ? Boolean(selected) : undefined}
                     tabIndex={0}
-                    draggable={Boolean(onMoveCard)}
+                    draggable={Boolean(onMoveCard) && !selection}
                     onDragStart={(e) => {
                       setDragId(card.id);
                       e.dataTransfer.effectAllowed = "move";
@@ -181,12 +196,21 @@ export default function Board({
                       setDragId(null);
                       setDropLane(null);
                     }}
-                    onClick={() => onOpenCard?.(card)}
-                    onKeyDown={(e) => e.key === "Enter" && onOpenCard?.(card)}
+                    onClick={(e) =>
+                      selection ? selection.onToggle(card, e, shown) : onOpenCard?.(card)
+                    }
+                    onKeyDown={(e) => {
+                      if (selection && (e.key === " " || e.key === "Enter")) {
+                        e.preventDefault();
+                        selection.onToggle(card, e, shown);
+                      } else if (e.key === "Enter") onOpenCard?.(card);
+                    }}
                   >
+                    {selection && <span className="board-card-check" aria-hidden="true">{selected ? "✓" : ""}</span>}
                     {renderCard(card)}
                   </div>
-                ))}
+                  );
+                })}
                 {shown.length === 0 && (
                   <div className="board-empty">
                     {all.length ? t("board.filterEmpty") : emptyLaneText || t("board.empty")}
@@ -203,7 +227,17 @@ export default function Board({
   );
 }
 
-function LaneHeader({ lane, count, onRename, onDelete, onDragStart, onDragEnd, onMoveLeft, onMoveRight }) {
+function LaneHeader({
+  lane,
+  count,
+  onRename,
+  onDelete,
+  onDragStart,
+  onDragEnd,
+  onMoveLeft,
+  onMoveRight,
+  selectState,
+}) {
   const { t } = useI18n();
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(lane.name);
@@ -217,6 +251,17 @@ function LaneHeader({ lane, count, onRename, onDelete, onDragStart, onDragEnd, o
 
   return (
     <div className="board-lane-head">
+      {selectState && (
+        <input
+          type="checkbox"
+          className="board-lane-select"
+          checked={selectState.checked}
+          ref={(el) => el && (el.indeterminate = selectState.some && !selectState.checked)}
+          onChange={selectState.onToggle}
+          title={t("select.lane")}
+          aria-label={t("select.laneAria", { name: lane.name })}
+        />
+      )}
       {onDragStart && !editing && (
         <span
           className="board-lane-handle"
