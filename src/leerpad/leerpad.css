@@ -72,7 +72,8 @@
 
 /* Lane reordering: the lane being dragged fades, a bar shows where it lands. */
 .board-lane.is-lane-dragging {
-  opacity: 0.4;
+  opacity: 0.35;
+  border-style: dashed;
 }
 
 .board-lane.is-lane-drop-before::before,
@@ -224,12 +225,39 @@
   outline: none;
 }
 
-.board-card[draggable="true"] {
+.board-card.is-draggable {
   cursor: grab;
+  touch-action: manipulation;
 }
 
+/* The card's place while it is being dragged: an empty slot. */
 .board-card.is-dragging {
-  opacity: 0.4;
+  opacity: 0.35;
+  border-style: dashed;
+}
+
+.board-card.is-dragging > * {
+  visibility: hidden;
+}
+
+/* What follows the pointer while dragging. */
+.board-card.is-overlay {
+  cursor: grabbing;
+  transform: rotate(2deg);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  border-color: var(--accent);
+}
+
+.board-lane.is-overlay {
+  cursor: grabbing;
+  transform: rotate(1deg);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.4);
+  max-height: 70vh;
+  overflow: hidden;
+}
+
+.board-lane-handle {
+  touch-action: none;
 }
 
 .board-card.is-zijpad {
