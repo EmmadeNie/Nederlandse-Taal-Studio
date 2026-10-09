@@ -4,6 +4,7 @@ import { LevelBadge, Tag } from "../components/Badges";
 import { LEVELS } from "./util";
 import { useI18n } from "../i18n/context";
 import { ArrowSquareOut, ICONS, X } from "../icons";
+import { LabelChips, LabelFilter } from "./Labels";
 
 /** Icon + text in a card's meta row (links, files, note). Renders nothing without text. */
 export function MetaItem({ icon: Icon, children }) {
@@ -15,12 +16,13 @@ export function MetaItem({ icon: Icon, children }) {
   );
 }
 
-/** Level + category labels (+ optional kind, e.g. "Zijpad"). */
-export function Chips({ level, categories = [], kind }) {
+/** Level + labels (+ optional kind, e.g. "Zijpad"). Zijpaden may still carry free-text categories. */
+export function Chips({ level, labelIds = [], categories = [], kind }) {
   const { t } = useI18n();
   return (
     <div className="board-card-chips">
       {level ? <LevelBadge level={level} /> : <span className="tag dim">{t("level.noneTag")}</span>}
+      <LabelChips ids={labelIds} />
       {categories.map((c) => (
         <Tag key={c}>{c}</Tag>
       ))}
@@ -34,11 +36,11 @@ export function Chips({ level, categories = [], kind }) {
 }
 
 /** Title + labels, shared by lesson and step cards. */
-export function CardBody({ title, level, categories, kind, meta }) {
+export function CardBody({ title, level, labelIds, categories, kind, meta }) {
   return (
     <>
       <div className="board-card-title">{title}</div>
-      <Chips level={level} categories={categories} kind={kind} />
+      <Chips level={level} labelIds={labelIds} categories={categories} kind={kind} />
       {meta && <div className="board-card-meta">{meta}</div>}
     </>
   );
@@ -168,8 +170,8 @@ export function LinksEditor({ value, onChange, addLabel }) {
   );
 }
 
-/** Search + level filter used above both boards. */
-export function BoardFilters({ search, setSearch, level, setLevel, placeholder }) {
+/** Search + level (+ label) filter used above both boards. */
+export function BoardFilters({ search, setSearch, level, setLevel, label, setLabel, placeholder }) {
   const { t } = useI18n();
   return (
     <div className="filters lp-filters">
@@ -189,6 +191,7 @@ export function BoardFilters({ search, setSearch, level, setLevel, placeholder }
         ))}
         <option value="none">{t("level.none")}</option>
       </select>
+      {setLabel && <LabelFilter value={label} onChange={setLabel} />}
     </div>
   );
 }

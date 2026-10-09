@@ -30,6 +30,7 @@ export default function LeerpadBoard({ studentId }) {
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
   const [level, setLevel] = useState("");
+  const [label, setLabel] = useState("");
   const [openId, setOpenId] = useState(null);
   const [pickerLane, setPickerLane] = useState(null);
 
@@ -90,6 +91,8 @@ export default function LeerpadBoard({ studentId }) {
         setSearch={setSearch}
         level={level}
         setLevel={setLevel}
+        label={label}
+        setLabel={setLabel}
         placeholder={t("lp.searchStep")}
       />
       {error && <div className="lp-error">{error}</div>}
@@ -99,7 +102,7 @@ export default function LeerpadBoard({ studentId }) {
         <Board
           lanes={lanes}
           cards={steps}
-          isCardVisible={(s) => matchesFilter(stepContent(s), search, level)}
+          isCardVisible={(s) => matchesFilter(stepContent(s), search, level, label)}
           cardClass={(s) => (s.lesson_id ? "" : "is-zijpad")}
           renderCard={(s) => {
             const c = stepContent(s);
@@ -107,6 +110,7 @@ export default function LeerpadBoard({ studentId }) {
               <CardBody
                 title={c.title}
                 level={c.level}
+                labelIds={c.labelIds}
                 categories={c.categories}
                 kind={s.lesson_id ? null : t("kind.zijpad")}
                 meta={
@@ -218,12 +222,13 @@ function LessonPicker({ lane, plannedIds, onClose, onPick }) {
   const [lessons, setLessons] = useState(null);
   const [search, setSearch] = useState("");
   const [level, setLevel] = useState("");
+  const [label, setLabel] = useState("");
 
   useEffect(() => {
     api.loadProgram().then((d) => setLessons(d.lessons)).catch(() => setLessons([]));
   }, []);
 
-  const shown = (lessons || []).filter((l) => matchesFilter(l, search, level)).slice(0, 60);
+  const shown = (lessons || []).filter((l) => matchesFilter({ ...l, labelIds: l.label_ids }, search, level, label)).slice(0, 60);
 
   return (
     <Dialog title={t("picker.title", { lane: lane.name })} onClose={onClose} wide>
@@ -232,6 +237,8 @@ function LessonPicker({ lane, plannedIds, onClose, onPick }) {
         setSearch={setSearch}
         level={level}
         setLevel={setLevel}
+        label={label}
+        setLabel={setLabel}
         placeholder={t("picker.search")}
       />
       {lessons === null ? (
@@ -250,7 +257,7 @@ function LessonPicker({ lane, plannedIds, onClose, onPick }) {
               <CardBody
                 title={l.title}
                 level={l.level}
-                categories={l.categories}
+                labelIds={l.label_ids}
                 kind={plannedIds.has(l.id) ? t("kind.alreadyOn") : null}
               />
             </button>
@@ -321,7 +328,7 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
 
   return (
     <Dialog title={content.title} onClose={onClose} wide>
-      <Chips level={content.level} categories={content.categories} kind={isZijpad ? t("kind.zijpad") : t("kind.stap")} />
+      <Chips level={content.level} labelIds={content.labelIds} categories={content.categories} kind={isZijpad ? t("kind.zijpad") : t("kind.stap")} />
       {isDocent && (
         <div className="lp-source">
           {isZijpad ? (
