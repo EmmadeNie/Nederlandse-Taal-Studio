@@ -1436,45 +1436,6 @@
     ]
   },
   {
-    "id": "word.rennen",
-    "nl": "rennen",
-    "en": "to run",
-    "partOfSpeech": "verb",
-    "introducedAtLevel": "A1",
-    "themes": [
-      "beweging"
-    ],
-    "tags": [
-      "regelmatig-ww"
-    ],
-    "conjugation": {
-      "infinitive": "rennen",
-      "stem": "ren",
-      "present": {
-        "ik": "ren",
-        "jij": "rent",
-        "hij": "rent",
-        "wij": "rennen"
-      },
-      "past": {
-        "singular": "rende",
-        "plural": "renden"
-      },
-      "participle": "gerend",
-      "auxiliary": "hebben",
-      "regularity": {
-        "present": "regular",
-        "past": "regular",
-        "participle": "regular"
-      }
-    },
-    "reviewStatus": "ai-reviewed",
-    "sets": [
-      "intro-tegenwoordige-tijd",
-      "intro-verleden-tijd"
-    ]
-  },
-  {
     "id": "word.bestellen",
     "nl": "bestellen",
     "en": "to order",
@@ -1544,45 +1505,6 @@
         "present": "regular",
         "past": "regular",
         "participle": "regular"
-      }
-    },
-    "reviewStatus": "ai-reviewed",
-    "sets": [
-      "intro-tegenwoordige-tijd",
-      "intro-verleden-tijd"
-    ]
-  },
-  {
-    "id": "word.wassen",
-    "nl": "wassen",
-    "en": "to wash",
-    "partOfSpeech": "verb",
-    "introducedAtLevel": "A1",
-    "themes": [
-      "huishouden"
-    ],
-    "tags": [
-      "onregelmatig-ww"
-    ],
-    "conjugation": {
-      "infinitive": "wassen",
-      "stem": "was",
-      "present": {
-        "ik": "was",
-        "jij": "wast",
-        "hij": "wast",
-        "wij": "wassen"
-      },
-      "past": {
-        "singular": "waste",
-        "plural": "wasten"
-      },
-      "participle": "gewassen",
-      "auxiliary": "hebben",
-      "regularity": {
-        "present": "regular",
-        "past": "regular",
-        "participle": "irregular"
       }
     },
     "reviewStatus": "ai-reviewed",

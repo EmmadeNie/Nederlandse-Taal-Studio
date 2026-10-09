@@ -2,12 +2,15 @@ import { useI18n } from "../i18n/context";
 import { LevelBadge } from "../components/Badges";
 import QuizletExport from "../components/QuizletExport";
 import { LEVELS } from "./util";
-import { THEMES, WORD_POS, hasWordList, themeLabel, wordsForList } from "./wordLists";
+import { THEMES, WORD_POS, WORD_SETS, hasWordList, themeLabel, wordsForList } from "./wordLists";
+import { slugLabel } from "./sentenceLists";
+import SetInput from "./SetInput";
 
 /** Short description of a recipe: "dieren · t/m A1". */
 function Summary({ spec }) {
   const { t } = useI18n();
   const parts = [
+    spec.set && slugLabel(spec.set),
     spec.theme && themeLabel(spec.theme),
     spec.partOfSpeech && t(`pos.${spec.partOfSpeech}`).toLowerCase(),
     spec.level && (spec.upTo ? t("wl.upToLevel", { level: spec.level }) : spec.level),
@@ -17,7 +20,7 @@ function Summary({ spec }) {
 
 /** File name for the export: "woorden-dieren", "woorden-A0". */
 const exportName = (spec) =>
-  ["woorden", spec.theme, spec.partOfSpeech, spec.level].filter(Boolean).join("-");
+  ["woorden", spec.set, spec.theme, spec.partOfSpeech, spec.level].filter(Boolean).join("-");
 
 /** The words of a lesson's word list, as a table. */
 export function WordListView({ spec }) {
@@ -77,6 +80,14 @@ export function WordListEditor({ value, onChange }) {
   return (
     <div className="wl-editor">
       <div className="lp-row">
+        <SetInput
+          value={spec.set}
+          onChange={(v) => set("set", v)}
+          sets={WORD_SETS}
+          listId="word-sets"
+          placeholder={t("wl.setPh")}
+          label={t("wl.set")}
+        />
         <select value={spec.theme || ""} onChange={(e) => set("theme", e.target.value)} aria-label={t("wl.theme")}>
           <option value="">{t("filter.allThemes")}</option>
           {THEMES.map((th) => (
