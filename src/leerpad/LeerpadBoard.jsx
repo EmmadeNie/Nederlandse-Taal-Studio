@@ -13,10 +13,10 @@ import { LEVELS, linkCount, matchesFilter, stepContent } from "./util";
  * zijpaden, extras and notes. Reviewers only look.
  */
 export default function LeerpadBoard({ studentId }) {
-  const { role, user } = useAuth();
+  const { role, profile } = useAuth();
   const { t } = useI18n();
   const isDocent = role === "docent";
-  const isOwner = user.id === studentId;
+  const isOwner = profile.id === studentId;
   const canArrange = isDocent || isOwner;
 
   const [lanes, setLanes] = useState([]);

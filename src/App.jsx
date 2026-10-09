@@ -14,6 +14,7 @@ import { useI18n } from "./i18n/context";
 import LanguageToggle from "./i18n/LanguageToggle";
 import LoginPage from "./auth/LoginPage";
 import NameSetup from "./auth/NameSetup";
+import InviteClaim from "./auth/InviteClaim";
 import UserManagement from "./users/UserManagement";
 import LesprogrammaPage from "./leerpad/LesprogrammaPage";
 import LeerpadenPage, { MijnLeerpadPage } from "./leerpad/LeerpadenPage";
@@ -59,8 +60,12 @@ function App() {
 function AuthGate() {
   const { session, profile, loading, signOut } = useAuth();
   const { t } = useI18n();
+  const { pathname } = useRoute();
+  const inviteCode = pathname.match(/^\/uitnodiging\/([a-z0-9]+)\/?$/i)?.[1];
   if (loading) return <div className="auth-screen dim">{t("common.loading")}</div>;
-  if (!session) return <LoginPage />;
+  if (!session) return <LoginPage invited={Boolean(inviteCode)} />;
+  // Before the name screen: a claimed invite already brings the name the docent entered.
+  if (inviteCode) return <InviteClaim code={inviteCode} />;
   if (!profile) {
     return (
       <div className="auth-screen">
