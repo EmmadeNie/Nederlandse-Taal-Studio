@@ -16,7 +16,14 @@ export function matchesFilter({ title, level }, search, levelFilter) {
 export function stepContent(step) {
   if (step.lesson) {
     const l = step.lesson;
-    return { title: l.title, level: l.level, categories: l.categories, explanation: l.explanation, links: l.links };
+    return {
+      title: l.title,
+      level: l.level,
+      categories: l.categories,
+      explanation: l.explanation,
+      links: l.links,
+      attachments: l.attachments || [],
+    };
   }
   return {
     title: step.title,
@@ -24,5 +31,6 @@ export function stepContent(step) {
     categories: step.categories,
     explanation: step.explanation,
     links: [],
+    attachments: [],
   };
 }
