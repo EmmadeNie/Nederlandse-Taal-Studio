@@ -1,0 +1,82 @@
+name: Deploy production
+
+# Every push to main deploys in a fixed order:
+#   1. migrations  apply new database migrations (skipped when none changed)
+#   2. frontend    build and deploy the app to Vercel, only if step 1 succeeded
+# so the live app never runs ahead of the live database. Vercel's own
+# automatic deploys for main are switched off in vercel.json; PR previews
+# still come from Vercel directly.
+#
+# Repository secrets (Settings → Secrets and variables → Actions):
+#   SUPABASE_ACCESS_TOKEN  personal access token (supabase.com/dashboard/account/tokens)
+#   SUPABASE_DB_PASSWORD   database password of the hosted project
+#   SUPABASE_PROJECT_ID    project ref, e.g. lgmzoihdwgkboixrylkd
+#   VERCEL_TOKEN           token from vercel.com/account/tokens
+# Repository variables:
+#   VERCEL_ORG_ID, VERCEL_PROJECT_ID  (from .vercel/repo.json)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  migrations:
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check for changed migrations
+        id: changed
+        run: |
+          before="${{ github.event.before }}"
+          if [ "${{ github.event_name }}" != "push" ] || [ -z "$before" ] || [ "$before" = "0000000000000000000000000000000000000000" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          elif git diff --name-only "$before" "${{ github.sha }}" -- supabase/migrations | grep -q .; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "No migration changes; nothing to apply."
+          fi
+      - uses: supabase/setup-cli@v1
+        if: steps.changed.outputs.run == 'true'
+        with:
+          version: 2.75.0
+      - name: Link project
+        if: steps.changed.outputs.run == 'true'
+        run: supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_ID }}
+      - name: Show pending migrations
+        if: steps.changed.outputs.run == 'true'
+        run: supabase migration list
+      - name: Push migrations
+        if: steps.changed.outputs.run == 'true'
+        run: supabase db push
+
+  frontend:
+    needs: migrations
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+      VERCEL_CLI: vercel@63.1.0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Pull Vercel settings and production env vars
+        run: npx --yes $VERCEL_CLI pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Build
+        run: npx --yes $VERCEL_CLI build --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy to production
+        run: npx --yes $VERCEL_CLI deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
