@@ -23,6 +23,7 @@ export function stepContent(step) {
       explanation: l.explanation,
       links: l.links,
       attachments: l.attachments || [],
+      wordList: l.word_list || null,
     };
   }
   return {
@@ -32,5 +33,6 @@ export function stepContent(step) {
     explanation: step.explanation,
     links: [],
     attachments: [],
+    wordList: null,
   };
 }

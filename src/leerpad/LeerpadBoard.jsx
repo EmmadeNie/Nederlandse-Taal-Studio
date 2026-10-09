@@ -3,6 +3,8 @@ import { useAuth } from "../auth/context";
 import { useI18n } from "../i18n/context";
 import Markdown from "../components/Markdown";
 import LessonFiles from "./LessonFiles";
+import { WordListView } from "./WordList";
+import { hasWordList, wordsForList } from "./wordLists";
 import Board, { AddCardForm } from "./Board";
 import * as api from "./api";
 import { BoardFilters, CardBody, Chips, Dialog, LinkList, LinksEditor, MetaItem } from "./shared";
@@ -110,6 +112,9 @@ export default function LeerpadBoard({ studentId }) {
                 meta={
                   <>
                     <MetaItem icon={ICONS.link}>{linkCount(t, s.extras.length)}</MetaItem>
+                    <MetaItem icon={ICONS.words}>
+                      {hasWordList(c.wordList) && t("wl.count", { n: wordsForList(c.wordList).length })}
+                    </MetaItem>
                     <MetaItem icon={ICONS.bestand}>
                       {c.attachments.length > 0 && t("files.count", { n: c.attachments.length })}
                     </MetaItem>
@@ -369,6 +374,13 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
             <Markdown className="lp-explanation">{content.explanation}</Markdown>
           </div>
         )
+      )}
+
+      {hasWordList(content.wordList) && (
+        <div className="lp-section">
+          <h4>{t("wl.title")}</h4>
+          <WordListView spec={content.wordList} />
+        </div>
       )}
 
       {content.attachments.length > 0 && (
