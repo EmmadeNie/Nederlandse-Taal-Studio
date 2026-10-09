@@ -72,6 +72,7 @@ function askSecret(question) {
     let value = "";
     const onData = (chunk) => {
       // Bracketed-paste markers some terminals add around pasted text.
+      // eslint-disable-next-line no-control-regex
       chunk = chunk.replace(/\x1b\[20[01]~/g, "");
       for (const ch of chunk) {
         if (ch === "\r" || ch === "\n") {
