@@ -11,13 +11,7 @@ function check({ data, error }) {
 
 const LESSON_FIELDS = "id, lane_id, position, title, level, categories, explanation, links";
 
-/** Position for a card dropped between two neighbours (either may be missing). */
-export function positionBetween(before, after) {
-  if (before == null && after == null) return 1;
-  if (before == null) return after - 1;
-  if (after == null) return before + 1;
-  return (before + after) / 2;
-}
+export { positionBetween } from "./positions";
 
 const nextPosition = (items) =>
   items.length ? Math.max(...items.map((i) => i.position)) + 1 : 1;
@@ -42,6 +36,9 @@ export const createLessonLane = (name, lanes) =>
 
 export const renameLessonLane = (id, name) =>
   supabase.from("lesson_lanes").update({ name }).eq("id", id).then(check);
+
+export const moveLessonLane = (id, position) =>
+  supabase.from("lesson_lanes").update({ position }).eq("id", id).then(check);
 
 export const deleteLessonLane = (id) =>
   supabase.from("lesson_lanes").delete().eq("id", id).then(check);
@@ -129,6 +126,9 @@ export const createLeerpadLane = (studentId, name, lanes) =>
 
 export const renameLeerpadLane = (id, name) =>
   supabase.from("leerpad_lanes").update({ name }).eq("id", id).then(check);
+
+export const moveLeerpadLane = (id, position) =>
+  supabase.from("leerpad_lanes").update({ position }).eq("id", id).then(check);
 
 export const deleteLeerpadLane = (id) =>
   supabase.from("leerpad_lanes").delete().eq("id", id).then(check);

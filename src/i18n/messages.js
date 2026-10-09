@@ -218,6 +218,12 @@ export const messages = {
     "board.renameLane": "Hernoem {name}",
     "board.deleteLane": "Lege lane verwijderen",
     "board.deleteLaneAria": "Verwijder {name}",
+    "board.dragLane": "Sleep om de lane te verplaatsen",
+    "board.dragLaneAria": "Verplaats {name} door te slepen",
+    "board.moveLaneLeft": "Naar links",
+    "board.moveLaneLeftAria": "Verplaats {name} naar links",
+    "board.moveLaneRight": "Naar rechts",
+    "board.moveLaneRightAria": "Verplaats {name} naar rechts",
     "board.links": plural("{n} link", "{n} links"),
 
     // Lesprogramma
@@ -506,6 +512,12 @@ export const messages = {
     "board.renameLane": "Rename {name}",
     "board.deleteLane": "Delete empty lane",
     "board.deleteLaneAria": "Delete {name}",
+    "board.dragLane": "Drag to move the lane",
+    "board.dragLaneAria": "Move {name} by dragging",
+    "board.moveLaneLeft": "Move left",
+    "board.moveLaneLeftAria": "Move {name} left",
+    "board.moveLaneRight": "Move right",
+    "board.moveLaneRightAria": "Move {name} right",
     "board.links": plural("{n} link", "{n} links"),
 
     "lp.lessons": plural("{n} lesson", "{n} lessons"),

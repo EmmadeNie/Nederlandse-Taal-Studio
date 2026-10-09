@@ -125,6 +125,17 @@ export default function LesprogrammaPage() {
               run(() => api.renameLessonLane(lane.id, name));
             })
           }
+          onMoveLane={
+            canEdit &&
+            ((lane, position) => {
+              setLanes((ls) =>
+                ls
+                  .map((l) => (l.id === lane.id ? { ...l, position } : l))
+                  .sort((a, b) => a.position - b.position)
+              );
+              run(() => api.moveLessonLane(lane.id, position));
+            })
+          }
           onDeleteLane={
             canEdit &&
             ((lane) => {

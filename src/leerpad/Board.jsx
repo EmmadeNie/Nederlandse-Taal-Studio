@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { positionBetween } from "./api";
+import { positionBetween, laneDropPosition, laneShiftPosition } from "./positions";
 import { useI18n } from "../i18n/context";
 import "./leerpad.css";
 
@@ -18,6 +18,8 @@ import "./leerpad.css";
  *   onAddLane     (name) => void
  *   onRenameLane  (lane, name) => void
  *   onDeleteLane  (lane) => void (only offered for empty lanes)
+ *   onMoveLane    (lane, position) => void; omit to disable lane reordering.
+ *                 The caller must keep `lanes` sorted by position afterwards.
  *   laneFooter    (lane) => node, e.g. an "add card" form
  *   emptyLaneText text for a lane without cards
  */
@@ -32,12 +34,16 @@ export default function Board({
   onAddLane,
   onRenameLane,
   onDeleteLane,
+  onMoveLane,
   laneFooter,
   emptyLaneText,
 }) {
   const { t } = useI18n();
   const [dragId, setDragId] = useState(null);
   const [dropLane, setDropLane] = useState(null);
+  // Lane drag: which lane is moving, and where it would land ({ id, side }).
+  const [dragLaneId, setDragLaneId] = useState(null);
+  const [laneDrop, setLaneDrop] = useState(null);
 
   const cardsIn = (laneId) =>
     cards.filter((c) => c.lane_id === laneId).sort((a, b) => a.position - b.position);
@@ -66,32 +72,96 @@ export default function Board({
     onMoveCard(moving, lane.id, position);
   };
 
+  const endLaneDrag = () => {
+    setDragLaneId(null);
+    setLaneDrop(null);
+  };
+
+  const moveLane = (lane, position) => {
+    if (position != null) onMoveLane(lane, position);
+  };
+
+  // Left or right half of the lane under the pointer.
+  const dropSide = (e) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    return e.clientX < r.left + r.width / 2 ? "before" : "after";
+  };
+
+  const handleLaneDrop = (e, target) => {
+    e.preventDefault();
+    const moving = lanes.find((l) => l.id === dragLaneId);
+    endLaneDrag();
+    if (moving) moveLane(moving, laneDropPosition(lanes, moving.id, target.id, dropSide(e)));
+  };
+
+  const laneClass = (lane) => {
+    if (dragLaneId) {
+      if (lane.id === dragLaneId) return "is-lane-dragging";
+      if (laneDrop?.id === lane.id) return `is-lane-drop-${laneDrop.side}`;
+      return "";
+    }
+    return dropLane === lane.id ? "is-drop" : "";
+  };
+
   return (
     <div className="board">
       <div className="board-lanes">
-        {lanes.map((lane) => {
+        {lanes.map((lane, i) => {
           const all = cardsIn(lane.id);
           const shown = all.filter(isCardVisible);
           return (
             <section
               key={lane.id}
-              className={`board-lane ${dropLane === lane.id ? "is-drop" : ""}`}
+              className={`board-lane ${laneClass(lane)}`}
               aria-label={lane.name}
               onDragOver={(e) => {
+                if (dragLaneId) {
+                  e.preventDefault();
+                  e.dataTransfer.dropEffect = "move";
+                  const side = dropSide(e);
+                  if (laneDrop?.id !== lane.id || laneDrop.side !== side) {
+                    setLaneDrop({ id: lane.id, side });
+                  }
+                  return;
+                }
                 if (!dragId) return;
                 e.preventDefault();
                 setDropLane(lane.id);
               }}
               onDragLeave={(e) => {
-                if (!e.currentTarget.contains(e.relatedTarget)) setDropLane(null);
+                if (e.currentTarget.contains(e.relatedTarget)) return;
+                setDropLane(null);
+                setLaneDrop((d) => (d?.id === lane.id ? null : d));
               }}
-              onDrop={(e) => handleDrop(e, lane)}
+              onDrop={(e) => (dragLaneId ? handleLaneDrop(e, lane) : handleDrop(e, lane))}
             >
               <LaneHeader
                 lane={lane}
                 count={all.length}
                 onRename={onRenameLane}
                 onDelete={all.length === 0 ? onDeleteLane : null}
+                onDragStart={
+                  onMoveLane &&
+                  ((e) => {
+                    // Show the whole lane as drag image, grabbed at the handle.
+                    const section = e.currentTarget.closest(".board-lane");
+                    const r = section.getBoundingClientRect();
+                    e.dataTransfer.setDragImage(section, e.clientX - r.left, e.clientY - r.top);
+                    e.dataTransfer.effectAllowed = "move";
+                    // Own type, so a lane can't be dropped as text into an input.
+                    e.dataTransfer.setData("application/x-board-lane", lane.id);
+                    setDragLaneId(lane.id);
+                  })
+                }
+                onDragEnd={endLaneDrag}
+                onMoveLeft={
+                  onMoveLane && i > 0 && (() => moveLane(lane, laneShiftPosition(lanes, lane.id, -1)))
+                }
+                onMoveRight={
+                  onMoveLane &&
+                  i < lanes.length - 1 &&
+                  (() => moveLane(lane, laneShiftPosition(lanes, lane.id, 1)))
+                }
               />
               <div className="board-cards">
                 {shown.map((card) => (
@@ -133,7 +203,7 @@ export default function Board({
   );
 }
 
-function LaneHeader({ lane, count, onRename, onDelete }) {
+function LaneHeader({ lane, count, onRename, onDelete, onDragStart, onDragEnd, onMoveLeft, onMoveRight }) {
   const { t } = useI18n();
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(lane.name);
@@ -147,6 +217,19 @@ function LaneHeader({ lane, count, onRename, onDelete }) {
 
   return (
     <div className="board-lane-head">
+      {onDragStart && !editing && (
+        <span
+          className="board-lane-handle"
+          role="img"
+          draggable
+          title={t("board.dragLane")}
+          aria-label={t("board.dragLaneAria", { name: lane.name })}
+          onDragStart={onDragStart}
+          onDragEnd={onDragEnd}
+        >
+          ⠿
+        </span>
+      )}
       {editing ? (
         <input
           autoFocus
@@ -166,6 +249,28 @@ function LaneHeader({ lane, count, onRename, onDelete }) {
         <h3 onDoubleClick={() => onRename && setEditing(true)}>{lane.name}</h3>
       )}
       <span className="board-count">{count}</span>
+      {(onMoveLeft || onMoveRight) && !editing && (
+        <span className="board-lane-move">
+          <button
+            className="board-icon-btn"
+            title={t("board.moveLaneLeft")}
+            aria-label={t("board.moveLaneLeftAria", { name: lane.name })}
+            disabled={!onMoveLeft}
+            onClick={() => onMoveLeft?.()}
+          >
+            ‹
+          </button>
+          <button
+            className="board-icon-btn"
+            title={t("board.moveLaneRight")}
+            aria-label={t("board.moveLaneRightAria", { name: lane.name })}
+            disabled={!onMoveRight}
+            onClick={() => onMoveRight?.()}
+          >
+            ›
+          </button>
+        </span>
+      )}
       {onRename && !editing && (
         <button
           className="board-icon-btn"
