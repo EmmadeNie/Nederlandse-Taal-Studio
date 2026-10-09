@@ -2,6 +2,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "../auth/context";
 import { useI18n } from "../i18n/context";
 import Markdown from "../components/Markdown";
+import { InternalLinkContext, lessonIdFromHref } from "../components/internalLinks";
+import { navigate } from "../hooks/useRoute";
+import LessonLinkPicker from "./LessonLinkPicker";
+import { insertAtCursor, lessonLinkMarkdown, rememberCursor } from "./lessonLink";
 import LessonFiles from "./LessonFiles";
 import { WordListView } from "./WordList";
 import { hasWordList, wordsForList } from "./wordLists";
@@ -208,6 +212,7 @@ export default function LeerpadBoard({ studentId }) {
 
       {openStep && (
         <StepDialog
+          key={openStep.id}
           step={openStep}
           lanes={lanes}
           note={notes[openStep.id] || ""}
@@ -215,6 +220,13 @@ export default function LeerpadBoard({ studentId }) {
           canArrange={canArrange}
           nextPos={nextPos}
           onClose={() => setOpenId(null)}
+          onLessonLink={(href) => {
+            // A lesson that is on this leerpad opens as its step; others in the lesprogramma.
+            const lessonId = lessonIdFromHref(href);
+            const target = lessonId && steps.find((s) => s.lesson_id === lessonId);
+            if (target) setOpenId(target.id);
+            else navigate(href);
+          }}
           onChanged={(patch, note) => {
             setSteps((ss) => ss.map((s) => (s.id === openStep.id ? { ...s, ...patch } : s)));
             if (note !== undefined) setNotes((n) => ({ ...n, [openStep.id]: note }));
@@ -281,7 +293,7 @@ function LessonPicker({ lane, plannedIds, onClose, onPick }) {
   );
 }
 
-function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose, onChanged, onRemoved }) {
+function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose, onLessonLink, onChanged, onRemoved }) {
   const { t } = useI18n();
   const content = stepContent(step);
   const isZijpad = !step.lesson_id;
@@ -355,6 +367,15 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
     onClose();
   };
 
+  const followLink = async (href) => {
+    if (!(await saveText())) return;
+    onLessonLink(href);
+  };
+
+  const zijpadRef = useRef(null);
+  const linkLesson = (target) =>
+    setZijpad((z) => ({ ...z, explanation: insertAtCursor(zijpadRef.current, z.explanation, lessonLinkMarkdown(target)) }));
+
   const remove = async () => {
     if (!window.confirm(t("step.confirmRemove", { title: content.title }))) return;
     try {
@@ -366,6 +387,7 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
   };
 
   return (
+    <InternalLinkContext.Provider value={followLink}>
     <Dialog title={content.title} onClose={close} wide>
       <Chips level={content.level} labelIds={content.labelIds} categories={content.categories} kind={isZijpad ? t("kind.zijpad") : t("kind.stap")} />
       {isDocent && (
@@ -407,16 +429,21 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
               </select>
             </label>
           </div>
-          <label className="fb-field">
-            <span>{t("lp.explanation")}</span>
+          <div className="fb-field">
+            <span>
+              {t("lp.explanation")} <LessonLinkPicker onPick={linkLesson} />
+            </span>
             <textarea
+              ref={zijpadRef}
+              onFocus={rememberCursor}
               rows={5}
+              aria-label={t("lp.explanation")}
               value={zijpad.explanation}
               onChange={(e) => setZijpad({ ...zijpad, explanation: e.target.value })}
               onBlur={saveText}
               placeholder={t("step.zijpadPh")}
             />
-          </label>
+          </div>
         </>
       ) : (
         content.explanation.trim() && (
@@ -505,5 +532,6 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
         </div>
       )}
     </Dialog>
+    </InternalLinkContext.Provider>
   );
 }
