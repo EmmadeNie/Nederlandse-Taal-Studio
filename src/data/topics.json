@@ -1,15 +1,211 @@
 [
-{"id":"topic.perfectum","title":"Het perfectum (voltooid tegenwoordige tijd)","introducedAtLevel":"A2","summary":"De voltooide tijd: hoe je vertelt wat er al is gebeurd.","explanation":"Het perfectum gebruik je om te vertellen over iets dat al is gebeurd.\n\n**Structuur:** onderwerp + hebben/zijn + voltooid deelwoord\n\n**Regelmatig:** ge- + stam + -t/-d (gekookt, gebeld)\n**Onregelmatig:** speciale vorm (gedronken, geschreven)","grammarTags":["perfectum"],"themes":["grammatica"],"docLinks":[],"reviewStatus":"ai-reviewed"},
-{"id":"topic.inversie","title":"Inversie (woordvolgorde)","introducedAtLevel":"A2","summary":"Als de zin niet met het onderwerp begint, komen persoonsvorm en onderwerp vaak in omgekeerde volgorde.","explanation":"In een Nederlandse hoofdzin staat de persoonsvorm op plek 2.\n\n**Normaal:** Ik werk vandaag thuis.\n**Inversie:** Vandaag werk ik thuis.\n\nZet je bijvoorbeeld tijd of plaats vooraan? Dan wisselen onderwerp en persoonsvorm van plaats: **ik werk → werk ik**.\n\nNog een voorbeeld:\n**Ik ga morgen naar school.**\n**Morgen ga ik naar school.**","grammarTags":["inversie","woordvolgorde"],"themes":["grammatica"],"docLinks":[],"reviewStatus":"ai-reviewed"},
-{"id":"topic.klinkers","title":"Klinkers en tweeklanken","introducedAtLevel":"A0","summary":"Korte en lange klinkers en veelvoorkomende tweeklanken.","explanation":"**Kort:** kat, bed, vis, bol, bus\n**Lang:** baan, been, boom, buur\n**Tweeklanken:** huis, trein, hout","grammarTags":["klinkers","uitspraak"],"themes":["uitspraak"],"docLinks":[],"reviewStatus":"ai-reviewed"},
-{"id":"topic.lettergrepen","title":"Lettergrepen","introducedAtLevel":"A0","summary":"Woorden in lettergrepen verdelen helpt bij spelling en uitspraak.","explanation":"Elke lettergreep heeft een klinker.\n\n**Open:** ma-ma\n**Gesloten:** kat-ten","grammarTags":["lettergrepen","uitspraak"],"themes":["uitspraak"],"docLinks":[],"reviewStatus":"ai-reviewed"},
-{"id":"topic.de-het","title":"De- en het-woorden","introducedAtLevel":"A0","summary":"Leer het lidwoord samen met het woord: de tafel, het huis.","explanation":"Je kunt niet altijd weten of een woord **de** of **het** krijgt.\n\n**Harde regels:**\n- Meervoud → **de**: de boeken, de huizen\n- Verkleinwoord → **het**: het huisje, het meisje\n\n**Handige vuistregels:**\n- Personen → meestal **de**: de man, de dokter\n- **-ing, -heid, -ij** → meestal **de**: de vergadering, de gezondheid, de bakkerij\n- **-isme, -ment, -um** → meestal **het**: het toerisme, het moment, het museum\n\n**Tip:** leer **de/het + woord** samen.","grammarTags":["lidwoorden","de-het"],"themes":["grammatica"],"docLinks":[],"reviewStatus":"ai-reviewed"},
-{"id":"topic.werkwoorden-vervoegen","title":"Werkwoorden vervoegen (tegenwoordige tijd)","introducedAtLevel":"A0","summary":"Ik loop, jij loopt, wij lopen.","explanation":"**Stam** = hele werkwoord zonder -en.\n- ik → stam\n- jij/hij/zij → stam + t\n- wij/jullie/zij → infinitief","grammarTags":["vervoegen","tegenwoordige-tijd"],"themes":["grammatica"],"docLinks":[],"reviewStatus":"ai-reviewed"},
-{"id":"topic.modale-werkwoorden","title":"Modale werkwoorden","introducedAtLevel":"A1","summary":"Kunnen, willen, moeten, mogen en zullen.","explanation":"Modale werkwoorden geven bijvoorbeeld mogelijkheid, wens, noodzaak of toestemming aan. Het tweede werkwoord staat als infinitief achteraan: **Ik wil Nederlands leren.**","grammarTags":["modale-werkwoorden"],"themes":["grammatica"],"docLinks":[],"reviewStatus":"ai-reviewed"},
-{"id":"topic.bijzinnen-b1","title":"Bijzinnen en woordvolgorde","introducedAtLevel":"B1","summary":"In een bijzin staan de werkwoorden meestal aan het einde.","explanation":"Na woorden zoals **omdat, hoewel, als, terwijl** krijg je een bijzin.\n\nHoofdzin: Ik blijf thuis.\nBijzin: omdat ik morgen vroeg **moet werken**.\n\nLet vooral op de werkwoorden aan het einde.","grammarTags":["bijzin","woordvolgorde","voegwoorden"],"themes":["grammatica"],"docLinks":[],"reviewStatus":"ai-reviewed"},
-{"id":"topic.voegwoorden-b1","title":"Reden, tegenstelling en voorwaarde","introducedAtLevel":"B1","summary":"Verbind ideeën met omdat, hoewel, terwijl, tenzij en daarom.","explanation":"**omdat** = reden\n**hoewel** = tegenstelling\n**terwijl** = twee situaties tegelijk / contrast\n**tenzij** = uitzondering op een voorwaarde\n**daarom** = gevolg; daarna volgt inversie: Daarom ga ik weg.","grammarTags":["voegwoorden","bijzin","inversie"],"themes":["grammatica"],"docLinks":[],"reviewStatus":"ai-reviewed"},
-{"id":"topic.om-te-b1","title":"Om ... te + infinitief","introducedAtLevel":"B1","summary":"Gebruik om ... te om een doel uit te drukken.","explanation":"**om + ... + te + infinitief** vertelt waarom je iets doet.\n\nIk volg Nederlandse les **om beter te kunnen communiceren**.","grammarTags":["om-te","te-infinitief"],"themes":["grammatica"],"docLinks":[],"reviewStatus":"ai-reviewed"},
-{"id":"topic.plusquamperfectum-b1","title":"Plusquamperfectum","introducedAtLevel":"B1","summary":"Iets was al gebeurd vóór een ander moment in het verleden.","explanation":"**had/hadden of was/waren + voltooid deelwoord**\n\nToen ik aankwam, **was de vergadering al begonnen**.\nIk **had het verslag al gelezen** voordat we erover spraken.","grammarTags":["plusquamperfectum","verleden-tijd"],"themes":["grammatica"],"docLinks":[],"reviewStatus":"ai-reviewed"},
-{"id":"topic.dubbele-infinitief-b1","title":"Dubbele infinitief","introducedAtLevel":"B1","summary":"Werkwoordstapeling met twee infinitieven, vooral in het perfectum met een hulpwerkwoord.","explanation":"**Perfectum + hulpwerkwoord:** gebruik vaak twee infinitieven in plaats van een voltooid deelwoord.\nIk **heb moeten wachten**.\nWij **zijn gaan wandelen**.\nIk **heb je horen schreeuwen**.\n\nOok buiten het perfectum kunnen meerdere infinitieven samen staan:\nIk **moet me kunnen concentreren**.\nWij **willen gaan afwassen**.\n\nDit zie je o.a. bij modale werkwoorden, beweging, zintuigen, positiewerkwoorden en werkwoorden zoals blijven, laten, leren, helpen en doen.","grammarTags":["dubbele-infinitief","woordvolgorde","perfectum"],"themes":["grammatica"],"docLinks":[],"reviewStatus":"ai-reviewed"},
-{"id":"topic.passief-b1","title":"Passieve zinnen","introducedAtLevel":"B1","summary":"In een passieve zin ondergaat het onderwerp de handeling; de actor kan worden weggelaten.","explanation":"**Actief:** Ik bak een appeltaart.\n**Passief:** Er wordt een appeltaart gebakken.\n\nPassief wordt meestal gevormd met **worden + voltooid deelwoord** of **zijn + voltooid deelwoord**.\n- **worden** → proces\n- **zijn** → resultaat\n\nDe actor kan met **door** worden genoemd. Bij een onbepaald onderwerp of zonder onderwerp gebruik je vaak **er**: **Er wordt veel gelachen.**","grammarTags":["passief","woordvolgorde"],"themes":["grammatica"],"docLinks":[],"reviewStatus":"ai-reviewed"}
+  {
+    "id": "topic.perfectum",
+    "title": "Het perfectum (voltooid tegenwoordige tijd)",
+    "introducedAtLevel": "A2",
+    "summary": "De voltooide tijd: hoe je vertelt wat er al is gebeurd.",
+    "explanation": "Het perfectum gebruik je om te vertellen over iets dat al is gebeurd.\n\n**Structuur:** onderwerp + hebben/zijn + voltooid deelwoord\n\n**Regelmatig:** ge- + stam + -t/-d (gekookt, gebeld)\n**Onregelmatig:** speciale vorm (gedronken, geschreven)",
+    "grammarTags": [
+      "perfectum"
+    ],
+    "themes": [
+      "grammatica"
+    ],
+    "docLinks": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "topic.inversie",
+    "title": "Inversie (woordvolgorde)",
+    "introducedAtLevel": "A2",
+    "summary": "Als de zin niet met het onderwerp begint, komen persoonsvorm en onderwerp vaak in omgekeerde volgorde.",
+    "explanation": "In een Nederlandse hoofdzin staat de persoonsvorm op plek 2.\n\n**Normaal:** Ik werk vandaag thuis.\n**Inversie:** Vandaag werk ik thuis.\n\nZet je bijvoorbeeld tijd of plaats vooraan? Dan wisselen onderwerp en persoonsvorm van plaats: **ik werk → werk ik**.\n\nNog een voorbeeld:\n**Ik ga morgen naar school.**\n**Morgen ga ik naar school.**",
+    "grammarTags": [
+      "inversie",
+      "woordvolgorde"
+    ],
+    "themes": [
+      "grammatica"
+    ],
+    "docLinks": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "topic.klinkers",
+    "title": "Klinkers en tweeklanken",
+    "introducedAtLevel": "A0",
+    "summary": "Korte en lange klinkers en veelvoorkomende tweeklanken.",
+    "explanation": "**Kort:** kat, bed, vis, bol, bus\n**Lang:** baan, been, boom, buur\n**Tweeklanken:** huis, trein, hout",
+    "grammarTags": [
+      "klinkers",
+      "uitspraak"
+    ],
+    "themes": [
+      "uitspraak"
+    ],
+    "docLinks": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "topic.lettergrepen",
+    "title": "Lettergrepen",
+    "introducedAtLevel": "A0",
+    "summary": "Woorden in lettergrepen verdelen helpt bij spelling en uitspraak.",
+    "explanation": "Elke lettergreep heeft een klinker.\n\n**Open:** ma-ma\n**Gesloten:** kat-ten",
+    "grammarTags": [
+      "lettergrepen",
+      "uitspraak"
+    ],
+    "themes": [
+      "uitspraak"
+    ],
+    "docLinks": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "topic.de-het",
+    "title": "De- en het-woorden",
+    "introducedAtLevel": "A0",
+    "summary": "Leer het lidwoord samen met het woord: de tafel, het huis.",
+    "explanation": "Je kunt niet altijd weten of een woord **de** of **het** krijgt.\n\n**Harde regels:**\n- Meervoud → **de**: de boeken, de huizen\n- Verkleinwoord → **het**: het huisje, het meisje\n\n**Handige vuistregels:**\n- Personen → meestal **de**: de man, de dokter\n- Fruitsoorten → meestal **de**: de appel, de banaan, de aardbei (maar: **het fruit**)\n- **-ing, -heid, -ij** → meestal **de**: de vergadering, de gezondheid, de bakkerij\n- **-isme, -ment, -um** → meestal **het**: het toerisme, het moment, het museum\n\n**Tip:** leer **de/het + woord** samen.",
+    "grammarTags": [
+      "lidwoorden",
+      "de-het"
+    ],
+    "themes": [
+      "grammatica"
+    ],
+    "docLinks": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "topic.werkwoorden-vervoegen",
+    "title": "Werkwoorden vervoegen (tegenwoordige tijd)",
+    "introducedAtLevel": "A0",
+    "summary": "Ik loop, jij loopt, wij lopen.",
+    "explanation": "**Stam** = hele werkwoord zonder -en.\n- ik → stam\n- jij/hij/zij → stam + t\n- wij/jullie/zij → infinitief",
+    "grammarTags": [
+      "vervoegen",
+      "tegenwoordige-tijd"
+    ],
+    "themes": [
+      "grammatica"
+    ],
+    "docLinks": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "topic.modale-werkwoorden",
+    "title": "Modale werkwoorden",
+    "introducedAtLevel": "A1",
+    "summary": "Kunnen, willen, moeten, mogen en zullen.",
+    "explanation": "Modale werkwoorden geven bijvoorbeeld mogelijkheid, wens, noodzaak of toestemming aan. Het tweede werkwoord staat als infinitief achteraan: **Ik wil Nederlands leren.**",
+    "grammarTags": [
+      "modale-werkwoorden"
+    ],
+    "themes": [
+      "grammatica"
+    ],
+    "docLinks": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "topic.bijzinnen-b1",
+    "title": "Bijzinnen en woordvolgorde",
+    "introducedAtLevel": "B1",
+    "summary": "In een bijzin staan de werkwoorden meestal aan het einde.",
+    "explanation": "Na woorden zoals **omdat, hoewel, als, terwijl** krijg je een bijzin.\n\nHoofdzin: Ik blijf thuis.\nBijzin: omdat ik morgen vroeg **moet werken**.\n\nLet vooral op de werkwoorden aan het einde.",
+    "grammarTags": [
+      "bijzin",
+      "woordvolgorde",
+      "voegwoorden"
+    ],
+    "themes": [
+      "grammatica"
+    ],
+    "docLinks": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "topic.voegwoorden-b1",
+    "title": "Reden, tegenstelling en voorwaarde",
+    "introducedAtLevel": "B1",
+    "summary": "Verbind ideeën met omdat, hoewel, terwijl, tenzij en daarom.",
+    "explanation": "**omdat** = reden\n**hoewel** = tegenstelling\n**terwijl** = twee situaties tegelijk / contrast\n**tenzij** = uitzondering op een voorwaarde\n**daarom** = gevolg; daarna volgt inversie: Daarom ga ik weg.",
+    "grammarTags": [
+      "voegwoorden",
+      "bijzin",
+      "inversie"
+    ],
+    "themes": [
+      "grammatica"
+    ],
+    "docLinks": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "topic.om-te-b1",
+    "title": "Om ... te + infinitief",
+    "introducedAtLevel": "B1",
+    "summary": "Gebruik om ... te om een doel uit te drukken.",
+    "explanation": "**om + ... + te + infinitief** vertelt waarom je iets doet.\n\nIk volg Nederlandse les **om beter te kunnen communiceren**.",
+    "grammarTags": [
+      "om-te",
+      "te-infinitief"
+    ],
+    "themes": [
+      "grammatica"
+    ],
+    "docLinks": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "topic.plusquamperfectum-b1",
+    "title": "Plusquamperfectum",
+    "introducedAtLevel": "B1",
+    "summary": "Iets was al gebeurd vóór een ander moment in het verleden.",
+    "explanation": "**had/hadden of was/waren + voltooid deelwoord**\n\nToen ik aankwam, **was de vergadering al begonnen**.\nIk **had het verslag al gelezen** voordat we erover spraken.",
+    "grammarTags": [
+      "plusquamperfectum",
+      "verleden-tijd"
+    ],
+    "themes": [
+      "grammatica"
+    ],
+    "docLinks": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "topic.dubbele-infinitief-b1",
+    "title": "Dubbele infinitief",
+    "introducedAtLevel": "B1",
+    "summary": "Werkwoordstapeling met twee infinitieven, vooral in het perfectum met een hulpwerkwoord.",
+    "explanation": "**Perfectum + hulpwerkwoord:** gebruik vaak twee infinitieven in plaats van een voltooid deelwoord.\nIk **heb moeten wachten**.\nWij **zijn gaan wandelen**.\nIk **heb je horen schreeuwen**.\n\nOok buiten het perfectum kunnen meerdere infinitieven samen staan:\nIk **moet me kunnen concentreren**.\nWij **willen gaan afwassen**.\n\nDit zie je o.a. bij modale werkwoorden, beweging, zintuigen, positiewerkwoorden en werkwoorden zoals blijven, laten, leren, helpen en doen.",
+    "grammarTags": [
+      "dubbele-infinitief",
+      "woordvolgorde",
+      "perfectum"
+    ],
+    "themes": [
+      "grammatica"
+    ],
+    "docLinks": [],
+    "reviewStatus": "ai-reviewed"
+  },
+  {
+    "id": "topic.passief-b1",
+    "title": "Passieve zinnen",
+    "introducedAtLevel": "B1",
+    "summary": "In een passieve zin ondergaat het onderwerp de handeling; de actor kan worden weggelaten.",
+    "explanation": "**Actief:** Ik bak een appeltaart.\n**Passief:** Er wordt een appeltaart gebakken.\n\nPassief wordt meestal gevormd met **worden + voltooid deelwoord** of **zijn + voltooid deelwoord**.\n- **worden** → proces\n- **zijn** → resultaat\n\nDe actor kan met **door** worden genoemd. Bij een onbepaald onderwerp of zonder onderwerp gebruik je vaak **er**: **Er wordt veel gelachen.**",
+    "grammarTags": [
+      "passief",
+      "woordvolgorde"
+    ],
+    "themes": [
+      "grammatica"
+    ],
+    "docLinks": [],
+    "reviewStatus": "ai-reviewed"
+  }
 ]
