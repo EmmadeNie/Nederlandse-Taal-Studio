@@ -5,7 +5,8 @@ export const LEVELS = ["A0", "A1", "A2", "B1", "B2"];
 /** "3 links" in the current language, or null for none. */
 export const linkCount = (t, n) => (n ? t("board.links", { n }) : null);
 
-export function matchesFilter({ title, level }, search, levelFilter) {
+export function matchesFilter({ title, level, labelIds }, search, levelFilter, labelFilter) {
+  if (labelFilter && !(labelIds || []).includes(labelFilter)) return false;
   if (search && !title.toLowerCase().includes(search.toLowerCase())) return false;
   if (levelFilter === "none") return !level;
   if (levelFilter && level !== levelFilter) return false;
@@ -19,7 +20,7 @@ export function stepContent(step) {
     return {
       title: l.title,
       level: l.level,
-      categories: l.categories,
+      labelIds: l.label_ids,
       explanation: l.explanation,
       links: l.links,
       attachments: l.attachments || [],
@@ -29,6 +30,7 @@ export function stepContent(step) {
   return {
     title: step.title,
     level: step.level,
+    labelIds: [],
     categories: step.categories,
     explanation: step.explanation,
     links: [],

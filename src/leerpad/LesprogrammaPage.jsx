@@ -4,6 +4,7 @@ import { useI18n } from "../i18n/context";
 import Markdown from "../components/Markdown";
 import LessonFiles from "./LessonFiles";
 import { WordListEditor, WordListView } from "./WordList";
+import { LabelPicker } from "./Labels";
 import { hasWordList, wordsForList } from "./wordLists";
 import SelectionBar from "./SelectionBar";
 import Board, { AddCardForm } from "./Board";
@@ -27,6 +28,7 @@ export default function LesprogrammaPage() {
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
   const [level, setLevel] = useState("");
+  const [label, setLabel] = useState("");
   const [openId, setOpenId] = useState(null);
   // Select mode (docent): pick many lessons and put them on a leerpad at once.
   const [selecting, setSelecting] = useState(false);
@@ -152,6 +154,8 @@ export default function LesprogrammaPage() {
         setSearch={setSearch}
         level={level}
         setLevel={setLevel}
+        label={label}
+        setLabel={setLabel}
         placeholder={t("lp.searchLesson")}
       />
       {error && <div className="lp-error">{error}</div>}
@@ -161,12 +165,12 @@ export default function LesprogrammaPage() {
         <Board
           lanes={lanes}
           cards={lessons}
-          isCardVisible={(l) => matchesFilter(l, search, level)}
+          isCardVisible={(l) => matchesFilter({ ...l, labelIds: l.label_ids }, search, level, label)}
           renderCard={(l) => (
             <CardBody
               title={l.title}
               level={l.level}
-              categories={l.categories}
+              labelIds={l.label_ids}
               meta={
                 <>
                   <MetaItem icon={ICONS.words}>
@@ -258,7 +262,7 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
   const [form, setForm] = useState({
     title: lesson.title,
     level: lesson.level || "",
-    categories: lesson.categories.join(", "),
+    label_ids: lesson.label_ids,
     explanation: lesson.explanation,
     links: lesson.links,
     lane_id: lesson.lane_id,
@@ -291,7 +295,7 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
       const updated = await api.updateLesson(lesson.id, {
         title: form.title.trim(),
         level: form.level || null,
-        categories: form.categories.split(",").map((c) => c.trim()).filter(Boolean),
+        label_ids: form.label_ids,
         explanation: form.explanation,
         links: form.links,
         lane_id: form.lane_id,
@@ -380,14 +384,10 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
               </select>
             </label>
           </div>
-          <label className="fb-field">
+          <div className="fb-field">
             <span>{t("lp.labels")}</span>
-            <input
-              value={form.categories}
-              onChange={(e) => set("categories")(e.target.value)}
-              placeholder="Grammatica, Oefenen"
-            />
-          </label>
+            <LabelPicker value={form.label_ids} onChange={set("label_ids")} />
+          </div>
         </>
       )}
 
