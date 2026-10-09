@@ -3,6 +3,8 @@ import { useAuth } from "../auth/context";
 import { useI18n } from "../i18n/context";
 import Markdown from "../components/Markdown";
 import LessonFiles from "./LessonFiles";
+import { WordListEditor, WordListView } from "./WordList";
+import { hasWordList, wordsForList } from "./wordLists";
 import SelectionBar from "./SelectionBar";
 import Board, { AddCardForm } from "./Board";
 import * as api from "./api";
@@ -167,6 +169,9 @@ export default function LesprogrammaPage() {
               categories={l.categories}
               meta={
                 <>
+                  <MetaItem icon={ICONS.words}>
+                    {hasWordList(l.word_list) && t("wl.count", { n: wordsForList(l.word_list).length })}
+                  </MetaItem>
                   <MetaItem icon={ICONS.bestand}>
                     {l.attachments?.length > 0 && t("files.count", { n: l.attachments.length })}
                   </MetaItem>
@@ -257,6 +262,7 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
     explanation: lesson.explanation,
     links: lesson.links,
     lane_id: lesson.lane_id,
+    word_list: lesson.word_list || null,
   });
   const [preview, setPreview] = useState(!canEdit);
   const [students, setStudents] = useState(null); // students with this lesson
@@ -289,6 +295,7 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
         explanation: form.explanation,
         links: form.links,
         lane_id: form.lane_id,
+        word_list: form.word_list,
       });
       onSaved(updated);
       onClose();
@@ -411,6 +418,14 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
           </label>
         )}
       </div>
+
+      {(canEdit || hasWordList(lesson.word_list)) && (
+        <div className="lp-section">
+          <h4>{t("wl.title")}</h4>
+          {canEdit && <WordListEditor value={form.word_list} onChange={set("word_list")} />}
+          <WordListView spec={canEdit ? form.word_list : lesson.word_list} />
+        </div>
+      )}
 
       <div className="lp-section">
         <h4>{t("files.title")}</h4>
