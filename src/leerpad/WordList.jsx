@@ -1,5 +1,6 @@
 import { useI18n } from "../i18n/context";
 import { LevelBadge } from "../components/Badges";
+import QuizletExport from "../components/QuizletExport";
 import { LEVELS } from "./util";
 import { THEMES, WORD_POS, hasWordList, themeLabel, wordsForList } from "./wordLists";
 
@@ -13,6 +14,10 @@ function Summary({ spec }) {
   ].filter(Boolean);
   return <span className="dim">{parts.join(" · ")}</span>;
 }
+
+/** File name for the export: "woorden-dieren", "woorden-A0". */
+const exportName = (spec) =>
+  ["woorden", spec.theme, spec.partOfSpeech, spec.level].filter(Boolean).join("-");
 
 /** The words of a lesson's word list, as a table. */
 export function WordListView({ spec }) {
@@ -55,6 +60,7 @@ export function WordListView({ spec }) {
           </table>
         </div>
       )}
+      <QuizletExport words={words} filename={exportName(spec)} />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { queryWords } from "../data";
 import { LevelBadge, ReviewBadge, Tag } from "./Badges";
 import { WordFilters } from "./Filters";
+import QuizletExport from "./QuizletExport";
 import FeedbackButton from "../feedback/FeedbackButton";
 import { useUrlParams, useSetUrlParams } from "../hooks/useUrlParams";
 import { useI18n } from "../i18n/context";
@@ -37,6 +38,12 @@ export default function WordBrowser() {
       <h2>{t("nav.words")}</h2>
       <WordFilters filters={filters} onChange={setFilters} />
       <p className="result-count">{t("words.found", { n: results.length })}</p>
+      <div className="qz-library">
+        <QuizletExport
+          words={results}
+          filename={["woorden", filters.theme, filters.partOfSpeech, filters.level].filter(Boolean).join("-")}
+        />
+      </div>
       <div className="card-grid">
         {results.map((w) => (
           <div key={w.id} className="card">
