@@ -17,7 +17,7 @@ function formatDate(iso, locale) {
  * re-checks that the caller is a docent.
  */
 export default function UserManagement() {
-  const { user } = useAuth();
+  const { profile: me } = useAuth();
   const { t, locale } = useI18n();
   const [profiles, setProfiles] = useState([]);
   const [error, setError] = useState(null);
@@ -25,7 +25,7 @@ export default function UserManagement() {
   const load = useCallback(async () => {
     const { data, error } = await supabase
       .from("profiles")
-      .select("id, email, display_name, role, created_at")
+      .select("id, user_id, email, display_name, role, created_at")
       .order("created_at");
     if (error) setError(error.message);
     else setProfiles(data);
@@ -72,11 +72,14 @@ export default function UserManagement() {
         <tbody>
           {profiles.map((p) => (
             <tr key={p.id}>
-              <td>{p.display_name || <span className="dim">—</span>}</td>
-              <td>{p.email}</td>
+              <td>
+                {p.display_name || <span className="dim">—</span>}
+                {!p.user_id && <span className="tag pending-tag">{t("users.pending")}</span>}
+              </td>
+              <td>{p.email || <span className="dim">—</span>}</td>
               <td className="dim">{formatDate(p.created_at, locale)}</td>
               <td>
-                {p.id === user.id ? (
+                {p.id === me.id ? (
                   <span className="tag">{t(`role.${p.role}`)} {t("users.you")}</span>
                 ) : (
                   <select

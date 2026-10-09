@@ -14,12 +14,14 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const { lang, setLang } = useI18n();
 
+  // A profile is linked to the login account through user_id (see
+  // *_profiles_without_account.sql); profile.id is what everything else uses.
   const loadProfile = useCallback(async (userId) => {
     const { data, error } = await supabase
       .from("profiles")
-      .select("id, email, display_name, role, language")
-      .eq("id", userId)
-      .single();
+      .select("id, user_id, email, display_name, role, language")
+      .eq("user_id", userId)
+      .maybeSingle();
     if (error) console.error("Profiel laden mislukt:", error.message);
     setProfile(data ?? null);
   }, []);
@@ -50,7 +52,7 @@ export function AuthProvider({ children }) {
     const { error } = await supabase
       .from("profiles")
       .update({ display_name: name.trim() })
-      .eq("id", session.user.id);
+      .eq("id", profile.id);
     if (error) throw error;
     await loadProfile(session.user.id);
   };
@@ -74,9 +76,12 @@ export function AuthProvider({ children }) {
     const { error } = await supabase
       .from("profiles")
       .update({ language })
-      .eq("id", session.user.id);
+      .eq("id", profile.id);
     if (error) console.error("Taal opslaan mislukt:", error.message);
   };
+
+  /** After an invite is claimed the account points at another profile. */
+  const reloadProfile = () => loadProfile(session.user.id);
 
   const signOut = () => supabase.auth.signOut();
 
@@ -88,6 +93,7 @@ export function AuthProvider({ children }) {
     loading,
     updateDisplayName,
     saveLanguage,
+    reloadProfile,
     signOut,
   };
 

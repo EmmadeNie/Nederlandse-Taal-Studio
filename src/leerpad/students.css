@@ -1,0 +1,93 @@
+/* Leerlingen without an account yet (Leerpaden page) */
+.pending-tag {
+  margin-left: 0.4rem;
+  background: rgba(210, 153, 34, 0.15);
+  color: var(--amber);
+  font-size: 0.7rem;
+}
+
+.students-pending {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+}
+
+.students-pending-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.students-pending-head .pending-tag {
+  margin-left: 0;
+}
+
+.students-invite {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.students-invite code {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.8rem;
+  user-select: all;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.students-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1rem;
+}
+
+.students-tools .lp-danger {
+  margin-left: auto;
+}
+
+.students-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.students-hint {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.lp-students-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.lp-students-row .lp-students {
+  margin-bottom: 0;
+}
+
+.auth-invited {
+  background: var(--accent-soft);
+  border-radius: 6px;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  margin: -0.75rem 0 1.25rem;
+}

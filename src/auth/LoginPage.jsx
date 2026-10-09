@@ -6,7 +6,7 @@ import { useI18n } from "../i18n/context";
  * Magic-link login: enter an email, receive a link, click it, done.
  * New email addresses get an account automatically (role: leerling).
  */
-export default function LoginPage() {
+export default function LoginPage({ invited = false }) {
   const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState("idle"); // idle | sending | sent | error
@@ -34,6 +34,7 @@ export default function LoginPage() {
       <div className="auth-card">
         <h1>🇳🇱 NL Studio</h1>
         <p className="subtitle">Nederlandse Taal Studio</p>
+        {invited && <p className="auth-invited">{t("invite.loginHint")}</p>}
 
         {status === "sent" ? (
           <div className="auth-sent">

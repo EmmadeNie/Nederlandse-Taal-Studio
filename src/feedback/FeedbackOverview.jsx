@@ -24,14 +24,14 @@ function formatDate(ts, locale) {
 
 export default function FeedbackOverview() {
   const feedback = useAllFeedback();
-  const { user, role } = useAuth();
+  const { profile, role } = useAuth();
   const { t, locale } = useI18n();
   const isDocent = role === "docent";
   const fileInput = useRef(null);
   const [notice, setNotice] = useState(null);
   const [legacyCount, setLegacyCount] = useState(() => getLegacyLocalFeedback().length);
 
-  const canDelete = (f) => isDocent || f.authorId === user?.id;
+  const canDelete = (f) => isDocent || f.authorId === profile?.id;
 
   const handleDelete = async (id) => {
     try {
