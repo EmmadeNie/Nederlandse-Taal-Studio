@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "../auth/context";
 import { useI18n } from "../i18n/context";
 import Markdown from "../components/Markdown";
 import LessonFiles from "./LessonFiles";
 import { WordListEditor, WordListView } from "./WordList";
 import { LabelPicker } from "./Labels";
+import SaveStatus from "./SaveStatus";
+import { useAutosave } from "./useAutosave";
 import { hasWordList, wordsForList } from "./wordLists";
 import { SentenceListEditor, SentenceListView } from "./SentenceList";
 import { hasSentenceList, sentencesForList } from "./sentenceLists";
@@ -269,7 +271,6 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
     level: lesson.level || "",
     label_ids: lesson.label_ids,
     explanation: lesson.explanation,
-    links: lesson.links,
     lane_id: lesson.lane_id,
     word_list: lesson.word_list || null,
     sentence_list: lesson.sentence_list || null,
@@ -278,10 +279,12 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
   const [students, setStudents] = useState(null); // students with this lesson
   const [allStudents, setAllStudents] = useState([]);
   const [planFor, setPlanFor] = useState("");
-  const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
   const set = (k) => (v) => setForm((f) => ({ ...f, [k]: v }));
+  const autosave = useAutosave();
+  // Text as last sent to the database, so blur + close don't save twice.
+  const sent = useRef({ title: lesson.title, explanation: lesson.explanation });
 
   useEffect(() => {
     // Who has this lesson is staff information; students only see the lesson.
@@ -290,30 +293,35 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
     if (canEdit) api.listStudents().then(setAllStudents).catch(() => {});
   }, [lesson.id, canEdit, isStudent]);
 
-  const save = async () => {
-    if (!form.title.trim()) {
-      setError(t("lp.needTitle"));
-      return;
-    }
-    setBusy(true);
-    setError(null);
-    try {
-      const updated = await api.updateLesson(lesson.id, {
-        title: form.title.trim(),
-        level: form.level || null,
-        label_ids: form.label_ids,
-        explanation: form.explanation,
-        links: form.links,
-        lane_id: form.lane_id,
-        word_list: form.word_list,
-        sentence_list: form.sentence_list,
-      });
-      onSaved(updated);
-      onClose();
-    } catch (e) {
-      setError(t(e.message));
-      setBusy(false);
-    }
+  /** Save fields of this lesson right away. */
+  const commit = (patch) =>
+    autosave.save(async () => onSaved(await api.updateLesson(lesson.id, patch)));
+
+  /** Choices (selects, labels, lists) save as soon as they change. */
+  const choose = (key, toDb = (v) => v) => (value) => {
+    set(key)(value);
+    commit({ [key]: toDb(value) });
+  };
+
+  /** Text fields save when you leave them (or close the dialog). */
+  const textPatch = () => {
+    const patch = {};
+    const title = form.title.trim();
+    if (!title) set("title")(sent.current.title); // an empty title is not saved
+    else if (title !== sent.current.title) patch.title = title;
+    if (form.explanation !== sent.current.explanation) patch.explanation = form.explanation;
+    return patch;
+  };
+  const saveText = () => {
+    const patch = textPatch();
+    if (!Object.keys(patch).length) return autosave.settled();
+    Object.assign(sent.current, patch);
+    return commit(patch);
+  };
+
+  const close = async () => {
+    if (canEdit && !(await saveText())) return; // keep the dialog open to show the error
+    onClose();
   };
 
   const remove = async () => {
@@ -345,7 +353,7 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
   const planned = new Set((students || []).map((s) => s.id));
 
   return (
-    <Dialog title={canEdit ? t("lp.editLesson") : lesson.title} onClose={onClose} wide>
+    <Dialog title={canEdit ? t("lp.editLesson") : lesson.title} onClose={close} wide>
       {isStudent ? (
         <div className="lp-source">
           <strong><Eye /> {t("lp.viewOnly")}. </strong>
@@ -366,12 +374,12 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
         <>
           <label className="fb-field">
             <span>{t("lp.title")}</span>
-            <input value={form.title} onChange={(e) => set("title")(e.target.value)} />
+            <input value={form.title} onChange={(e) => set("title")(e.target.value)} onBlur={saveText} />
           </label>
           <div className="lp-row">
             <label className="fb-field" style={{ flex: "1 1 120px" }}>
               <span>{t("lp.level")}</span>
-              <select value={form.level} onChange={(e) => set("level")(e.target.value)}>
+              <select value={form.level} onChange={(e) => choose("level", (v) => v || null)(e.target.value)}>
                 <option value="">{t("level.none")}</option>
                 {LEVELS.map((l) => (
                   <option key={l} value={l}>
@@ -382,7 +390,7 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
             </label>
             <label className="fb-field" style={{ flex: "1 1 120px" }}>
               <span>{t("lp.lane")}</span>
-              <select value={form.lane_id} onChange={(e) => set("lane_id")(e.target.value)}>
+              <select value={form.lane_id} onChange={(e) => choose("lane_id")(e.target.value)}>
                 {lanes.map((l) => (
                   <option key={l.id} value={l.id}>
                     {l.name}
@@ -393,7 +401,7 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
           </div>
           <div className="fb-field">
             <span>{t("lp.labels")}</span>
-            <LabelPicker value={form.label_ids} onChange={set("label_ids")} />
+            <LabelPicker value={form.label_ids} onChange={choose("label_ids")} />
           </div>
         </>
       )}
@@ -419,6 +427,7 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
               rows={8}
               value={form.explanation}
               onChange={(e) => set("explanation")(e.target.value)}
+              onBlur={saveText}
               aria-label={t("lp.explanation")}
               placeholder={t("lp.explanationPh")}
             />
@@ -429,7 +438,7 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
       {(canEdit || hasWordList(lesson.word_list)) && (
         <div className="lp-section">
           <h4>{t("wl.title")}</h4>
-          {canEdit && <WordListEditor value={form.word_list} onChange={set("word_list")} />}
+          {canEdit && <WordListEditor value={form.word_list} onChange={choose("word_list")} />}
           <WordListView spec={canEdit ? form.word_list : lesson.word_list} />
         </div>
       )}
@@ -437,7 +446,7 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
       {(canEdit || hasSentenceList(lesson.sentence_list)) && (
         <div className="lp-section">
           <h4>{t("sl.title")}</h4>
-          {canEdit && <SentenceListEditor value={form.sentence_list} onChange={set("sentence_list")} />}
+          {canEdit && <SentenceListEditor value={form.sentence_list} onChange={choose("sentence_list")} />}
           <SentenceListView spec={canEdit ? form.sentence_list : lesson.sentence_list} />
         </div>
       )}
@@ -482,14 +491,10 @@ function LessonDialog({ lesson, lanes, canEdit, isStudent, onClose, onSaved, onD
 
       {error && <div className="auth-error">{error}</div>}
 
+      {canEdit && <SaveStatus status={autosave.status} error={autosave.error} />}
+
       {canEdit && (
         <div className="lp-actions">
-          <button className="fb-btn-primary" onClick={save} disabled={busy}>
-            {t("common.save")}
-          </button>
-          <button className="fb-btn-secondary" onClick={onClose}>
-            {t("common.cancel")}
-          </button>
           <button className="lp-danger" onClick={remove}>
             {t("lp.deleteLesson")}
           </button>
