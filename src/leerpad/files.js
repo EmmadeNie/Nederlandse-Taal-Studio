@@ -18,6 +18,7 @@ const TYPES = {
   xls: "application/vnd.ms-excel",
   xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   txt: "text/plain",
+  csv: "text/csv",
   jpg: "image/jpeg",
   jpeg: "image/jpeg",
   png: "image/png",

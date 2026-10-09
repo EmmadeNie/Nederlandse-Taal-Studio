@@ -124,6 +124,6 @@ export function fileIconFor(mime) {
   if (mime.includes("presentation") || mime.includes("powerpoint")) return FilePpt;
   if (mime.includes("sheet") || mime.includes("excel")) return FileXls;
   if (mime.includes("word")) return FileDoc;
-  if (mime === "text/plain") return FileText;
+  if (mime === "text/plain" || mime === "text/csv") return FileText;
   return File;
 }
