@@ -26,6 +26,7 @@ export function stepContent(step) {
       attachments: l.attachments || [],
       wordList: l.word_list || null,
       sentenceList: l.sentence_list || null,
+      topicIds: l.topic_ids || [],
     };
   }
   return {
@@ -38,5 +39,6 @@ export function stepContent(step) {
     attachments: [],
     wordList: null,
     sentenceList: null,
+    topicIds: [],
   };
 }

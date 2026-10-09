@@ -893,3 +893,65 @@
   gap: 0.3rem;
   font-size: 0.78rem;
 }
+
+/* ----- Grammar topics on a lesson ----- */
+.lg-list,
+.lg-chosen {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.lg-list li {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.85rem;
+}
+
+.lg-list summary {
+  cursor: pointer;
+}
+
+.lg-list summary .level-badge {
+  font-size: 0.62rem;
+  margin-left: 0.3rem;
+}
+
+.lg-summary {
+  font-size: 0.78rem;
+  margin-top: 0.15rem;
+}
+
+.lg-list details[open] summary {
+  margin-bottom: 0.5rem;
+}
+
+.lg-list a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  margin-top: 0.4rem;
+}
+
+.lg-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.lg-chosen li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+}
+
+.lg-chosen li .board-icon-btn {
+  margin-left: auto;
+}
