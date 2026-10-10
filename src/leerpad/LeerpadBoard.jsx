@@ -6,14 +6,14 @@ import { InternalLinkContext, lessonIdFromHref } from "../components/internalLin
 import { navigate } from "../hooks/useRoute";
 import RichEditor from "../editor/RichEditor";
 import LessonFiles from "./LessonFiles";
-import { WordListView } from "./WordList";
-import { hasWordList, wordsForList } from "./wordLists";
-import { SentenceListView } from "./SentenceList";
+import { WordListsView } from "./WordList";
+import { hasWordList, toLists, wordsForLists } from "./wordLists";
+import { SentenceListsView } from "./SentenceList";
 import { GrammarView } from "./LessonGrammar";
 import { grammarCount } from "./grammarTopics";
 import SaveStatus from "./SaveStatus";
 import { useAutosave } from "./useAutosave";
-import { hasSentenceList, sentencesForList } from "./sentenceLists";
+import { hasSentenceList, sentencesForLists } from "./sentenceLists";
 import Board, { AddCardForm } from "./Board";
 import * as api from "./api";
 import { BoardFilters, CardBody, Chips, Dialog, LinkList, LinksEditor, MetaItem } from "./shared";
@@ -129,10 +129,10 @@ export default function LeerpadBoard({ studentId }) {
                       {grammarCount(c.topicIds) > 0 && t("lg.count", { n: grammarCount(c.topicIds) })}
                     </MetaItem>
                     <MetaItem icon={ICONS.words}>
-                      {hasWordList(c.wordList) && t("wl.count", { n: wordsForList(c.wordList).length })}
+                      {toLists(c.wordList).some(hasWordList) && t("wl.count", { n: wordsForLists(c.wordList).length })}
                     </MetaItem>
                     <MetaItem icon={ICONS.sentences}>
-                      {hasSentenceList(c.sentenceList) && t("sl.count", { n: sentencesForList(c.sentenceList).length })}
+                      {toLists(c.sentenceList).some(hasSentenceList) && t("sl.count", { n: sentencesForLists(c.sentenceList).length })}
                     </MetaItem>
                     <MetaItem icon={ICONS.bestand}>
                       {c.attachments.length > 0 && t("files.count", { n: c.attachments.length })}
@@ -451,17 +451,17 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
         </div>
       )}
 
-      {hasWordList(content.wordList) && (
+      {toLists(content.wordList).some(hasWordList) && (
         <div className="lp-section">
           <h4>{t("wl.title")}</h4>
-          <WordListView spec={content.wordList} />
+          <WordListsView value={content.wordList} />
         </div>
       )}
 
-      {hasSentenceList(content.sentenceList) && (
+      {toLists(content.sentenceList).some(hasSentenceList) && (
         <div className="lp-section">
           <h4>{t("sl.title")}</h4>
-          <SentenceListView spec={content.sentenceList} />
+          <SentenceListsView value={content.sentenceList} />
         </div>
       )}
 

@@ -4,7 +4,7 @@ import { LevelBadge } from "../components/Badges";
 import QuizletExport from "../components/QuizletExport";
 import SetSelect from "./SetSelect";
 import { LEVELS } from "./util";
-import { THEMES, themeLabel } from "./wordLists";
+import { THEMES, themeLabel, toLists } from "./wordLists";
 import { GRAMMAR_TAGS, hasSentenceList, sentencesForList, slugLabel } from "./sentenceLists";
 
 /** Short description of a recipe: "mijn eerste ontmoetingsgesprek" or "communicatie · t/m A1". */
@@ -51,6 +51,13 @@ export function SentenceListView({ spec }) {
       <QuizletExport words={items} filename={exportName(spec)} downloadKey="qz.downloadSentences" />
     </details>
   );
+}
+
+/** All sentence lists of a lesson, each folded on its own. */
+export function SentenceListsView({ value }) {
+  return toLists(value)
+    .filter(hasSentenceList)
+    .map((spec, i) => <SentenceListView key={i} spec={spec} />);
 }
 
 /** Docent: choose a set (dialogue) or theme, grammar and level for a lesson's sentence list. */

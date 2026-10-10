@@ -3,7 +3,7 @@ import { getSet } from "../data";
 import { LevelBadge } from "../components/Badges";
 import QuizletExport from "../components/QuizletExport";
 import { LEVELS } from "./util";
-import { THEMES, WORD_POS, hasWordList, themeLabel, wordsForList } from "./wordLists";
+import { THEMES, WORD_POS, hasWordList, themeLabel, toLists, wordsForList } from "./wordLists";
 import { slugLabel } from "./sentenceLists";
 import SetSelect from "./SetSelect";
 
@@ -68,6 +68,13 @@ export function WordListView({ spec }) {
       <QuizletExport words={words} filename={exportName(spec)} />
     </details>
   );
+}
+
+/** All word lists of a lesson, each folded on its own. */
+export function WordListsView({ value }) {
+  return toLists(value)
+    .filter(hasWordList)
+    .map((spec, i) => <WordListView key={i} spec={spec} />);
 }
 
 /** Docent: choose theme, part of speech and level for a lesson's word list. */

@@ -81,7 +81,10 @@ export async function deleteSet(id) {
 export async function lessonsUsing({ topicId, setId }) {
   let query = supabase.from("lessons").select("id, title");
   if (topicId) query = query.contains("topic_ids", [topicId]);
-  else if (setId) query = query.or(`word_list->>set.eq.${setId},sentence_list->>set.eq.${setId}`);
+  else if (setId) {
+    const list = JSON.stringify([{ set: setId }]);
+    query = query.or(`word_list.cs.${list},sentence_list.cs.${list}`);
+  }
   else return [];
   return query.order("title").then(check);
 }
