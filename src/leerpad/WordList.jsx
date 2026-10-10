@@ -22,16 +22,17 @@ function Summary({ spec }) {
 const exportName = (spec) =>
   ["woorden", spec.set, spec.theme, spec.partOfSpeech, spec.level].filter(Boolean).join("-");
 
-/** The words of a lesson's word list, as a table. */
+/** The words of a lesson's word list, as a table (folded until you open it). */
 export function WordListView({ spec }) {
   const { t } = useI18n();
   if (!hasWordList(spec)) return null;
   const words = wordsForList(spec);
+  // Collapsed by default: the count and recipe show, click to see the words.
   return (
-    <div className="wl">
-      <div className="wl-head">
+    <details className="wl wl-collapsible">
+      <summary className="wl-head">
         <strong>{t("wl.count", { n: words.length })}</strong> <Summary spec={spec} />
-      </div>
+      </summary>
       {words.length === 0 ? (
         <p className="dim lp-empty">{t("wl.empty")}</p>
       ) : (
@@ -64,7 +65,7 @@ export function WordListView({ spec }) {
         </div>
       )}
       <QuizletExport words={words} filename={exportName(spec)} />
-    </div>
+    </details>
   );
 }
 
