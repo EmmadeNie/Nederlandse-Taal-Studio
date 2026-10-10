@@ -1044,3 +1044,40 @@
   background: var(--surface-2);
   outline: none;
 }
+
+/* Word list folded by default: the head is the toggle */
+.wl-collapsible > summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+}
+
+.wl-collapsible > summary::-webkit-details-marker {
+  display: none;
+}
+
+.wl-collapsible > summary::before {
+  content: "▸";
+  color: var(--text-dim);
+  transition: transform 0.15s;
+}
+
+.wl-collapsible[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.wl.wl-collapsible {
+  display: block;
+}
+
+.wl.wl-collapsible[open] {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
