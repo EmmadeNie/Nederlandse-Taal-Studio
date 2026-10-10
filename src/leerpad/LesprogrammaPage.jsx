@@ -20,7 +20,7 @@ import SelectionBar from "./SelectionBar";
 import Board, { AddCardForm } from "./Board";
 import * as api from "./api";
 import { BoardFilters, CardBody, Chips, Dialog, MetaItem } from "./shared";
-import { CheckSquare, ICONS } from "../icons";
+import { CheckSquare, Eye, ICONS } from "../icons";
 import { LEVELS, matchesFilter } from "./util";
 
 /**
@@ -294,6 +294,9 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
     topic_ids: lesson.topic_ids || [],
   });
   const [preview, setPreview] = useState(!canEdit);
+  // Docent: see the lesson exactly as a student does (no editors, no staff info).
+  const [asStudent, setAsStudent] = useState(false);
+  const editing = canEdit && !asStudent;
   const [students, setStudents] = useState(null); // students with this lesson
   const [allStudents, setAllStudents] = useState([]);
   const [planFor, setPlanFor] = useState("");
@@ -378,9 +381,17 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
   const planned = new Set((students || []).map((s) => s.id));
 
   return (
-    <Dialog title={canEdit ? t("lp.editLesson") : lesson.title} onClose={close} wide>
-      {!canEdit && <Chips level={lesson.level} labelIds={lesson.label_ids} />}
-      {!isStudent && (
+    <Dialog title={editing ? t("lp.editLesson") : lesson.title} onClose={close} wide>
+      {canEdit && (
+        <div className="lp-preview-bar">
+          <button type="button" className={asStudent ? "fb-btn-primary" : "fb-btn-secondary"} onClick={() => setAsStudent((v) => !v)}>
+            <Eye aria-hidden="true" /> {asStudent ? t("lp.backToEdit") : t("lp.viewAsStudent")}
+          </button>
+          {asStudent && <span className="dim">{t("lp.viewAsStudentHint")}</span>}
+        </div>
+      )}
+      {!editing && <Chips level={lesson.level} labelIds={lesson.label_ids} />}
+      {!isStudent && !asStudent && (
         <div className="lp-source">
           <strong>{t("lp.lessonSource")}</strong>
           {students === null
@@ -391,7 +402,7 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
         </div>
       )}
 
-      {canEdit && (
+      {editing && (
         <>
           <label className="fb-field">
             <span>{t("lp.title")}</span>
@@ -430,13 +441,13 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
       <div className="lp-section">
         <h4>
           {t("lp.explanation")}{" "}
-          {canEdit && (
+          {editing && (
             <button type="button" className="fb-link" onClick={() => setPreview((p) => !p)}>
               {preview ? t("lp.edit") : t("lp.preview")}
             </button>
           )}
         </h4>
-        {preview ? (
+        {preview || !editing ? (
           form.explanation.trim() ? (
             <InternalLinkContext.Provider value={followLink}>
               <Markdown className="lp-explanation">{form.explanation}</Markdown>
@@ -456,27 +467,27 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
         )}
       </div>
 
-      {(canEdit || grammarCount(lesson.topic_ids) > 0) && (
+      {(editing || grammarCount(lesson.topic_ids) > 0) && (
         <div className="lp-section">
           <h4>{t("lg.title")}</h4>
-          {canEdit && <GrammarPicker value={form.topic_ids} onChange={choose("topic_ids")} />}
-          <GrammarView ids={canEdit ? form.topic_ids : lesson.topic_ids} />
+          {editing && <GrammarPicker value={form.topic_ids} onChange={choose("topic_ids")} />}
+          <GrammarView ids={editing ? form.topic_ids : lesson.topic_ids} />
         </div>
       )}
 
-      {(canEdit || hasWordList(lesson.word_list)) && (
+      {(editing || hasWordList(lesson.word_list)) && (
         <div className="lp-section">
           <h4>{t("wl.title")}</h4>
-          {canEdit && <WordListEditor value={form.word_list} onChange={choose("word_list")} />}
-          <WordListView spec={canEdit ? form.word_list : lesson.word_list} />
+          {editing && <WordListEditor value={form.word_list} onChange={choose("word_list")} />}
+          <WordListView spec={editing ? form.word_list : lesson.word_list} />
         </div>
       )}
 
-      {(canEdit || hasSentenceList(lesson.sentence_list)) && (
+      {(editing || hasSentenceList(lesson.sentence_list)) && (
         <div className="lp-section">
           <h4>{t("sl.title")}</h4>
-          {canEdit && <SentenceListEditor value={form.sentence_list} onChange={choose("sentence_list")} />}
-          <SentenceListView spec={canEdit ? form.sentence_list : lesson.sentence_list} />
+          {editing && <SentenceListEditor value={form.sentence_list} onChange={choose("sentence_list")} />}
+          <SentenceListView spec={editing ? form.sentence_list : lesson.sentence_list} />
         </div>
       )}
 
@@ -485,13 +496,13 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
         <LessonFiles
           lessonId={lesson.id}
           attachments={lesson.attachments}
-          canEdit={canEdit}
+          canEdit={editing}
           onChange={(attachments) => onSaved({ ...lesson, attachments })}
         />
       </div>
 
 
-      {canEdit && (
+      {editing && (
         <div className="lp-section">
           <h4>{t("lp.plan")}</h4>
           {allStudents.length ? (
@@ -520,9 +531,9 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
 
       {error && <div className="auth-error">{error}</div>}
 
-      {canEdit && <SaveStatus status={autosave.status} error={autosave.error} />}
+      {editing && <SaveStatus status={autosave.status} error={autosave.error} />}
 
-      {canEdit && (
+      {editing && (
         <div className="lp-actions">
           <button className="lp-danger" onClick={remove}>
             {t("lp.deleteLesson")}
