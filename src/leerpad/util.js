@@ -27,6 +27,7 @@ export function stepContent(step) {
       wordList: l.word_list || null,
       sentenceList: l.sentence_list || null,
       topicIds: l.topic_ids || [],
+      verbIds: l.verb_ids || [],
     };
   }
   return {
@@ -40,5 +41,6 @@ export function stepContent(step) {
     wordList: null,
     sentenceList: null,
     topicIds: [],
+    verbIds: [],
   };
 }

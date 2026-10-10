@@ -13,7 +13,6 @@ import VerbCard from "./VerbCard";
  */
 export default function RelatedWords({ ids = [] }) {
   const { t } = useI18n();
-  const [open, setOpen] = useState(null); // verb shown in full
   const words = ids.map((id) => getItem(id)).filter(Boolean);
   if (!words.length) return null;
   const verbs = words.filter((w) => w.partOfSpeech === "verb" && w.conjugation);
@@ -26,11 +25,7 @@ export default function RelatedWords({ ids = [] }) {
       {verbs.length > 0 && (
         <>
           <h4>{t("rw.verbs", { n: verbs.length })}</h4>
-          <div className="rw-verbs">
-            {verbs.map((v) => (
-              <VerbTile key={v.id} verb={v} onOpen={() => setOpen(v)} />
-            ))}
-          </div>
+          <VerbTiles verbs={verbs} />
         </>
       )}
       {others.length > 0 && (
@@ -43,12 +38,26 @@ export default function RelatedWords({ ids = [] }) {
           </div>
         </>
       )}
+    </div>
+  );
+}
+
+/** Verbs as conjugation tiles; click one for its full card. */
+export function VerbTiles({ verbs }) {
+  const [open, setOpen] = useState(null); // verb shown in full
+  return (
+    <>
+      <div className="rw-verbs">
+        {verbs.map((v) => (
+          <VerbTile key={v.id} verb={v} onOpen={() => setOpen(v)} />
+        ))}
+      </div>
       {open && (
         <Dialog title={open.nl} onClose={() => setOpen(null)}>
           <VerbCard verb={open} />
         </Dialog>
       )}
-    </div>
+    </>
   );
 }
 

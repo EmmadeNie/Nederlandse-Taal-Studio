@@ -32,6 +32,7 @@ export async function usageOf(change) {
   }
   list("pr.use.topic", topics.filter((x) => x.relatedWordIds?.includes(id) || x.exampleSentenceIds?.includes(id)));
   list("pr.use.sentence", sentences.filter((x) => x.wordIds?.includes(id) || x.focusWordIds?.includes(id)));
+  if (id.startsWith("word.")) list("ie.inLesson", await lessonsUsing({ verbId: id }), (l) => l.title);
   if (id.startsWith("topic.")) {
     list("ie.inLesson", await lessonsUsing({ topicId: id }), (l) => l.title);
     list("pr.use.exercise", exercises.filter((x) => x.topicId === id));

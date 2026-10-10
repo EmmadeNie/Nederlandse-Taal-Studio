@@ -174,13 +174,13 @@ function JsonField({ value, onCommit }) {
 }
 
 /** Search an item of a type and pick it. */
-export function ItemPicker({ type, exclude = [], onPick, label }) {
+export function ItemPicker({ type, exclude = [], onPick, label, filter }) {
   const { t } = useI18n();
   const [query, setQuery] = useState("");
   const q = query.trim().toLowerCase();
   const results = q
     ? (LISTS[type] || [])
-        .filter((item) => !exclude.includes(item.id))
+        .filter((item) => !exclude.includes(item.id) && (!filter || filter(item)))
         .filter((item) => `${itemLabel(item)} ${item.en || ""} ${item.id}`.toLowerCase().includes(q))
         .slice(0, 8)
     : [];

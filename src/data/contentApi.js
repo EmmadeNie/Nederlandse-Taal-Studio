@@ -71,6 +71,12 @@ async function removeItemReferences(id) {
     }
     if (changed) await updateItem(fixed);
   }
+  if (typeOfId(id) === "word") {
+    const lessons = await supabase.from("lessons").select("id, verb_ids").contains("verb_ids", [id]).then(check);
+    for (const l of lessons) {
+      check(await supabase.from("lessons").update({ verb_ids: l.verb_ids.filter((x) => x !== id) }).eq("id", l.id));
+    }
+  }
   if (typeOfId(id) === "topic") {
     const lessons = await supabase.from("lessons").select("id, topic_ids").contains("topic_ids", [id]).then(check);
     for (const l of lessons) {
@@ -130,10 +136,11 @@ export async function addVocabulary(kind, value) {
   putVocabulary(kind, value);
 }
 
-/** Lessons that use an item or set: topics via topic_ids, sets via word/sentence lists. */
-export async function lessonsUsing({ topicId, setId }) {
+/** Lessons that use an item or set: topics via topic_ids, verbs via verb_ids, sets via word/sentence lists. */
+export async function lessonsUsing({ topicId, verbId, setId }) {
   let query = supabase.from("lessons").select("id, title");
   if (topicId) query = query.contains("topic_ids", [topicId]);
+  else if (verbId) query = query.contains("verb_ids", [verbId]);
   else if (setId) {
     const list = JSON.stringify([{ set: setId }]);
     query = query.or(`word_list.cs.${list},sentence_list.cs.${list}`);

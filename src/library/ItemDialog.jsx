@@ -88,8 +88,8 @@ export default function ItemDialog({ item: initial, type: newType, onClose }) {
   // Where an item is used, shown before deleting it.
   const inSets = isNew ? [] : setsWithItem(draft.id);
   useEffect(() => {
-    if (isNew || type !== "topic") return;
-    lessonsUsing({ topicId: initial.id })
+    if (isNew || (type !== "topic" && type !== "word")) return;
+    lessonsUsing(type === "topic" ? { topicId: initial.id } : { verbId: initial.id })
       .then(setUsage)
       .catch(() => setUsage([]));
   }, [isNew, type, initial.id]);
