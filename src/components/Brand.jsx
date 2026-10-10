@@ -2,7 +2,7 @@ import { useI18n } from "../i18n/context";
 
 /**
  * The logo: a board whose cards stack up like stairs, with the orange card
- * at the top as the goal (your next level). Same drawing as public/logo-icon.svg (the favicon);
+ * at the top as the goal (your next level). The favicon (public/logo-icon.svg) is the same cards without the tile;
  * the tile and card colours follow the theme (--logo-tile, --logo-card).
  */
 export function LogoMark({ size = 40 }) {
