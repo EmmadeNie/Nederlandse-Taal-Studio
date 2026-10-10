@@ -74,6 +74,14 @@ export default function SetDialog({ set, canEdit, onClose }) {
     save({ itemIds: arrayMove(ids, ids.indexOf(active.id), ids.indexOf(over.id)) });
   };
 
+  // Lowest level first; within a level the current order stays (Array.sort is stable).
+  const rank = (id) => {
+    const i = LEVELS.indexOf(getItem(id)?.introducedAtLevel || getItem(id)?.level);
+    return i === -1 ? LEVELS.length : i;
+  };
+  const byLevel = [...set.itemIds].sort((a, b) => rank(a) - rank(b));
+  const sortedByLevel = byLevel.every((id, i) => id === set.itemIds[i]);
+
   const remove = async () => {
     const used = (lessons || []).map((l) => l.title);
     const question = used.length
@@ -115,7 +123,14 @@ export default function SetDialog({ set, canEdit, onClose }) {
       )}
 
       <div className="lp-section">
-        <h4>{t(`sets.count.${set.type}`, { n: items.length })}</h4>
+        <div className="set-items-head">
+          <h4>{t(`sets.count.${set.type}`, { n: items.length })}</h4>
+          {canEdit && items.length > 1 && (
+            <button type="button" className="fb-link" onClick={() => save({ itemIds: byLevel })} disabled={sortedByLevel}>
+              {t("sets.sortLevel")}
+            </button>
+          )}
+        </div>
         {items.length === 0 ? (
           <p className="dim lp-empty">{t("sets.empty")}</p>
         ) : (
