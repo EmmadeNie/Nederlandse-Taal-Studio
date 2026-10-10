@@ -1,11 +1,8 @@
 import { useI18n } from "../i18n/context";
 import { getItem } from "../data";
 
-/**
- * Sentences under a grammar rule: the ones the docent picked (exampleSentenceIds,
- * in that order). The English shows only when the box is switched to English.
- */
-export default function ExampleSentences({ ids = [], showEnglish = true }) {
+/** Sentences under a grammar rule: the ones the docent picked (exampleSentenceIds, in that order). */
+export default function ExampleSentences({ ids = [] }) {
   const { t } = useI18n();
   const list = ids.map((id) => getItem(id)).filter(Boolean);
   if (!list.length) return null;
@@ -16,7 +13,7 @@ export default function ExampleSentences({ ids = [], showEnglish = true }) {
         {list.map((s) => (
           <li key={s.id}>
             <div>{s.nl}</div>
-            {showEnglish && <div className="dim">{s.en}</div>}
+            <div className="dim">{s.en}</div>
           </li>
         ))}
       </ul>
