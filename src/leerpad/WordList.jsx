@@ -1,16 +1,17 @@
 import { useI18n } from "../i18n/context";
+import { getSet } from "../data";
 import { LevelBadge } from "../components/Badges";
 import QuizletExport from "../components/QuizletExport";
 import { LEVELS } from "./util";
-import { THEMES, WORD_POS, hasWordList, themeLabel, wordSetIds, wordsForList } from "./wordLists";
+import { THEMES, WORD_POS, hasWordList, themeLabel, wordsForList } from "./wordLists";
 import { slugLabel } from "./sentenceLists";
-import SetInput from "./SetInput";
+import SetSelect from "./SetSelect";
 
 /** Short description of a recipe: "dieren · t/m A1". */
 function Summary({ spec }) {
   const { t } = useI18n();
   const parts = [
-    spec.set && slugLabel(spec.set),
+    spec.set && (getSet(spec.set)?.title || slugLabel(spec.set)),
     spec.theme && themeLabel(spec.theme),
     spec.partOfSpeech && t(`pos.${spec.partOfSpeech}`).toLowerCase(),
     spec.level && (spec.upTo ? t("wl.upToLevel", { level: spec.level }) : spec.level),
@@ -81,14 +82,7 @@ export function WordListEditor({ value, onChange }) {
   return (
     <div className="wl-editor">
       <div className="lp-row">
-        <SetInput
-          value={spec.set}
-          onChange={(v) => set("set", v)}
-          sets={wordSetIds()}
-          listId="word-sets"
-          placeholder={t("wl.setPh")}
-          label={t("wl.set")}
-        />
+        <SetSelect type="word" value={spec.set} onChange={(v) => set("set", v)} label={t("wl.set")} />
         <select value={spec.theme || ""} onChange={(e) => set("theme", e.target.value)} aria-label={t("wl.theme")}>
           <option value="">{t("filter.allThemes")}</option>
           {THEMES.map((th) => (
