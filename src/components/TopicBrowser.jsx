@@ -1,3 +1,5 @@
+import { useContentVersion } from "../data/useContent";
+import { EditItemButton, NewItemButton } from "../library/ItemEditing";
 import { useEffect, useRef } from "react";
 import { topics, querySentences } from "../data";
 import { LevelBadge, ReviewBadge, Tag } from "./Badges";
@@ -11,6 +13,7 @@ import { useI18n } from "../i18n/context";
 
 export default function TopicBrowser() {
   const { t } = useI18n();
+  useContentVersion();
   const urlParams = useUrlParams();
   const route = useRoute();
 
@@ -37,6 +40,7 @@ export default function TopicBrowser() {
   return (
     <div>
       <h2>{t("nav.topics")}</h2>
+      <NewItemButton type="topic" />
       <p className="result-count">{t("topics.count", { n: topics.length })}</p>
       {topics.map((topic) => {
         const isOpen = expandedId === topic.id;
@@ -98,6 +102,7 @@ export default function TopicBrowser() {
               </>
             )}
             <div className="card-footer" onClick={(e) => e.stopPropagation()}>
+              <EditItemButton item={topic} />
               <CopyLinkButton path={pathFor("topics", topicSlug(topic.id))} />
               <FeedbackButton
                 itemType="topic"

@@ -1,3 +1,5 @@
+import { useContentVersion } from "../data/useContent";
+import { EditItemButton, NewItemButton } from "../library/ItemEditing";
 import {
   exercises,
   topics,
@@ -12,9 +14,11 @@ import { EXERCISE_ICONS, ICONS, Package, Warning } from "../icons";
 
 export default function ExerciseBrowser() {
   const { t } = useI18n();
+  useContentVersion();
   return (
     <div>
       <h2>{t("nav.exercises")}</h2>
+      <NewItemButton type="exercise" />
       <p className="result-count">
         {t("ex.count", { n: exercises.length })}
       </p>
@@ -82,6 +86,7 @@ export default function ExerciseBrowser() {
                 )}
               </div>
               <div className="card-footer">
+                <EditItemButton item={ex} />
                 <FeedbackButton
                   itemType="exercise"
                   itemId={ex.id}

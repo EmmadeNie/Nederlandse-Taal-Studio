@@ -6,6 +6,7 @@ import VerbBrowser from "./VerbBrowser";
 import SentenceBrowser from "./SentenceBrowser";
 import TopicBrowser from "./TopicBrowser";
 import ExerciseBrowser from "./ExerciseBrowser";
+import SetBrowser from "../library/SetBrowser";
 
 const PANELS = {
   words: WordBrowser,
@@ -13,6 +14,7 @@ const PANELS = {
   sentences: SentenceBrowser,
   topics: TopicBrowser,
   exercises: ExerciseBrowser,
+  sets: SetBrowser,
 };
 
 /**

@@ -1,3 +1,4 @@
+import { useContentVersion } from "./data/useContent";
 import { useEffect, useState } from "react";
 import ContentGate from "./components/ContentGate";
 import "./App.css";
@@ -95,6 +96,7 @@ function AuthGate() {
 }
 
 function Studio() {
+  useContentVersion(); // counts follow edits
   const route = useRoute();
   const [appFeedbackOpen, setAppFeedbackOpen] = useState(false);
   const stats = getStats();

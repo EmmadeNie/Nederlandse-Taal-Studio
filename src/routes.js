@@ -22,6 +22,7 @@ export const PATHS = {
   sentences: "/bibliotheek/zinnen",
   topics: "/bibliotheek/grammatica",
   exercises: "/bibliotheek/oefeningen",
+  sets: "/bibliotheek/sets",
   feedback: "/feedback",
   users: "/gebruikers",
 };
