@@ -265,4 +265,4 @@ woordvolgorde, bijzin, voegwoorden, modale-werkwoorden, scheidbare-werkwoorden, 
 te-infinitief, om-te, aan-het, gebiedende-wijs, vragen, ontkenning, lidwoorden, de-het,
 voornaamwoorden, voorzetsels, vervoegen, klinkers, lettergrepen, uitspraak
 
-**tags:** regelmatig-ww, onregelmatig-ww, hulpwerkwoord, modaal-werkwoord, scheidbaar-ww, formeel, informeel
+**tags:** regelmatig-ww, onregelmatig-ww, hulpwerkwoord, modaal-werkwoord, scheidbaar-ww, formeel, informeel, vraagwoord
