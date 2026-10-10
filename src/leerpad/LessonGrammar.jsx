@@ -46,7 +46,7 @@ function GrammarItem({ topic }) {
             <Markdown className="lp-explanation">{text.explanation}</Markdown>
           </div>
         )}
-        <RelatedWords ids={topic.relatedWordIds} />
+        <RelatedWords ids={topic.relatedWordIds} showEnglish={lang === "en"} />
         <ExampleSentences ids={topic.exampleSentenceIds} showEnglish={lang === "en"} />
         <a href={pathFor("topics", topicSlug(topic.id))} target="_blank" rel="noopener noreferrer">
           <ArrowSquareOut aria-hidden="true" /> {t("lg.openInLibrary")}

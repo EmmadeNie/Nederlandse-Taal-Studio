@@ -1476,6 +1476,23 @@ svg[class^="ph"], button svg, h4 svg, .board-meta-item svg {
   font-weight: 600;
 }
 
+.rw-word-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  margin-bottom: 0.3rem;
+}
+
+.rw-word-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.rw-word-en {
+  margin-top: 0.3rem;
+}
+
 .rw-chips {
   list-style: none;
   margin: 0;
