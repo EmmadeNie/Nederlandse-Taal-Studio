@@ -1114,7 +1114,7 @@ svg[class^="ph"], button svg, h4 svg, .board-meta-item svg {
 }
 
 .ie-row:has(.ie-multi),
-.ie-row:has(.ie-markdown),
+.ie-row:has(.ie-rich),
 .ie-row:has(.ie-textarea),
 .ie-row:has(.ie-refs),
 .ie-row:has(.ie-json),

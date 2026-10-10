@@ -1,52 +1,33 @@
-import { useContext } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { useContext, useMemo } from "react";
 import { navigate } from "../hooks/useRoute";
+import { useI18n } from "../i18n/context";
 import { InternalLinkContext } from "./internalLinks";
+import { sanitize, toHtml } from "../editor/richText";
+import "../editor/rich.css";
 
 /**
- * Markdown renderer for content fields (topic explanations, etc.).
- *
- * Uses react-markdown with GitHub-flavored markdown, so ChatGPT can use
- * bold, lists, headings, tables, links, inline code and more. React-markdown
- * does not render raw HTML by default, which keeps rendering safe.
+ * Shows an explanation: HTML from the rich editor, or older Markdown (GitHub
+ * flavoured, converted). Always sanitized, see src/editor/richText.js.
  * Links to other pages of the app ("/lesprogramma/…") open in place;
  * other links open in a new tab.
  */
 export default function Markdown({ children, className }) {
-  if (!children) return null;
-  return (
-    <div className={className}>
-      <ReactMarkdown remarkPlugins={[remarkGfm]} components={{ a: Link }}>
-        {children}
-      </ReactMarkdown>
-    </div>
-  );
-}
-
-// eslint-disable-next-line no-unused-vars -- react-markdown passes the AST node
-function Link({ href = "", children, node, ...rest }) {
+  const { lang } = useI18n();
   const handle = useContext(InternalLinkContext);
-  if (href.startsWith("/")) {
-    return (
-      <a
-        {...rest}
-        href={href}
-        className="md-internal-link"
-        onClick={(e) => {
-          if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return; // new tab/window
-          e.preventDefault();
-          if (handle) handle(href);
-          else navigate(href);
-        }}
-      >
-        {children}
-      </a>
-    );
-  }
+  const html = useMemo(() => sanitize(toHtml(children || "")), [children]);
+  if (!html) return null;
+
+  const onClick = (e) => {
+    const a = e.target.closest?.("a");
+    const href = a?.getAttribute("href") || "";
+    if (!href.startsWith("/") || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    e.preventDefault();
+    if (handle) handle(href);
+    else navigate(href);
+  };
+
   return (
-    <a {...rest} href={href} target="_blank" rel="noopener noreferrer">
-      {children}
-    </a>
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- clicks on the links inside; links are keyboard-reachable themselves
+    <div className={`rich ${className || ""}`} data-lang={lang} onClick={onClick} dangerouslySetInnerHTML={{ __html: html }} />
   );
 }

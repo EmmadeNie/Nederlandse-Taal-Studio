@@ -4,6 +4,25 @@
  * IconContext in main.jsx (1.15em, regular); active nav items use weight="fill".
  */
 import {
+  ArrowClockwise,
+  ArrowCounterClockwise,
+  Columns,
+  Eraser,
+  Highlighter,
+  Info,
+  ListBullets,
+  ListNumbers,
+  Palette,
+  Quotes,
+  Rows,
+  Table,
+  TextB,
+  TextHThree,
+  TextHTwo,
+  TextItalic,
+  TextStrikethrough,
+  TextUnderline,
+  Trash,
   ArrowElbowDownRight,
   ArrowSquareOut,
   ArrowsClockwise,
@@ -110,6 +129,30 @@ export {
   UploadSimple,
   Warning,
   X,
+};
+
+/** The rich-text editor's toolbar. */
+export {
+  Translate,
+  ArrowClockwise,
+  ArrowCounterClockwise,
+  Columns,
+  Eraser,
+  Highlighter,
+  Info,
+  ListBullets,
+  ListNumbers,
+  Palette,
+  Quotes,
+  Rows,
+  Table,
+  TextB,
+  TextHThree,
+  TextHTwo,
+  TextItalic,
+  TextStrikethrough,
+  TextUnderline,
+  Trash,
 };
 
 /** Exercise types in the library. */

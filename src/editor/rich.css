@@ -1,0 +1,356 @@
+/* ----- Explanations: the same look in the editor and when shown ----- */
+.rich {
+  /* Labels of the boxes, per UI language. */
+  --label-regel: "Regel";
+  --label-tip: "Tip";
+  --label-letop: "Let op";
+  --label-voorbeeld: "Voorbeeld";
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.rich[data-lang="en"] {
+  --label-regel: "Rule";
+  --label-tip: "Tip";
+  --label-letop: "Watch out";
+  --label-voorbeeld: "Example";
+}
+
+.rich > :first-child {
+  margin-top: 0;
+}
+
+.rich > :last-child {
+  margin-bottom: 0;
+}
+
+.rich p {
+  margin: 0 0 0.65rem;
+}
+
+.rich h2 {
+  font-size: 1.15rem;
+  margin: 1.2rem 0 0.5rem;
+  letter-spacing: -0.01em;
+}
+
+.rich h3 {
+  font-size: 1rem;
+  margin: 1rem 0 0.4rem;
+}
+
+.rich h4 {
+  font-size: 0.9rem;
+  margin: 0.9rem 0 0.35rem;
+}
+
+.rich ul,
+.rich ol {
+  margin: 0 0 0.7rem;
+  padding-left: 1.4rem;
+}
+
+.rich li {
+  margin: 0.15rem 0;
+}
+
+.rich li > p {
+  margin: 0;
+}
+
+.rich a {
+  color: var(--accent);
+}
+
+.rich mark {
+  color: #14171d;
+  border-radius: 3px;
+  padding: 0 0.15em;
+}
+
+.rich blockquote {
+  margin: 0 0 0.7rem;
+  padding: 0.1rem 0 0.1rem 0.9rem;
+  border-left: 3px solid var(--border);
+  color: var(--text-dim);
+}
+
+.rich hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 1rem 0;
+}
+
+/* Tables, e.g. a conjugation */
+.rich table {
+  border-collapse: collapse;
+  margin: 0.4rem 0 0.9rem;
+  min-width: 50%;
+  max-width: 100%;
+  font-size: 0.86rem;
+  display: block;
+  overflow-x: auto;
+}
+
+.rich th,
+.rich td {
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.7rem;
+  text-align: left;
+  vertical-align: top;
+  min-width: 4rem;
+}
+
+.rich th {
+  background: var(--surface-2);
+  font-weight: 600;
+}
+
+.rich th > p,
+.rich td > p {
+  margin: 0;
+}
+
+/* Boxes: Regel / Tip / Let op / Voorbeeld */
+.rich .callout,
+.rich div[data-callout] {
+  --c: #4f9cf9;
+  position: relative;
+  margin: 0.4rem 0 0.9rem;
+  padding: 1.7rem 0.95rem 0.75rem;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--c) 11%, transparent);
+  border: 1px solid color-mix(in srgb, var(--c) 35%, transparent);
+}
+
+.rich div[data-callout]::before {
+  position: absolute;
+  top: 0.45rem;
+  left: 0.95rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: color-mix(in srgb, var(--c) 80%, var(--text));
+}
+
+.rich div[data-callout="regel"] {
+  --c: #4f9cf9;
+}
+.rich div[data-callout="regel"]::before {
+  content: var(--label-regel);
+}
+
+.rich div[data-callout="tip"] {
+  --c: #3fbf7f;
+}
+.rich div[data-callout="tip"]::before {
+  content: var(--label-tip);
+}
+
+.rich div[data-callout="letop"] {
+  --c: #f08c3c;
+}
+.rich div[data-callout="letop"]::before {
+  content: var(--label-letop);
+}
+
+.rich div[data-callout="voorbeeld"] {
+  --c: #a67cf0;
+}
+.rich div[data-callout="voorbeeld"]::before {
+  content: var(--label-voorbeeld);
+}
+
+.rich div[data-callout] > :last-child {
+  margin-bottom: 0;
+}
+
+/* Example sentence: Dutch, then the English below it */
+.rich div[data-example] {
+  margin: 0.3rem 0 0.8rem;
+  padding: 0.45rem 0.8rem;
+  border-radius: 8px;
+  background: var(--surface-2);
+}
+
+.rich div[data-example] > p {
+  margin: 0;
+}
+
+.rich div[data-example] > p:first-child {
+  font-weight: 600;
+}
+
+.rich div[data-example] > p + p {
+  color: var(--text-dim);
+  font-style: italic;
+  font-size: 0.85rem;
+}
+
+/* ----- The editor ----- */
+.rich-editor {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+}
+
+.rich-editor:focus-within {
+  border-color: var(--accent);
+}
+
+.rich-editor .rich {
+  min-height: 9rem;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 0.75rem 0.9rem;
+  outline: none;
+}
+
+.rich-editor .rich p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: var(--text-dim);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.rich-editor .rich .selectedCell {
+  background: var(--accent-soft);
+}
+
+.re-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.5rem;
+  padding: 0.35rem 0.4rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 8px 8px 0 0;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.re-group {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+  padding-right: 0.5rem;
+  border-right: 1px solid var(--border);
+}
+
+.re-group:last-child {
+  border-right: 0;
+  padding-right: 0;
+}
+
+.re-history {
+  margin-left: auto;
+}
+
+.re-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1rem;
+  min-width: 2rem;
+  height: 2rem;
+  justify-content: center;
+  padding: 0 0.4rem;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.re-btn:hover:not(:disabled),
+.re-btn:focus-visible {
+  background: var(--surface-2);
+  color: var(--text);
+  outline: none;
+}
+
+.re-btn[aria-pressed="true"] {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.re-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.re-menu {
+  position: relative;
+  display: inline-flex;
+}
+
+.re-pop {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 0.3rem);
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  white-space: nowrap;
+}
+
+.re-pop-list {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.re-swatch {
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  border: 2px solid var(--surface);
+  box-shadow: 0 0 0 1px var(--border);
+  cursor: pointer;
+}
+
+.re-swatch:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.re-callout-choice {
+  --c: #4f9cf9;
+  text-align: left;
+  border: 1px solid color-mix(in srgb, var(--c) 40%, transparent);
+  background: color-mix(in srgb, var(--c) 12%, transparent);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 0.35rem 0.7rem;
+  font: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.re-callout-choice.callout-tip {
+  --c: #3fbf7f;
+}
+
+.re-callout-choice.callout-letop {
+  --c: #f08c3c;
+}
+
+.re-callout-choice.callout-voorbeeld {
+  --c: #a67cf0;
+}
+
+.re-toolbar .ll {
+  margin-left: 0.2rem;
+}

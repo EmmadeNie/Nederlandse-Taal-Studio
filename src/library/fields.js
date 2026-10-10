@@ -82,7 +82,7 @@ export const FIELDS = {
     { path: "title", label: "f.title", kind: "text" },
     level(),
     { path: "summary", label: "f.summary", kind: "textarea" },
-    { path: "explanation", label: "f.explanation", kind: "markdown" },
+    { path: "explanation", label: "f.explanation", kind: "rich" },
     { path: "grammarTags", label: "f.grammarTags", kind: "multi", options: GRAMMAR_TAGS, optionLabel: slugText },
     { path: "themes", label: "f.themes", kind: "multi", options: THEMES, optionLabel: slugText },
     { path: "relatedWordIds", label: "f.relatedWordIds", kind: "refs", refType: "word" },
