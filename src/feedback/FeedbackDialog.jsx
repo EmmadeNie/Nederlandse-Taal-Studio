@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FEEDBACK_CATEGORIES, addFeedback } from "./store";
+import { addFeedback, categoriesFor } from "./store";
 import { useAuth } from "../auth/context";
 import { useI18n } from "../i18n/context";
 import { CheckCircle, X } from "../icons";
@@ -8,7 +8,7 @@ import { CheckCircle, X } from "../icons";
  * Modal dialog to add feedback for a content item (or the app in general).
  *
  * Props:
- *   itemType  - "word" | "verb" | "sentence" | "topic" | "exercise" | "app"
+ *   itemType  - "word" | "verb" | "sentence" | "topic" | "exercise" | "lesson" | "zijpad" | "app"
  *   itemId    - id of the content item (null for general app feedback)
  *   itemLabel - human-readable label shown in the dialog header
  *   onClose   - called when the dialog should close
@@ -17,7 +17,7 @@ export default function FeedbackDialog({ itemType, itemId, itemLabel, onClose })
   const { profile } = useAuth();
   const { t } = useI18n();
   const [category, setCategory] = useState(
-    itemType === "app" ? "app" : "taalfout"
+    itemType === "app" ? "app" : categoriesFor(itemType)[0]
   );
   const [message, setMessage] = useState("");
   const [saved, setSaved] = useState(false);
@@ -26,11 +26,14 @@ export default function FeedbackDialog({ itemType, itemId, itemLabel, onClose })
 
   // Close on Escape
   useEffect(() => {
+    // Capture first, so a lesson dialog behind this one stays open.
     const onKey = (e) => {
-      if (e.key === "Escape") onClose();
+      if (e.key !== "Escape") return;
+      e.stopImmediatePropagation();
+      onClose();
     };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener("keydown", onKey, true);
+    return () => window.removeEventListener("keydown", onKey, true);
   }, [onClose]);
 
   const canSubmit = message.trim().length > 0 && !saving;
@@ -88,7 +91,7 @@ export default function FeedbackDialog({ itemType, itemId, itemLabel, onClose })
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
               >
-                {FEEDBACK_CATEGORIES.map((c) => (
+                {categoriesFor(itemType).map((c) => (
                   <option key={c} value={c}>
                     {t(`fb.cat.${c}`)}
                   </option>

@@ -10,7 +10,7 @@ import { usePrefs } from "../prefs/context";
  * feedback mode (the speech-bubble switch top right).
  *
  * Props:
- *   itemType  - "word" | "verb" | "sentence" | "topic" | "exercise"
+ *   itemType  - "word" | "verb" | "sentence" | "topic" | "exercise" | "lesson" | "zijpad"
  *   itemId    - id of the content item
  *   itemLabel - human-readable label (shown in the dialog)
  */

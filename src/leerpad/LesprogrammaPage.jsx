@@ -18,6 +18,7 @@ import { hasWordList, toLists, wordsForLists } from "./wordLists";
 import { SentenceListEditor, SentenceListsView } from "./SentenceList";
 import { hasSentenceList, sentencesForLists } from "./sentenceLists";
 import SelectionBar from "./SelectionBar";
+import FeedbackButton from "../feedback/FeedbackButton";
 import Board, { AddCardForm } from "./Board";
 import * as api from "./api";
 import { BoardFilters, CardBody, Chips, Dialog, MetaItem } from "./shared";
@@ -194,6 +195,7 @@ export default function LesprogrammaPage() {
                   <MetaItem icon={ICONS.bestand}>
                     {l.attachments?.length > 0 && t("files.count", { n: l.attachments.length })}
                   </MetaItem>
+                  <FeedbackButton itemType="lesson" itemId={l.id} itemLabel={l.title} />
                 </>
               }
             />
@@ -391,7 +393,10 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
           {asStudent && <span className="dim">{t("lp.viewAsStudentHint")}</span>}
         </div>
       )}
-      {!editing && <Chips level={lesson.level} labelIds={lesson.label_ids} />}
+      <div className="lp-feedback">
+        {!editing && <Chips level={lesson.level} labelIds={lesson.label_ids} />}
+        <FeedbackButton itemType="lesson" itemId={lesson.id} itemLabel={lesson.title} />
+      </div>
       {!isStudent && !asStudent && (
         <div className="lp-source">
           <strong>{t("lp.lessonSource")}</strong>

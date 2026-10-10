@@ -15,6 +15,7 @@ import SaveStatus from "./SaveStatus";
 import { useAutosave } from "./useAutosave";
 import { hasSentenceList, sentencesForLists } from "./sentenceLists";
 import Board, { AddCardForm } from "./Board";
+import FeedbackButton from "../feedback/FeedbackButton";
 import * as api from "./api";
 import { BoardFilters, CardBody, Chips, Dialog, LinkList, LinksEditor, MetaItem } from "./shared";
 import { ICONS } from "../icons";
@@ -138,6 +139,7 @@ export default function LeerpadBoard({ studentId }) {
                       {c.attachments.length > 0 && t("files.count", { n: c.attachments.length })}
                     </MetaItem>
                     <MetaItem icon={ICONS.notitie}>{isDocent && notes[s.id] && t("lp.hasNote")}</MetaItem>
+                    <StepFeedback step={s} title={c.title} />
                   </>
                 }
               />
@@ -385,7 +387,10 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
   return (
     <InternalLinkContext.Provider value={followLink}>
     <Dialog title={content.title} onClose={close} wide>
-      <Chips level={content.level} labelIds={content.labelIds} categories={content.categories} kind={isZijpad ? t("kind.zijpad") : t("kind.stap")} />
+      <div className="lp-feedback">
+        <Chips level={content.level} labelIds={content.labelIds} categories={content.categories} kind={isZijpad ? t("kind.zijpad") : t("kind.stap")} />
+        <StepFeedback step={step} title={content.title} />
+      </div>
       {isDocent && (
         <div className="lp-source">
           {isZijpad ? (
@@ -523,5 +528,14 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
       )}
     </Dialog>
     </InternalLinkContext.Provider>
+  );
+}
+
+/** Feedback on a step: a stap counts for its lesson (so all students' feedback meets), a zijpad for itself. */
+function StepFeedback({ step, title }) {
+  return step.lesson_id ? (
+    <FeedbackButton itemType="lesson" itemId={step.lesson_id} itemLabel={title} />
+  ) : (
+    <FeedbackButton itemType="zijpad" itemId={step.id} itemLabel={title} />
   );
 }
