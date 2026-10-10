@@ -22,19 +22,56 @@
   margin-top: auto;
 }
 
-.sidebar h1 {
-  font-size: 1rem;
-  padding: 0 1.25rem;
-  margin: 0 0 0.25rem 0;
-  color: var(--accent);
-  letter-spacing: -0.02em;
+/* ----- Brand: logo + name (sidebar and login) ----- */
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
 }
 
-.sidebar .subtitle {
-  font-size: 0.75rem;
-  color: var(--text-dim);
+.sidebar .brand {
   padding: 0 1.25rem;
   margin: 0 0 1.5rem 0;
+}
+
+.brand-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.logo-mark {
+  flex: none;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  min-width: 0;
+}
+
+.brand-name {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 650;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.brand-sub {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #8bbcfb;
+}
+
+.brand-tagline {
+  margin: 0;
+  font-size: 0.76rem;
+  line-height: 1.4;
+  color: var(--text-dim);
 }
 
 .sidebar nav {
@@ -897,6 +934,15 @@
   font-size: 1.25rem;
   color: var(--accent);
   margin: 0 0 0.25rem 0;
+}
+
+.auth-card .brand {
+  margin: 0 0 1.5rem 0;
+}
+
+.auth-card .brand-name {
+  font-size: 1.25rem;
+  color: var(--text);
 }
 
 .auth-card .subtitle {

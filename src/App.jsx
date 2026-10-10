@@ -1,4 +1,5 @@
 import { useContentVersion } from "./data/useContent";
+import Brand from "./components/Brand";
 import { useEffect, useState } from "react";
 import ContentGate from "./components/ContentGate";
 import "./App.css";
@@ -136,8 +137,7 @@ function Studio() {
   return (
     <div className="app">
       <aside className="sidebar">
-        <h1>🇳🇱 NL Studio</h1>
-        <p className="subtitle">Nederlandse Taal Studio</p>
+        <Brand tagline />
         <nav>
           {pages.map((p) => (
             <button
