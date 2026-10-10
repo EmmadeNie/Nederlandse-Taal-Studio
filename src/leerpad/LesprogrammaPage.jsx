@@ -20,7 +20,7 @@ import SelectionBar from "./SelectionBar";
 import Board, { AddCardForm } from "./Board";
 import * as api from "./api";
 import { BoardFilters, CardBody, Chips, Dialog, MetaItem } from "./shared";
-import { CheckSquare, Eye, ICONS } from "../icons";
+import { CheckSquare, ICONS } from "../icons";
 import { LEVELS, matchesFilter } from "./util";
 
 /**
@@ -146,11 +146,6 @@ export default function LesprogrammaPage() {
             {selecting ? t("select.done") : <><CheckSquare /> {t("select.start")}</>}
           </button>
         )}
-        {!canEdit && (
-          <span className="lp-view-only" title={t("lp.viewOnlyHint")}>
-            <Eye /> {t("lp.viewOnly")}
-          </span>
-        )}
       </div>
       <p className="lp-intro">
         {selecting ? (
@@ -158,7 +153,7 @@ export default function LesprogrammaPage() {
         ) : (
           <>
             {isStudent ? t("lp.studentIntro") : t("lp.programIntro")}
-            {canEdit ? " " + t("lp.programIntroDrag") : " " + t("lp.viewOnlyHint")}
+            {canEdit && " " + t("lp.programIntroDrag")}
           </>
         )}
       </p>
@@ -385,12 +380,7 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
   return (
     <Dialog title={canEdit ? t("lp.editLesson") : lesson.title} onClose={close} wide>
       {!canEdit && <Chips level={lesson.level} labelIds={lesson.label_ids} />}
-      {isStudent ? (
-        <div className="lp-source">
-          <strong><Eye /> {t("lp.viewOnly")}. </strong>
-          {t("lp.viewOnlyHint")}
-        </div>
-      ) : (
+      {!isStudent && (
         <div className="lp-source">
           <strong>{t("lp.lessonSource")}</strong>
           {students === null
