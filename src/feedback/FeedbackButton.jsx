@@ -3,9 +3,11 @@ import FeedbackDialog from "./FeedbackDialog";
 import { useFeedbackCount } from "./useFeedback";
 import { useI18n } from "../i18n/context";
 import { ICONS } from "../icons";
+import { usePrefs } from "../prefs/context";
 
 /**
- * Small feedback button to attach to any content card.
+ * Small feedback button to attach to any content card. Only shown in
+ * feedback mode (the speech-bubble switch top right).
  *
  * Props:
  *   itemType  - "word" | "verb" | "sentence" | "topic" | "exercise"
@@ -16,6 +18,8 @@ export default function FeedbackButton({ itemType, itemId, itemLabel }) {
   const [open, setOpen] = useState(false);
   const count = useFeedbackCount(itemId);
   const { t } = useI18n();
+  const { feedbackMode } = usePrefs();
+  if (!feedbackMode) return null;
 
   return (
     <>

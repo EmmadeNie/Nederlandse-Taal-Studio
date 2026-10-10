@@ -64,7 +64,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #8bbcfb;
+  color: var(--brand-sub);
 }
 
 .brand-tagline {
@@ -1072,11 +1072,37 @@
   top: calc(0.75rem + env(safe-area-inset-top, 0px));
   right: 1rem;
   z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
-.lang-corner .lang-toggle {
+.lang-corner .lang-toggle,
+.corner-btn {
   background: var(--surface);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 8px var(--shadow);
+}
+
+.corner-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.9rem;
+  height: 1.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+
+.corner-btn:hover {
+  color: var(--text);
+}
+
+.corner-btn[aria-pressed="true"] {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: var(--accent);
 }
 
 /* ----- Bibliotheek / Library ----- */
@@ -1193,7 +1219,7 @@ svg[class^="ph"], button svg, h4 svg, .board-meta-item svg {
 }
 
 .ie-error {
-  color: #f19a9a;
+  color: var(--error-text);
   font-size: 0.78rem;
 }
 
@@ -1410,7 +1436,7 @@ svg[class^="ph"], button svg, h4 svg, .board-meta-item svg {
 }
 
 .rw-irregular {
-  color: #f3c08a;
+  color: var(--orange-text);
   font-weight: 600;
 }
 
@@ -1433,4 +1459,54 @@ svg[class^="ph"], button svg, h4 svg, .board-meta-item svg {
   border-radius: 6px;
   padding: 0.2rem 0.55rem;
   font-size: 0.82rem;
+}
+
+/* ----- Light theme: fine-tuning ----- */
+:root[data-theme="light"] .level-badge {
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+:root[data-theme="light"] .label-chip,
+:root[data-theme="light"] .label-toggle[aria-pressed="true"] {
+  color: color-mix(in srgb, var(--lc) 45%, var(--text));
+}
+
+/* Feedback mode switched on: every feedback button pops up in colour once */
+@keyframes feedback-pop {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(var(--pop, 1.7));
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 6px var(--accent-soft);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.feedback-pop .fb-button,
+.feedback-pop .app-feedback-btn {
+  animation: feedback-pop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.feedback-pop .app-feedback-btn {
+  --pop: 1.12;
+}
+
+.feedback-pop .fb-button:nth-of-type(odd) {
+  animation-delay: 0.05s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feedback-pop .fb-button,
+  .feedback-pop .app-feedback-btn {
+    animation: none;
+  }
 }
