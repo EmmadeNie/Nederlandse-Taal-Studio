@@ -5,17 +5,11 @@
  * Each problem is { field, key, vars }: `field` is the path of the field it is
  * about ("" = the whole item), `key` an i18n key under "val.".
  */
-import {
-  GRAMMAR_TAGS,
-  LEVELS,
-  PARTS_OF_SPEECH,
-  REVIEW_STATUSES,
-  SENTENCE_TYPES,
-  TAGS,
-  TENSES,
-  THEMES,
-  WORD_ORDERS,
-} from "./schema.js";
+import { LEVELS, PARTS_OF_SPEECH, REVIEW_STATUSES, SENTENCE_TYPES, TENSES, WORD_ORDERS } from "./schema.js";
+import { GRAMMAR_TAGS, TAGS, THEMES } from "./index.js";
+
+/** Allowed value of a vocabulary (theme, tag, grammar tag): lower case, digits, single hyphens. */
+export const VOCAB_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
 export const ID_PATTERN = /^(word|sentence|topic|exercise)\.[a-z0-9][a-z0-9._-]*$/;
 export const SET_ID_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;

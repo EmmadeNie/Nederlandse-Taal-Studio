@@ -4,7 +4,7 @@
  * set membership itself; validate.js gives friendlier messages before that.
  */
 import { supabase } from "../lib/supabase";
-import { allItems, dropItem, dropSet, putItem, putSet, typeOfId } from "./index";
+import { allItems, dropItem, dropSet, putItem, putSet, putVocabulary, typeOfId } from "./index";
 
 const ITEM = "id, type, data";
 const SET = "id, type, title, level, item_ids";
@@ -122,6 +122,12 @@ export async function deleteSet(id) {
         .eq("id", l.id)
     );
   }
+}
+
+/** Add an allowed theme, word tag or grammar tag ("theme" | "tag" | "grammarTag"). */
+export async function addVocabulary(kind, value) {
+  check(await supabase.from("vocabularies").insert({ kind, value }));
+  putVocabulary(kind, value);
 }
 
 /** Lessons that use an item or set: topics via topic_ids, sets via word/sentence lists. */

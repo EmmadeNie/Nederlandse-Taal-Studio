@@ -1,6 +1,6 @@
 /** Load all content from the database into src/data (see setContent there). */
 import { supabase } from "../lib/supabase";
-import { setContent } from "./index";
+import { setContent, setVocabularies } from "./index";
 
 const PAGE = 1000; // PostgREST returns at most this many rows per request
 
@@ -19,9 +19,11 @@ async function all(table, columns) {
 }
 
 export async function loadContent() {
-  const [items, setRows] = await Promise.all([
+  const [items, setRows, vocab] = await Promise.all([
     all("content_items", "id, type, data"),
     all("sets", "id, type, title, level, item_ids"),
+    all("vocabularies", "id, kind, value"),
   ]);
+  setVocabularies(vocab);
   setContent(items, setRows);
 }

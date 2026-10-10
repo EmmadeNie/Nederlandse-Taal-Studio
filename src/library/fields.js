@@ -6,17 +6,8 @@
  * label: i18n key; options: allowed values (select/multi);
  * optionLabel: (t, value) => text; when: (item) => shown?; group: heading above it.
  */
-import {
-  GRAMMAR_TAGS,
-  LEVELS,
-  PARTS_OF_SPEECH,
-  REVIEW_STATUSES,
-  SENTENCE_TYPES,
-  TAGS,
-  TENSES,
-  THEMES,
-  WORD_ORDERS,
-} from "../data/schema.js";
+import { LEVELS, PARTS_OF_SPEECH, REVIEW_STATUSES, SENTENCE_TYPES, TENSES, WORD_ORDERS } from "../data/schema.js";
+import { GRAMMAR_TAGS, TAGS, THEMES } from "../data/index.js";
 import { EXERCISE_TYPES } from "../data/validate.js";
 
 const slugText = (t, v) => v.replace(/-/g, " ");

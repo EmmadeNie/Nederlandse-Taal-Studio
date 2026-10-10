@@ -208,6 +208,7 @@ const KIND = {
   "set.addItem": "update",
   "set.removeItem": "update",
   "set.moveItem": "update",
+  "vocab.add": "add",
 };
 
 const show = (v) =>
@@ -277,7 +278,10 @@ function ChangeCard({ change, evaluation, decision, busy, error, onApprove, onRe
     rows = [[t("pr.order"), before.itemIds.map(nameOf).join(", "), after.itemIds.map(nameOf).join(", ")]];
   }
 
-  const what = isItem
+  const isVocab = change.op === "vocab.add";
+  const what = isVocab
+    ? `${t(`pr.vocab.${change.kind}`)} · ${change.value}`
+    : isItem
     ? `${t(`pr.type.${change.type || change.id.split(".")[0]}`)} · ${itemLabel(getItem(change.id)) || change.data?.nl || change.data?.title || change.id}`
     : `${t("pr.type.set")} · ${before?.title || change.title || change.set}`;
   const where = change.after ? "" : "Start";
@@ -294,9 +298,10 @@ function ChangeCard({ change, evaluation, decision, busy, error, onApprove, onRe
       <header>
         <span className={`pr-kind pr-kind-${kind}`}>{t(`pr.kind.${kind}`)}</span>
         <strong>{what}</strong>
-        <code>{isItem ? change.id : change.set}</code>
+        {!isVocab && <code>{isItem ? change.id : change.set}</code>}
       </header>
       {setAction && <p className="pr-action">{setAction}</p>}
+      {isVocab && <p className="pr-action">{t(`pr.vocab.hint.${change.kind}`, { value: change.value })}</p>}
       {change.reason && (
         <p className="pr-reason">
           <span className="dim">{t("pr.reason")}: </span>
