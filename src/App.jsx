@@ -22,6 +22,8 @@ import LoginPage from "./auth/LoginPage";
 import NameSetup from "./auth/NameSetup";
 import InviteClaim from "./auth/InviteClaim";
 import UserManagement from "./users/UserManagement";
+import ProposalsPage from "./proposals/ProposalsPage";
+import { countOpenProposals } from "./proposals/api";
 import LesprogrammaPage from "./leerpad/LesprogrammaPage";
 import LeerpadenPage, { MijnLeerpadPage } from "./leerpad/LeerpadenPage";
 import { isSupabaseConfigured } from "./lib/supabase";
@@ -33,6 +35,7 @@ const PAGES = [
   { id: "leerpaden", roles: ["docent", "reviewer"] },
   { id: "library" },
   { id: "feedback" },
+  { id: "proposals", roles: ["docent"] },
   { id: "users", roles: ["docent"] },
 ];
 
@@ -110,6 +113,10 @@ function Studio() {
   const { profile, role, signOut } = useAuth();
   const { t } = useI18n();
   const pages = PAGES.filter((p) => !p.roles || p.roles.includes(role));
+  const [openProposals, setOpenProposals] = useState(0);
+  useEffect(() => {
+    if (role === "docent") countOpenProposals().then(setOpenProposals, () => {});
+  }, [role]);
   const validPages = new Set(pages.map((p) => p.id));
 
   // The path is the source of truth for the active page (see src/routes.js).
@@ -137,6 +144,7 @@ function Studio() {
   };
   const badges = {
     feedback: allFeedback.length || undefined,
+    proposals: openProposals || undefined,
   };
 
   return (
@@ -187,6 +195,7 @@ function Studio() {
           <Library tab={page} onTab={setPage} counts={libraryCounts} />
         )}
         {page === "feedback" && <FeedbackOverview />}
+        {page === "proposals" && <ProposalsPage onCountChange={setOpenProposals} />}
         {page === "users" && <UserManagement />}
         {page === "lesprogramma" && <LesprogrammaPage />}
         {page === "leerpaden" && <LeerpadenPage />}
