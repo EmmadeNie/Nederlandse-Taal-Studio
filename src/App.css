@@ -1518,3 +1518,31 @@ svg[class^="ph"], button svg, h4 svg, .board-meta-item svg {
     animation: none;
   }
 }
+
+/* ----- Example sentences under a grammar rule ----- */
+.example-sentences {
+  margin-top: 1rem;
+}
+
+.example-sentences h4 {
+  margin: 0 0 0.2rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-dim);
+}
+
+.example-sentences ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.example-sentences li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+
+.example-sentences li .dim {
+  font-size: 0.8rem;
+}

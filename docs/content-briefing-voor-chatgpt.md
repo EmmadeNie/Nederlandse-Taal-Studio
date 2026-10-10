@@ -129,9 +129,16 @@ gesprek dus in de juiste volgorde achter elkaar.
   "grammarTags": ["perfectum"],
   "themes": ["grammatica"],
   "docLinks": [],
+  "relatedWordIds": ["word.werken"],
+  "exampleSentenceIds": ["sentence.ik-heb-gewerkt"],
   "reviewStatus": "ai-reviewed"
 }
 ```
+
+`relatedWordIds`: woorden (vaak werkwoorden) die bij de regel horen; ze verschijnen als
+vervoegingstegels onder de uitleg. `exampleSentenceIds`: de voorbeeldzinnen die de regel het
+best laten zien, in de gewenste volgorde (3–6 is genoeg). `grammarTags` op zinnen blijven
+belangrijk: daarmee vinden oefeningen (en later AI) zinnen bij een grammaticaverschijnsel.
 
 ### Uitleg opmaken (HTML)
 

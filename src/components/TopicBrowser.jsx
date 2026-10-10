@@ -6,6 +6,7 @@ import { LevelBadge, ReviewBadge, Tag } from "./Badges";
 import FeedbackButton from "../feedback/FeedbackButton";
 import Markdown from "./Markdown";
 import RelatedWords from "./RelatedWords";
+import ExampleSentences from "./ExampleSentences";
 import { useUrlParams } from "../hooks/useUrlParams";
 import { navigate, useRoute } from "../hooks/useRoute";
 import { pathFor, topicIdFromSlug, topicSlug } from "../routes";
@@ -45,7 +46,8 @@ export default function TopicBrowser() {
       <p className="result-count">{t("topics.count", { n: topics.length })}</p>
       {topics.map((topic) => {
         const isOpen = expandedId === topic.id;
-        const relatedSentences = isOpen
+        // Fallback while no example sentences are picked: sentences sharing a grammar tag.
+        const relatedSentences = isOpen && !topic.exampleSentenceIds?.length
           ? querySentences({ grammarTags: topic.grammarTags })
           : [];
 
@@ -77,30 +79,7 @@ export default function TopicBrowser() {
                   <Markdown className="explanation">{topic.explanation}</Markdown>
                 )}
                 <RelatedWords ids={topic.relatedWordIds} />
-                {relatedSentences.length > 0 && (
-                  <div style={{ marginTop: "1rem" }}>
-                    <strong
-                      style={{ fontSize: "0.85rem", color: "var(--text-dim)" }}
-                    >
-                      {t("topics.related", { n: relatedSentences.length })}
-                    </strong>
-                    {relatedSentences.map((s) => (
-                      <div
-                        key={s.id}
-                        style={{
-                          padding: "0.5rem 0",
-                          borderBottom: "1px solid var(--border)",
-                          fontSize: "0.9rem",
-                        }}
-                      >
-                        <div>{s.nl}</div>
-                        <div style={{ color: "var(--text-dim)", fontSize: "0.8rem" }}>
-                          {s.en}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <ExampleSentences ids={topic.exampleSentenceIds} fallback={relatedSentences} />
               </>
             )}
             <div className="card-footer" onClick={(e) => e.stopPropagation()}>

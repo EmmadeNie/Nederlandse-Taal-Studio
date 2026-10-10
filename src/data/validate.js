@@ -90,6 +90,7 @@ export function validateItem(type, item, ctx, { isNew = false } = {}) {
     allOf("themes", item.themes, THEMES);
     allOf("grammarTags", item.grammarTags, GRAMMAR_TAGS);
     refs("relatedWordIds", item.relatedWordIds, "word");
+    refs("exampleSentenceIds", item.exampleSentenceIds, "sentence");
   }
 
   if (type === "exercise") {
