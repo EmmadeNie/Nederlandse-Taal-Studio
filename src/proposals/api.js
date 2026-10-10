@@ -1,6 +1,7 @@
 /** Proposals in the database, and the content export for ChatGPT. */
 import { supabase } from "../lib/supabase";
 import { touchedIds } from "./changeset";
+import { GRAMMAR_TAGS, TAGS, THEMES } from "../data";
 
 const FIELDS = "id, title, summary, changes, decisions, status, created_at";
 
@@ -96,5 +97,7 @@ export async function exportContent() {
     topics: byType("topic"),
     exercises: byType("exercise"),
     sets: sets.map((s) => ({ id: s.id, type: s.type, title: s.title, level: s.level, itemIds: s.item_ids, updatedAt: s.updated_at })),
+    // Allowed values; a new one needs a "vocab.add" first.
+    vocabularies: { themes: [...THEMES], tags: [...TAGS], grammarTags: [...GRAMMAR_TAGS] },
   };
 }

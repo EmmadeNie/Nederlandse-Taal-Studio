@@ -4,12 +4,16 @@
  *
  * Problems and notes are { key, vars } for t(); `key` lives under "pr.".
  */
-import { allItems, getItem, getSet, typeOfId } from "../data";
-import { validateItem, validateSet } from "../data/validate";
-import { createItem, createSet, deleteItem, deleteSet, updateItem, updateSet } from "../data/contentApi";
+import { VOCABULARIES, allItems, getItem, getSet, typeOfId } from "../data";
+import { VOCAB_PATTERN, validateItem, validateSet } from "../data/validate";
+import { addVocabulary, createItem, createSet, deleteItem, deleteSet, updateItem, updateSet } from "../data/contentApi";
 
 export const ITEM_OPS = ["add", "update", "delete"];
 export const SET_OPS = ["set.create", "set.update", "set.delete", "set.addItem", "set.removeItem", "set.moveItem"];
+export const VOCAB_OPS = ["vocab.add"];
+export const VOCAB_KINDS = ["theme", "tag", "grammarTag"];
+// Item fields whose values come from a vocabulary.
+const VOCAB_FIELDS = { themes: "theme", tags: "tag", grammarTags: "grammarTag" };
 const ITEM_TYPES = ["word", "sentence", "topic", "exercise"];
 const SET_TYPES = ["word", "sentence", "exercise"];
 
@@ -35,8 +39,11 @@ export function parseChangeset(text) {
       throw Object.assign(new Error("pr.err.change"), { vars: { n: i + 1, why } });
     };
     if (!c || typeof c !== "object") bad("geen object");
-    if (![...ITEM_OPS, ...SET_OPS].includes(c.op)) bad(`onbekende op "${c.op}"`);
-    if (ITEM_OPS.includes(c.op)) {
+    if (![...ITEM_OPS, ...SET_OPS, ...VOCAB_OPS].includes(c.op)) bad(`onbekende op "${c.op}"`);
+    if (VOCAB_OPS.includes(c.op)) {
+      if (!VOCAB_KINDS.includes(c.kind)) bad("kind moet theme, tag of grammarTag zijn");
+      if (typeof c.value !== "string") bad("value ontbreekt");
+    } else if (ITEM_OPS.includes(c.op)) {
       if (typeof c.id !== "string") bad("id ontbreekt");
       if (c.op !== "delete" && (typeof c.data !== "object" || c.data === null || Array.isArray(c.data))) {
         bad("data moet een object zijn");
@@ -65,7 +72,11 @@ export function parseChangeset(text) {
 
 /** The ids a change touches (to fetch their current version). */
 export const touchedIds = (change) =>
-  ITEM_OPS.includes(change.op) ? { items: [change.id], sets: [] } : { items: [], sets: [change.set] };
+  ITEM_OPS.includes(change.op)
+    ? { items: [change.id], sets: [] }
+    : SET_OPS.includes(change.op)
+      ? { items: [], sets: [change.set] }
+      : { items: [], sets: [] };
 
 /** Patch an item's fields: top-level keys replace, null removes. */
 export function applyPatch(data, patch) {
@@ -116,6 +127,12 @@ export function evaluate(change, index, { changes, decisions, versions }) {
     return Boolean(change.baseVersion && current && new Date(current) > new Date(change.baseVersion));
   };
   const ctx = { has: (id) => Boolean(getItem(id)), hasSet: (id) => Boolean(getSet(id)) };
+
+  if (VOCAB_OPS.includes(change.op)) {
+    if (!VOCAB_PATTERN.test(change.value || "")) problems.push(p("badVocab", { value: change.value }));
+    else if (VOCABULARIES[change.kind]?.includes(change.value)) problems.push(p("vocabExists", { value: change.value }));
+    return { before, after, problems, conflict, blockedBy: null, similar: null };
+  }
 
   if (ITEM_OPS.includes(change.op)) {
     const type = change.type || typeOfId(change.id);
@@ -169,6 +186,22 @@ export function evaluate(change, index, { changes, decisions, versions }) {
     }
   }
 
+  // An unknown theme/tag that an earlier vocab.add in this proposal adds: wait for it.
+  if (!blockedBy) {
+    const pending = (field, value) =>
+      changes.findIndex(
+        (o, j) => j < index && o.op === "vocab.add" && o.kind === VOCAB_FIELDS[field] && o.value === value && decisions[j]?.status !== "approved"
+      );
+    for (let k = problems.length - 1; k >= 0; k--) {
+      const x = problems[k];
+      if (x.key !== "val.unknown" || !VOCAB_FIELDS[x.field]) continue;
+      const j = pending(x.field, x.vars?.value);
+      if (j === -1) continue;
+      problems.splice(k, 1);
+      blockedBy ||= { index: j, rejected: decisions[j]?.status === "rejected", name: x.vars.value };
+    }
+  }
+
   // A new item with the same Dutch text (or title) as an existing one: maybe a double.
   let similar = null;
   if (change.op === "add" && after) {
@@ -186,6 +219,8 @@ export function evaluate(change, index, { changes, decisions, versions }) {
 export async function applyChange(change, evaluation) {
   const { after } = evaluation;
   switch (change.op) {
+    case "vocab.add":
+      return addVocabulary(change.kind, change.value);
     case "add":
       return createItem(after);
     case "update":

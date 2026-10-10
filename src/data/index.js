@@ -1,4 +1,4 @@
-import { LEVELS, THEMES, GRAMMAR_TAGS, TAGS } from "./schema.js";
+import { LEVELS, THEMES as SEED_THEMES, GRAMMAR_TAGS as SEED_GRAMMAR_TAGS, TAGS as SEED_TAGS } from "./schema.js";
 
 /**
  * The content (words, sentences, grammar topics, exercises, sets) lives in the
@@ -98,7 +98,32 @@ export function dropSet(id) {
 /** The sets an item is in. */
 export const setsWithItem = (id) => sets.filter((s) => s.itemIds.includes(id));
 
-export { LEVELS, THEMES, GRAMMAR_TAGS, TAGS };
+export { LEVELS };
+
+// ----- Vocabularies (themes, word tags, grammar tags) -----
+
+/**
+ * The allowed values, from the vocabularies table (loaded with the content;
+ * src/data/schema.js is the starting point until then). Filled in place, so
+ * pickers and validation that hold these arrays see new values right away.
+ */
+export const THEMES = [...SEED_THEMES];
+export const TAGS = [...SEED_TAGS];
+export const GRAMMAR_TAGS = [...SEED_GRAMMAR_TAGS];
+export const VOCABULARIES = { theme: THEMES, tag: TAGS, grammarTag: GRAMMAR_TAGS };
+
+/** Replace the vocabularies with rows { kind, value } (in their order). */
+export function setVocabularies(rows) {
+  if (!rows.length) return; // nothing in the database (yet): keep the seed
+  Object.values(VOCABULARIES).forEach((list) => (list.length = 0));
+  rows.forEach((row) => VOCABULARIES[row.kind]?.push(row.value));
+}
+
+export function putVocabulary(kind, value) {
+  const list = VOCABULARIES[kind];
+  if (list && !list.includes(value)) list.push(value);
+  changed();
+}
 
 // ----- Query helpers -----
 

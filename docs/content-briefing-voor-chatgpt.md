@@ -51,7 +51,10 @@ een set?), zoek het op in de export in plaats van te gokken.
 
     { "op": "set.moveItem", "set": "…", "baseVersion": "…", "item": "word.x", "after": null },
 
-    { "op": "set.delete", "set": "…", "baseVersion": "…" }
+    { "op": "set.delete", "set": "…", "baseVersion": "…" },
+
+    { "op": "vocab.add", "kind": "theme", "value": "seizoenen",
+      "reason": "Voor lente, zomer, herfst en winter." }
   ]
 }
 ```
@@ -74,6 +77,10 @@ Regels:
   Staat iets al, pas het bestaande item aan in plaats van een tweede te maken.
 - Houd een changeset overzichtelijk: liever 5–40 wijzigingen over één onderwerp dan alles tegelijk.
 - Verander nooit `reviewStatus` naar `human-verified`.
+- **Nieuwe thema's en tags**: gebruik bij `themes`, `tags` en `grammarTags` alleen waarden uit
+  `vocabularies` in de export. Is er echt een nieuwe nodig, zet dan vóór de eerste wijziging die hem
+  gebruikt een `vocab.add` (`kind`: `theme`, `tag` of `grammarTag`; `value`: kleine letters, cijfers
+  en streepjes). Die wijzigingen wachten dan tot de docent de nieuwe waarde heeft goedgekeurd.
 
 ## Belangrijk principe
 
@@ -252,9 +259,10 @@ Wijzig sets alleen met de `set.*`-operaties hierboven, niet via een veld op het 
 
 ## Canonieke vocabulaires
 
-Gebruik bij voorkeur bestaande waarden. Nieuwe themes/grammarTags/tags kunnen, maar laat het
-de docent weten zodat ze aan de canonieke lijst in `schema.js` worden toegevoegd (anders waarschuwt
-de validatie dat de tag onbekend is).
+De actuele lijsten staan in de export onder `vocabularies` (`themes`, `tags`, `grammarTags`); die zijn
+leidend. Hieronder de lijsten zoals ze begonnen. Gebruik bestaande waarden; een nieuwe waarde voeg je
+toe met `vocab.add` (zie de changeset). Hernoemen of verwijderen kan niet via een changeset: stel
+dat voor in je toelichting.
 
 **themes:** eten, fruit, dieren, kleuren, mensen, familie, kleding, huis, keuken, badkamer,
 huishouden, apparaten, dingen, plaatsen, vervoer, beweging, sport, vrije-tijd, tijd, werk, school,
