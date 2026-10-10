@@ -1,7 +1,7 @@
 import { useContentVersion } from "../data/useContent";
 import { EditItemButton, NewItemButton } from "../library/ItemEditing";
 import { useEffect, useRef } from "react";
-import { topics, querySentences } from "../data";
+import { topics } from "../data";
 import { LevelBadge, ReviewBadge, Tag } from "./Badges";
 import FeedbackButton from "../feedback/FeedbackButton";
 import Markdown from "./Markdown";
@@ -46,10 +46,6 @@ export default function TopicBrowser() {
       <p className="result-count">{t("topics.count", { n: topics.length })}</p>
       {topics.map((topic) => {
         const isOpen = expandedId === topic.id;
-        // Fallback while no example sentences are picked: sentences sharing a grammar tag.
-        const relatedSentences = isOpen && !topic.exampleSentenceIds?.length
-          ? querySentences({ grammarTags: topic.grammarTags })
-          : [];
 
         return (
           <div
@@ -79,7 +75,7 @@ export default function TopicBrowser() {
                   <Markdown className="explanation">{topic.explanation}</Markdown>
                 )}
                 <RelatedWords ids={topic.relatedWordIds} />
-                <ExampleSentences ids={topic.exampleSentenceIds} fallback={relatedSentences} />
+                <ExampleSentences ids={topic.exampleSentenceIds} />
               </>
             )}
             <div className="card-footer" onClick={(e) => e.stopPropagation()}>
