@@ -1403,6 +1403,57 @@ svg[class^="ph"], button svg, h4 svg, .board-meta-item svg {
   color: var(--text-dim);
 }
 
+.rw-verbs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 0.6rem;
+}
+
+.rw-tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.82rem;
+}
+
+.rw-tile-name {
+  display: block;
+  margin: 0 0 0.35rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.rw-tile-name:hover {
+  text-decoration: underline;
+}
+
+.rw-row {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.rw-row > .dim {
+  min-width: 3.4rem;
+}
+
+.rw-sep {
+  border-top: 1px solid var(--border);
+  margin: 0.3rem 0;
+}
+
+.rw-irregular {
+  color: var(--orange-text);
+  font-weight: 600;
+}
+
 .rw-chips {
   list-style: none;
   margin: 0;
