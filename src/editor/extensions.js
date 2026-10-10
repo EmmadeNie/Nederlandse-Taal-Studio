@@ -96,7 +96,8 @@ export const extensions = [
   TextStyle,
   Color,
   Highlight.configure({ multicolor: true }),
-  TableKit.configure({ table: { resizable: false } }),
+  // Drag a column border to make it wider or narrower (stored as colwidth / <col> widths).
+  TableKit.configure({ table: { resizable: true, cellMinWidth: 40 } }),
   Callout,
   Example,
 ];
