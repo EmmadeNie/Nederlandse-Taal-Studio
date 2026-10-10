@@ -2,16 +2,16 @@ import { useState } from "react";
 import { useI18n } from "../i18n/context";
 import { getItem } from "../data";
 import { Dialog } from "../leerpad/shared";
-import { LevelBadge, Tag } from "./Badges";
+import { LevelBadge } from "./Badges";
 import FeedbackButton from "../feedback/FeedbackButton";
 import VerbCard from "./VerbCard";
 
 /**
  * The words linked to a grammar topic (relatedWordIds), as tiles: verbs with only
  * the conjugations (irregular forms in orange; click the verb for its full card),
- * other words with article, plural and level. English only when the box is on EN.
+ * other words like on the Woordenschat page, with their translation.
  */
-export default function RelatedWords({ ids = [], showEnglish = true }) {
+export default function RelatedWords({ ids = [] }) {
   const { t } = useI18n();
   const [open, setOpen] = useState(null); // verb shown in full
   const words = ids.map((id) => getItem(id)).filter(Boolean);
@@ -38,7 +38,7 @@ export default function RelatedWords({ ids = [], showEnglish = true }) {
           <h4>{t("rw.words", { n: others.length })}</h4>
           <div className="rw-words">
             {others.map((w) => (
-              <WordTile key={w.id} word={w} showEnglish={showEnglish} />
+              <WordTile key={w.id} word={w} />
             ))}
           </div>
         </>
@@ -52,8 +52,8 @@ export default function RelatedWords({ ids = [], showEnglish = true }) {
   );
 }
 
-/** A word that is not a verb, as on the Woordenschat page; the English only on request. */
-function WordTile({ word: w, showEnglish }) {
+/** A word that is not a verb, as on the Woordenschat page: word, translation, plural. */
+function WordTile({ word: w }) {
   const { t } = useI18n();
   return (
     <div className="card rw-word">
@@ -62,23 +62,14 @@ function WordTile({ word: w, showEnglish }) {
         <span className="word">{w.nl}</span>
         <LevelBadge level={w.introducedAtLevel} />
       </div>
-      {(showEnglish || w.plural) && (
-        <div className="translation">
-          {showEnglish && w.en}
-          {w.plural && (
-            <span className={showEnglish ? "rw-word-plural" : undefined}>
-              {t("words.plural")} {w.plural}
-            </span>
-          )}
-        </div>
-      )}
-      {w.themes?.length > 0 && (
-        <div className="meta">
-          {w.themes.map((theme) => (
-            <Tag key={theme}>{theme}</Tag>
-          ))}
-        </div>
-      )}
+      <div className="translation">
+        {w.en}
+        {w.plural && (
+          <span className="rw-word-plural">
+            {t("words.plural")} {w.plural}
+          </span>
+        )}
+      </div>
       <div className="card-footer">
         <FeedbackButton itemType="word" itemId={w.id} itemLabel={`${w.article ? w.article + " " : ""}${w.nl} (${w.en})`} />
       </div>
