@@ -55,16 +55,20 @@ export default function RelatedWords({ ids = [] }) {
   );
 }
 
-/** Only the conjugations; forms marked irregular are orange. */
-function VerbTile({ verb: v, onOpen }) {
+/** Only the conjugations; forms marked irregular are orange. Without onOpen the name is plain text. */
+export function VerbTile({ verb: v, onOpen }) {
   const { t } = useI18n();
   const c = v.conjugation;
   const irregular = (form) => c.regularity?.[form] === "irregular";
   return (
     <div className="rw-tile">
-      <button type="button" className="rw-tile-name" onClick={onOpen} title={t("rw.openVerb", { name: v.nl })}>
-        {c.infinitive || v.nl}
-      </button>
+      {onOpen ? (
+        <button type="button" className="rw-tile-name" onClick={onOpen} title={t("rw.openVerb", { name: v.nl })}>
+          {c.infinitive || v.nl}
+        </button>
+      ) : (
+        <span className="rw-tile-name">{c.infinitive || v.nl}</span>
+      )}
       <Row label="ik" value={c.present?.ik} irregular={irregular("present")} />
       <Row label="jij" value={c.present?.jij} irregular={irregular("present")} />
       <Row label="hij/zij" value={c.present?.hij} irregular={irregular("present")} />

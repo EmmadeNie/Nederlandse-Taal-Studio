@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { useI18n } from "../i18n/context";
-import { getItem } from "../data";
+import { LEVELS, getItem } from "../data";
 import { useContentVersion } from "../data/useContent";
 import { itemLabel } from "../library/fields";
 import { ITEM_OPS, applyChange, evaluate } from "./changeset";
+import FieldValue from "./FieldValue";
+import { fieldOrder, same, useFieldLabel } from "./fieldDiff";
 import { clearDecision, deleteProposal, fetchVersions, saveDecision } from "./api";
 
 /** One proposal: ChatGPT's summary and a card per change to approve or reject. */
@@ -13,6 +15,7 @@ export default function ProposalView({ proposal, onBack, onChanged, onDeleted })
   const [versions, setVersions] = useState(null);
   const [busy, setBusy] = useState(null); // index being handled, or "all"
   const [errors, setErrors] = useState({});
+  const [order, setOrder] = useState("proposed"); // or "level"
 
   const refreshVersions = useCallback(
     () =>
@@ -29,6 +32,19 @@ export default function ProposalView({ proposal, onBack, onChanged, onDeleted })
   const ctx = { changes: proposal.changes, decisions: proposal.decisions || {}, versions: versions || {} };
   const evaluations = proposal.changes.map((c, i) => evaluate(c, i, ctx));
   const decided = Object.keys(proposal.decisions || {}).length;
+
+  // Shown in the proposed order, or grouped by level (the proposed level, else the current one).
+  const all = proposal.changes.map((_, i) => i);
+  const levelOf = (i) => {
+    const { before, after } = evaluations[i];
+    return after?.introducedAtLevel || after?.level || before?.introducedAtLevel || before?.level || null;
+  };
+  const groups =
+    order === "proposed"
+      ? [{ level: null, indexes: all }]
+      : [...LEVELS, null]
+          .map((level) => ({ level, indexes: all.filter((i) => (levelOf(i) || null) === level) }))
+          .filter((g) => g.indexes.length);
 
   const canApprove = (i) => {
     const e = evaluations[i];
@@ -142,19 +158,32 @@ export default function ProposalView({ proposal, onBack, onChanged, onDeleted })
       {errors.all && <div className="auth-error">{errors.all}</div>}
       {versions === null && <p className="dim">{t("common.loading")}</p>}
 
+      <div role="group" aria-label={t("pr.order.label")} className="pr-tabs">
+        {["proposed", "level"].map((o) => (
+          <button key={o} type="button" aria-pressed={order === o} onClick={() => setOrder(o)}>
+            {t(`pr.order.${o}`)}
+          </button>
+        ))}
+      </div>
+
       {versions !== null &&
-        proposal.changes.map((change, i) => (
-          <ChangeCard
-            key={i}
-            change={change}
-            evaluation={evaluations[i]}
-            decision={proposal.decisions?.[i]}
-            busy={busy === i || busy === "all"}
-            error={errors[i]}
-            onApprove={(force) => handle(i, "approved", { force })}
-            onReject={() => handle(i, "rejected")}
-            onReopen={() => reopen(i)}
-          />
+        groups.map(({ level, indexes }) => (
+          <section key={level ?? "-"}>
+            {order === "level" && <h3 className="pr-group">{level ?? t("pr.order.none")}</h3>}
+            {indexes.map((i) => (
+              <ChangeCard
+                key={i}
+                change={proposal.changes[i]}
+                evaluation={evaluations[i]}
+                decision={proposal.decisions?.[i]}
+                busy={busy === i || busy === "all"}
+                error={errors[i]}
+                onApprove={(force) => handle(i, "approved", { force })}
+                onReject={() => handle(i, "rejected")}
+                onReopen={() => reopen(i)}
+              />
+            ))}
+          </section>
         ))}
 
       <div className="lp-actions">
@@ -193,27 +222,23 @@ const nameOf = (id) => itemLabel(getItem(id)) || id;
 
 function ChangeCard({ change, evaluation, decision, busy, error, onApprove, onReject, onReopen }) {
   const { t } = useI18n();
-  const { before, after, problems, conflict, blockedBy } = evaluation;
+  const { before, after, problems, conflict, blockedBy, similar } = evaluation;
   const isItem = ITEM_OPS.includes(change.op);
-  const label = (key) => {
-    if (key === "introducedAtLevel") key = "level";
-    const text = t(`f.${key}`);
-    return text === `f.${key}` ? key : text;
-  };
+  const itemType = change.type || change.id?.split(".")[0];
+  const label = useFieldLabel(itemType);
 
-  // Rows: field | now | proposal
+  // Rows: field | now | proposal (null = no column)
   let rows = [];
   if (isItem) {
-    // eslint-disable-next-line no-unused-vars -- id is shown in the header
-    const strip = (x) => (x ? (({ id, ...rest }) => rest)(x) : {});
-    const b = strip(before);
-    const a = strip(after);
-    if (change.op === "add") rows = Object.keys(a).map((k) => [label(k), null, show(a[k])]);
-    else if (change.op === "delete") rows = Object.keys(b).map((k) => [label(k), show(b[k]), null]);
+    const b = before || {};
+    const a = after || {};
+    const val = (item, k) => <FieldValue type={itemType} field={k} value={item[k]} item={item} />;
+    if (change.op === "add") rows = fieldOrder(itemType, a).map((k) => [label(k), null, val(a, k)]);
+    else if (change.op === "delete") rows = fieldOrder(itemType, b).map((k) => [label(k), val(b, k), null]);
     else
-      rows = [...new Set([...Object.keys(b), ...Object.keys(a)])]
-        .filter((k) => JSON.stringify(b[k]) !== JSON.stringify(a[k]))
-        .map((k) => [label(k), show(b[k]), show(a[k])]);
+      rows = fieldOrder(itemType, b, a)
+        .filter((k) => !same(b[k], a[k]))
+        .map((k) => [label(k), val(b, k), val(a, k)]);
   } else if (change.op === "set.create") {
     rows = [
       [t("pr.setTitle"), null, show(after?.title)],
@@ -266,6 +291,9 @@ function ChangeCard({ change, evaluation, decision, busy, error, onApprove, onRe
         </div>
       )}
       {!decision && conflict && <div className="pr-note pr-note-warn">{t("pr.conflict")}</div>}
+      {!decision && similar && (
+        <div className="pr-note pr-note-warn">{t("pr.similar", { name: itemLabel(similar), id: similar.id })}</div>
+      )}
       {!decision && problems.length > 0 && (
         <ul className="pr-problems">
           {problems.map((x, j) => (
@@ -284,9 +312,9 @@ function ChangeCard({ change, evaluation, decision, busy, error, onApprove, onRe
           <span className="pr-diff-head">{t("pr.proposed")}</span>
           {rows.map(([field, old, next], j) => (
             <div key={j} className="pr-diff-row">
-              <span className="dim">{field}</span>
-              <span className={old !== null && next !== null ? "pr-old" : undefined}>{old ?? ""}</span>
-              <span className={next !== null && old !== null ? "pr-new" : undefined}>{next ?? ""}</span>
+              <div className="dim">{field}</div>
+              <div className={old !== null && next !== null ? "pr-old" : undefined}>{old ?? ""}</div>
+              <div className={next !== null && old !== null ? "pr-new" : undefined}>{next ?? ""}</div>
             </div>
           ))}
         </div>
