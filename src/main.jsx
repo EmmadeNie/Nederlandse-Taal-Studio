@@ -5,6 +5,7 @@ import App from './App.jsx'
 import { AuthProvider } from './auth/AuthProvider.jsx'
 import { isSupabaseConfigured } from './lib/supabase'
 import { I18nProvider } from './i18n/I18nProvider.jsx'
+import { PrefsProvider } from './prefs/PrefsProvider.jsx'
 import { migrateLegacyUrl } from './routes'
 import { IconContext } from '@phosphor-icons/react'
 
@@ -15,6 +16,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     {/* Phosphor icons scale with the surrounding text */}
     <IconContext.Provider value={{ size: '1.15em', weight: 'regular' }}>
+    <PrefsProvider>
     <I18nProvider>
       {isSupabaseConfigured ? (
         <AuthProvider>
@@ -24,6 +26,7 @@ createRoot(document.getElementById('root')).render(
         <App />
       )}
     </I18nProvider>
+    </PrefsProvider>
     </IconContext.Provider>
   </StrictMode>,
 )

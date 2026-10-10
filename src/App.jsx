@@ -16,6 +16,8 @@ import { ICONS, Lightbulb } from "./icons";
 import { useAuth } from "./auth/context";
 import { useI18n } from "./i18n/context";
 import LanguageToggle from "./i18n/LanguageToggle";
+import { FeedbackModeToggle, ThemeToggle } from "./prefs/PrefsToggles";
+import { usePrefs } from "./prefs/context";
 import LoginPage from "./auth/LoginPage";
 import NameSetup from "./auth/NameSetup";
 import InviteClaim from "./auth/InviteClaim";
@@ -60,6 +62,8 @@ function App() {
   return (
     <>
       <div className="lang-corner">
+        <FeedbackModeToggle />
+        <ThemeToggle />
         <LanguageToggle />
       </div>
       {isSupabaseConfigured ? <AuthGate /> : <SetupNeeded />}
@@ -100,6 +104,7 @@ function Studio() {
   useContentVersion(); // counts follow edits
   const route = useRoute();
   const [appFeedbackOpen, setAppFeedbackOpen] = useState(false);
+  const { feedbackMode } = usePrefs();
   const stats = getStats();
   const allFeedback = useAllFeedback();
   const { profile, role, signOut } = useAuth();
@@ -166,12 +171,14 @@ function Studio() {
               </button>
             </div>
           </div>
-          <button
-            className="app-feedback-btn"
-            onClick={() => setAppFeedbackOpen(true)}
-          >
-            <Lightbulb /> {t("app.feedbackButton")}
-          </button>
+          {feedbackMode && (
+            <button
+              className="app-feedback-btn"
+              onClick={() => setAppFeedbackOpen(true)}
+            >
+              <Lightbulb /> {t("app.feedbackButton")}
+            </button>
+          )}
         </div>
       </aside>
       <main className={BOARD_PAGES.has(page) ? "main main-board" : "main"}>
