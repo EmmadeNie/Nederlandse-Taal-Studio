@@ -1397,52 +1397,10 @@ svg[class^="ph"], button svg, h4 svg, .board-meta-item svg {
 }
 
 .related-words h4 {
-  margin: 0.4rem 0 0;
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  margin: 0.4rem 0 0.2rem;
+  font-size: 0.85rem;
+  font-weight: 700;
   color: var(--text-dim);
-}
-
-.rw-table-wrap {
-  overflow-x: auto;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-}
-
-.rw-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.84rem;
-}
-
-.rw-table th,
-.rw-table td {
-  text-align: left;
-  padding: 0.4rem 0.65rem;
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-}
-
-.rw-table th {
-  background: var(--surface-2);
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: var(--text-dim);
-}
-
-.rw-table tr:last-child td {
-  border-bottom: 0;
-}
-
-.rw-irregular {
-  color: var(--orange-text);
-  font-weight: 600;
-}
-
-.rw-legend {
-  margin: 0;
-  font-size: 0.75rem;
 }
 
 .rw-chips {
