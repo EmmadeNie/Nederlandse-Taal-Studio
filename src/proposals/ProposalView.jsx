@@ -4,6 +4,8 @@ import { getItem } from "../data";
 import { useContentVersion } from "../data/useContent";
 import { itemLabel } from "../library/fields";
 import { ITEM_OPS, applyChange, evaluate } from "./changeset";
+import FieldValue from "./FieldValue";
+import { fieldOrder, same, useFieldLabel } from "./fieldDiff";
 import { clearDecision, deleteProposal, fetchVersions, saveDecision } from "./api";
 
 /** One proposal: ChatGPT's summary and a card per change to approve or reject. */
@@ -193,27 +195,23 @@ const nameOf = (id) => itemLabel(getItem(id)) || id;
 
 function ChangeCard({ change, evaluation, decision, busy, error, onApprove, onReject, onReopen }) {
   const { t } = useI18n();
-  const { before, after, problems, conflict, blockedBy } = evaluation;
+  const { before, after, problems, conflict, blockedBy, similar } = evaluation;
   const isItem = ITEM_OPS.includes(change.op);
-  const label = (key) => {
-    if (key === "introducedAtLevel") key = "level";
-    const text = t(`f.${key}`);
-    return text === `f.${key}` ? key : text;
-  };
+  const itemType = change.type || change.id?.split(".")[0];
+  const label = useFieldLabel(itemType);
 
-  // Rows: field | now | proposal
+  // Rows: field | now | proposal (null = no column)
   let rows = [];
   if (isItem) {
-    // eslint-disable-next-line no-unused-vars -- id is shown in the header
-    const strip = (x) => (x ? (({ id, ...rest }) => rest)(x) : {});
-    const b = strip(before);
-    const a = strip(after);
-    if (change.op === "add") rows = Object.keys(a).map((k) => [label(k), null, show(a[k])]);
-    else if (change.op === "delete") rows = Object.keys(b).map((k) => [label(k), show(b[k]), null]);
+    const b = before || {};
+    const a = after || {};
+    const val = (item, k) => <FieldValue type={itemType} field={k} value={item[k]} item={item} />;
+    if (change.op === "add") rows = fieldOrder(itemType, a).map((k) => [label(k), null, val(a, k)]);
+    else if (change.op === "delete") rows = fieldOrder(itemType, b).map((k) => [label(k), val(b, k), null]);
     else
-      rows = [...new Set([...Object.keys(b), ...Object.keys(a)])]
-        .filter((k) => JSON.stringify(b[k]) !== JSON.stringify(a[k]))
-        .map((k) => [label(k), show(b[k]), show(a[k])]);
+      rows = fieldOrder(itemType, b, a)
+        .filter((k) => !same(b[k], a[k]))
+        .map((k) => [label(k), val(b, k), val(a, k)]);
   } else if (change.op === "set.create") {
     rows = [
       [t("pr.setTitle"), null, show(after?.title)],
@@ -266,6 +264,9 @@ function ChangeCard({ change, evaluation, decision, busy, error, onApprove, onRe
         </div>
       )}
       {!decision && conflict && <div className="pr-note pr-note-warn">{t("pr.conflict")}</div>}
+      {!decision && similar && (
+        <div className="pr-note pr-note-warn">{t("pr.similar", { name: itemLabel(similar), id: similar.id })}</div>
+      )}
       {!decision && problems.length > 0 && (
         <ul className="pr-problems">
           {problems.map((x, j) => (
@@ -284,9 +285,9 @@ function ChangeCard({ change, evaluation, decision, busy, error, onApprove, onRe
           <span className="pr-diff-head">{t("pr.proposed")}</span>
           {rows.map(([field, old, next], j) => (
             <div key={j} className="pr-diff-row">
-              <span className="dim">{field}</span>
-              <span className={old !== null && next !== null ? "pr-old" : undefined}>{old ?? ""}</span>
-              <span className={next !== null && old !== null ? "pr-new" : undefined}>{next ?? ""}</span>
+              <div className="dim">{field}</div>
+              <div className={old !== null && next !== null ? "pr-old" : undefined}>{old ?? ""}</div>
+              <div className={next !== null && old !== null ? "pr-new" : undefined}>{next ?? ""}</div>
             </div>
           ))}
         </div>

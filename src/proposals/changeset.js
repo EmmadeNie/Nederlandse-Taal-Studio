@@ -4,7 +4,7 @@
  *
  * Problems and notes are { key, vars } for t(); `key` lives under "pr.".
  */
-import { getItem, getSet, typeOfId } from "../data";
+import { allItems, getItem, getSet, typeOfId } from "../data";
 import { validateItem, validateSet } from "../data/validate";
 import { createItem, createSet, deleteItem, deleteSet, updateItem, updateSet } from "../data/contentApi";
 
@@ -86,7 +86,7 @@ const insertAfter = (ids, item, after) => {
 // ----- Checking one change -----
 
 /**
- * What would happen: { before, after, problems[], conflict, blockedBy }.
+ * What would happen: { before, after, problems[], conflict, blockedBy, similar }.
  * `versions` maps ids ("word.x", "set:id") to the current updated_at;
  * `decisions` are this proposal's verdicts, `changes` all its changes.
  */
@@ -169,7 +169,16 @@ export function evaluate(change, index, { changes, decisions, versions }) {
     }
   }
 
-  return { before, after, problems, conflict, blockedBy };
+  // A new item with the same Dutch text (or title) as an existing one: maybe a double.
+  let similar = null;
+  if (change.op === "add" && after) {
+    const norm = (x) => (x.nl || x.title || "").trim().toLowerCase();
+    const mine = norm(after);
+    const type = change.type || typeOfId(change.id);
+    similar = (mine && allItems().find((x) => x.id !== change.id && typeOfId(x.id) === type && norm(x) === mine)) || null;
+  }
+
+  return { before, after, problems, conflict, blockedBy, similar };
 }
 
 // ----- Applying one change -----
