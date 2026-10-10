@@ -1349,6 +1349,18 @@ svg[class^="ph"], button svg, h4 svg, .board-meta-item svg {
   margin-bottom: 0.9rem;
 }
 
+.set-items-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.set-items-head .fb-link:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 .set-items {
   margin: 0 0 0.6rem;
   padding: 0;
