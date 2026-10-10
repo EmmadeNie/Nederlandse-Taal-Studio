@@ -11,6 +11,8 @@ import { WordListEditor, WordListsView } from "./WordList";
 import ListsEditor from "./ListsEditor";
 import { LabelPicker } from "./Labels";
 import { GrammarPicker, GrammarView } from "./LessonGrammar";
+import { VerbsPicker, VerbsView } from "./LessonVerbs";
+import { lessonVerbs } from "./verbIds";
 import { grammarCount } from "./grammarTopics";
 import SaveStatus from "./SaveStatus";
 import { useAutosave } from "./useAutosave";
@@ -186,6 +188,9 @@ export default function LesprogrammaPage() {
                   <MetaItem icon={ICONS.topics}>
                     {grammarCount(l.topic_ids) > 0 && t("lg.count", { n: grammarCount(l.topic_ids) })}
                   </MetaItem>
+                  <MetaItem icon={ICONS.verbs}>
+                    {lessonVerbs(l.verb_ids).length > 0 && t("lv.count", { n: lessonVerbs(l.verb_ids).length })}
+                  </MetaItem>
                   <MetaItem icon={ICONS.words}>
                     {toLists(l.word_list).some(hasWordList) && t("wl.count", { n: wordsForLists(l.word_list).length })}
                   </MetaItem>
@@ -295,6 +300,7 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
     word_list: lesson.word_list || null,
     sentence_list: lesson.sentence_list || null,
     topic_ids: lesson.topic_ids || [],
+    verb_ids: lesson.verb_ids || [],
   });
   const [preview, setPreview] = useState(!canEdit);
   // Docent: see the lesson exactly as a student does (no editors, no staff info).
@@ -478,6 +484,14 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
           <h4>{t("lg.title")}</h4>
           {editing && <GrammarPicker value={form.topic_ids} onChange={choose("topic_ids")} />}
           <GrammarView ids={editing ? form.topic_ids : lesson.topic_ids} />
+        </div>
+      )}
+
+      {(editing || lessonVerbs(lesson.verb_ids).length > 0) && (
+        <div className="lp-section">
+          <h4>{t("lv.title")}</h4>
+          {editing && <VerbsPicker value={form.verb_ids} onChange={choose("verb_ids")} />}
+          <VerbsView ids={editing ? form.verb_ids : lesson.verb_ids} />
         </div>
       )}
 

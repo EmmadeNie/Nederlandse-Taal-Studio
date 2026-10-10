@@ -10,6 +10,8 @@ import { WordListsView } from "./WordList";
 import { hasWordList, toLists, wordsForLists } from "./wordLists";
 import { SentenceListsView } from "./SentenceList";
 import { GrammarView } from "./LessonGrammar";
+import { VerbsView } from "./LessonVerbs";
+import { lessonVerbs } from "./verbIds";
 import { grammarCount } from "./grammarTopics";
 import SaveStatus from "./SaveStatus";
 import { useAutosave } from "./useAutosave";
@@ -128,6 +130,9 @@ export default function LeerpadBoard({ studentId }) {
                     <MetaItem icon={ICONS.link}>{linkCount(t, s.extras.length)}</MetaItem>
                     <MetaItem icon={ICONS.topics}>
                       {grammarCount(c.topicIds) > 0 && t("lg.count", { n: grammarCount(c.topicIds) })}
+                    </MetaItem>
+                    <MetaItem icon={ICONS.verbs}>
+                      {lessonVerbs(c.verbIds).length > 0 && t("lv.count", { n: lessonVerbs(c.verbIds).length })}
                     </MetaItem>
                     <MetaItem icon={ICONS.words}>
                       {toLists(c.wordList).some(hasWordList) && t("wl.count", { n: wordsForLists(c.wordList).length })}
@@ -453,6 +458,13 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
         <div className="lp-section">
           <h4>{t("lg.title")}</h4>
           <GrammarView ids={content.topicIds} />
+        </div>
+      )}
+
+      {lessonVerbs(content.verbIds).length > 0 && (
+        <div className="lp-section">
+          <h4>{t("lv.title")}</h4>
+          <VerbsView ids={content.verbIds} />
         </div>
       )}
 
