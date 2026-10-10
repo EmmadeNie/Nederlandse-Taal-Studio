@@ -13,7 +13,16 @@ export { GRAMMAR_TAGS };
 export const hasSentenceList = (spec) =>
   Boolean(spec && (spec.set || spec.theme || spec.grammarTag || spec.level));
 
-/** Sentences matching the recipe. */
+/** Lowest level first; within a level the list keeps its order (a dialogue stays in order). */
+const byLevel = (list) => {
+  const rank = (s) => {
+    const i = LEVELS.indexOf(s.introducedAtLevel);
+    return i === -1 ? LEVELS.length : i;
+  };
+  return [...list].sort((a, b) => rank(a) - rank(b));
+};
+
+/** Sentences matching the recipe, A0 first. */
 export function sentencesForList(spec) {
   if (!hasSentenceList(spec)) return [];
   const max = spec.level ? LEVELS.indexOf(spec.level) : -1;
@@ -22,7 +31,7 @@ export function sentencesForList(spec) {
     const set = getSet(spec.set);
     pool = setItems(set?.type === "sentence" ? set : null);
   }
-  return pool.filter((s) => {
+  return byLevel(pool).filter((s) => {
     if (spec.theme && !(s.themes || []).includes(spec.theme)) return false;
     if (spec.grammarTag && !(s.grammarTags || []).includes(spec.grammarTag)) return false;
     if (spec.level) {
