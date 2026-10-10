@@ -4,6 +4,8 @@
  * IconContext in main.jsx (1.15em, regular); active nav items use weight="fill".
  */
 import {
+  Moon,
+  Sun,
   ArrowClockwise,
   ArrowCounterClockwise,
   Columns,
@@ -106,6 +108,9 @@ export const ICONS = {
 
 /** Actions and states. */
 export {
+  ChatCircleDots,
+  Moon,
+  Sun,
   ArrowElbowDownRight,
   ArrowSquareOut,
   CaretLeft,

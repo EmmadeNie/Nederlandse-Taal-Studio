@@ -17,8 +17,42 @@
   --b1: #fbbf24;
   --b2: #fb7185;
 
+  /* Colours that need a darker shade on a light background */
+  --brand-sub: #8bbcfb;
+  --error-text: #f19a9a;
+  --orange-text: #f3c08a;
+  --shadow: rgba(0, 0, 0, 0.25);
+
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color-scheme: dark;
+}
+
+/* Light theme (the sun/moon switch top right) */
+:root[data-theme="light"] {
+  --bg: #f4f6f9;
+  --surface: #ffffff;
+  --surface-2: #eceff4;
+  --border: #d6dbe3;
+  --text: #171a21;
+  --text-dim: #5b6372;
+  --accent: #2563eb;
+  --accent-soft: rgba(37, 99, 235, 0.1);
+  --green: #1a7f37;
+  --amber: #9a6700;
+  --red: #cf222e;
+
+  --a0: #047857;
+  --a1: #1d4ed8;
+  --a2: #6d28d9;
+  --b1: #b45309;
+  --b2: #be123c;
+
+  --brand-sub: #2563eb;
+  --error-text: #cf222e;
+  --orange-text: #b45309;
+  --shadow: rgba(23, 26, 33, 0.12);
+
+  color-scheme: light;
 }
 
 * {
