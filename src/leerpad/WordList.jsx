@@ -2,7 +2,7 @@ import { useI18n } from "../i18n/context";
 import { LevelBadge } from "../components/Badges";
 import QuizletExport from "../components/QuizletExport";
 import { LEVELS } from "./util";
-import { THEMES, WORD_POS, WORD_SETS, hasWordList, themeLabel, wordsForList } from "./wordLists";
+import { THEMES, WORD_POS, hasWordList, themeLabel, wordSetIds, wordsForList } from "./wordLists";
 import { slugLabel } from "./sentenceLists";
 import SetInput from "./SetInput";
 
@@ -83,7 +83,7 @@ export function WordListEditor({ value, onChange }) {
         <SetInput
           value={spec.set}
           onChange={(v) => set("set", v)}
-          sets={WORD_SETS}
+          sets={wordSetIds()}
           listId="word-sets"
           placeholder={t("wl.setPh")}
           label={t("wl.set")}

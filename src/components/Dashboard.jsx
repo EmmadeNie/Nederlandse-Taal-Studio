@@ -1,3 +1,4 @@
+import { useContentVersion } from "../data/useContent";
 import {
   getStats,
   getLevelMatrix,
@@ -10,6 +11,7 @@ import { ChartLineDown, CheckCircle, ICONS, LinkBreak, Warning } from "../icons"
 
 export default function Dashboard() {
   const { t } = useI18n();
+  useContentVersion();
   const stats = getStats();
   const matrix = getLevelMatrix();
   const quality = getQualityIndicators();

@@ -1,3 +1,5 @@
+import { useContentVersion } from "../data/useContent";
+import { EditItemButton, NewItemButton } from "../library/ItemEditing";
 import { querySentences, LEVELS } from "../data";
 import { LevelBadge, ReviewBadge, Tag } from "./Badges";
 import { getAllThemes, getAllGrammarTags } from "../data";
@@ -9,6 +11,7 @@ import { Note } from "../icons";
 
 export default function SentenceBrowser() {
   const { t } = useI18n();
+  useContentVersion();
   const urlParams = useUrlParams();
   const setUrlParams = useSetUrlParams();
   const themes = getAllThemes();
@@ -62,6 +65,7 @@ export default function SentenceBrowser() {
   return (
     <div>
       <h2>{t("nav.sentences")}</h2>
+      <NewItemButton type="sentence" />
       <div className="filters">
         <input
           type="text"
@@ -185,6 +189,7 @@ export default function SentenceBrowser() {
           </div>
           {s.reviewNotes && <div className="note"><Note /> {s.reviewNotes}</div>}
           <div className="card-footer">
+            <EditItemButton item={s} />
             <FeedbackButton
               itemType="sentence"
               itemId={s.id}

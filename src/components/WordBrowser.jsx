@@ -1,3 +1,5 @@
+import { useContentVersion } from "../data/useContent";
+import { EditItemButton, NewItemButton } from "../library/ItemEditing";
 import { queryWords } from "../data";
 import { LevelBadge, ReviewBadge, Tag } from "./Badges";
 import { WordFilters } from "./Filters";
@@ -8,6 +10,7 @@ import { useI18n } from "../i18n/context";
 
 export default function WordBrowser() {
   const { t } = useI18n();
+  useContentVersion();
   const urlParams = useUrlParams();
   const setUrlParams = useSetUrlParams();
 
@@ -36,6 +39,7 @@ export default function WordBrowser() {
   return (
     <div>
       <h2>{t("nav.words")}</h2>
+      <NewItemButton type="word" />
       <WordFilters filters={filters} onChange={setFilters} />
       <p className="result-count">{t("words.found", { n: results.length })}</p>
       <div className="qz-library">
@@ -67,6 +71,7 @@ export default function WordBrowser() {
               <ReviewBadge status={w.reviewStatus} />
             </div>
             <div className="card-footer">
+              <EditItemButton item={w} />
               <FeedbackButton
                 itemType="word"
                 itemId={w.id}

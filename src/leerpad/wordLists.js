@@ -1,33 +1,32 @@
 /**
- * Word lists on lessons: a recipe ({ theme, partOfSpeech, level, upTo }) over
- * the word data in src/data, stored in lessons.word_list. Like exercises, the
+ * Word lists on lessons: a recipe ({ set, theme, partOfSpeech, level, upTo }) over
+ * the words in src/data, stored in lessons.word_list. Like exercises, the
  * list is computed, so new words with a matching theme appear by themselves.
  */
-import { LEVELS, THEMES, queryWords, queryWordsUpToLevel, words as allWords } from "../data";
+import { LEVELS, THEMES, getSet, queryWords, queryWordsUpToLevel, setItems, setsOfType } from "../data";
 
 export { THEMES };
 export const WORD_POS = ["noun", "verb", "adjective", "adverb", "numeral", "conjunction", "other"];
 
-/** The word sets used in the word data (e.g. the verbs of an exercise), in order of first appearance. */
-export const WORD_SETS = [...new Set(allWords.flatMap((w) => w.sets || []))];
+/** Ids of the word sets (e.g. the verbs of an exercise). */
+export const wordSetIds = () => setsOfType("word").map((s) => s.id);
 
 export const hasWordList = (spec) => Boolean(spec && (spec.set || spec.theme || spec.partOfSpeech || spec.level));
 
-/** Words matching the recipe, alphabetical. */
+/** Words matching the recipe: a set in its own order, otherwise alphabetical. */
 export function wordsForList(spec) {
   if (!hasWordList(spec)) return [];
   if (spec.set) {
+    const set = getSet(spec.set);
     const lvl = LEVELS.indexOf(spec.level);
-    return allWords
-      .filter((w) => (w.sets || []).includes(spec.set))
+    return setItems(set?.type === "word" ? set : null)
       .filter((w) => !spec.theme || (w.themes || []).includes(spec.theme))
       .filter((w) => !spec.partOfSpeech || w.partOfSpeech === spec.partOfSpeech)
       .filter((w) => {
         if (!spec.level) return true;
         const idx = LEVELS.indexOf(w.introducedAtLevel);
         return spec.upTo ? idx <= lvl : idx === lvl;
-      })
-      .sort((a, b) => a.nl.localeCompare(b.nl, "nl"));
+      });
   }
   const filters = {
     themes: spec.theme ? [spec.theme] : undefined,

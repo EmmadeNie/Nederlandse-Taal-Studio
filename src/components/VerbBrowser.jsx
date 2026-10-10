@@ -1,3 +1,5 @@
+import { useContentVersion } from "../data/useContent";
+import { EditItemButton, NewItemButton } from "../library/ItemEditing";
 import { queryWords } from "../data";
 import { LevelBadge, ReviewBadge, Tag } from "./Badges";
 import FeedbackButton from "../feedback/FeedbackButton";
@@ -9,6 +11,7 @@ const LEVELS = ["A0", "A1", "A2", "B1", "B2"];
 
 export default function VerbBrowser() {
   const { t } = useI18n();
+  useContentVersion();
   const urlParams = useUrlParams();
   const setUrlParams = useSetUrlParams();
   const search = urlParams.search || "";
@@ -40,6 +43,7 @@ export default function VerbBrowser() {
   return (
     <div>
       <h2>{t("nav.verbs")}</h2>
+      <NewItemButton type="word" extra={{ partOfSpeech: "verb", conjugation: {} }} label={t("ie.new.verb")} />
       <div className="filters">
         <input
           type="text"
@@ -176,6 +180,7 @@ export default function VerbBrowser() {
               </div>
             )}
             <div className="card-footer">
+              <EditItemButton item={v} />
               <FeedbackButton
                 itemType="verb"
                 itemId={v.id}

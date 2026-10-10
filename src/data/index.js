@@ -1,20 +1,104 @@
-import wordsCore from "./words.json";
-import wordsThema from "./words-thema.json";
-import wordsVerbs from "./words-verbs.json";
-import sentences from "./sentences.json";
-import topics from "./topics.json";
-import exercises from "./exercises.json";
 import { LEVELS, THEMES, GRAMMAR_TAGS, TAGS } from "./schema.js";
 
-// Merge all word lists into one, de-duping by id
-const allWordsRaw = [...wordsCore, ...wordsThema, ...wordsVerbs];
-const wordMap = new Map();
-allWordsRaw.forEach((w) => {
-  if (!wordMap.has(w.id)) wordMap.set(w.id, w);
-});
-export const words = Array.from(wordMap.values());
+/**
+ * The content (words, sentences, grammar topics, exercises, sets) lives in the
+ * database (tables content_items and sets). <ContentGate> loads it once after
+ * login and fills these arrays in place via setContent(), so everything that
+ * imports them keeps working. Items have the same shape as the old JSON:
+ * { id, ...fields }. Sets: { id, type, title, level, itemIds }.
+ */
+export const words = [];
+export const sentences = [];
+export const topics = [];
+export const exercises = [];
+export const sets = [];
 
-export { sentences, topics, exercises, LEVELS, THEMES, GRAMMAR_TAGS, TAGS };
+const BY_TYPE = { word: words, sentence: sentences, topic: topics, exercise: exercises };
+
+/** Replace all content: rows from content_items and sets. */
+export function setContent(itemRows, setRows) {
+  Object.values(BY_TYPE).forEach((list) => (list.length = 0));
+  itemRows.forEach((row) => BY_TYPE[row.type]?.push({ id: row.id, ...row.data }));
+  sets.length = 0;
+  version += 1;
+  setRows.forEach((row) =>
+    sets.push({ id: row.id, type: row.type, title: row.title, level: row.level, itemIds: row.item_ids })
+  );
+}
+
+/** The sets of one type ("word", "sentence", "exercise"), by title. */
+export const setsOfType = (type) =>
+  sets.filter((s) => s.type === type).sort((a, b) => a.title.localeCompare(b.title, "nl"));
+
+export const getSet = (id) => sets.find((s) => s.id === id) || null;
+
+/** The items of a set, in the set's order (unknown ids skipped). */
+export function setItems(set) {
+  if (!set) return [];
+  const list = BY_TYPE[set.type] || [];
+  const byId = new Map(list.map((item) => [item.id, item]));
+  return set.itemIds.map((id) => byId.get(id)).filter(Boolean);
+}
+
+// ----- Changes after loading (editing in the app) -----
+
+let version = 0;
+const listeners = new Set();
+const changed = () => {
+  version += 1;
+  listeners.forEach((fn) => fn());
+};
+
+/** For useContentVersion(): re-render when content changes. */
+export const subscribeContent = (fn) => {
+  listeners.add(fn);
+  return () => listeners.delete(fn);
+};
+export const getContentVersion = () => version;
+
+export const allItems = () => [...words, ...sentences, ...topics, ...exercises];
+export const getItem = (id) => allItems().find((item) => item.id === id) || null;
+export const typeOfId = (id) => id.split(".")[0];
+
+/** A row of content_items was created or changed. */
+export function putItem(row) {
+  const list = BY_TYPE[row.type];
+  const item = { id: row.id, ...row.data };
+  const i = list.findIndex((x) => x.id === row.id);
+  if (i >= 0) list[i] = item;
+  else list.push(item);
+  changed();
+}
+
+export function dropItem(id) {
+  const list = BY_TYPE[typeOfId(id)];
+  const i = list?.findIndex((x) => x.id === id) ?? -1;
+  if (i >= 0) list.splice(i, 1);
+  // The database also took it out of its sets.
+  sets.forEach((s) => {
+    if (s.itemIds.includes(id)) s.itemIds = s.itemIds.filter((x) => x !== id);
+  });
+  changed();
+}
+
+export function putSet(row) {
+  const set = { id: row.id, type: row.type, title: row.title, level: row.level, itemIds: row.item_ids };
+  const i = sets.findIndex((x) => x.id === row.id);
+  if (i >= 0) sets[i] = set;
+  else sets.push(set);
+  changed();
+}
+
+export function dropSet(id) {
+  const i = sets.findIndex((x) => x.id === id);
+  if (i >= 0) sets.splice(i, 1);
+  changed();
+}
+
+/** The sets an item is in. */
+export const setsWithItem = (id) => sets.filter((s) => s.itemIds.includes(id));
+
+export { LEVELS, THEMES, GRAMMAR_TAGS, TAGS };
 
 // ----- Query helpers -----
 
