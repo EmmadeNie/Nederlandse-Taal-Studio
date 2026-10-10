@@ -257,7 +257,7 @@ de docent weten zodat ze aan de canonieke lijst in `schema.js` worden toegevoegd
 de validatie dat de tag onbekend is).
 
 **themes:** eten, fruit, dieren, kleuren, mensen, familie, kleding, huis, keuken, badkamer,
-huishouden, apparaten, dingen, plaatsen, vervoer, beweging, sport, vrije-tijd, werk, school,
+huishouden, apparaten, dingen, plaatsen, vervoer, beweging, sport, vrije-tijd, tijd, werk, school,
 communicatie, emoties, weer, natuur, zintuigen, beschrijvend, dagelijks-leven, grammatica, uitspraak
 
 **grammarTags:** tegenwoordige-tijd, verleden-tijd, perfectum, plusquamperfectum, futurum, inversie,
