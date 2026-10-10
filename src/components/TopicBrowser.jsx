@@ -95,7 +95,7 @@ function TopicCard({ topic, isOpen, cardRef, onToggle }) {
             </div>
           )}
           <RelatedWords ids={topic.relatedWordIds} />
-          <ExampleSentences ids={topic.exampleSentenceIds} showEnglish={lang === "en"} />
+          <ExampleSentences ids={topic.exampleSentenceIds} />
         </>
       )}
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- keeps button clicks from folding the card */}
