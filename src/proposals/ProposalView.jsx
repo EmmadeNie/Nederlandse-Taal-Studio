@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useI18n } from "../i18n/context";
-import { getItem } from "../data";
+import { LEVELS, getItem } from "../data";
 import { useContentVersion } from "../data/useContent";
 import { itemLabel } from "../library/fields";
 import { ITEM_OPS, applyChange, evaluate } from "./changeset";
@@ -15,6 +15,7 @@ export default function ProposalView({ proposal, onBack, onChanged, onDeleted })
   const [versions, setVersions] = useState(null);
   const [busy, setBusy] = useState(null); // index being handled, or "all"
   const [errors, setErrors] = useState({});
+  const [order, setOrder] = useState("proposed"); // or "level"
 
   const refreshVersions = useCallback(
     () =>
@@ -31,6 +32,19 @@ export default function ProposalView({ proposal, onBack, onChanged, onDeleted })
   const ctx = { changes: proposal.changes, decisions: proposal.decisions || {}, versions: versions || {} };
   const evaluations = proposal.changes.map((c, i) => evaluate(c, i, ctx));
   const decided = Object.keys(proposal.decisions || {}).length;
+
+  // Shown in the proposed order, or grouped by level (the proposed level, else the current one).
+  const all = proposal.changes.map((_, i) => i);
+  const levelOf = (i) => {
+    const { before, after } = evaluations[i];
+    return after?.introducedAtLevel || after?.level || before?.introducedAtLevel || before?.level || null;
+  };
+  const groups =
+    order === "proposed"
+      ? [{ level: null, indexes: all }]
+      : [...LEVELS, null]
+          .map((level) => ({ level, indexes: all.filter((i) => (levelOf(i) || null) === level) }))
+          .filter((g) => g.indexes.length);
 
   const canApprove = (i) => {
     const e = evaluations[i];
@@ -144,19 +158,32 @@ export default function ProposalView({ proposal, onBack, onChanged, onDeleted })
       {errors.all && <div className="auth-error">{errors.all}</div>}
       {versions === null && <p className="dim">{t("common.loading")}</p>}
 
+      <div role="group" aria-label={t("pr.order.label")} className="pr-tabs">
+        {["proposed", "level"].map((o) => (
+          <button key={o} type="button" aria-pressed={order === o} onClick={() => setOrder(o)}>
+            {t(`pr.order.${o}`)}
+          </button>
+        ))}
+      </div>
+
       {versions !== null &&
-        proposal.changes.map((change, i) => (
-          <ChangeCard
-            key={i}
-            change={change}
-            evaluation={evaluations[i]}
-            decision={proposal.decisions?.[i]}
-            busy={busy === i || busy === "all"}
-            error={errors[i]}
-            onApprove={(force) => handle(i, "approved", { force })}
-            onReject={() => handle(i, "rejected")}
-            onReopen={() => reopen(i)}
-          />
+        groups.map(({ level, indexes }) => (
+          <section key={level ?? "-"}>
+            {order === "level" && <h3 className="pr-group">{level ?? t("pr.order.none")}</h3>}
+            {indexes.map((i) => (
+              <ChangeCard
+                key={i}
+                change={proposal.changes[i]}
+                evaluation={evaluations[i]}
+                decision={proposal.decisions?.[i]}
+                busy={busy === i || busy === "all"}
+                error={errors[i]}
+                onApprove={(force) => handle(i, "approved", { force })}
+                onReject={() => handle(i, "rejected")}
+                onReopen={() => reopen(i)}
+              />
+            ))}
+          </section>
         ))}
 
       <div className="lp-actions">
