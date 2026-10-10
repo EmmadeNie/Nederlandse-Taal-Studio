@@ -1149,8 +1149,23 @@ svg[class^="ph"], button svg, h4 svg, .board-meta-item svg {
   margin-bottom: 0.9rem;
 }
 
+/* Edit button: top right of a library card */
+.card,
+.topic-card,
+.sentence-card {
+  position: relative;
+}
+
 .ie-edit {
-  margin-right: auto;
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+}
+
+.card:has(.ie-edit) > :first-child,
+.topic-card:has(.ie-edit) > :first-child,
+.sentence-card:has(.ie-edit) > :first-child {
+  padding-right: 2.25rem;
 }
 
 .ie-form {
