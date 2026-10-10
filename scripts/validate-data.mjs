@@ -17,6 +17,7 @@ import {
   PARTS_OF_SPEECH,
   REVIEW_STATUSES,
 } from "../src/data/schema.js";
+import { hasNoPerfect } from "../src/data/verbForms.js";
 
 const read = (p) => JSON.parse(readFileSync(new URL(p, import.meta.url)));
 
@@ -130,14 +131,16 @@ words
       warn(`Verb missing conjugation: ${v.id}`);
       return;
     }
-    ["infinitive", "stem", "present", "past", "participle", "auxiliary", "regularity"].forEach(
-      (k) => {
+    // A verb without a perfect ("zullen") leaves out participle, auxiliary and regularity.participle together.
+    const noPerfect = hasNoPerfect(c);
+    ["infinitive", "stem", "present", "past", "participle", "auxiliary", "regularity"]
+      .filter((k) => !(noPerfect && (k === "participle" || k === "auxiliary")))
+      .forEach((k) => {
         if (c[k] === undefined) warn(`Verb ${v.id} missing conjugation.${k}`);
-      }
-    );
+      });
     if (c.regularity) {
       if (!c.regularity.past) warn(`Verb ${v.id} missing regularity.past`);
-      if (!c.regularity.participle) warn(`Verb ${v.id} missing regularity.participle`);
+      if (!noPerfect && !c.regularity.participle) warn(`Verb ${v.id} missing regularity.participle`);
     }
     if (c.auxiliary && !["hebben", "zijn"].includes(c.auxiliary))
       warn(`Verb ${v.id} invalid auxiliary: ${c.auxiliary}`);

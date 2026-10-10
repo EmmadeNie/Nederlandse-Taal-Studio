@@ -6,6 +6,7 @@
  */
 import { VOCABULARIES, allItems, getItem, getSet, typeOfId } from "../data";
 import { VOCAB_PATTERN, validateItem, validateSet } from "../data/validate";
+import { hasNoPerfect } from "../data/verbForms";
 import { addVocabulary, createItem, createSet, deleteItem, deleteSet, updateItem, updateSet } from "../data/contentApi";
 
 export const ITEM_OPS = ["add", "update", "delete"];
@@ -211,7 +212,10 @@ export function evaluate(change, index, { changes, decisions, versions }) {
     similar = (mine && allItems().find((x) => x.id !== change.id && typeOfId(x.id) === type && norm(x) === mine)) || null;
   }
 
-  return { before, after, problems, conflict, blockedBy, similar };
+  // A verb without a perfect is allowed, but worth a conscious look.
+  const noPerfect = Boolean(after?.partOfSpeech === "verb" && after.conjugation && hasNoPerfect(after.conjugation));
+
+  return { before, after, problems, conflict, blockedBy, similar, noPerfect };
 }
 
 // ----- Applying one change -----

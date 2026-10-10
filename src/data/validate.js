@@ -7,6 +7,7 @@
  */
 import { LEVELS, PARTS_OF_SPEECH, REVIEW_STATUSES, SENTENCE_TYPES, TENSES, WORD_ORDERS } from "./schema.js";
 import { GRAMMAR_TAGS, TAGS, THEMES } from "./index.js";
+import { PERFECT_FIELDS, hasNoPerfect } from "./verbForms.js";
 
 /** Allowed value of a vocabulary (theme, tag, grammar tag): lower case, digits, single hyphens. */
 export const VOCAB_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -58,7 +59,10 @@ export function validateItem(type, item, ctx, { isNew = false } = {}) {
         "conjugation.auxiliary",
         "conjugation.regularity.past",
         "conjugation.regularity.participle",
-      ].forEach(required);
+      ]
+        // A verb without a perfect ("zullen") leaves out all three perfect fields.
+        .filter((f) => !(hasNoPerfect(item.conjugation) && PERFECT_FIELDS.includes(f)))
+        .forEach(required);
       oneOf("conjugation.auxiliary", item.conjugation?.auxiliary, ["hebben", "zijn", "hebben/zijn"]);
     }
   }

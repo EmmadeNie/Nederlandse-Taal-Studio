@@ -78,7 +78,13 @@ export default function VerbCard({ verb: v }) {
             }}
           >
             <span className="label">{t("verbs.participle")}</span>
-            <span>{v.conjugation.participle}</span>
+            {v.conjugation.participle ? (
+              <span>{v.conjugation.participle}</span>
+            ) : (
+              <span className="dim" title={t("verbs.noPerfect")}>
+                {t("verbs.notApplicable")}
+              </span>
+            )}
           </div>
           {v.conjugation.auxiliary && (
             <div className="row">
