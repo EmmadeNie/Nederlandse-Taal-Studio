@@ -1,3 +1,4 @@
+import { hasNoPerfect } from "./verbForms.js";
 import { LEVELS, THEMES as SEED_THEMES, GRAMMAR_TAGS as SEED_GRAMMAR_TAGS, TAGS as SEED_TAGS } from "./schema.js";
 
 /**
@@ -351,8 +352,10 @@ export function getQualityIndicators({ thinThreshold = 3 } = {}) {
     if (!isVerb(w)) return false;
     const c = w.conjugation;
     if (!c) return true;
-    if (requiredConj.some((k) => c[k] === undefined)) return true;
-    if (!c.regularity?.past || !c.regularity?.participle) return true;
+    const noPerfect = hasNoPerfect(c);
+    const needed = noPerfect ? requiredConj.filter((k) => k !== "participle" && k !== "auxiliary") : requiredConj;
+    if (needed.some((k) => c[k] === undefined)) return true;
+    if (!c.regularity?.past || (!noPerfect && !c.regularity?.participle)) return true;
     return false;
   });
 

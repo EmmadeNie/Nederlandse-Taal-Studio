@@ -108,7 +108,14 @@ export function VerbTile({ verb: v, onOpen }) {
       <Row label={t("verbs.sg")} value={c.past?.singular} irregular={irregular("past")} />
       <Row label={t("verbs.pl")} value={c.past?.plural} irregular={irregular("past")} />
       <div className="rw-sep" />
-      <Row label={t("verbs.participle")} prefix={c.auxiliary} value={c.participle} irregular={irregular("participle")} />
+      {c.participle ? (
+        <Row label={t("verbs.participle")} prefix={c.auxiliary} value={c.participle} irregular={irregular("participle")} />
+      ) : (
+        <div className="rw-row" title={t("verbs.noPerfect")}>
+          <span className="dim">{t("verbs.participle")}</span>
+          <span className="dim">{t("verbs.notApplicable")}</span>
+        </div>
+      )}
     </div>
   );
 }

@@ -241,7 +241,7 @@ const nameOf = (id) => itemLabel(getItem(id)) || id;
 
 function ChangeCard({ change, evaluation, decision, busy, error, onApprove, onReject, onReopen }) {
   const { t } = useI18n();
-  const { before, after, problems, conflict, blockedBy, similar } = evaluation;
+  const { before, after, problems, conflict, blockedBy, similar, noPerfect } = evaluation;
   const isItem = ITEM_OPS.includes(change.op);
   const usage = useUsage(change, !decision);
   const itemType = change.type || change.id?.split(".")[0];
@@ -328,6 +328,7 @@ function ChangeCard({ change, evaluation, decision, busy, error, onApprove, onRe
         ) : (
           <div className="pr-note dim">{t("pr.unused")}</div>
         ))}
+      {!decision && noPerfect && <div className="pr-note pr-note-warn">{t("pr.noPerfect")}</div>}
       {!decision && similar && (
         <div className="pr-note pr-note-warn">{t("pr.similar", { name: itemLabel(similar), id: similar.id })}</div>
       )}

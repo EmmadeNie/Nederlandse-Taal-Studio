@@ -151,6 +151,9 @@ Zet NIETS op `human-verified`, dat doet alleen de docent.
 ```
 `regularity` is PER VORM (`present`, `past`, `participle`), elk "regular" of "irregular".
 `auxiliary`: "hebben" of "zijn".
+**Werkwoord zonder perfectum** (zoals *zullen*): laat `participle`, `auxiliary` én
+`regularity.participle` alle drie weg; verzin geen vormen. De app toont ze dan als "n.v.t.".
+Laat ze alleen weg als het werkwoord echt geen voltooid deelwoord heeft.
 
 ## Zin (sentence)
 
