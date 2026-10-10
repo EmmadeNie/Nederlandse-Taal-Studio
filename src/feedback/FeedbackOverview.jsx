@@ -10,8 +10,10 @@ import {
 import { useAuth } from "../auth/context";
 import { useI18n } from "../i18n/context";
 import { ArrowElbowDownRight, DownloadSimple, UploadSimple, X } from "../icons";
+import { navigate } from "../hooks/useRoute";
+import { pathFor } from "../routes";
 
-const ITEM_TYPES = new Set(["word", "verb", "sentence", "topic", "exercise", "app", "overig"]);
+const ITEM_TYPES = new Set(["word", "verb", "sentence", "topic", "exercise", "lesson", "zijpad", "app", "overig"]);
 
 function formatDate(ts, locale) {
   return new Date(ts).toLocaleString(locale, {
@@ -162,7 +164,16 @@ export default function FeedbackOverview() {
             </div>
             <div className="fb-message">{f.message}</div>
             {f.itemLabel && (
-              <div className="fb-item-label"><ArrowElbowDownRight /> {f.itemLabel}</div>
+              <div className="fb-item-label">
+                <ArrowElbowDownRight />{" "}
+                {f.itemType === "lesson" && f.itemId ? (
+                  <button type="button" className="fb-link" onClick={() => navigate(pathFor("lesprogramma", f.itemId))}>
+                    {f.itemLabel}
+                  </button>
+                ) : (
+                  f.itemLabel
+                )}
+              </div>
             )}
           </div>
         ))

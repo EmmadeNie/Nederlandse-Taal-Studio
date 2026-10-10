@@ -1144,3 +1144,19 @@
 .lp-section > .wl + .wl {
   margin-top: 6px;
 }
+
+/* Chips with the feedback button at the end (lesson and step dialogs) */
+.lp-feedback {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.lp-feedback:empty {
+  display: none;
+}
+
+.board-card-meta .fb-button {
+  margin-left: auto;
+}

@@ -27,9 +27,16 @@ export const FEEDBACK_CATEGORIES = [
   "te-makkelijk",
   "vertaling",
   "tag-metadata",
+  "onduidelijk",
   "app",
   "overig",
 ];
+
+/** Lessons get the categories that fit a lesson; everything else gets the full list. */
+export const categoriesFor = (itemType) =>
+  itemType === "lesson" || itemType === "zijpad"
+    ? ["onduidelijk", "te-moeilijk", "te-makkelijk", "verkeerd-niveau", "taalfout", "overig"]
+    : FEEDBACK_CATEGORIES;
 
 const VALID_CATEGORIES = new Set(FEEDBACK_CATEGORIES);
 
