@@ -406,3 +406,24 @@
 :root[data-theme="light"] .rich mark {
   color: #14171d !important;
 }
+
+/* Editor: room between blocks (tables, boxes) so you can click between them;
+   the gap cursor shows where a new line will go. Type, or press Enter, to add it. */
+.ProseMirror > .tableWrapper,
+.ProseMirror > .callout,
+.ProseMirror > div[data-callout],
+.ProseMirror > div[data-example] {
+  margin-top: 0.9rem;
+  margin-bottom: 0.9rem;
+}
+
+.ProseMirror .tableWrapper > table {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.ProseMirror .ProseMirror-gapcursor:after {
+  width: 100%;
+  border-top: 2px solid var(--accent);
+  top: -0.5rem;
+}
