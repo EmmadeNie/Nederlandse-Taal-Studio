@@ -5,6 +5,7 @@ import { topics, querySentences } from "../data";
 import { LevelBadge, ReviewBadge, Tag } from "./Badges";
 import FeedbackButton from "../feedback/FeedbackButton";
 import Markdown from "./Markdown";
+import RelatedWords from "./RelatedWords";
 import { useUrlParams } from "../hooks/useUrlParams";
 import { navigate, useRoute } from "../hooks/useRoute";
 import { pathFor, topicIdFromSlug, topicSlug } from "../routes";
@@ -75,6 +76,7 @@ export default function TopicBrowser() {
                 {topic.explanation && (
                   <Markdown className="explanation">{topic.explanation}</Markdown>
                 )}
+                <RelatedWords ids={topic.relatedWordIds} />
                 {relatedSentences.length > 0 && (
                   <div style={{ marginTop: "1rem" }}>
                     <strong
