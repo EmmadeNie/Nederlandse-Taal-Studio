@@ -36,12 +36,17 @@ purify.addHook("afterSanitizeAttributes", (node) => {
       node.setAttribute("rel", "noopener noreferrer");
     }
   }
-  // Inline styles: only text and highlight colours.
+  // Inline styles: only text and highlight colours, and widths on tables and columns.
   if (node.hasAttribute?.("style")) {
+    const sizable = ["TABLE", "COL"].includes(node.tagName);
     const kept = (node.getAttribute("style") || "")
       .split(";")
       .map((rule) => rule.trim())
-      .filter((rule) => /^(color|background-color)\s*:\s*(#[0-9a-f]{3,8}|rgba?\([\d\s.,%]+\)|[a-z]+)$/i.test(rule))
+      .filter(
+        (rule) =>
+          /^(color|background-color)\s*:\s*(#[0-9a-f]{3,8}|rgba?\([\d\s.,%]+\)|[a-z]+)$/i.test(rule) ||
+          (sizable && /^(width|min-width)\s*:\s*\d+(\.\d+)?px$/i.test(rule))
+      )
       // "inherit" & co. would undo the readable text colour on a highlight.
       .filter((rule) => !/:\s*(inherit|initial|unset|currentcolor)$/i.test(rule));
     if (kept.length) node.setAttribute("style", kept.join("; "));
@@ -57,6 +62,6 @@ export const sanitize = (html) =>
       "ul", "ol", "li", "blockquote", "hr", "code", "pre",
       "table", "thead", "tbody", "tr", "th", "td", "colgroup", "col", "div",
     ],
-    ALLOWED_ATTR: ["href", "target", "rel", "class", "style", "colspan", "rowspan", "data-callout", "data-example", "data-color"],
+    ALLOWED_ATTR: ["href", "target", "rel", "class", "style", "colspan", "rowspan", "colwidth", "data-callout", "data-example", "data-color"],
     ALLOW_DATA_ATTR: false,
   });

@@ -96,11 +96,36 @@
 
 .rich th,
 .rich td {
+  position: relative; /* for the column resize handle */
   border: 1px solid var(--border);
   padding: 0.35rem 0.7rem;
   text-align: left;
   vertical-align: top;
+}
+
+/* Columns without a width set by dragging stay readable. */
+.rich th:not([colwidth]),
+.rich td:not([colwidth]) {
   min-width: 4rem;
+}
+
+/* Editor: drag a column border to resize it */
+.ProseMirror .column-resize-handle {
+  position: absolute;
+  top: 0;
+  right: -2px;
+  bottom: -1px;
+  width: 4px;
+  background: var(--accent);
+  pointer-events: none;
+}
+
+.ProseMirror.resize-cursor {
+  cursor: col-resize;
+}
+
+.ProseMirror .tableWrapper {
+  overflow-x: auto;
 }
 
 .rich th {

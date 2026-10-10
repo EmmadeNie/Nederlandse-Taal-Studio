@@ -469,8 +469,10 @@
 }
 
 .lp-row > input,
-.lp-row > select {
-  flex: 1 1 140px;
+.lp-row > select,
+.lp-row > .ie-picker input,
+.lg-picker > select {
+  flex: 0 0 auto;
   min-width: 0;
   background: var(--surface-2);
   border: 1px solid var(--border);
@@ -954,6 +956,16 @@
   gap: 0.3rem;
   font-size: 0.78rem;
   margin-top: 0.4rem;
+}
+
+.lp-row > input,
+.lp-row > select {
+  flex: 1 1 140px;
+}
+
+.lp-row > .ie-picker {
+  flex: 1 1 200px;
+  min-width: 0;
 }
 
 .lg-picker {
