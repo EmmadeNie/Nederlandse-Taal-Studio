@@ -7,7 +7,7 @@
  *   /lesprogramma
  *   /leerpaden, /leerpaden/<leerling>
  *   /bibliotheek/<tab>, /bibliotheek/grammatica/<onderwerp>
- *   /feedback, /gebruikers
+ *   /feedback, /voorstellen, /voorstellen/<id>, /gebruikers
  *
  * Filters stay in the query string, e.g. /bibliotheek/zinnen?level=A2.
  */
@@ -24,6 +24,7 @@ export const PATHS = {
   exercises: "/bibliotheek/oefeningen",
   sets: "/bibliotheek/sets",
   feedback: "/feedback",
+  proposals: "/voorstellen",
   users: "/gebruikers",
 };
 

@@ -1,32 +1,91 @@
 # Content-briefing voor ChatGPT
 
-Kopieer dit naar ChatGPT als context bij het aanleveren van content voor Nederlandse Taal Studio.
-Dit beschrijft de technische vorm die de app verwacht. ChatGPT bepaalt de inhoud; dit document
-bepaalt alleen het format zodat de data meteen past.
+Plak dit document in ChatGPT (bijvoorbeeld als instructie van een Project of eigen GPT), samen met
+de export uit de app. Het beschrijft hoe de inhoud van Taal Studio eruitziet en hoe je
+wijzigingen voorstelt. ChatGPT bepaalt de inhoud; dit document bepaalt de vorm.
+
+## Zo werken we
+
+1. De docent klikt in Taal Studio op **Voorstellen → Inhoud exporteren** en geeft je het bestand
+   `taalstudio-inhoud-<datum>.json`. Daarin staat alle huidige inhoud: `words`, `sentences`,
+   `topics`, `exercises` en `sets`. Elk item en elke set heeft een `updatedAt`.
+2. De docent vraagt iets ("maak 15 zinnen bij het perfectum", "controleer de A1-woorden").
+3. Jij antwoordt met **één JSON-changeset** (format hieronder) in een ```json-codeblok, met
+   daarbuiten hooguit een korte toelichting.
+4. De docent plakt de changeset in de app en keurt elke wijziging los goed of af. Pas dan
+   verandert er iets.
+
+Werk altijd vanuit de meest recente export. Weet je iets niet zeker (bestaat een ID al? hoe heet
+een set?), zoek het op in de export in plaats van te gokken.
+
+## De changeset
+
+```json
+{
+  "title": "Perfectum: 12 nieuwe zinnen en een zinnenset",
+  "summary": "Korte uitleg voor de docent: wat en waarom.",
+  "changes": [
+    { "op": "add", "type": "sentence", "id": "sentence.ik-heb-gewerkt",
+      "data": { "nl": "Ik heb gewerkt.", "en": "I have worked.", "...": "..." },
+      "reason": "Basisvoorbeeld perfectum met hebben." },
+
+    { "op": "update", "type": "word", "id": "word.hond",
+      "baseVersion": "2026-10-01T12:00:00.000000+00:00",
+      "data": { "plural": "honden", "tags": null },
+      "reason": "Meervoud ontbrak; lege tags weg." },
+
+    { "op": "delete", "type": "sentence", "id": "sentence.dubbel",
+      "baseVersion": "…", "reason": "Dubbel met sentence.ik-heb-gewerkt." },
+
+    { "op": "set.create", "set": "perfectum-a2", "type": "sentence",
+      "title": "Perfectum A2", "level": "A2",
+      "items": ["sentence.ik-heb-gewerkt"], "reason": "…" },
+
+    { "op": "set.update", "set": "perfectum-a2", "baseVersion": "…",
+      "title": "Perfectum (A2)", "level": "A2" },
+
+    { "op": "set.addItem", "set": "eerste-regelmatige-werkwoorden", "baseVersion": "…",
+      "item": "word.werken", "after": "word.wonen" },
+
+    { "op": "set.removeItem", "set": "…", "baseVersion": "…", "item": "word.x" },
+
+    { "op": "set.moveItem", "set": "…", "baseVersion": "…", "item": "word.x", "after": null },
+
+    { "op": "set.delete", "set": "…", "baseVersion": "…" }
+  ]
+}
+```
+
+Regels:
+
+- **`add`**: `data` bevat alle velden van het nieuwe item (zonder `id` en `updatedAt`). Het ID
+  mag nog niet bestaan.
+- **`update`**: `data` bevat **alleen de velden die veranderen**. Een veld vervang je in zijn
+  geheel (ook arrays en `conjugation`: geef de volledige nieuwe waarde). `null` haalt een veld weg.
+- **`baseVersion`**: neem bij `update`, `delete` en alle set-wijzigingen de `updatedAt` van dat
+  item of die set uit de export over. Is het intussen aangepast, dan ziet de docent een waarschuwing.
+- **`reason`**: altijd invullen, één zin. De docent beslist op basis daarvan.
+- **Volgorde telt**: zet `add` en `set.create` vóór wijzigingen die ernaar verwijzen. Een
+  `set.addItem` met een nieuw woord komt dus ná de `add` van dat woord.
+- **Sets** hebben één soort (`word`, `sentence` of `exercise`) en een vaste volgorde van items.
+  `after` is het ID waarna het item komt; `null` = vooraan. Een set-ID (`set`) is een slug:
+  kleine letters, cijfers en streepjes.
+- Eén item hoort maar één keer in een set; een woord bestaat maar één keer in de hele inhoud.
+  Staat iets al, pas het bestaande item aan in plaats van een tweede te maken.
+- Houd een changeset overzichtelijk: liever 5–40 wijzigingen over één onderwerp dan alles tegelijk.
+- Verander nooit `reviewStatus` naar `human-verified`.
 
 ## Belangrijk principe
 
-Het dashboard en alle statistieken zijn **afgeleiden** van de data, geen aparte data. Tellingen
-per niveau, kwaliteitsindicatoren en coverage worden live berekend uit de JSON. Je hoeft dus
-nooit cijfers of overzichten aan te leveren — alleen de inhoud (woorden, zinnen, topics,
-oefeningen). De app rekent de rest uit.
-
-## De zes databestanden
-
-| Bestand | Inhoud |
-|---------|--------|
-| `words.json` | kern-woordenschat (zelfst. nw., bijv. nw.) |
-| `words-thema.json` | themawoordenschat |
-| `words-verbs.json` | werkwoorden (met volledige vervoeging) |
-| `sentences.json` | voorbeeld-/oefenzinnen |
-| `topics.json` | grammatica-onderwerpen |
-| `exercises.json` | oefening-recepten (query's op tags) |
+Het dashboard en alle statistieken worden live berekend uit de inhoud. Lever dus nooit cijfers
+of overzichten aan, alleen woorden, zinnen, grammatica-onderwerpen, oefeningen en sets.
 
 ## ID-conventie
 
 `type.slug` in kleine letters: `word.hond`, `sentence.gisteren-slecht-geslapen`,
 `topic.perfectum`, `exercise.perfectum-a2`. IDs moeten uniek zijn. Verwijzingen
-(`wordIds`, `focusWordIds`, `topicId`) moeten naar bestaande IDs wijzen.
+(`wordIds`, `focusWordIds`, `topicId`, `relatedWordIds`, `exampleSentenceIds`, items in sets)
+moeten naar bestaande IDs wijzen, of naar een item dat eerder in dezelfde changeset wordt toegevoegd.
 
 ## Niveaus
 
@@ -39,7 +98,7 @@ Geldige waarden: `A0`, `A1`, `A2`, `B1`, `B2`.
 - `ai-reviewed` = door ChatGPT taalkundig gecontroleerd, klaar om te testen
 - `human-verified` = door de docent met leerlingen getest en goedgekeurd
 
-Zet NIETS op `human-verified` — dat doet alleen de docent.
+Zet NIETS op `human-verified`, dat doet alleen de docent.
 
 ## Woord (word)
 
@@ -59,11 +118,6 @@ Zet NIETS op `human-verified` — dat doet alleen de docent.
 ```
 `partOfSpeech`: noun | verb | adjective | adverb | preposition | pronoun | conjunction | numeral | other.
 `article` en `plural` alleen bij zelfstandige naamwoorden.
-`sets` (optioneel): woorden die bij elkaar horen, bv. de werkwoorden van een oefening:
-`"sets": ["intro-tegenwoordige-tijd"]`. Een les met die set toont precies die woorden
-(alfabetisch). Elk woord-ID mag maar één keer voorkomen in alle woordbestanden
-samen: staat een woord al ergens, voeg dan de set toe aan dat bestaande item in plaats van
-het opnieuw op te nemen.
 
 ## Werkwoord (word met conjugation)
 
@@ -112,10 +166,6 @@ het opnieuw op te nemen.
 ```
 `difficulty`: 1-5. `tense`: zie lijst. `sentenceType`: statement | question | imperative | negation.
 `wordOrder`: svo | inversion | subordinate. `focusWordIds` = kernwoord(en) voor invuloefeningen.
-`sets` (optioneel): zinnen die bij elkaar horen, bv. een gesprek uit een les:
-`"sets": ["mijn-eerste-ontmoetingsgesprek"]` (kleine letters, streepjes). Een les met die
-set toont precies die zinnen, in de volgorde van het bestand — zet de zinnen van een
-gesprek dus in de juiste volgorde achter elkaar.
 
 ## Grammatica (topic)
 
@@ -177,6 +227,18 @@ Oude uitleg in Markdown blijft werken, maar schrijf nieuwe uitleg in HTML.
 Een oefening slaat GEEN eigen zinnen op — het is een recept dat via `query` zinnen/woorden
 ophaalt op basis van tags. `maxLevel` betekent "alles t/m dit niveau".
 
+## Sets
+
+Sets zijn geordende lijstjes die lessen gebruiken: een woordenset (bv. de werkwoorden van een
+les), een zinnenset (bv. een gesprek, in de juiste volgorde) of een oefeningenset. In de export:
+
+```json
+{ "id": "eerste-regelmatige-werkwoorden", "type": "word", "title": "Eerste regelmatige werkwoorden",
+  "level": "A1", "itemIds": ["word.werken", "word.wonen"], "updatedAt": "…" }
+```
+
+Wijzig sets alleen met de `set.*`-operaties hierboven, niet via een veld op het item.
+
 ## Canonieke vocabulaires
 
 Gebruik bij voorkeur bestaande waarden. Nieuwe themes/grammarTags/tags kunnen, maar laat het
@@ -193,9 +255,3 @@ te-infinitief, om-te, aan-het, gebiedende-wijs, vragen, ontkenning, lidwoorden, 
 voornaamwoorden, voorzetsels, vervoegen, klinkers, lettergrepen, uitspraak
 
 **tags:** regelmatig-ww, onregelmatig-ww, hulpwerkwoord, modaal-werkwoord, scheidbaar-ww, formeel, informeel
-
-## Aanleveren
-
-Lever per bestand een volledige, geldige JSON-array aan (of de hele set). De docent zet het in
-de app; de validatie (`node scripts/validate-data.mjs`) controleert IDs, referenties, niveaus,
-tags, vervoegingen en enums voordat het live gaat.
