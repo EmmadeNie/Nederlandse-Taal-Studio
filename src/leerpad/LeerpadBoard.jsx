@@ -4,8 +4,7 @@ import { useI18n } from "../i18n/context";
 import Markdown from "../components/Markdown";
 import { InternalLinkContext, lessonIdFromHref } from "../components/internalLinks";
 import { navigate } from "../hooks/useRoute";
-import LessonLinkPicker from "./LessonLinkPicker";
-import { insertAtCursor, lessonLinkMarkdown, rememberCursor } from "./lessonLink";
+import RichEditor from "../editor/RichEditor";
 import LessonFiles from "./LessonFiles";
 import { WordListView } from "./WordList";
 import { hasWordList, wordsForList } from "./wordLists";
@@ -372,9 +371,6 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
     onLessonLink(href);
   };
 
-  const zijpadRef = useRef(null);
-  const linkLesson = (target) =>
-    setZijpad((z) => ({ ...z, explanation: insertAtCursor(zijpadRef.current, z.explanation, lessonLinkMarkdown(target)) }));
 
   const remove = async () => {
     if (!window.confirm(t("step.confirmRemove", { title: content.title }))) return;
@@ -430,18 +426,12 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
             </label>
           </div>
           <div className="fb-field">
-            <span>
-              {t("lp.explanation")} <LessonLinkPicker onPick={linkLesson} />
-            </span>
-            <textarea
-              ref={zijpadRef}
-              onFocus={rememberCursor}
-              rows={5}
-              aria-label={t("lp.explanation")}
+            <span>{t("lp.explanation")}</span>
+            <RichEditor
               value={zijpad.explanation}
-              onChange={(e) => setZijpad({ ...zijpad, explanation: e.target.value })}
+              onChange={(explanation) => setZijpad((z) => ({ ...z, explanation }))}
               onBlur={saveText}
-              placeholder={t("step.zijpadPh")}
+              label={t("lp.explanation")}
             />
           </div>
         </>

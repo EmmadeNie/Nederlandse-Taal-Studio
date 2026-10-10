@@ -5,8 +5,7 @@ import Markdown from "../components/Markdown";
 import { InternalLinkContext } from "../components/internalLinks";
 import { navigate, useRoute } from "../hooks/useRoute";
 import { PATHS, pathFor } from "../routes";
-import LessonLinkPicker from "./LessonLinkPicker";
-import { insertAtCursor, lessonLinkMarkdown, rememberCursor } from "./lessonLink";
+import RichEditor from "../editor/RichEditor";
 import LessonFiles from "./LessonFiles";
 import { WordListEditor, WordListView } from "./WordList";
 import { LabelPicker } from "./Labels";
@@ -354,11 +353,6 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
     navigate(href);
   };
 
-  const explanationRef = useRef(null);
-  const linkLesson = (target) => {
-    set("explanation")(insertAtCursor(explanationRef.current, form.explanation, lessonLinkMarkdown(target)));
-    setPreview(false);
-  };
 
   const remove = async () => {
     if (!window.confirm(t("lp.confirmDeleteLesson", { title: lesson.title }))) return;
@@ -451,7 +445,6 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
               {preview ? t("lp.edit") : t("lp.preview")}
             </button>
           )}
-          {canEdit && <LessonLinkPicker lessons={lessons} excludeId={lesson.id} onPick={linkLesson} />}
         </h4>
         {preview ? (
           form.explanation.trim() ? (
@@ -462,18 +455,14 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
             <p className="dim lp-empty">{t("lp.noExplanation")}</p>
           )
         ) : (
-          <label className="fb-field">
-            <textarea
-              ref={explanationRef}
-              onFocus={rememberCursor}
-              rows={8}
-              value={form.explanation}
-              onChange={(e) => set("explanation")(e.target.value)}
-              onBlur={saveText}
-              aria-label={t("lp.explanation")}
-              placeholder={t("lp.explanationPh")}
-            />
-          </label>
+          <RichEditor
+            value={form.explanation}
+            onChange={set("explanation")}
+            onBlur={saveText}
+            lessons={lessons}
+            excludeLessonId={lesson.id}
+            label={t("lp.explanation")}
+          />
         )}
       </div>
 

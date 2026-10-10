@@ -125,13 +125,34 @@ gesprek dus in de juiste volgorde achter elkaar.
   "title": "Het perfectum",
   "introducedAtLevel": "A2",
   "summary": "Korte omschrijving.",
-  "explanation": "Uitgebreide uitleg (mag \\n voor nieuwe regels).",
+  "explanation": "<p>Uitgebreide uitleg in HTML, zie hieronder.</p>",
   "grammarTags": ["perfectum"],
   "themes": ["grammatica"],
   "docLinks": [],
   "reviewStatus": "ai-reviewed"
 }
 ```
+
+### Uitleg opmaken (HTML)
+
+`explanation` (en de uitleg van lessen) is HTML, zoals de editor in de app die maakt.
+Gebruik alleen deze bouwstenen; al het andere wordt bij weergave weggehaald:
+
+- Tekst: `<p>`, `<h2>` (kop), `<h3>` (subkop), `<strong>`, `<em>`, `<u>`, `<s>`, `<br>`
+- Lijsten: `<ul>`/`<ol>` met `<li>`
+- Links: `<a href="https://…">` (website) of `<a href="/lesprogramma/<les-id>">` (andere les)
+- Markeerstift: `<mark data-color="#fde68a" style="background-color: #fde68a">…</mark>`
+  (kleuren: #fde68a geel, #bbf7d0 groen, #bfdbfe blauw, #fbcfe8 roze)
+- Tekstkleur: `<span style="color: #f19a9a">…</span>`
+  (kleuren: #8bbcfb blauw, #7fd8a8 groen, #f3c08a oranje, #f19a9a rood, #c4a6f7 paars)
+- Kader: `<div data-callout="regel">…</div>` — soorten: `regel`, `tip`, `letop`, `voorbeeld`;
+  binnenin gewone `<p>`, lijsten enz. Het label ("Regel", "Let op") zet de app er zelf boven.
+- Voorbeeldzin: `<div data-example><p>Ik heb gewerkt.</p><p>I have worked.</p></div>`
+  (eerst Nederlands, dan Engels)
+- Tabel (bv. vervoeging): `<table><tbody><tr><th><p>ik</p></th><th><p>jij</p></th></tr>`
+  `<tr><td><p>werk</p></td><td><p>werkt</p></td></tr></tbody></table>`
+
+Oude uitleg in Markdown blijft werken, maar schrijf nieuwe uitleg in HTML.
 
 ## Oefening (exercise)
 

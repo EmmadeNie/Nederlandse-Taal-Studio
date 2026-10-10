@@ -4,6 +4,7 @@ import { getItem, topics, words, sentences, exercises } from "../data";
 import { LevelBadge } from "../components/Badges";
 import { X } from "../icons";
 import { itemLabel } from "./fields";
+import RichEditor from "../editor/RichEditor";
 
 const LISTS = { word: words, sentence: sentences, topic: topics, exercise: exercises };
 
@@ -37,6 +38,9 @@ export default function FieldInput({ field, value, onChange, onCommit, errors = 
           onBlur={() => onCommit()}
         />
       );
+      break;
+    case "rich":
+      control = <RichEditor value={value} onChange={onChange} onBlur={() => onCommit()} label={label} />;
       break;
     case "number":
       control = (
@@ -127,7 +131,7 @@ export default function FieldInput({ field, value, onChange, onCommit, errors = 
   }
 
   // One control: a real <label> around it. Chip groups and lists name themselves.
-  const Wrapper = field.kind === "multi" || field.kind === "refs" ? "div" : "label";
+  const Wrapper = ["multi", "refs", "rich"].includes(field.kind) ? "div" : "label";
   return (
     <Wrapper className={`fb-field ie-field ie-${field.kind}`}>
       <span>{label}</span>
