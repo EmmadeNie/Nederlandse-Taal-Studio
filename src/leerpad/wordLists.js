@@ -3,13 +3,11 @@
  * the words in src/data, stored in lessons.word_list. Like exercises, the
  * list is computed, so new words with a matching theme appear by themselves.
  */
-import { LEVELS, THEMES, getSet, queryWords, queryWordsUpToLevel, setItems, setsOfType } from "../data";
+import { LEVELS, THEMES, getSet, queryWords, queryWordsUpToLevel, setItems } from "../data";
 
 export { THEMES };
 export const WORD_POS = ["noun", "verb", "adjective", "adverb", "numeral", "conjunction", "other"];
 
-/** Ids of the word sets (e.g. the verbs of an exercise). */
-export const wordSetIds = () => setsOfType("word").map((s) => s.id);
 
 export const hasWordList = (spec) => Boolean(spec && (spec.set || spec.theme || spec.partOfSpeech || spec.level));
 

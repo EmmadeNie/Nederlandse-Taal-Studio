@@ -4,12 +4,10 @@
  * A set is a named group of sentences that belong together (a dialogue such as
  * "mijn-eerste-ontmoetingsgesprek", a row in the sets table); its sentences keep the set's order.
  */
-import { GRAMMAR_TAGS, LEVELS, getSet, sentences, setItems, setsOfType } from "../data";
+import { GRAMMAR_TAGS, LEVELS, getSet, sentences, setItems } from "../data";
 
 export { GRAMMAR_TAGS };
 
-/** Ids of the sentence sets (e.g. a dialogue). */
-export const sentenceSetIds = () => setsOfType("sentence").map((s) => s.id);
 
 export const hasSentenceList = (spec) =>
   Boolean(spec && (spec.set || spec.theme || spec.grammarTag || spec.level));
