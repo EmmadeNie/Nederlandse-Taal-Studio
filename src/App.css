@@ -1476,21 +1476,28 @@ svg[class^="ph"], button svg, h4 svg, .board-meta-item svg {
   font-weight: 600;
 }
 
-.rw-word-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.4rem;
-  margin-bottom: 0.3rem;
+.rw-words {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.6rem;
 }
 
-.rw-word-name {
-  font-size: 0.95rem;
-  font-weight: 700;
+.rw-word {
+  padding: 0.75rem 0.9rem;
 }
 
-.rw-word-en {
-  margin-top: 0.3rem;
+.rw-word .translation:last-child,
+.rw-word .meta:last-child {
+  margin-bottom: 0;
+}
+
+.rw-word .card-footer:empty {
+  display: none;
+}
+
+.rw-word-plural {
+  margin-left: 0.5rem;
+  opacity: 0.6;
 }
 
 .rw-chips {
