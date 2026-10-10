@@ -4,7 +4,8 @@
  *   <div data-callout="regel|tip|letop|voorbeeld"> … </div>   a coloured box
  *   <div data-example><p>Nederlandse zin</p><p>English</p></div>   NL + EN
  */
-import { Node, mergeAttributes } from "@tiptap/core";
+import { Extension, Node, mergeAttributes } from "@tiptap/core";
+import { Plugin, TextSelection } from "@tiptap/pm/state";
 import StarterKit from "@tiptap/starter-kit";
 import { TableKit } from "@tiptap/extension-table";
 import { Color, TextStyle } from "@tiptap/extension-text-style";
@@ -85,6 +86,60 @@ export const Example = Node.create({
   },
 });
 
+// Blocks you can't put the cursor right before or after by clicking.
+const BOXES = new Set(["table", "callout", "example"]);
+
+/**
+ * Click in the space between two blocks where one is a table or box: a new
+ * empty line appears there (or the empty line that is already there gets the
+ * cursor). Otherwise there is no way to type between a table and what follows.
+ */
+export const ClickBetweenBlocks = Extension.create({
+  name: "clickBetweenBlocks",
+  addProseMirrorPlugins() {
+    return [
+      new Plugin({
+        props: {
+          handleDOMEvents: {
+            mousedown(view, event) {
+              if (event.target !== view.dom || event.button !== 0) return false;
+              const { doc, schema } = view.state;
+              // The first top-level block below the click.
+              let index = doc.childCount;
+              let pos = 0;
+              let at = doc.content.size;
+              for (let i = 0; i < doc.childCount; i++) {
+                const dom = view.nodeDOM(pos);
+                if (dom?.getBoundingClientRect && event.clientY < dom.getBoundingClientRect().top) {
+                  index = i;
+                  at = pos;
+                  break;
+                }
+                pos += doc.child(i).nodeSize;
+              }
+              const before = index > 0 ? doc.child(index - 1) : null;
+              const after = index < doc.childCount ? doc.child(index) : null;
+              if (!BOXES.has(before?.type.name) && !BOXES.has(after?.type.name)) return false;
+              const empty = (n) => n?.type.name === "paragraph" && n.content.size === 0;
+              let tr = view.state.tr;
+              if (empty(before)) tr = tr.setSelection(TextSelection.create(tr.doc, at - 1));
+              else if (empty(after)) tr = tr.setSelection(TextSelection.create(tr.doc, at + 1));
+              else {
+                tr = tr.insert(at, schema.nodes.paragraph.create());
+                tr = tr.setSelection(TextSelection.create(tr.doc, at + 1));
+              }
+              view.dispatch(tr.scrollIntoView());
+              view.focus();
+              event.preventDefault();
+              return true;
+            },
+          },
+        },
+      }),
+    ];
+  },
+});
+
 /** Everything the editor knows. */
 export const extensions = [
   StarterKit.configure({
@@ -100,4 +155,5 @@ export const extensions = [
   TableKit.configure({ table: { resizable: true, cellMinWidth: 40 } }),
   Callout,
   Example,
+  ClickBetweenBlocks,
 ];
