@@ -86,6 +86,7 @@ export const FIELDS = {
     { path: "grammarTags", label: "f.grammarTags", kind: "multi", options: GRAMMAR_TAGS, optionLabel: slugText },
     { path: "themes", label: "f.themes", kind: "multi", options: THEMES, optionLabel: slugText },
     { path: "relatedWordIds", label: "f.relatedWordIds", kind: "refs", refType: "word" },
+    { path: "exampleSentenceIds", label: "f.exampleSentenceIds", kind: "refs", refType: "sentence" },
     { ...review[0], group: "f.review" },
     { path: "reviewNotes", label: "f.reviewNotes", kind: "textarea" },
   ],

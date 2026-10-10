@@ -2,6 +2,7 @@ import { useI18n } from "../i18n/context";
 import { topics } from "../data";
 import Markdown from "../components/Markdown";
 import RelatedWords from "../components/RelatedWords";
+import ExampleSentences from "../components/ExampleSentences";
 import { LevelBadge } from "../components/Badges";
 import { pathFor, topicSlug } from "../routes";
 import { ArrowSquareOut, X } from "../icons";
@@ -25,6 +26,7 @@ export function GrammarView({ ids }) {
             </summary>
             {topic.explanation && <Markdown className="lp-explanation">{topic.explanation}</Markdown>}
             <RelatedWords ids={topic.relatedWordIds} />
+            <ExampleSentences ids={topic.exampleSentenceIds} />
             <a href={pathFor("topics", topicSlug(topic.id))} target="_blank" rel="noopener noreferrer">
               <ArrowSquareOut aria-hidden="true" /> {t("lg.openInLibrary")}
             </a>
