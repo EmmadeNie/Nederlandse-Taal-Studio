@@ -7,15 +7,16 @@ import { navigate, useRoute } from "../hooks/useRoute";
 import { PATHS, pathFor } from "../routes";
 import RichEditor from "../editor/RichEditor";
 import LessonFiles from "./LessonFiles";
-import { WordListEditor, WordListView } from "./WordList";
+import { WordListEditor, WordListsView } from "./WordList";
+import ListsEditor from "./ListsEditor";
 import { LabelPicker } from "./Labels";
 import { GrammarPicker, GrammarView } from "./LessonGrammar";
 import { grammarCount } from "./grammarTopics";
 import SaveStatus from "./SaveStatus";
 import { useAutosave } from "./useAutosave";
-import { hasWordList, wordsForList } from "./wordLists";
-import { SentenceListEditor, SentenceListView } from "./SentenceList";
-import { hasSentenceList, sentencesForList } from "./sentenceLists";
+import { hasWordList, toLists, wordsForLists } from "./wordLists";
+import { SentenceListEditor, SentenceListsView } from "./SentenceList";
+import { hasSentenceList, sentencesForLists } from "./sentenceLists";
 import SelectionBar from "./SelectionBar";
 import Board, { AddCardForm } from "./Board";
 import * as api from "./api";
@@ -185,10 +186,10 @@ export default function LesprogrammaPage() {
                     {grammarCount(l.topic_ids) > 0 && t("lg.count", { n: grammarCount(l.topic_ids) })}
                   </MetaItem>
                   <MetaItem icon={ICONS.words}>
-                    {hasWordList(l.word_list) && t("wl.count", { n: wordsForList(l.word_list).length })}
+                    {toLists(l.word_list).some(hasWordList) && t("wl.count", { n: wordsForLists(l.word_list).length })}
                   </MetaItem>
                   <MetaItem icon={ICONS.sentences}>
-                    {hasSentenceList(l.sentence_list) && t("sl.count", { n: sentencesForList(l.sentence_list).length })}
+                    {toLists(l.sentence_list).some(hasSentenceList) && t("sl.count", { n: sentencesForLists(l.sentence_list).length })}
                   </MetaItem>
                   <MetaItem icon={ICONS.bestand}>
                     {l.attachments?.length > 0 && t("files.count", { n: l.attachments.length })}
@@ -475,19 +476,37 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
         </div>
       )}
 
-      {(editing || hasWordList(lesson.word_list)) && (
+      {(editing || toLists(lesson.word_list).some(hasWordList)) && (
         <div className="lp-section">
           <h4>{t("wl.title")}</h4>
-          {editing && <WordListEditor value={form.word_list} onChange={choose("word_list")} />}
-          <WordListView spec={editing ? form.word_list : lesson.word_list} />
+          {editing && (
+            <ListsEditor
+              value={form.word_list}
+              onChange={choose("word_list")}
+              Editor={WordListEditor}
+              has={hasWordList}
+              addLabel="wl.add"
+              removeLabel="wl.remove"
+            />
+          )}
+          <WordListsView value={editing ? form.word_list : lesson.word_list} />
         </div>
       )}
 
-      {(editing || hasSentenceList(lesson.sentence_list)) && (
+      {(editing || toLists(lesson.sentence_list).some(hasSentenceList)) && (
         <div className="lp-section">
           <h4>{t("sl.title")}</h4>
-          {editing && <SentenceListEditor value={form.sentence_list} onChange={choose("sentence_list")} />}
-          <SentenceListView spec={editing ? form.sentence_list : lesson.sentence_list} />
+          {editing && (
+            <ListsEditor
+              value={form.sentence_list}
+              onChange={choose("sentence_list")}
+              Editor={SentenceListEditor}
+              has={hasSentenceList}
+              addLabel="sl.add"
+              removeLabel="sl.remove"
+            />
+          )}
+          <SentenceListsView value={editing ? form.sentence_list : lesson.sentence_list} />
         </div>
       )}
 

@@ -4,7 +4,7 @@
  * set membership itself; validate.js gives friendlier messages before that.
  */
 import { supabase } from "../lib/supabase";
-import { dropItem, dropSet, putItem, putSet, typeOfId } from "./index";
+import { allItems, dropItem, dropSet, putItem, putSet, typeOfId } from "./index";
 
 const ITEM = "id, type, data";
 const SET = "id, type, title, level, item_ids";
@@ -45,9 +45,38 @@ export async function updateItem(item) {
   return row;
 }
 
+/** Delete an item and take it out of whatever refers to it (sets do that in the database). */
 export async function deleteItem(id) {
   check(await supabase.from("content_items").delete().eq("id", id));
   dropItem(id);
+  await removeItemReferences(id);
+}
+
+// Fields of other items that refer to an item by id.
+const REF_FIELDS = ["wordIds", "focusWordIds", "relatedWordIds", "exampleSentenceIds"];
+
+async function removeItemReferences(id) {
+  for (const item of allItems()) {
+    const fixed = { ...item };
+    let changed = false;
+    REF_FIELDS.forEach((f) => {
+      if (item[f]?.includes(id)) {
+        fixed[f] = item[f].filter((x) => x !== id);
+        changed = true;
+      }
+    });
+    if (item.topicId === id) {
+      delete fixed.topicId;
+      changed = true;
+    }
+    if (changed) await updateItem(fixed);
+  }
+  if (typeOfId(id) === "topic") {
+    const lessons = await supabase.from("lessons").select("id, topic_ids").contains("topic_ids", [id]).then(check);
+    for (const l of lessons) {
+      check(await supabase.from("lessons").update({ topic_ids: l.topic_ids.filter((x) => x !== id) }).eq("id", l.id));
+    }
+  }
 }
 
 export async function createSet({ id, type, title, level = null, itemIds = [] }) {
@@ -72,16 +101,37 @@ export async function updateSet(id, patch) {
   return row;
 }
 
+/** Delete a set and the lesson lists built on it. */
 export async function deleteSet(id) {
   check(await supabase.from("sets").delete().eq("id", id));
   dropSet(id);
+  const lessons = await supabase
+    .from("lessons")
+    .select("id, word_list, sentence_list")
+    .or(`word_list.cs.${JSON.stringify([{ set: id }])},sentence_list.cs.${JSON.stringify([{ set: id }])}`)
+    .then(check);
+  const without = (lists) => {
+    const kept = (Array.isArray(lists) ? lists : lists ? [lists] : []).filter((x) => x.set !== id);
+    return kept.length ? kept : null;
+  };
+  for (const l of lessons) {
+    check(
+      await supabase
+        .from("lessons")
+        .update({ word_list: without(l.word_list), sentence_list: without(l.sentence_list) })
+        .eq("id", l.id)
+    );
+  }
 }
 
 /** Lessons that use an item or set: topics via topic_ids, sets via word/sentence lists. */
 export async function lessonsUsing({ topicId, setId }) {
   let query = supabase.from("lessons").select("id, title");
   if (topicId) query = query.contains("topic_ids", [topicId]);
-  else if (setId) query = query.or(`word_list->>set.eq.${setId},sentence_list->>set.eq.${setId}`);
+  else if (setId) {
+    const list = JSON.stringify([{ set: setId }]);
+    query = query.or(`word_list.cs.${list},sentence_list.cs.${list}`);
+  }
   else return [];
   return query.order("title").then(check);
 }

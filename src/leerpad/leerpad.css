@@ -1112,3 +1112,35 @@
   align-items: center;
   gap: 0.35rem;
 }
+
+/* Several word/sentence lists on a lesson */
+.lists-editor {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.lists-editor-item {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 8px 0 10px;
+}
+
+.lists-editor-item > .wl-editor {
+  flex: 1;
+  min-width: 0;
+}
+
+.lists-editor-add {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.lp-section > .wl + .wl {
+  margin-top: 6px;
+}

@@ -6,6 +6,7 @@ import { itemLabel } from "../library/fields";
 import { ITEM_OPS, applyChange, evaluate } from "./changeset";
 import FieldValue from "./FieldValue";
 import { fieldOrder, same, useFieldLabel } from "./fieldDiff";
+import { usageOf } from "./usage";
 import { clearDecision, deleteProposal, fetchVersions, saveDecision } from "./api";
 
 /** One proposal: ChatGPT's summary and a card per change to approve or reject. */
@@ -218,12 +219,30 @@ const show = (v) =>
         ? JSON.stringify(v)
         : String(v);
 
+/** Where a deleted item or set is still used (null while loading, or when not a delete). */
+function useUsage(change, active) {
+  const [usage, setUsage] = useState(null);
+  const isDelete = change.op === "delete" || change.op === "set.delete";
+  useEffect(() => {
+    if (!active || !isDelete) return;
+    let live = true;
+    usageOf(change)
+      .then((u) => live && setUsage(u))
+      .catch(() => live && setUsage(null));
+    return () => {
+      live = false;
+    };
+  }, [change, active, isDelete]);
+  return active && isDelete ? usage : null;
+}
+
 const nameOf = (id) => itemLabel(getItem(id)) || id;
 
 function ChangeCard({ change, evaluation, decision, busy, error, onApprove, onReject, onReopen }) {
   const { t } = useI18n();
   const { before, after, problems, conflict, blockedBy, similar } = evaluation;
   const isItem = ITEM_OPS.includes(change.op);
+  const usage = useUsage(change, !decision);
   const itemType = change.type || change.id?.split(".")[0];
   const label = useFieldLabel(itemType);
 
@@ -291,6 +310,19 @@ function ChangeCard({ change, evaluation, decision, busy, error, onApprove, onRe
         </div>
       )}
       {!decision && conflict && <div className="pr-note pr-note-warn">{t("pr.conflict")}</div>}
+      {usage &&
+        (usage.length ? (
+          <div className="pr-note pr-note-warn">
+            {t("pr.usedIn")}
+            <ul>
+              {usage.map((u, j) => (
+                <li key={j}>{t(u.key, u.vars)}</li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <div className="pr-note dim">{t("pr.unused")}</div>
+        ))}
       {!decision && similar && (
         <div className="pr-note pr-note-warn">{t("pr.similar", { name: itemLabel(similar), id: similar.id })}</div>
       )}

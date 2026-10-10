@@ -5,6 +5,7 @@
  * "mijn-eerste-ontmoetingsgesprek", a row in the sets table); its sentences keep the set's order.
  */
 import { GRAMMAR_TAGS, LEVELS, getSet, sentences, setItems } from "../data";
+import { toLists, unique } from "./wordLists";
 
 export { GRAMMAR_TAGS };
 
@@ -34,3 +35,6 @@ export function sentencesForList(spec) {
 
 /** "mijn-eerste-ontmoetingsgesprek" → "mijn eerste ontmoetingsgesprek" */
 export const slugLabel = (slug) => slug.replace(/-/g, " ");
+
+/** All sentences of a lesson's sentence lists, each once. */
+export const sentencesForLists = (value) => unique(toLists(value).flatMap(sentencesForList));

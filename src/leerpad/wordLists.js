@@ -40,3 +40,11 @@ export function wordsForList(spec) {
 
 /** "dagelijks-leven" → "dagelijks leven" */
 export const themeLabel = (theme) => theme.replace(/-/g, " ");
+
+/** A lesson's lists as an array (older lessons stored a single recipe). */
+export const toLists = (value) => (Array.isArray(value) ? value : value ? [value] : []);
+
+/** All words of a lesson's word lists, each once. */
+export const wordsForLists = (value) => unique(toLists(value).flatMap(wordsForList));
+
+export const unique = (items) => [...new Map(items.map((x) => [x.id, x])).values()];
