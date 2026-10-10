@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Brand from "../components/Brand";
 import { supabase } from "../lib/supabase";
 import { useI18n } from "../i18n/context";
 import { EnvelopeSimple } from "../icons";
@@ -33,8 +34,7 @@ export default function LoginPage({ invited = false }) {
   return (
     <div className="auth-screen">
       <div className="auth-card">
-        <h1>🇳🇱 NL Studio</h1>
-        <p className="subtitle">Nederlandse Taal Studio</p>
+        <Brand tagline />
         {invited && <p className="auth-invited">{t("invite.loginHint")}</p>}
 
         {status === "sent" ? (
