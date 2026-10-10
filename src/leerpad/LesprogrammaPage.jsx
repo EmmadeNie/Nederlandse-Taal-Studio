@@ -20,7 +20,7 @@ import { hasSentenceList, sentencesForList } from "./sentenceLists";
 import SelectionBar from "./SelectionBar";
 import Board, { AddCardForm } from "./Board";
 import * as api from "./api";
-import { BoardFilters, CardBody, Dialog, MetaItem } from "./shared";
+import { BoardFilters, CardBody, Chips, Dialog, MetaItem } from "./shared";
 import { CheckSquare, Eye, ICONS } from "../icons";
 import { LEVELS, matchesFilter } from "./util";
 
@@ -390,6 +390,7 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
 
   return (
     <Dialog title={canEdit ? t("lp.editLesson") : lesson.title} onClose={close} wide>
+      {!canEdit && <Chips level={lesson.level} labelIds={lesson.label_ids} />}
       {isStudent ? (
         <div className="lp-source">
           <strong><Eye /> {t("lp.viewOnly")}. </strong>
