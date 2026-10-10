@@ -1081,3 +1081,18 @@
   flex-direction: column;
   gap: 0.5rem;
 }
+
+/* Lesson dialog: "Bekijk als leerling" */
+.lp-preview-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  font-size: 0.82rem;
+}
+
+.lp-preview-bar button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
