@@ -1,4 +1,7 @@
+import { useState } from "react";
 import { useI18n } from "../i18n/context";
+import TopicLangToggle from "../components/TopicLangToggle";
+import { hasEnglish, topicText } from "../components/topicLang";
 import { topics } from "../data";
 import Markdown from "../components/Markdown";
 import RelatedWords from "../components/RelatedWords";
@@ -12,28 +15,44 @@ import { knownTopics as known } from "./grammarTopics";
 
 /** The grammar of a lesson: title, level, summary; the explanation opens in place. */
 export function GrammarView({ ids }) {
-  const { t } = useI18n();
   const list = known(ids);
   if (!list.length) return null;
   return (
     <ul className="lg-list">
       {list.map((topic) => (
-        <li key={topic.id}>
-          <details>
-            <summary>
-              <strong>{topic.title}</strong> <LevelBadge level={topic.introducedAtLevel} />
-              <div className="dim lg-summary">{topic.summary}</div>
-            </summary>
-            {topic.explanation && <Markdown className="lp-explanation">{topic.explanation}</Markdown>}
-            <RelatedWords ids={topic.relatedWordIds} />
-            <ExampleSentences ids={topic.exampleSentenceIds} />
-            <a href={pathFor("topics", topicSlug(topic.id))} target="_blank" rel="noopener noreferrer">
-              <ArrowSquareOut aria-hidden="true" /> {t("lg.openInLibrary")}
-            </a>
-          </details>
-        </li>
+        <GrammarItem key={topic.id} topic={topic} />
       ))}
     </ul>
+  );
+}
+
+/** One topic in a lesson; NL/EN switch per topic, always starting in Dutch. */
+function GrammarItem({ topic }) {
+  const { t } = useI18n();
+  const [lang, setLang] = useState("nl");
+  const text = topicText(topic, lang);
+  return (
+    <li>
+      <details>
+        <summary>
+          <strong lang={lang}>{text.title}</strong> <LevelBadge level={topic.introducedAtLevel} />
+          {hasEnglish(topic) && <TopicLangToggle lang={lang} onChange={setLang} />}
+          <div className="dim lg-summary" lang={lang}>
+            {text.summary}
+          </div>
+        </summary>
+        {text.explanation && (
+          <div lang={lang}>
+            <Markdown className="lp-explanation">{text.explanation}</Markdown>
+          </div>
+        )}
+        <RelatedWords ids={topic.relatedWordIds} />
+        <ExampleSentences ids={topic.exampleSentenceIds} showEnglish={lang === "en"} />
+        <a href={pathFor("topics", topicSlug(topic.id))} target="_blank" rel="noopener noreferrer">
+          <ArrowSquareOut aria-hidden="true" /> {t("lg.openInLibrary")}
+        </a>
+      </details>
+    </li>
   );
 }
 

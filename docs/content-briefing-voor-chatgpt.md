@@ -176,6 +176,9 @@ Zet NIETS op `human-verified`, dat doet alleen de docent.
   "introducedAtLevel": "A2",
   "summary": "Korte omschrijving.",
   "explanation": "<p>Uitgebreide uitleg in HTML, zie hieronder.</p>",
+  "titleEn": "The present perfect",
+  "summaryEn": "Short description in English.",
+  "explanationEn": "<p>The same explanation in English, in the same HTML.</p>",
   "grammarTags": ["perfectum"],
   "themes": ["grammatica"],
   "docLinks": [],
@@ -184,6 +187,14 @@ Zet NIETS op `human-verified`, dat doet alleen de docent.
   "reviewStatus": "ai-reviewed"
 }
 ```
+
+**Nederlands en Engels.** `title`, `summary` en `explanation` zijn Nederlands; leerlingen zien die
+altijd eerst. `titleEn`, `summaryEn` en `explanationEn` zijn dezelfde teksten in het Engels: leerlingen
+kunnen per regel naar Engels omschakelen. Vertaal de inhoud, niet de voorbeelden: Nederlandse
+voorbeeldwoorden en -zinnen blijven Nederlands, met eventueel de Engelse betekenis erachter
+(*Ik heb gewerkt* = I have worked). Houd dezelfde opbouw, kaders en tabellen aan als in de Nederlandse
+uitleg, zodat beide versies naast elkaar kloppen. Schrijf het Engels eenvoudig (B1): veel leerlingen
+hebben Engels niet als moedertaal.
 
 `relatedWordIds`: woorden (vaak werkwoorden) die bij de regel horen; ze verschijnen als
 vervoegingstegels onder de uitleg. `exampleSentenceIds`: de voorbeeldzinnen die de regel het

@@ -1568,3 +1568,35 @@ svg[class^="ph"], button svg, h4 svg, .board-meta-item svg {
 .example-sentences li .dim {
   font-size: 0.8rem;
 }
+
+/* NL | EN switch on a grammar box */
+.topic-lang {
+  display: inline-flex;
+  margin-left: auto;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.topic-lang button {
+  background: none;
+  border: 0;
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 2px 9px;
+  cursor: pointer;
+}
+
+.topic-lang button[aria-pressed="true"] {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.lg-list summary .topic-lang {
+  float: right;
+}
