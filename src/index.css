@@ -22,6 +22,8 @@
   --error-text: #f19a9a;
   --orange-text: #f3c08a;
   --shadow: rgba(0, 0, 0, 0.25);
+  --logo-tile: #22262f;
+  --logo-card: #4f9cf9;
 
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color-scheme: dark;
@@ -51,6 +53,8 @@
   --error-text: #cf222e;
   --orange-text: #b45309;
   --shadow: rgba(23, 26, 33, 0.12);
+  --logo-tile: #e3e9f3;
+  --logo-card: #2563eb;
 
   color-scheme: light;
 }

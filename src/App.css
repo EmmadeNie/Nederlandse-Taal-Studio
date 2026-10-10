@@ -1429,17 +1429,17 @@ svg[class^="ph"], button svg, h4 svg, .board-meta-item svg {
   color: color-mix(in srgb, var(--lc) 45%, var(--text));
 }
 
-/* Feedback mode switched on: every feedback button pops up in colour once */
+/* Feedback mode switched on: every feedback button pops up in soft orange once */
 @keyframes feedback-pop {
   0% {
     transform: scale(1);
   }
   35% {
     transform: scale(var(--pop, 1.7));
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 6px var(--accent-soft);
+    background: color-mix(in srgb, #f08c3c 28%, transparent);
+    color: var(--orange-text);
+    border-color: color-mix(in srgb, #f08c3c 60%, transparent);
+    box-shadow: 0 0 0 6px color-mix(in srgb, #f08c3c 14%, transparent);
   }
   70% {
     transform: scale(0.9);
