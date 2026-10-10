@@ -6,11 +6,11 @@ import { LevelBadge } from "./Badges";
 import VerbCard from "./VerbCard";
 
 /**
- * The words linked to a grammar topic (relatedWordIds): verbs as compact tiles
- * with only the conjugations (irregular forms in orange) — click the verb for
- * its full card; other words as chips.
+ * The words linked to a grammar topic (relatedWordIds), as tiles: verbs with only
+ * the conjugations (irregular forms in orange; click the verb for its full card),
+ * other words with article, plural and level. English only when the box is on EN.
  */
-export default function RelatedWords({ ids = [] }) {
+export default function RelatedWords({ ids = [], showEnglish = true }) {
   const { t } = useI18n();
   const [open, setOpen] = useState(null); // verb shown in full
   const words = ids.map((id) => getItem(id)).filter(Boolean);
@@ -35,15 +35,11 @@ export default function RelatedWords({ ids = [] }) {
       {others.length > 0 && (
         <>
           <h4>{t("rw.words", { n: others.length })}</h4>
-          <ul className="rw-chips">
+          <div className="rw-verbs">
             {others.map((w) => (
-              <li key={w.id}>
-                {w.article && <span className="dim">{w.article} </span>}
-                <strong>{w.nl}</strong> <span className="dim">· {w.en}</span>{" "}
-                {w.introducedAtLevel && <LevelBadge level={w.introducedAtLevel} />}
-              </li>
+              <WordTile key={w.id} word={w} showEnglish={showEnglish} />
             ))}
-          </ul>
+          </div>
         </>
       )}
       {open && (
@@ -51,6 +47,29 @@ export default function RelatedWords({ ids = [] }) {
           <VerbCard verb={open} />
         </Dialog>
       )}
+    </div>
+  );
+}
+
+/** A word that is not a verb: article + word, plural, level; the English on request. */
+function WordTile({ word: w, showEnglish }) {
+  const { t } = useI18n();
+  return (
+    <div className="rw-tile rw-word">
+      <div className="rw-word-head">
+        <span className="rw-word-name">
+          {w.article && <span className="dim">{w.article} </span>}
+          {w.nl}
+        </span>
+        {w.introducedAtLevel && <LevelBadge level={w.introducedAtLevel} />}
+      </div>
+      {w.plural && (
+        <div className="rw-row">
+          <span className="dim">{t("wl.plural")}</span>
+          <span>{w.plural}</span>
+        </div>
+      )}
+      {showEnglish && w.en && <div className="dim rw-word-en">{w.en}</div>}
     </div>
   );
 }

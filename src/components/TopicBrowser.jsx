@@ -94,7 +94,7 @@ function TopicCard({ topic, isOpen, cardRef, onToggle }) {
               <Markdown className="explanation">{text.explanation}</Markdown>
             </div>
           )}
-          <RelatedWords ids={topic.relatedWordIds} />
+          <RelatedWords ids={topic.relatedWordIds} showEnglish={lang === "en"} />
           <ExampleSentences ids={topic.exampleSentenceIds} showEnglish={lang === "en"} />
         </>
       )}
