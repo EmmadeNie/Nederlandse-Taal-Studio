@@ -28,11 +28,12 @@ export function SentenceListView({ spec }) {
   const { t } = useI18n();
   if (!hasSentenceList(spec)) return null;
   const items = sentencesForList(spec);
+  // Folded by default, like the word list.
   return (
-    <div className="wl">
-      <div className="wl-head">
+    <details className="wl wl-collapsible">
+      <summary className="wl-head">
         <strong>{t("sl.count", { n: items.length })}</strong> <Summary spec={spec} />
-      </div>
+      </summary>
       {items.length === 0 ? (
         <p className="dim lp-empty">{spec.set ? t("sl.emptySet") : t("sl.empty")}</p>
       ) : (
@@ -48,7 +49,7 @@ export function SentenceListView({ spec }) {
         </ol>
       )}
       <QuizletExport words={items} filename={exportName(spec)} downloadKey="qz.downloadSentences" />
-    </div>
+    </details>
   );
 }
 

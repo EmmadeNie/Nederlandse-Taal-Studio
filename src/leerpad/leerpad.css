@@ -926,8 +926,8 @@
 .lg-list li {
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 0.5rem 0.7rem;
-  font-size: 0.85rem;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.9rem;
 }
 
 .lg-list summary {
@@ -1045,30 +1045,46 @@
   outline: none;
 }
 
-/* Word list folded by default: the head is the toggle */
-.wl-collapsible > summary {
+/* Folded blocks in a lesson (grammar topics, word list, sentences): one look.
+   A bordered row, a ▸ that turns when open, the head is the toggle. */
+.wl-collapsible > summary,
+.lg-list summary {
+  position: relative;
   cursor: pointer;
   list-style: none;
-  display: flex;
-  align-items: baseline;
-  gap: 0.4rem;
-  padding: 0.45rem 0.6rem;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--surface-2);
+  padding-left: 1.1rem;
 }
 
-.wl-collapsible > summary::-webkit-details-marker {
+.wl-collapsible > summary {
+  display: block;
+  padding: 0.55rem 0.75rem 0.55rem 1.85rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.wl-collapsible > summary::-webkit-details-marker,
+.lg-list summary::-webkit-details-marker {
   display: none;
 }
 
-.wl-collapsible > summary::before {
+.wl-collapsible > summary::before,
+.lg-list summary::before {
   content: "▸";
+  position: absolute;
+  left: 0;
+  top: 0;
   color: var(--text-dim);
   transition: transform 0.15s;
 }
 
-.wl-collapsible[open] > summary::before {
+.wl-collapsible > summary::before {
+  left: 0.75rem;
+  top: 0.55rem;
+}
+
+.wl-collapsible[open] > summary::before,
+.lg-list details[open] summary::before {
   transform: rotate(90deg);
 }
 
