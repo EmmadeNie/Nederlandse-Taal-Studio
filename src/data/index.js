@@ -1,20 +1,45 @@
-import wordsCore from "./words.json";
-import wordsThema from "./words-thema.json";
-import wordsVerbs from "./words-verbs.json";
-import sentences from "./sentences.json";
-import topics from "./topics.json";
-import exercises from "./exercises.json";
 import { LEVELS, THEMES, GRAMMAR_TAGS, TAGS } from "./schema.js";
 
-// Merge all word lists into one, de-duping by id
-const allWordsRaw = [...wordsCore, ...wordsThema, ...wordsVerbs];
-const wordMap = new Map();
-allWordsRaw.forEach((w) => {
-  if (!wordMap.has(w.id)) wordMap.set(w.id, w);
-});
-export const words = Array.from(wordMap.values());
+/**
+ * The content (words, sentences, grammar topics, exercises, sets) lives in the
+ * database (tables content_items and sets). <ContentGate> loads it once after
+ * login and fills these arrays in place via setContent(), so everything that
+ * imports them keeps working. Items have the same shape as the old JSON:
+ * { id, ...fields }. Sets: { id, type, title, level, itemIds }.
+ */
+export const words = [];
+export const sentences = [];
+export const topics = [];
+export const exercises = [];
+export const sets = [];
 
-export { sentences, topics, exercises, LEVELS, THEMES, GRAMMAR_TAGS, TAGS };
+const BY_TYPE = { word: words, sentence: sentences, topic: topics, exercise: exercises };
+
+/** Replace all content: rows from content_items and sets. */
+export function setContent(itemRows, setRows) {
+  Object.values(BY_TYPE).forEach((list) => (list.length = 0));
+  itemRows.forEach((row) => BY_TYPE[row.type]?.push({ id: row.id, ...row.data }));
+  sets.length = 0;
+  setRows.forEach((row) =>
+    sets.push({ id: row.id, type: row.type, title: row.title, level: row.level, itemIds: row.item_ids })
+  );
+}
+
+/** The sets of one type ("word", "sentence", "exercise"), by title. */
+export const setsOfType = (type) =>
+  sets.filter((s) => s.type === type).sort((a, b) => a.title.localeCompare(b.title, "nl"));
+
+export const getSet = (id) => sets.find((s) => s.id === id) || null;
+
+/** The items of a set, in the set's order (unknown ids skipped). */
+export function setItems(set) {
+  if (!set) return [];
+  const list = BY_TYPE[set.type] || [];
+  const byId = new Map(list.map((item) => [item.id, item]));
+  return set.itemIds.map((id) => byId.get(id)).filter(Boolean);
+}
+
+export { LEVELS, THEMES, GRAMMAR_TAGS, TAGS };
 
 // ----- Query helpers -----
 

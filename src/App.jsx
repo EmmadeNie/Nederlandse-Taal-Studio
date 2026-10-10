@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import ContentGate from "./components/ContentGate";
 import "./App.css";
 import Dashboard from "./components/Dashboard";
 import Library from "./components/Library";
@@ -86,7 +87,11 @@ function AuthGate() {
     );
   }
   if (!profile.display_name) return <NameSetup />;
-  return <Studio />;
+  return (
+    <ContentGate>
+      <Studio />
+    </ContentGate>
+  );
 }
 
 function Studio() {

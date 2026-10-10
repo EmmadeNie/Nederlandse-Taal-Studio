@@ -48,6 +48,9 @@ export const messages = {
     "app.feedbackButton": "Feedback over de app",
     "app.feedbackLabel": "De app in het algemeen",
     "app.profileError": "Je profiel kon niet worden geladen.",
+    "content.loading": "Inhoud laden…",
+    "content.error": "De inhoud (woorden, zinnen, grammatica) kon niet worden geladen.",
+    "content.retry": "Opnieuw proberen",
     "setup.title": "Supabase niet geconfigureerd",
     "setup.body":
       "Kopieer .env.example naar .env.local, vul de Supabase URL en anon key in en herstart npm run dev.",
@@ -463,6 +466,9 @@ export const messages = {
     "app.feedbackButton": "Feedback about the app",
     "app.feedbackLabel": "The app in general",
     "app.profileError": "Your profile could not be loaded.",
+    "content.loading": "Loading content…",
+    "content.error": "The content (words, sentences, grammar) could not be loaded.",
+    "content.retry": "Try again",
     "setup.title": "Supabase is not configured",
     "setup.body":
       "Copy .env.example to .env.local, fill in the Supabase URL and anon key, and restart npm run dev.",

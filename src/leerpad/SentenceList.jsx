@@ -4,7 +4,7 @@ import QuizletExport from "../components/QuizletExport";
 import SetInput from "./SetInput";
 import { LEVELS } from "./util";
 import { THEMES, themeLabel } from "./wordLists";
-import { GRAMMAR_TAGS, SENTENCE_SETS, hasSentenceList, sentencesForList, slugLabel } from "./sentenceLists";
+import { GRAMMAR_TAGS, hasSentenceList, sentenceSetIds, sentencesForList, slugLabel } from "./sentenceLists";
 
 /** Short description of a recipe: "mijn eerste ontmoetingsgesprek" or "communicatie · t/m A1". */
 function Summary({ spec }) {
@@ -66,7 +66,7 @@ export function SentenceListEditor({ value, onChange }) {
         <SetInput
           value={spec.set}
           onChange={(v) => set("set", v)}
-          sets={SENTENCE_SETS}
+          sets={sentenceSetIds()}
           listId="sentence-sets"
           placeholder={t("sl.setPh")}
           label={t("sl.set")}
