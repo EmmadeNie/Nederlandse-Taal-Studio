@@ -222,6 +222,16 @@ otp_expiry = 3600
 # admin_email = "admin@email.com"
 # sender_name = "Admin"
 
+# Login emails with both the link and a code (the login page accepts either).
+# On production the same templates are set in the dashboard (Authentication → Emails).
+[auth.email.template.magic_link]
+subject = "Inloggen bij Taal Studio"
+content_path = "./supabase/templates/magic_link.html"
+
+[auth.email.template.confirmation]
+subject = "Welkom bij Taal Studio"
+content_path = "./supabase/templates/confirmation.html"
+
 # Uncomment to customize email template
 # [auth.email.template.invite]
 # subject = "You have been invited"

@@ -962,6 +962,16 @@
   line-height: 1.5;
 }
 
+.auth-code {
+  margin: 0.5rem 0 1rem;
+}
+
+.auth-code input {
+  font-size: 1.3rem;
+  letter-spacing: 0.3em;
+  text-align: center;
+}
+
 .auth-error {
   color: var(--red);
   font-size: 0.82rem;

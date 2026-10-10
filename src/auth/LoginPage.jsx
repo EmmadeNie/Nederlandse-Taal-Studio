@@ -6,6 +6,8 @@ import { EnvelopeSimple } from "../icons";
 
 /**
  * Magic-link login: enter an email, receive a link, click it, done.
+ * The same email has a code too: typing it here logs in on this device, handy
+ * when the link opens in another browser (a mail app on a phone).
  * New email addresses get an account automatically (role: leerling).
  */
 export default function LoginPage({ invited = false }) {
@@ -13,6 +15,8 @@ export default function LoginPage({ invited = false }) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState("idle"); // idle | sending | sent | error
   const [error, setError] = useState(null);
+  const [code, setCode] = useState("");
+  const [checking, setChecking] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,6 +35,18 @@ export default function LoginPage({ invited = false }) {
     }
   };
 
+  // On success the auth listener takes over and shows the app.
+  const handleCode = async (e) => {
+    e.preventDefault();
+    setChecking(true);
+    setError(null);
+    const { error } = await supabase.auth.verifyOtp({ email: email.trim(), token: code.trim(), type: "email" });
+    if (error) {
+      setError(t("login.codeWrong"));
+      setChecking(false);
+    }
+  };
+
   return (
     <div className="auth-screen">
       <div className="auth-card">
@@ -43,7 +59,32 @@ export default function LoginPage({ invited = false }) {
               <EnvelopeSimple /> {t("login.sent")} <strong>{email}</strong>.
             </p>
             <p className="dim">{t("login.sentHint")}</p>
-            <button className="fb-link" onClick={() => setStatus("idle")}>
+            <form className="auth-code" onSubmit={handleCode}>
+              <label className="fb-field">
+                <span>{t("login.codeLabel")}</span>
+                <input
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  pattern="[0-9]*"
+                  maxLength={10}
+                  value={code}
+                  onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
+                  placeholder="123456"
+                />
+              </label>
+              {error && <div className="auth-error">{error}</div>}
+              <button type="submit" className="fb-btn-primary auth-submit" disabled={checking || code.length < 6}>
+                {checking ? t("login.codeChecking") : t("login.codeSubmit")}
+              </button>
+            </form>
+            <button
+              className="fb-link"
+              onClick={() => {
+                setStatus("idle");
+                setCode("");
+                setError(null);
+              }}
+            >
               {t("login.otherEmail")}
             </button>
           </div>
