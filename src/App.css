@@ -1677,3 +1677,12 @@ svg[class^="ph"], button svg, h4 svg, .board-meta-item svg {
 .cat-pronunciation {
   color: var(--b1);
 }
+
+.users-actions {
+  width: 1%;
+  text-align: right;
+}
+
+.users-delete:hover {
+  color: var(--red);
+}
