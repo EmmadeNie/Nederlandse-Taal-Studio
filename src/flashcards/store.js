@@ -5,7 +5,7 @@
 import { useSyncExternalStore } from "react";
 import { supabase } from "../lib/supabase";
 
-const FIELDS = "id, source, title, created_at";
+const FIELDS = "id, source, title, created_at, done_at";
 let decks = null; // null until loaded
 let loading = null;
 const listeners = new Set();
@@ -55,6 +55,19 @@ export async function addDeck(source, title) {
   decks = [...(decks || []), row];
   emit();
   return row;
+}
+
+/** Set a list to done (or back to practising). */
+export async function setDeckDone(id, done) {
+  const row = await supabase
+    .from("flashcard_decks")
+    .update({ done_at: done ? new Date().toISOString() : null })
+    .eq("id", id)
+    .select(FIELDS)
+    .single()
+    .then(check);
+  decks = (decks || []).map((d) => (d.id === id ? row : d));
+  emit();
 }
 
 export async function removeDeck(id) {
