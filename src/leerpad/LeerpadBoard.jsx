@@ -20,6 +20,7 @@ import Board, { AddCardForm } from "./Board";
 import FeedbackButton from "../feedback/FeedbackButton";
 import * as api from "./api";
 import { planByLevel } from "./byLevel";
+import StepStatus from "./StepStatus";
 import { BoardFilters, CardBody, Chips, Dialog, LinkList, LinksEditor, MetaItem } from "./shared";
 import { ICONS } from "../icons";
 import { LEVELS, linkCount, matchesFilter, stepContent } from "./util";
@@ -116,6 +117,11 @@ export default function LeerpadBoard({ studentId }) {
       await load();
     });
 
+  const changeStatus = (step, status) => {
+    setSteps((ss) => ss.map((s) => (s.id === step.id ? { ...s, status } : s)));
+    run(() => api.setStepStatus(step.id, status));
+  };
+
   const openStep = steps.find((s) => s.id === openId);
 
   if (loading) return <p className="dim">{t("common.loading")}</p>;
@@ -150,6 +156,8 @@ export default function LeerpadBoard({ studentId }) {
           renderCard={(s) => {
             const c = stepContent(s);
             return (
+              <>
+              <StepStatus status={s.status} onChange={canArrange ? (status) => changeStatus(s, status) : undefined} />
               <CardBody
                 title={c.title}
                 level={c.level}
@@ -179,6 +187,7 @@ export default function LeerpadBoard({ studentId }) {
                   </>
                 }
               />
+              </>
             );
           }}
           onOpenCard={(s) => setOpenId(s.id)}

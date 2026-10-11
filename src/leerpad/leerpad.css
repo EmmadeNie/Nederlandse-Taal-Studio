@@ -1223,3 +1223,65 @@
   align-items: center;
   gap: 0.4rem;
 }
+
+/* Status of a step on a leerpad (top right of the card): click for the next one */
+.board-card {
+  position: relative;
+}
+
+.step-status {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  background: none;
+  padding: 0;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+span.step-status {
+  cursor: default;
+}
+
+.step-status.is-none {
+  color: var(--text-dim);
+  opacity: 0.3;
+  border-color: var(--border);
+}
+
+.board-card:hover .step-status.is-none,
+.step-status.is-none:focus-visible {
+  opacity: 0.7;
+}
+
+.step-status.is-in_class {
+  color: var(--a1);
+  background: color-mix(in srgb, var(--a1) 16%, transparent);
+}
+
+.step-status.is-homework {
+  color: var(--b1);
+  background: color-mix(in srgb, var(--b1) 16%, transparent);
+}
+
+.step-status.is-homework_done {
+  color: var(--green);
+  background: color-mix(in srgb, var(--green) 16%, transparent);
+}
+
+.step-status.is-ongoing {
+  color: var(--a2);
+  background: color-mix(in srgb, var(--a2) 16%, transparent);
+}
+
+.step-status ~ .board-card-title {
+  padding-right: 26px;
+}
