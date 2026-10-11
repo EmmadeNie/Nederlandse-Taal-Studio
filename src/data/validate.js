@@ -8,6 +8,7 @@
 import { LEVELS, PARTS_OF_SPEECH, REVIEW_STATUSES, SENTENCE_TYPES, TENSES, WORD_ORDERS } from "./schema.js";
 import { GRAMMAR_TAGS, TAGS, THEMES } from "./index.js";
 import { PERFECT_FIELDS, hasNoPerfect } from "./verbForms.js";
+import { TOPIC_CATEGORIES } from "./topicCategory.js";
 
 /** Allowed value of a vocabulary (theme, tag, grammar tag): lower case, digits, single hyphens. */
 export const VOCAB_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -85,6 +86,7 @@ export function validateItem(type, item, ctx, { isNew = false } = {}) {
   if (type === "topic") {
     ["title", "introducedAtLevel"].forEach(required);
     oneOf("introducedAtLevel", item.introducedAtLevel, LEVELS);
+    oneOf("category", item.category, TOPIC_CATEGORIES); // missing = grammar
     allOf("themes", item.themes, THEMES);
     allOf("grammarTags", item.grammarTags, GRAMMAR_TAGS);
     refs("relatedWordIds", item.relatedWordIds, "word");

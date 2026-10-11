@@ -1629,3 +1629,51 @@ svg[class^="ph"], button svg, h4 svg, .board-meta-item svg {
 .lg-list summary .topic-lang {
   float: right;
 }
+
+/* Grammatica / Spelling / Uitspraak */
+.topic-cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0.25rem 0 0.75rem;
+}
+
+.topic-cats button {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.topic-cats button[aria-pressed="true"] {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.cat-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+  vertical-align: middle;
+  border: 1px solid currentColor;
+  white-space: nowrap;
+}
+
+.cat-grammar {
+  color: var(--a1);
+}
+
+.cat-spelling {
+  color: var(--a0);
+}
+
+.cat-pronunciation {
+  color: var(--b1);
+}

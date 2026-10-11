@@ -3,6 +3,7 @@ import { supabase } from "../lib/supabase";
 import { touchedIds } from "./changeset";
 import { GRAMMAR_TAGS, TAGS, THEMES } from "../data";
 import { loadBoard } from "./lessons";
+import { categoryOf } from "../data/topicCategory";
 
 const FIELDS = "id, title, summary, changes, decisions, status, created_at";
 
@@ -91,7 +92,15 @@ export async function exportContent() {
   ]);
   const lessonsOfLane = (laneId) => board.lessons.filter((l) => l.laneId === laneId).sort((a, b) => a.position - b.position);
   const byType = (type) =>
-    items.filter((r) => r.type === type).map((r) => ({ id: r.id, updatedAt: r.updated_at, ...r.data }));
+    items
+      .filter((r) => r.type === type)
+      .map((r) => ({
+        id: r.id,
+        updatedAt: r.updated_at,
+        // Topics always carry their category in the export (missing = grammar).
+        ...(type === "topic" ? { category: categoryOf(r.data) } : {}),
+        ...r.data,
+      }));
   return {
     exportedAt: new Date().toISOString(),
     note: "Taal Studio content. Use updatedAt as baseVersion when you propose an update or delete (also for lessons).",

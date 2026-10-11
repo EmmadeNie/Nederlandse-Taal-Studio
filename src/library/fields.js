@@ -9,6 +9,7 @@
 import { LEVELS, PARTS_OF_SPEECH, REVIEW_STATUSES, SENTENCE_TYPES, TENSES, WORD_ORDERS } from "../data/schema.js";
 import { GRAMMAR_TAGS, TAGS, THEMES } from "../data/index.js";
 import { EXERCISE_TYPES } from "../data/validate.js";
+import { DEFAULT_TOPIC_CATEGORY, TOPIC_CATEGORIES } from "../data/topicCategory.js";
 
 const slugText = (t, v) => v.replace(/-/g, " ");
 const isNoun = (item) => item.partOfSpeech === "noun";
@@ -71,6 +72,14 @@ export const FIELDS = {
   ],
   topic: [
     { path: "title", label: "f.title", kind: "text" },
+    {
+      path: "category",
+      label: "f.category",
+      kind: "select",
+      options: TOPIC_CATEGORIES,
+      default: DEFAULT_TOPIC_CATEGORY,
+      optionLabel: (t, v) => t(`cat.${v}`),
+    },
     level(),
     { path: "summary", label: "f.summary", kind: "textarea" },
     { path: "explanation", label: "f.explanation", kind: "rich" },
@@ -98,7 +107,7 @@ export function newItem(type, extra = {}) {
   const base = {
     word: { nl: "", en: "", partOfSpeech: "noun", introducedAtLevel: "A0", themes: [], tags: [], reviewStatus: "human-verified" },
     sentence: { nl: "", en: "", introducedAtLevel: "A0", themes: [], grammarTags: [], wordIds: [], focusWordIds: [], reviewStatus: "human-verified" },
-    topic: { title: "", introducedAtLevel: "A0", summary: "", explanation: "", grammarTags: [], themes: [], docLinks: [], reviewStatus: "human-verified" },
+    topic: { title: "", category: DEFAULT_TOPIC_CATEGORY, introducedAtLevel: "A0", summary: "", explanation: "", grammarTags: [], themes: [], docLinks: [], reviewStatus: "human-verified" },
     exercise: { title: "", type: "fill-in", level: "A0", query: { maxLevel: "A0", limit: 10 } },
   }[type];
   return { id: "", ...base, ...extra };
