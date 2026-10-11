@@ -300,6 +300,24 @@
   font-size: 0.85rem;
 }
 
+.fc-nav {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: -0.25rem;
+}
+
+.fc-nav .fb-link {
+  padding: 0.4rem 0.2rem;
+  font-size: 0.95rem;
+}
+
+.fc-nav .fb-link:disabled,
+.fc-done-actions .fb-link:disabled {
+  opacity: 0.35;
+  cursor: default;
+  text-decoration: none;
+}
+
 .fc-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
