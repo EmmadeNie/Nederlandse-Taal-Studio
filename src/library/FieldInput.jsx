@@ -177,6 +177,7 @@ function JsonField({ value, onCommit }) {
 export function ItemPicker({ type, exclude = [], onPick, label, filter }) {
   const { t } = useI18n();
   const [query, setQuery] = useState("");
+  const [active, setActive] = useState(0); // highlighted result: Enter picks it
   const q = query.trim().toLowerCase();
   const results = q
     ? (LISTS[type] || [])
@@ -189,16 +190,37 @@ export function ItemPicker({ type, exclude = [], onPick, label, filter }) {
       <input
         type="search"
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={(e) => {
+          setQuery(e.target.value);
+          setActive(0);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+            if (!results.length) return;
+            e.preventDefault();
+            const step = e.key === "ArrowDown" ? 1 : -1;
+            setActive((i) => (i + step + results.length) % results.length);
+          } else if (e.key === "Enter") {
+            // Never submit a surrounding form; pick the highlighted (first) result.
+            e.preventDefault();
+            const item = results[Math.min(active, results.length - 1)];
+            if (!item) return;
+            onPick(item);
+            setQuery("");
+            setActive(0);
+          }
+        }}
         placeholder={label || t(`ie.search.${type}`)}
         aria-label={label || t(`ie.search.${type}`)}
       />
       {results.length > 0 && (
         <ul className="ll-list">
-          {results.map((item) => (
+          {results.map((item, i) => (
             <li key={item.id}>
               <button
                 type="button"
+                className={i === Math.min(active, results.length - 1) ? "is-active" : undefined}
+                onMouseEnter={() => setActive(i)}
                 onClick={() => {
                   onPick(item);
                   setQuery("");
