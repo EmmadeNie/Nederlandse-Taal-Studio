@@ -2,6 +2,7 @@
 import { supabase } from "../lib/supabase";
 import { touchedIds } from "./changeset";
 import { GRAMMAR_TAGS, TAGS, THEMES } from "../data";
+import { loadBoard } from "./lessons";
 
 const FIELDS = "id, title, summary, changes, decisions, status, created_at";
 
@@ -83,20 +84,45 @@ export async function exportContent() {
       if (rows.length < 1000) return out;
     }
   };
-  const [items, sets] = await Promise.all([
+  const [items, sets, board] = await Promise.all([
     all("content_items", "id, type, data, updated_at"),
     all("sets", "id, type, title, level, item_ids, updated_at"),
+    loadBoard(),
   ]);
+  const lessonsOfLane = (laneId) => board.lessons.filter((l) => l.laneId === laneId).sort((a, b) => a.position - b.position);
   const byType = (type) =>
     items.filter((r) => r.type === type).map((r) => ({ id: r.id, updatedAt: r.updated_at, ...r.data }));
   return {
     exportedAt: new Date().toISOString(),
-    note: "Taal Studio content. Use updatedAt as baseVersion when you propose an update or delete.",
+    note: "Taal Studio content. Use updatedAt as baseVersion when you propose an update or delete (also for lessons).",
     words: byType("word"),
     sentences: byType("sentence"),
     topics: byType("topic"),
     exercises: byType("exercise"),
     sets: sets.map((s) => ({ id: s.id, type: s.type, title: s.title, level: s.level, itemIds: s.item_ids, updatedAt: s.updated_at })),
+    // The Lesprogramma board: lanes left to right, lessons top to bottom per lane.
+    lanes: board.lanes.map((lane) => ({ id: lane.id, name: lane.name })),
+    labels: board.labels.map((l) => ({ id: l.id, name: l.name_nl, nameEn: l.name_en || "" })),
+    lessons: board.lanes.flatMap((lane) =>
+      lessonsOfLane(lane.id).map((l, i) => ({
+        id: l.id,
+        updatedAt: l.updatedAt,
+        laneId: lane.id,
+        lane: lane.name,
+        order: i + 1,
+        title: l.title,
+        level: l.level,
+        labelIds: l.labelIds,
+        labels: l.labelIds.map((id) => board.labels.find((x) => x.id === id)?.name_nl).filter(Boolean),
+        explanation: l.explanation,
+        links: l.links,
+        wordLists: l.wordLists,
+        sentenceLists: l.sentenceLists,
+        topicIds: l.topicIds,
+        verbIds: l.verbIds,
+        attachments: l.attachments,
+      }))
+    ),
     // Allowed values; a new one needs a "vocab.add" first.
     vocabularies: { themes: [...THEMES], tags: [...TAGS], grammarTags: [...GRAMMAR_TAGS] },
   };

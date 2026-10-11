@@ -74,13 +74,13 @@ async function removeItemReferences(id) {
   if (typeOfId(id) === "word") {
     const lessons = await supabase.from("lessons").select("id, verb_ids").contains("verb_ids", [id]).then(check);
     for (const l of lessons) {
-      check(await supabase.from("lessons").update({ verb_ids: l.verb_ids.filter((x) => x !== id) }).eq("id", l.id));
+      check(await supabase.from("lessons").update({ verb_ids: l.verb_ids.filter((x) => x !== id), updated_at: new Date().toISOString() }).eq("id", l.id));
     }
   }
   if (typeOfId(id) === "topic") {
     const lessons = await supabase.from("lessons").select("id, topic_ids").contains("topic_ids", [id]).then(check);
     for (const l of lessons) {
-      check(await supabase.from("lessons").update({ topic_ids: l.topic_ids.filter((x) => x !== id) }).eq("id", l.id));
+      check(await supabase.from("lessons").update({ topic_ids: l.topic_ids.filter((x) => x !== id), updated_at: new Date().toISOString() }).eq("id", l.id));
     }
   }
 }
@@ -124,7 +124,7 @@ export async function deleteSet(id) {
     check(
       await supabase
         .from("lessons")
-        .update({ word_list: without(l.word_list), sentence_list: without(l.sentence_list) })
+        .update({ word_list: without(l.word_list), sentence_list: without(l.sentence_list), updated_at: new Date().toISOString() })
         .eq("id", l.id)
     );
   }
