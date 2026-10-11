@@ -249,6 +249,15 @@ export default function LesprogrammaPage() {
               run(() => api.deleteLessonLane(lane.id));
             })
           }
+          focusLaneId={lanes.find((l) => l.is_focus)?.id}
+          onFocusLane={
+            canEdit
+              ? (lane) => {
+                  setLanes((ls) => ls.map((l) => ({ ...l, is_focus: l.id === lane?.id })));
+                  run(() => api.setFocusLessonLane(lane?.id ?? null));
+                }
+              : undefined
+          }
           laneFooter={
             canEdit &&
             ((lane) => (

@@ -209,6 +209,15 @@ export default function LeerpadBoard({ studentId }) {
               run(() => api.moveLeerpadLane(lane.id, position));
             })
           }
+          focusLaneId={lanes.find((l) => l.is_focus)?.id}
+          onFocusLane={
+            canArrange
+              ? (lane) => {
+                  setLanes((ls) => ls.map((l) => ({ ...l, is_focus: l.id === lane?.id })));
+                  run(() => api.setFocusLeerpadLane(studentId, lane?.id ?? null));
+                }
+              : undefined
+          }
           onDeleteLane={
             canArrange &&
             lanes.length > 1 &&
