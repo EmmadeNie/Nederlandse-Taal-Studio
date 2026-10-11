@@ -12,7 +12,7 @@ import { useAllFeedback } from "./feedback/useFeedback";
 import { getStats } from "./data";
 import { navigate, useRoute } from "./hooks/useRoute";
 import { PATHS } from "./routes";
-import { ICONS, Lightbulb } from "./icons";
+import { ICONS, Lightbulb, List } from "./icons";
 import { useAuth } from "./auth/context";
 import { useI18n } from "./i18n/context";
 import LanguageToggle from "./i18n/LanguageToggle";
@@ -107,6 +107,7 @@ function Studio() {
   useContentVersion(); // counts follow edits
   const route = useRoute();
   const [appFeedbackOpen, setAppFeedbackOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false); // phone: the menu slides in
   const { feedbackMode } = usePrefs();
   const stats = getStats();
   const allFeedback = useAllFeedback();
@@ -132,8 +133,11 @@ function Studio() {
     if (page !== route.page) navigate(PATHS[page], { replace: true });
   }, [page, route.page]);
 
-  // Clicking a nav item drops the previous page's filters.
-  const setPage = (id) => navigate(PATHS[id === "library" ? "words" : id]);
+  // Clicking a nav item drops the previous page's filters (and closes the phone menu).
+  const setPage = (id) => {
+    setMenuOpen(false);
+    navigate(PATHS[id === "library" ? "words" : id]);
+  };
 
   const libraryCounts = {
     words: stats.totalWords,
@@ -149,7 +153,21 @@ function Studio() {
 
   return (
     <div className="app">
-      <aside className="sidebar">
+      {/* Phone: a top bar with the menu button; the sidebar becomes a drawer. */}
+      <header className="mobile-bar">
+        <button
+          type="button"
+          className="mobile-menu-btn"
+          aria-label={t("app.menu")}
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen(true)}
+        >
+          <List size={22} />
+        </button>
+        <Brand as="span" />
+      </header>
+      {menuOpen && <div className="sidebar-backdrop" onClick={() => setMenuOpen(false)} aria-hidden="true" />}
+      <aside className={`sidebar ${menuOpen ? "is-open" : ""}`}>
         <Brand tagline />
         <nav>
           {pages.map((p) => (

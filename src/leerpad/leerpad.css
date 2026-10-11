@@ -1356,3 +1356,20 @@ span.step-status {
   white-space: nowrap;
   cursor: pointer;
 }
+
+/* Phone: one lane fills most of the screen; swipe between lanes */
+@media (max-width: 760px) {
+  .board {
+    scroll-snap-type: x mandatory;
+  }
+
+  .board-lane {
+    flex-basis: 85vw;
+    width: 85vw;
+    scroll-snap-align: start;
+  }
+
+  .lp-page-head {
+    flex-wrap: wrap;
+  }
+}
