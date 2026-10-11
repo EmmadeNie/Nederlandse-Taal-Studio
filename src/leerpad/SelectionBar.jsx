@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useI18n } from "../i18n/context";
-import { leerpadLanes, listStudents, planLessons } from "./api";
+import { leerpadLanes, listStudents, planLessons, plannedLessonIds } from "./api";
 
 /**
  * Bottom bar while lessons are selected on the lesprogramma: put them all on
- * one student's leerpad, in a lane of choice.
+ * one student's leerpad, in a lane of choice. Choosing a student highlights the
+ * lessons already on their leerpad (onPlanned gets the set of lesson ids).
  */
-export default function SelectionBar({ lessonIds, onClear }) {
+export default function SelectionBar({ lessonIds, onClear, onPlanned, plannedCount }) {
   const { t } = useI18n();
   const [students, setStudents] = useState([]);
   const [studentId, setStudentId] = useState("");
@@ -19,11 +20,15 @@ export default function SelectionBar({ lessonIds, onClear }) {
     listStudents().then(setStudents).catch(() => setStudents([]));
   }, []);
 
+  const showPlanned = (id) =>
+    id ? plannedLessonIds(id).then(onPlanned, () => onPlanned(null)) : onPlanned(null);
+
   const chooseStudent = async (id) => {
     setStudentId(id);
     setLanes([]);
     setLaneId("");
     setMessage(null);
+    showPlanned(id);
     if (!id) return;
     try {
       const rows = await leerpadLanes(id);
@@ -45,6 +50,7 @@ export default function SelectionBar({ lessonIds, onClear }) {
         ? t("select.planned", { n: added, name: student?.display_name || student?.email, lane: lane?.name })
         : "";
       setMessage({ text: [planned, skipped ? t("select.skipped", { n: skipped }) : ""].filter(Boolean).join(" ") });
+      showPlanned(studentId); // the new ones are highlighted too
     } catch (e) {
       setMessage({ error: true, text: t(e.message) });
     } finally {
@@ -80,6 +86,11 @@ export default function SelectionBar({ lessonIds, onClear }) {
           </option>
         ))}
       </select>
+      {studentId && plannedCount != null && (
+        <span className="selection-planned">
+          <span className="planned-swatch" aria-hidden="true" /> {t("select.alreadyPlanned", { n: plannedCount })}
+        </span>
+      )}
       <button
         className="fb-btn-primary"
         onClick={plan}
