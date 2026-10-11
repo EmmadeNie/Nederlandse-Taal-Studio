@@ -130,8 +130,7 @@ export default function LeerpadBoard({ studentId }) {
     <>
       <BoardFilters
         search={search}
-        // A student's own leerpad has no search field; staff search across steps.
-        setSearch={isOwner && !isDocent ? undefined : setSearch}
+        setSearch={setSearch}
         level={level}
         setLevel={setLevel}
         label={label}
