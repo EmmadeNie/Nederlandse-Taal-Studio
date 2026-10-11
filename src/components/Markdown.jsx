@@ -3,6 +3,7 @@ import { navigate } from "../hooks/useRoute";
 import { useI18n } from "../i18n/context";
 import { InternalLinkContext } from "./internalLinks";
 import { sanitize, toHtml } from "../editor/richText";
+import { playVideoCard, withVideoCards } from "../editor/videoCards";
 import "../editor/rich.css";
 
 /**
@@ -12,12 +13,21 @@ import "../editor/rich.css";
  * other links open in a new tab.
  */
 export default function Markdown({ children, className }) {
-  const { lang } = useI18n();
+  const { lang, t } = useI18n();
   const handle = useContext(InternalLinkContext);
-  const html = useMemo(() => sanitize(toHtml(children || "")), [children]);
+  const playLabel = t("video.play");
+  const html = useMemo(
+    () => withVideoCards(sanitize(toHtml(children || "")), { playLabel }),
+    [children, playLabel]
+  );
   if (!html) return null;
 
   const onClick = (e) => {
+    if (playVideoCard(e.target)) {
+      e.preventDefault();
+      e.stopPropagation(); // don't fold the box it sits in
+      return;
+    }
     const a = e.target.closest?.("a");
     const href = a?.getAttribute("href") || "";
     if (!href.startsWith("/") || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
