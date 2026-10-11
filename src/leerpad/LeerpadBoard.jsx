@@ -20,6 +20,7 @@ import Board, { AddCardForm } from "./Board";
 import FeedbackButton from "../feedback/FeedbackButton";
 import * as api from "./api";
 import { planByLevel } from "./byLevel";
+import ListHeading from "../flashcards/ListHeading";
 import StepStatus, { StatusLegend } from "./StepStatus";
 import { BoardFilters, CardBody, Chips, Dialog, LinkList, LinksEditor, MetaItem } from "./shared";
 import { ICONS } from "../icons";
@@ -515,21 +516,21 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
 
       {lessonVerbs(content.verbIds).length > 0 && (
         <div className="lp-section">
-          <h4>{t("lv.title")}</h4>
+          <ListHeading lesson={step.lesson} part="verbs">{t("lv.title")}</ListHeading>
           <VerbsView ids={content.verbIds} />
         </div>
       )}
 
       {toLists(content.wordList).some(hasWordList) && (
         <div className="lp-section">
-          <h4>{t("wl.title")}</h4>
+          <ListHeading lesson={step.lesson} part="words">{t("wl.title")}</ListHeading>
           <WordListsView value={content.wordList} />
         </div>
       )}
 
       {toLists(content.sentenceList).some(hasSentenceList) && (
         <div className="lp-section">
-          <h4>{t("sl.title")}</h4>
+          <ListHeading lesson={step.lesson} part="sentences">{t("sl.title")}</ListHeading>
           <SentenceListsView value={content.sentenceList} />
         </div>
       )}

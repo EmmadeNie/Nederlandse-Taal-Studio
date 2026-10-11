@@ -101,6 +101,7 @@ export const ICONS = {
   sets: Stack,
   dashboard: SquaresFour,
   feedback: ChatCircleDots,
+  flashcards: Cards,
   proposals: Sparkle,
   users: Users,
   leerling: Student,
@@ -114,6 +115,7 @@ export const ICONS = {
 
 /** Actions and states. */
 export {
+  Cards,
   List,
   House,
   HourglassMedium,

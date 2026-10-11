@@ -22,6 +22,7 @@ import LoginPage from "./auth/LoginPage";
 import NameSetup from "./auth/NameSetup";
 import InviteClaim from "./auth/InviteClaim";
 import UserManagement from "./users/UserManagement";
+import FlashcardsPage from "./flashcards/FlashcardsPage";
 import ProposalsPage from "./proposals/ProposalsPage";
 import { countOpenProposals } from "./proposals/api";
 import LesprogrammaPage from "./leerpad/LesprogrammaPage";
@@ -30,6 +31,7 @@ import { isSupabaseConfigured } from "./lib/supabase";
 
 const PAGES = [
   { id: "leerpad", roles: ["leerling"] },
+  { id: "flashcards" },
   { id: "dashboard", roles: ["docent", "reviewer"] },
   { id: "lesprogramma" },
   { id: "leerpaden", roles: ["docent", "reviewer"] },
@@ -213,6 +215,7 @@ function Studio() {
           <Library tab={page} onTab={setPage} counts={libraryCounts} />
         )}
         {page === "feedback" && <FeedbackOverview />}
+        {page === "flashcards" && <FlashcardsPage />}
         {page === "proposals" && <ProposalsPage onCountChange={setOpenProposals} />}
         {page === "users" && <UserManagement />}
         {page === "lesprogramma" && <LesprogrammaPage />}
