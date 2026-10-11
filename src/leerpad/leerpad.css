@@ -1052,6 +1052,7 @@
 }
 
 .ll-list button:hover,
+.ll-list button.is-active,
 .ll-list button:focus-visible {
   background: var(--surface-2);
   outline: none;
