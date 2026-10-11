@@ -82,6 +82,63 @@ Regels:
   gebruikt een `vocab.add` (`kind`: `theme`, `tag` of `grammarTag`; `value`: kleine letters, cijfers
   en streepjes). Die wijzigingen wachten dan tot de docent de nieuwe waarde heeft goedgekeurd.
 
+## Lessen (kaartjes op het Lesprogramma-bord)
+
+De export bevat ook het bord: `lanes` (de kolommen, van links naar rechts), `labels` en `lessons`
+(per baan van boven naar beneden, met `order`). Een les in de export:
+
+```json
+{
+  "id": "d4787bdb-7598-4b14-9263-a57e429bed23",
+  "updatedAt": "2026-10-10T22:52:09.95+00:00",
+  "laneId": "9d845284-…", "lane": "A", "order": 1,
+  "title": "Werkwoorden vervoegen",
+  "level": "A1",
+  "labelIds": ["c162de31-…"], "labels": ["Oefenen"],
+  "explanation": "<p>Uitleg in HTML, zoals bij grammatica.</p>",
+  "links": [{ "label": "nt2taalmenu.nl", "url": "https://nt2taalmenu.nl/…" }],
+  "wordLists": [{ "set": "eerste-regelmatige-werkwoorden" }, { "theme": "dieren", "level": "A1", "upTo": true }],
+  "sentenceLists": [{ "set": "mijn-eerste-zinnen-a0" }],
+  "topicIds": ["topic.perfectum"],
+  "verbIds": ["word.werken", "word.wonen"],
+  "attachments": ["werkblad.pdf"]
+}
+```
+
+- `wordLists` / `sentenceLists`: lijstjes in de les. Elk lijstje is een "recept": een `set`
+  (aanbevolen, geordend) en/of filters `theme`, `level` (+ `upTo: true` = t/m dat niveau);
+  woordenlijsten ook `partOfSpeech`, zinnenlijsten ook `grammarTag`.
+- `topicIds`: grammatica-onderwerpen; `verbIds`: werkwoorden die als vervoegingstegels getoond worden.
+- `labelIds`: alleen bestaande labels uit `labels`. `attachments` (bestanden) zijn alleen ter info;
+  die kun je niet wijzigen.
+- Les-ID's zijn vaste ID's uit de database: gebruik ze zoals ze in de export staan. Een nieuwe les
+  krijgt pas een ID als de docent hem goedkeurt, dus je kunt in hetzelfde voorstel niet naar een nieuwe
+  les verwijzen.
+
+Wijzigingen (in dezelfde changeset als woorden en sets):
+
+```json
+{ "op": "lesson.add", "lane": "<laneId>", "after": "<lessonId> | null",
+  "data": { "title": "Werkwoorden oefenen", "level": "A1", "labelIds": [],
+            "explanation": "<p>…</p>", "links": [], "wordLists": [], "sentenceLists": [],
+            "topicIds": [], "verbIds": ["word.werken"] },
+  "reason": "…" }
+
+{ "op": "lesson.update", "id": "<lessonId>", "baseVersion": "<updatedAt>",
+  "data": { "title": "Nieuwe titel", "verbIds": ["word.werken", "word.koken"] },
+  "reason": "…" }
+
+{ "op": "lesson.update", "id": "<lessonId>", "baseVersion": "<updatedAt>",
+  "lane": "<laneId>", "after": null, "data": {}, "reason": "Naar boven in baan A." }
+```
+
+- `after`: de les waarna hij komt in die baan; `null` = bovenaan; weglaten bij `lesson.add` = onderaan.
+  Bij `lesson.update` alleen `lane`/`after` meegeven als de les moet verplaatsen.
+- `data` bij een update bevat alleen wat verandert; een veld vervang je in zijn geheel (geef bij een
+  lijst de hele nieuwe lijst). `null` maakt een veld leeg.
+- Lessen verwijderen, banen of labels aanmaken kan niet via een changeset: stel dat voor in je toelichting.
+- Leerpaden van leerlingen staan niet in de export en kun je niet wijzigen.
+
 ## Belangrijk principe
 
 Het dashboard en alle statistieken worden live berekend uit de inhoud. Lever dus nooit cijfers

@@ -7,6 +7,7 @@
 import { VOCABULARIES, allItems, getItem, getSet, typeOfId } from "../data";
 import { VOCAB_PATTERN, validateItem, validateSet } from "../data/validate";
 import { hasNoPerfect } from "../data/verbForms";
+import { LESSON_OPS, applyLesson, evaluateLesson } from "./lessons";
 import { addVocabulary, createItem, createSet, deleteItem, deleteSet, updateItem, updateSet } from "../data/contentApi";
 
 export const ITEM_OPS = ["add", "update", "delete"];
@@ -40,8 +41,12 @@ export function parseChangeset(text) {
       throw Object.assign(new Error("pr.err.change"), { vars: { n: i + 1, why } });
     };
     if (!c || typeof c !== "object") bad("geen object");
-    if (![...ITEM_OPS, ...SET_OPS, ...VOCAB_OPS].includes(c.op)) bad(`onbekende op "${c.op}"`);
-    if (VOCAB_OPS.includes(c.op)) {
+    if (![...ITEM_OPS, ...SET_OPS, ...VOCAB_OPS, ...LESSON_OPS].includes(c.op)) bad(`onbekende op "${c.op}"`);
+    if (LESSON_OPS.includes(c.op)) {
+      if (typeof c.data !== "object" || c.data === null || Array.isArray(c.data)) bad("data moet een object zijn");
+      if (c.op === "lesson.update" && typeof c.id !== "string") bad("id ontbreekt");
+      if (c.op === "lesson.add" && typeof c.lane !== "string") bad("lane ontbreekt");
+    } else if (VOCAB_OPS.includes(c.op)) {
       if (!VOCAB_KINDS.includes(c.kind)) bad("kind moet theme, tag of grammarTag zijn");
       if (typeof c.value !== "string") bad("value ontbreekt");
     } else if (ITEM_OPS.includes(c.op)) {
@@ -58,8 +63,8 @@ export function parseChangeset(text) {
   // Copied straight from the export, these are not fields.
   changes.forEach((c) => {
     if (c.data) {
-      delete c.data.id;
-      delete c.data.updatedAt;
+      // Board fields of a lesson go next to data (lane, after), not in it.
+      ["id", "updatedAt", "laneId", "position", "attachments"].forEach((k) => delete c.data[k]);
     }
   });
   return {
@@ -102,7 +107,10 @@ const insertAfter = (ids, item, after) => {
  * `versions` maps ids ("word.x", "set:id") to the current updated_at;
  * `decisions` are this proposal's verdicts, `changes` all its changes.
  */
-export function evaluate(change, index, { changes, decisions, versions }) {
+export function evaluate(change, index, { changes, decisions, versions, board }) {
+  if (LESSON_OPS.includes(change.op)) {
+    return { blockedBy: null, similar: null, noPerfect: false, ...evaluateLesson(change, board) };
+  }
   const problems = [];
   let before = null;
   let after = null;
@@ -222,6 +230,7 @@ export function evaluate(change, index, { changes, decisions, versions }) {
 
 export async function applyChange(change, evaluation) {
   const { after } = evaluation;
+  if (LESSON_OPS.includes(change.op)) return applyLesson(change, evaluation);
   switch (change.op) {
     case "vocab.add":
       return addVocabulary(change.kind, change.value);

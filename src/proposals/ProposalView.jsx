@@ -7,6 +7,8 @@ import { ITEM_OPS, applyChange, evaluate } from "./changeset";
 import FieldValue from "./FieldValue";
 import { fieldOrder, same, useFieldLabel } from "./fieldDiff";
 import { usageOf } from "./usage";
+import { LESSON_FIELDS, LESSON_OPS, loadBoard } from "./lessons";
+import LessonValue from "./LessonValue";
 import { clearDecision, deleteProposal, fetchVersions, saveDecision } from "./api";
 
 /** One proposal: ChatGPT's summary and a card per change to approve or reject. */
@@ -17,6 +19,18 @@ export default function ProposalView({ proposal, onBack, onChanged, onDeleted })
   const [busy, setBusy] = useState(null); // index being handled, or "all"
   const [errors, setErrors] = useState({});
   const [order, setOrder] = useState("proposed"); // or "level"
+  // Lessons, lanes and labels, only when the proposal changes lessons.
+  const hasLessons = proposal.changes.some((c) => LESSON_OPS.includes(c.op));
+  const [board, setBoard] = useState(null);
+  const refreshBoard = useCallback(async () => {
+    if (!hasLessons) return null;
+    const b = await loadBoard();
+    setBoard(b);
+    return b;
+  }, [hasLessons]);
+  useEffect(() => {
+    refreshBoard().catch((e) => setErrors((x) => ({ ...x, all: e.message })));
+  }, [refreshBoard]);
 
   const refreshVersions = useCallback(
     () =>
@@ -30,7 +44,8 @@ export default function ProposalView({ proposal, onBack, onChanged, onDeleted })
     refreshVersions();
   }, [refreshVersions]);
 
-  const ctx = { changes: proposal.changes, decisions: proposal.decisions || {}, versions: versions || {} };
+  const ctx = { changes: proposal.changes, decisions: proposal.decisions || {}, versions: versions || {}, board };
+  const ready = versions !== null && (!hasLessons || board !== null);
   const evaluations = proposal.changes.map((c, i) => evaluate(c, i, ctx));
   const decided = Object.keys(proposal.decisions || {}).length;
 
@@ -53,8 +68,8 @@ export default function ProposalView({ proposal, onBack, onChanged, onDeleted })
   };
 
   // Apply, then record. Each step works on the latest proposal row.
-  const decide = async (current, i, status, { force = false } = {}) => {
-    const e = evaluate(current.changes[i], i, { ...ctx, decisions: current.decisions || {} });
+  const decide = async (current, i, status, { force = false, boardNow = board } = {}) => {
+    const e = evaluate(current.changes[i], i, { ...ctx, board: boardNow, decisions: current.decisions || {} });
     if (status === "approved") {
       if (e.blockedBy || e.problems.length) return current;
       if (e.conflict && !force) return current;
@@ -70,6 +85,7 @@ export default function ProposalView({ proposal, onBack, onChanged, onDeleted })
       const updated = await decide(proposal, i, status, opts);
       onChanged(updated);
       await refreshVersions();
+      await refreshBoard();
     } catch (err) {
       setErrors((x) => ({ ...x, [i]: err.message }));
     } finally {
@@ -92,18 +108,22 @@ export default function ProposalView({ proposal, onBack, onChanged, onDeleted })
   const approveAll = async () => {
     setBusy("all");
     let current = proposal;
+    let boardNow = board;
     try {
       for (let i = 0; i < current.changes.length; i++) {
         if (current.decisions?.[i]) continue;
-        const e = evaluate(current.changes[i], i, { ...ctx, decisions: current.decisions || {} });
+        const e = evaluate(current.changes[i], i, { ...ctx, board: boardNow, decisions: current.decisions || {} });
         if (e.blockedBy || e.problems.length || e.conflict) continue;
-        current = await decide(current, i, "approved");
+        current = await decide(current, i, "approved", { boardNow });
+        // Positions and versions on the board change with each lesson.
+        if (LESSON_OPS.includes(current.changes[i].op)) boardNow = await loadBoard();
       }
     } catch (err) {
       setErrors((x) => ({ ...x, all: err.message }));
     }
     onChanged(current);
     await refreshVersions();
+    await refreshBoard();
     setBusy(null);
   };
 
@@ -157,7 +177,7 @@ export default function ProposalView({ proposal, onBack, onChanged, onDeleted })
         </span>
       </div>
       {errors.all && <div className="auth-error">{errors.all}</div>}
-      {versions === null && <p className="dim">{t("common.loading")}</p>}
+      {!ready && <p className="dim">{t("common.loading")}</p>}
 
       <div role="group" aria-label={t("pr.order.label")} className="pr-tabs">
         {["proposed", "level"].map((o) => (
@@ -167,7 +187,7 @@ export default function ProposalView({ proposal, onBack, onChanged, onDeleted })
         ))}
       </div>
 
-      {versions !== null &&
+      {ready &&
         groups.map(({ level, indexes }) => (
           <section key={level ?? "-"}>
             {order === "level" && <h3 className="pr-group">{level ?? t("pr.order.none")}</h3>}
@@ -175,6 +195,7 @@ export default function ProposalView({ proposal, onBack, onChanged, onDeleted })
               <ChangeCard
                 key={i}
                 change={proposal.changes[i]}
+                board={board}
                 evaluation={evaluations[i]}
                 decision={proposal.decisions?.[i]}
                 busy={busy === i || busy === "all"}
@@ -209,6 +230,8 @@ const KIND = {
   "set.removeItem": "update",
   "set.moveItem": "update",
   "vocab.add": "add",
+  "lesson.add": "add",
+  "lesson.update": "update",
 };
 
 const show = (v) =>
@@ -239,7 +262,7 @@ function useUsage(change, active) {
 
 const nameOf = (id) => itemLabel(getItem(id)) || id;
 
-function ChangeCard({ change, evaluation, decision, busy, error, onApprove, onReject, onReopen }) {
+function ChangeCard({ change, evaluation, decision, busy, error, onApprove, onReject, onReopen, board }) {
   const { t } = useI18n();
   const { before, after, problems, conflict, blockedBy, similar, noPerfect } = evaluation;
   const isItem = ITEM_OPS.includes(change.op);
@@ -249,7 +272,31 @@ function ChangeCard({ change, evaluation, decision, busy, error, onApprove, onRe
 
   // Rows: field | now | proposal (null = no column)
   let rows = [];
-  if (isItem) {
+  const isLesson = LESSON_OPS.includes(change.op);
+  if (isLesson && after) {
+    const b = before || {};
+    const lv = (x, k) => <LessonValue key={k} field={k} value={x[k]} board={board} />;
+    rows = LESSON_FIELDS.filter((k) =>
+      change.op === "lesson.add" ? k === "title" || (after[k] != null && after[k] !== "" && !(Array.isArray(after[k]) && !after[k].length)) : !same(b[k], after[k])
+    ).map((k) => [t(`pr.lesson.${k}`), change.op === "lesson.add" ? null : lv(b, k), lv(after, k)]);
+    if (evaluation.moves) {
+      const place = `${after.laneName || "—"} · ${
+        change.after ? t("pr.lesson.after", { title: after.afterTitle || change.after }) : "after" in change ? t("pr.lesson.top") : t("pr.lesson.bottom")
+      }`;
+      const was = before ? board?.lanes.find((l) => l.id === before.laneId)?.name : null;
+      rows.push([
+        t("pr.lesson.place"),
+        change.op === "lesson.add" ? null : (
+          <span key="was" className="pr-text">
+            {was || "—"}
+          </span>
+        ),
+        <span key="place" className="pr-text">
+          {place}
+        </span>,
+      ]);
+    }
+  } else if (isItem) {
     const b = before || {};
     const a = after || {};
     const val = (item, k) => <FieldValue type={itemType} field={k} value={item[k]} item={item} />;
@@ -279,7 +326,9 @@ function ChangeCard({ change, evaluation, decision, busy, error, onApprove, onRe
   }
 
   const isVocab = change.op === "vocab.add";
-  const what = isVocab
+  const what = isLesson
+    ? `${t("pr.type.lesson")} · ${after?.title || before?.title || change.id || ""}`
+    : isVocab
     ? `${t(`pr.vocab.${change.kind}`)} · ${change.value}`
     : isItem
     ? `${t(`pr.type.${change.type || change.id.split(".")[0]}`)} · ${itemLabel(getItem(change.id)) || change.data?.nl || change.data?.title || change.id}`
@@ -298,7 +347,7 @@ function ChangeCard({ change, evaluation, decision, busy, error, onApprove, onRe
       <header>
         <span className={`pr-kind pr-kind-${kind}`}>{t(`pr.kind.${kind}`)}</span>
         <strong>{what}</strong>
-        {!isVocab && <code>{isItem ? change.id : change.set}</code>}
+        {!isVocab && !(isLesson && !change.id) && <code>{isItem || isLesson ? change.id : change.set}</code>}
       </header>
       {setAction && <p className="pr-action">{setAction}</p>}
       {isVocab && <p className="pr-action">{t(`pr.vocab.hint.${change.kind}`, { value: change.value })}</p>}
@@ -336,7 +385,7 @@ function ChangeCard({ change, evaluation, decision, busy, error, onApprove, onRe
         <ul className="pr-problems">
           {problems.map((x, j) => (
             <li key={j}>
-              {x.field && <span className="dim">{label(x.field)}: </span>}
+              {x.field && <span className="dim">{isLesson ? t(`pr.lesson.${x.field}`) : label(x.field)}: </span>}
               {t(x.key, x.vars)}
             </li>
           ))}
