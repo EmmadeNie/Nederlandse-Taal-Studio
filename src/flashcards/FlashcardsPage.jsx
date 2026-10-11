@@ -86,6 +86,7 @@ export default function FlashcardsPage() {
       return (
         <Practice
           key={route.param}
+          settingsKey={route.param}
           cards={[...unique.values()]}
           title={title}
           onExit={() => navigate(pathFor("flashcards"))}

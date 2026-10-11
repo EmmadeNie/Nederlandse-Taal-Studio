@@ -206,6 +206,41 @@
   font-size: 0.85rem;
 }
 
+/* Level and round size, under the title */
+.fc-settings {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.fc-seg {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.fc-seg button {
+  background: none;
+  border: 0;
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 0.82rem;
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+}
+
+.fc-seg button + button {
+  border-left: 1px solid var(--border);
+}
+
+.fc-seg button[aria-pressed="true"] {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+
 .fc-bar {
   height: 4px;
   border-radius: 999px;
