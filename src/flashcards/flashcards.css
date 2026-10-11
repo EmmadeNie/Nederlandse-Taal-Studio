@@ -423,3 +423,15 @@
 .fc-decks li.is-done .fc-deck {
   opacity: 0.6;
 }
+
+.fc-from-docent {
+  display: inline-block;
+  margin-left: 0.45rem;
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  vertical-align: middle;
+  color: var(--accent);
+  background: var(--accent-soft);
+}

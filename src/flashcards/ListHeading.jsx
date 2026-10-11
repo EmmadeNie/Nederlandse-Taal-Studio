@@ -3,12 +3,14 @@ import FlashcardButton from "./FlashcardButton";
 import { deckTitle } from "./cards";
 
 /** A list heading in a lesson, with "Flashcards" to add that list to Mijn flashcards. */
-export default function ListHeading({ children, lesson, part }) {
+export default function ListHeading({ children, lesson, part, forProfileId }) {
   const { t } = useI18n();
   return (
     <h4 className="fc-heading">
       <span>{children}</span>
-      {lesson?.id && <FlashcardButton source={{ lesson: lesson.id, part }} title={deckTitle(lesson, part, t)} />}
+      {lesson?.id && (
+        <FlashcardButton source={{ lesson: lesson.id, part }} title={deckTitle(lesson, part, t)} forProfileId={forProfileId} />
+      )}
     </h4>
   );
 }
