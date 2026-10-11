@@ -69,6 +69,7 @@ import {
   Signpost,
   Stack,
   SquaresFour,
+  List,
   House,
   HourglassMedium,
   Target,
@@ -113,6 +114,7 @@ export const ICONS = {
 
 /** Actions and states. */
 export {
+  List,
   House,
   HourglassMedium,
   ChalkboardTeacher,

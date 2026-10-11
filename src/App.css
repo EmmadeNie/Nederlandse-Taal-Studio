@@ -1686,3 +1686,143 @@ svg[class^="ph"], button svg, h4 svg, .board-meta-item svg {
 .users-delete:hover {
   color: var(--red);
 }
+
+/* ----- Phone: top bar + drawer menu, full-width content ----- */
+.mobile-bar,
+.sidebar-backdrop {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .app {
+    flex-direction: column;
+  }
+
+  .mobile-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 0.5rem 0.75rem;
+    padding-top: calc(0.5rem + env(safe-area-inset-top, 0px));
+    /* room for the theme/language switches top right */
+    padding-right: 9rem;
+  }
+
+  .mobile-bar .brand-row svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .mobile-bar .brand-name {
+    font-size: 1rem;
+  }
+
+  .mobile-bar .brand-sub {
+    display: none;
+  }
+
+  .mobile-menu-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    flex: none;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    height: 100dvh;
+    width: min(82vw, 300px);
+    z-index: 60;
+    transform: translateX(-102%);
+    transition: transform 0.2s ease;
+    box-shadow: 0 0 40px var(--shadow);
+    padding-top: calc(1.5rem + env(safe-area-inset-top, 0px));
+  }
+
+  .sidebar.is-open {
+    transform: none;
+  }
+
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .main {
+    padding: 1rem;
+    max-width: none;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .main h2 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+
+  .lang-corner {
+    top: calc(0.85rem + env(safe-area-inset-top, 0px));
+    right: 0.75rem;
+    z-index: 40;
+  }
+
+  /* Library tabs scroll sideways instead of wrapping into many rows */
+  .library-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .library-tabs button {
+    flex: none;
+  }
+
+  /* Dialogs come up from the bottom, full width */
+  .fb-overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .fb-dialog,
+  .lp-dialog.is-wide {
+    max-width: none;
+    border-radius: 16px 16px 0 0;
+    max-height: 92dvh;
+    overflow-y: auto;
+    padding: 1.1rem;
+    padding-bottom: calc(1.1rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Wide tables scroll inside themselves */
+  .users-table {
+    display: block;
+    overflow-x: auto;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar {
+    transition: none;
+  }
+}
