@@ -177,6 +177,7 @@ export default function ProposalView({ proposal, onBack, onChanged, onDeleted })
         </span>
       </div>
       {errors.all && <div className="auth-error">{errors.all}</div>}
+      {ready && <ProblemSummary proposal={proposal} evaluations={evaluations} errors={errors} />}
       {!ready && <p className="dim">{t("common.loading")}</p>}
 
       <div role="group" aria-label={t("pr.order.label")} className="pr-tabs">
@@ -194,6 +195,7 @@ export default function ProposalView({ proposal, onBack, onChanged, onDeleted })
             {indexes.map((i) => (
               <ChangeCard
                 key={i}
+                index={i}
                 change={proposal.changes[i]}
                 board={board}
                 evaluation={evaluations[i]}
@@ -213,6 +215,83 @@ export default function ProposalView({ proposal, onBack, onChanged, onDeleted })
           {t("pr.delete")}
         </button>
       </div>
+    </div>
+  );
+}
+
+// ----- All problems at the top, to copy to ChatGPT -----
+
+/** "update word.hond", "lesson.add Werkwoorden oefenen", "vocab.add theme tijd". */
+const changeName = (change, evaluation) =>
+  [
+    change.op,
+    change.id || change.set || (change.kind && `${change.kind} ${change.value}`) || evaluation?.after?.title || "",
+    change.item ? `(${change.item})` : null,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+function ProblemSummary({ proposal, evaluations, errors }) {
+  const { t } = useI18n();
+  const [copied, setCopied] = useState(false);
+  const open = proposal.changes
+    .map((change, i) => {
+      if (proposal.decisions?.[i]) return null;
+      const e = evaluations[i];
+      const lines = [
+        ...(e.problems || []).map((x) => `${x.field ? `${x.field}: ` : ""}${t(x.key, x.vars)}`),
+        e.conflict && t("pr.conflict"),
+        e.blockedBy && (e.blockedBy.rejected ? t("pr.blockedRejected", { name: e.blockedBy.name }) : t("pr.blocked", { name: e.blockedBy.name })),
+        errors[i] && `${t("pr.applyError")}: ${t(errors[i])}`,
+      ].filter(Boolean);
+      return lines.length ? { i, name: changeName(change, e), lines, waiting: Boolean(e.blockedBy && !e.problems?.length) } : null;
+    })
+    .filter(Boolean);
+  if (!open.length) return null;
+
+  const text = [
+    t("pr.copyIntro", { title: proposal.title }),
+    "",
+    ...open.flatMap((x) => [`#${x.i + 1} ${x.name}`, ...x.lines.map((l) => `- ${l}`), ""]),
+    t("pr.copyAsk"),
+  ].join("\n");
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      window.prompt(t("pr.copyFallback"), text);
+    }
+  };
+
+  return (
+    <div className="pr-summary-box">
+      <div className="pr-summary-head">
+        <strong>{t("pr.problemCount", { n: open.length })}</strong>
+        <button type="button" className="fb-btn-secondary" onClick={copy}>
+          {copied ? t("pr.copied") : t("pr.copyForChat")}
+        </button>
+      </div>
+      <ul>
+        {open.map((x) => (
+          <li key={x.i}>
+            <button
+              type="button"
+              className="fb-link"
+              onClick={() => document.getElementById(`pr-card-${x.i}`)?.scrollIntoView({ behavior: "smooth", block: "center" })}
+            >
+              #{x.i + 1} {x.name}
+            </button>
+            <ul>
+              {x.lines.map((l, j) => (
+                <li key={j}>{l}</li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -262,7 +341,7 @@ function useUsage(change, active) {
 
 const nameOf = (id) => itemLabel(getItem(id)) || id;
 
-function ChangeCard({ change, evaluation, decision, busy, error, onApprove, onReject, onReopen, board }) {
+function ChangeCard({ index, change, evaluation, decision, busy, error, onApprove, onReject, onReopen, board }) {
   const { t } = useI18n();
   const { before, after, problems, conflict, blockedBy, similar, noPerfect } = evaluation;
   const isItem = ITEM_OPS.includes(change.op);
@@ -343,7 +422,7 @@ function ChangeCard({ change, evaluation, decision, busy, error, onApprove, onRe
 
   const kind = KIND[change.op];
   return (
-    <article className={`pr-card ${conflict && !decision ? "is-conflict" : ""} ${decision?.status === "rejected" ? "is-rejected" : ""}`}>
+    <article id={`pr-card-${index}`} className={`pr-card ${conflict && !decision ? "is-conflict" : ""} ${decision?.status === "rejected" ? "is-rejected" : ""}`}>
       <header>
         <span className={`pr-kind pr-kind-${kind}`}>{t(`pr.kind.${kind}`)}</span>
         <strong>{what}</strong>

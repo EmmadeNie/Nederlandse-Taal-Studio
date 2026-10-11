@@ -340,3 +340,35 @@
   margin: 0;
   padding-left: 18px;
 }
+
+/* All problems of the open changes, to copy to ChatGPT */
+.pr-summary-box {
+  border: 1px solid color-mix(in srgb, var(--red) 40%, var(--border));
+  background: color-mix(in srgb, var(--red) 6%, var(--surface));
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.pr-summary-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.pr-summary-box > ul {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+}
+
+.pr-summary-box ul ul {
+  margin: 2px 0 0;
+  padding-left: 18px;
+  color: var(--error-text);
+}
