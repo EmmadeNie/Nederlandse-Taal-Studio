@@ -171,17 +171,20 @@ export function LinksEditor({ value, onChange, addLabel }) {
 }
 
 /** Search + level (+ label) filter used above both boards. */
+/** Search, level and label filters above a board; without setSearch there is no search field. */
 export function BoardFilters({ search, setSearch, level, setLevel, label, setLabel, placeholder }) {
   const { t } = useI18n();
   return (
-    <div className="filters lp-filters">
-      <input
-        type="search"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder={placeholder}
-        aria-label={t("common.search")}
-      />
+    <div className={`filters lp-filters ${setSearch ? "" : "no-search"}`}>
+      {setSearch && (
+        <input
+          type="search"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder={placeholder}
+          aria-label={t("common.search")}
+        />
+      )}
       <select value={level} onChange={(e) => setLevel(e.target.value)} aria-label={t("lp.level")}>
         <option value="">{t("level.all")}</option>
         {LEVELS.map((l) => (
