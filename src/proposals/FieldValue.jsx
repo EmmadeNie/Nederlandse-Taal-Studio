@@ -18,7 +18,7 @@ export default function FieldValue({ type, field, value, item }) {
   if (field === "conjugation" && typeof value === "object") {
     return (
       <div className="pr-verb">
-        <VerbTile verb={{ nl: item?.nl, conjugation: value }} />
+        <VerbTile verb={{ nl: item?.nl, en: item?.en, conjugation: value }} />
       </div>
     );
   }

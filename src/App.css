@@ -1453,6 +1453,11 @@ svg[class^="ph"], button svg, h4 svg, .board-meta-item svg {
   cursor: pointer;
 }
 
+.rw-tile-en {
+  margin: -0.25rem 0 0.4rem;
+  font-size: 0.78rem;
+}
+
 .rw-tile-name:hover {
   text-decoration: underline;
 }

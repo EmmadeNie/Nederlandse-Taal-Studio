@@ -86,7 +86,7 @@ function WordTile({ word: w }) {
   );
 }
 
-/** Only the conjugations; forms marked irregular are orange. Without onOpen the name is plain text. */
+/** The meaning, then the conjugations; forms marked irregular are orange. Without onOpen the name is plain text. */
 export function VerbTile({ verb: v, onOpen }) {
   const { t } = useI18n();
   const c = v.conjugation;
@@ -100,6 +100,7 @@ export function VerbTile({ verb: v, onOpen }) {
       ) : (
         <span className="rw-tile-name">{c.infinitive || v.nl}</span>
       )}
+      {v.en && <div className="dim rw-tile-en">{v.en}</div>}
       <Row label="ik" value={c.present?.ik} irregular={irregular("present")} />
       <Row label="jij" value={c.present?.jij} irregular={irregular("present")} />
       <Row label="hij/zij" value={c.present?.hij} irregular={irregular("present")} />
