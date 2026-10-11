@@ -1347,3 +1347,12 @@ span.step-status {
 .lane-focus-field .dim {
   font-size: 0.78rem;
 }
+
+.selection-bylevel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  white-space: nowrap;
+  cursor: pointer;
+}

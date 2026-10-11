@@ -276,6 +276,7 @@ export default function LesprogrammaPage() {
           lessonIds={selectedInOrder}
           onClear={() => setSelected(new Set())}
           onPlanned={setPlannedIds}
+          levelOf={(id) => lessons.find((l) => l.id === id)?.level || null}
           plannedCount={plannedIds ? lessons.filter((l) => plannedIds.has(l.id)).length : null}
         />
       )}

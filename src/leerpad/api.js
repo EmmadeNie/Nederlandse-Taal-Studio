@@ -4,6 +4,7 @@
  */
 import { supabase } from "../lib/supabase";
 import { removeStoredFiles } from "./files";
+import { LEVELS } from "../data/schema.js";
 
 function check({ data, error }) {
   if (error) throw new Error(error.message);
@@ -221,18 +222,35 @@ export const plannedLessonIds = (studentId) =>
     .then(check)
     .then((rows) => new Set(rows.map((r) => r.lesson_id)));
 
-export async function planLessons(lessonIds, studentId, laneId) {
+/**
+ * Put lessons on a student's leerpad, at the bottom of a lane. With levelOf
+ * (lessonId → "A1" | null), each lesson goes to the lane named after its level
+ * (made when missing); lessons without a level go to laneId.
+ */
+export async function planLessons(lessonIds, studentId, laneId, { levelOf } = {}) {
   await ensureLeerpad(studentId);
   const { lanes, steps } = await loadLeerpad(studentId);
-  const lane = lanes.find((l) => l.id === laneId) || lanes[0];
+  const fallback = lanes.find((l) => l.id === laneId) || lanes[0];
   const planned = new Set(steps.map((s) => s.lesson_id).filter(Boolean));
   const todo = lessonIds.filter((id) => !planned.has(id));
-  if (todo.length) {
-    let position = nextPosition(steps.filter((s) => s.lane_id === lane.id)) - 1;
-    await supabase
-      .from("steps")
-      .insert(todo.map((id) => ({ student_id: studentId, lane_id: lane.id, lesson_id: id, position: ++position })))
-      .then(check);
+
+  // Missing level lanes are made first, A0 → B2, so they stand in level order.
+  const allLanes = [...lanes];
+  const named = (level) => allLanes.find((l) => l.name.trim().toUpperCase() === level);
+  const needed = LEVELS.filter((lv) => todo.some((id) => levelOf?.(id) === lv));
+  for (const level of needed) {
+    if (!named(level)) allLanes.push(await createLeerpadLane(studentId, level, allLanes));
   }
-  return { added: todo.length, skipped: lessonIds.length - todo.length };
+  const laneFor = (lessonId) => named(levelOf?.(lessonId)) || fallback;
+
+  const rows = [];
+  const next = {}; // next position per lane
+  for (const id of todo) {
+    const lane = laneFor(id);
+    next[lane.id] ??= nextPosition(steps.filter((s) => s.lane_id === lane.id));
+    rows.push({ student_id: studentId, lane_id: lane.id, lesson_id: id, position: next[lane.id]++ });
+  }
+  if (rows.length) await supabase.from("steps").insert(rows).then(check);
+  const used = [...new Set(rows.map((r) => allLanes.find((l) => l.id === r.lane_id)?.name))];
+  return { added: rows.length, skipped: lessonIds.length - todo.length, lanes: used };
 }
