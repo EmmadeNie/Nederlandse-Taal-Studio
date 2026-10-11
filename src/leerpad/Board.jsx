@@ -23,7 +23,8 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { positionBetween, lanePositionAt, laneShiftPosition } from "./positions";
 import { useI18n } from "../i18n/context";
-import { CaretLeft, CaretRight, Check, DotsSixVertical, PencilSimple, Target, X } from "../icons";
+import { CaretLeft, CaretRight, Check, DotsSixVertical, PencilSimple, X } from "../icons";
+import { Dialog } from "./shared";
 import "./leerpad.css";
 
 /**
@@ -407,6 +408,7 @@ function LaneHeader({
 }) {
   const { t } = useI18n();
   const [editing, setEditing] = useState(false);
+  const [settings, setSettings] = useState(false); // the lane settings dialog
   const [name, setName] = useState(lane.name);
 
   const save = () => {
@@ -471,26 +473,24 @@ function LaneHeader({
           </button>
         </span>
       )}
-      {onFocus && !editing && (
-        <button
-          className={`board-icon-btn board-focus-btn ${isFocus ? "is-on" : ""}`}
-          title={isFocus ? t("board.focusOff") : t("board.focusOn")}
-          aria-label={t("board.focusAria", { name: lane.name })}
-          aria-pressed={Boolean(isFocus)}
-          onClick={onFocus}
-        >
-          <Target weight={isFocus ? "fill" : "regular"} />
-        </button>
-      )}
       {onRename && !editing && (
         <button
           className="board-icon-btn"
-          title={t("common.rename")}
-          aria-label={t("board.renameLane", { name: lane.name })}
-          onClick={() => setEditing(true)}
+          title={t("board.laneSettings")}
+          aria-label={t("board.laneSettingsAria", { name: lane.name })}
+          onClick={() => setSettings(true)}
         >
           <PencilSimple />
         </button>
+      )}
+      {settings && (
+        <LaneSettings
+          lane={lane}
+          isFocus={isFocus}
+          onFocus={onFocus}
+          onRename={onRename}
+          onClose={() => setSettings(false)}
+        />
       )}
       {onDelete && !editing && (
         <button
@@ -503,6 +503,47 @@ function LaneHeader({
         </button>
       )}
     </div>
+  );
+}
+
+/** Lane settings (pencil in the lane header): name, and whether it is the board's middle lane. */
+function LaneSettings({ lane, isFocus, onFocus, onRename, onClose }) {
+  const { t } = useI18n();
+  const [name, setName] = useState(lane.name);
+  const [focus, setFocus] = useState(Boolean(isFocus));
+  const save = (e) => {
+    e.preventDefault();
+    const v = name.trim();
+    if (v && v !== lane.name) onRename(lane, v);
+    if (onFocus && focus !== Boolean(isFocus)) onFocus();
+    onClose();
+  };
+  return (
+    <Dialog title={t("board.laneSettings")} onClose={onClose}>
+      <form onSubmit={save}>
+        <label className="fb-field">
+          <span>{t("board.laneName")}</span>
+          <input autoFocus value={name} onChange={(e) => setName(e.target.value)} />
+        </label>
+        {onFocus && (
+          <label className="lane-focus-field">
+            <input type="checkbox" checked={focus} onChange={(e) => setFocus(e.target.checked)} />
+            <span>
+              <strong>{t("board.focusLabel")}</strong>
+              <span className="dim">{t("board.focusHint")}</span>
+            </span>
+          </label>
+        )}
+        <div className="fb-actions">
+          <button type="button" className="fb-btn-secondary" onClick={onClose}>
+            {t("common.cancel")}
+          </button>
+          <button type="submit" className="fb-btn-primary" disabled={!name.trim()}>
+            {t("common.save")}
+          </button>
+        </div>
+      </form>
+    </Dialog>
   );
 }
 

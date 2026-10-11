@@ -193,7 +193,6 @@ export function MijnLeerpadPage() {
       <div className="lp-page-head">
         <h2>{t("nav.leerpad")}</h2>
       </div>
-      <p className="lp-intro">{t("mine.intro")}</p>
       <LeerpadBoard studentId={profile.id} />
     </>
   );
