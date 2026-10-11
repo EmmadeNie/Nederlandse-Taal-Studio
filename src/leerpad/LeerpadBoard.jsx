@@ -516,21 +516,21 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
 
       {lessonVerbs(content.verbIds).length > 0 && (
         <div className="lp-section">
-          <ListHeading lesson={step.lesson} part="verbs">{t("lv.title")}</ListHeading>
+          <ListHeading lesson={step.lesson} forProfileId={isDocent ? step.student_id : undefined} part="verbs">{t("lv.title")}</ListHeading>
           <VerbsView ids={content.verbIds} />
         </div>
       )}
 
       {toLists(content.wordList).some(hasWordList) && (
         <div className="lp-section">
-          <ListHeading lesson={step.lesson} part="words">{t("wl.title")}</ListHeading>
+          <ListHeading lesson={step.lesson} forProfileId={isDocent ? step.student_id : undefined} part="words">{t("wl.title")}</ListHeading>
           <WordListsView value={content.wordList} />
         </div>
       )}
 
       {toLists(content.sentenceList).some(hasSentenceList) && (
         <div className="lp-section">
-          <ListHeading lesson={step.lesson} part="sentences">{t("sl.title")}</ListHeading>
+          <ListHeading lesson={step.lesson} forProfileId={isDocent ? step.student_id : undefined} part="sentences">{t("sl.title")}</ListHeading>
           <SentenceListsView value={content.sentenceList} />
         </div>
       )}

@@ -43,7 +43,7 @@ export default function FlashcardsPage() {
   const { profile, role } = useAuth();
   const route = useRoute();
   useContentVersion();
-  const decks = useDecks();
+  const decks = useDecks(profile.id);
   const isStudent = role === "leerling";
   const [lessons, setLessons] = useState(null); // lessons to browse
   const [extra, setExtra] = useState(new Map()); // lessons of decks that are not in `lessons`
@@ -52,7 +52,7 @@ export default function FlashcardsPage() {
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    loadDecks({ force: true }).catch((e) => setError(e.message));
+    loadDecks(profile.id, { force: true }).catch((e) => setError(e.message));
     loadMyLessons(profile.id, isStudent)
       .then(setLessons)
       .catch((e) => setError(e.message));
@@ -209,7 +209,10 @@ function DeckList({ decks, cardsOf, t }) {
         return (
           <li key={d.id} className={d.done_at ? "is-done" : undefined}>
             <button type="button" className="fc-deck" onClick={() => navigate(pathFor("flashcards", d.id))} disabled={!n}>
-              <span className="fc-deck-title">{d.title}</span>
+              <span className="fc-deck-title">
+                {d.title}
+                {d.added_by && d.added_by !== d.profile_id && <span className="fc-from-docent">{t("fc.fromDocent")}</span>}
+              </span>
               <span className="dim">{n ? t("fc.cards", { n }) : t("fc.noCards")}</span>
             </button>
             <button
@@ -217,7 +220,7 @@ function DeckList({ decks, cardsOf, t }) {
               className="board-icon-btn fc-done-btn"
               aria-label={d.done_at ? t("fc.undoDoneAria", { name: d.title }) : t("fc.markDoneAria", { name: d.title })}
               title={d.done_at ? t("fc.undoDone") : t("fc.markDone")}
-              onClick={() => setDeckDone(d.id, !d.done_at)}
+              onClick={() => setDeckDone(d, !d.done_at)}
             >
               {d.done_at ? <ArrowCounterClockwise /> : <CheckCircle />}
             </button>
@@ -226,7 +229,7 @@ function DeckList({ decks, cardsOf, t }) {
               className="board-icon-btn"
               aria-label={t("fc.removeDeck", { name: d.title })}
               title={t("fc.removeHint")}
-              onClick={() => removeDeck(d.id)}
+              onClick={() => removeDeck(d)}
             >
               <X />
             </button>
