@@ -197,6 +197,16 @@ export async function leerpadLanes(studentId) {
  * Put several lessons on a leerpad at the end of one lane, in the given order.
  * Lessons already on that leerpad are skipped. Returns { added, skipped }.
  */
+/** Ids of the lessons that are on a student's leerpad already. */
+export const plannedLessonIds = (studentId) =>
+  supabase
+    .from("steps")
+    .select("lesson_id")
+    .eq("student_id", studentId)
+    .not("lesson_id", "is", null)
+    .then(check)
+    .then((rows) => new Set(rows.map((r) => r.lesson_id)));
+
 export async function planLessons(lessonIds, studentId, laneId) {
   await ensureLeerpad(studentId);
   const { lanes, steps } = await loadLeerpad(studentId);

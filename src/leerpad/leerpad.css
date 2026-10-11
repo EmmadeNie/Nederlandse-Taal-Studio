@@ -1173,3 +1173,28 @@
 .board-card-meta .fb-button {
   margin-left: auto;
 }
+
+/* Selecting on the lesprogramma: lessons already on the chosen student's leerpad,
+   marked like a highlighter */
+.board-card.is-planned {
+  background: color-mix(in srgb, #fde68a 16%, var(--surface));
+  border-color: color-mix(in srgb, #f5c542 70%, var(--border));
+  box-shadow: inset 4px 0 0 #f5c542;
+}
+
+.selection-planned {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.planned-swatch {
+  display: inline-block;
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 3px;
+  background: color-mix(in srgb, #fde68a 40%, transparent);
+  box-shadow: inset 3px 0 0 #f5c542;
+}

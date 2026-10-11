@@ -48,6 +48,8 @@ export default function LesprogrammaPage() {
   const openId = route.page === "lesprogramma" ? route.param : null;
   const setOpenId = (id) => navigate(id ? pathFor("lesprogramma", id) : PATHS.lesprogramma);
   // Select mode (docent): pick many lessons and put them on a leerpad at once.
+  // Lessons on the leerpad of the student chosen in the selection bar (highlighted).
+  const [plannedIds, setPlannedIds] = useState(null);
   const [selecting, setSelecting] = useState(false);
   const [selected, setSelected] = useState(() => new Set());
   const [anchor, setAnchor] = useState(null); // last clicked card, for shift-click ranges
@@ -128,6 +130,7 @@ export default function LesprogrammaPage() {
     setSelecting(false);
     setSelected(new Set());
     setAnchor(null);
+    setPlannedIds(null);
   };
 
   // Selected lessons in board order (lane order, then position in the lane).
@@ -205,6 +208,7 @@ export default function LesprogrammaPage() {
               }
             />
           )}
+          cardClass={(l) => (selecting && plannedIds?.has(l.id) ? "is-planned" : "")}
           onOpenCard={(l) => setOpenId(l.id)}
           onMoveCard={canEdit ? moveLesson : undefined}
           selection={
@@ -259,7 +263,12 @@ export default function LesprogrammaPage() {
         />
       )}
       {selecting && (
-        <SelectionBar lessonIds={selectedInOrder} onClear={() => setSelected(new Set())} />
+        <SelectionBar
+          lessonIds={selectedInOrder}
+          onClear={() => setSelected(new Set())}
+          onPlanned={setPlannedIds}
+          plannedCount={plannedIds ? lessons.filter((l) => plannedIds.has(l.id)).length : null}
+        />
       )}
       {openId && !loading && !openLesson && (
         <div className="lp-error">
