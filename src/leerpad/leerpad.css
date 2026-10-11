@@ -1284,4 +1284,21 @@ span.step-status {
 
 .step-status ~ .board-card-title {
   padding-right: 26px;
+
+/* The middle lane (e.g. To do): the board opens with it in 3rd place */
+.board-lane.is-focus {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+  box-shadow: inset 0 3px 0 var(--accent);
+}
+
+.board-focus-btn:not(.is-on) {
+  opacity: 0.45;
+}
+
+.board-focus-btn:not(.is-on):hover {
+  opacity: 1;
+}
+
+.board-focus-btn.is-on {
+  color: var(--accent);
 }

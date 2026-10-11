@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   DndContext,
   DragOverlay,
@@ -23,7 +23,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { positionBetween, lanePositionAt, laneShiftPosition } from "./positions";
 import { useI18n } from "../i18n/context";
-import { CaretLeft, CaretRight, Check, DotsSixVertical, PencilSimple, X } from "../icons";
+import { CaretLeft, CaretRight, Check, DotsSixVertical, PencilSimple, Target, X } from "../icons";
 import "./leerpad.css";
 
 /**
@@ -47,6 +47,8 @@ import "./leerpad.css";
  *                 The caller must keep `lanes` sorted by position afterwards.
  *   laneFooter    (lane) => node, e.g. an "add card" form
  *   emptyLaneText text for a lane without cards
+ *   focusLaneId   the board's middle lane: the board opens scrolled so it is the 3rd lane
+ *   onFocusLane   (lane | null) => void; omit to hide the middle-lane switch
  *   selection     optional select mode: { selectedIds: Set, onToggle(card, event, laneCards),
  *                 onToggleLane(lane, laneCards) }. While set, clicking a card selects it
  *                 instead of opening it, and cards can't be dragged.
@@ -87,8 +89,23 @@ export default function Board({
   laneFooter,
   emptyLaneText,
   selection,
+  focusLaneId,
+  onFocusLane,
 }) {
   const { t } = useI18n();
+  // Open with the middle lane as the third visible lane (scroll left for the others).
+  const boardRef = useRef(null);
+  const scrolledFor = useRef(null);
+  useLayoutEffect(() => {
+    const el = boardRef.current;
+    const index = lanes.findIndex((l) => l.id === focusLaneId);
+    if (!el || index < 0 || scrolledFor.current === focusLaneId) return;
+    scrolledFor.current = focusLaneId;
+    const laneEls = el.querySelectorAll(":scope > .board-lanes > .board-lane");
+    const first = laneEls[0];
+    const target = laneEls[Math.max(0, index - 2)];
+    if (first && target) el.scrollLeft = target.offsetLeft - first.offsetLeft;
+  }, [focusLaneId, lanes]);
   // What is being dragged: { type: "card" | "lane", id }.
   const [active, setActive] = useState(null);
   // While a card is dragged: the visible card ids per lane, as they would be
@@ -200,7 +217,7 @@ export default function Board({
       onDragCancel={finish}
       accessibility={{ screenReaderInstructions: { draggable: t("board.dragHelp") } }}
     >
-      <div className="board">
+      <div className="board" ref={boardRef}>
         <div className="board-lanes">
           <SortableContext items={lanes.map((l) => laneKey(l.id))} strategy={horizontalListSortingStrategy}>
             {lanes.map((lane, i) => {
@@ -212,6 +229,7 @@ export default function Board({
                 <SortableLane
                   key={lane.id}
                   lane={lane}
+                  isFocus={lane.id === focusLaneId}
                   canDrag={Boolean(onMoveLane)}
                   isOver={columns && activeCard && columns[lane.id].includes(activeCard.id) && activeCard.lane_id !== lane.id}
                 >
@@ -231,6 +249,8 @@ export default function Board({
                         }
                         onRename={onRenameLane}
                         onDelete={all.length === 0 ? onDeleteLane : null}
+                        isFocus={lane.id === focusLaneId}
+                        onFocus={onFocusLane && (() => onFocusLane(lane.id === focusLaneId ? null : lane))}
                         onMoveLeft={
                           onMoveLane && i > 0 && (() => onMoveLaneTo(onMoveLane, lanes, lane, -1))
                         }
@@ -309,13 +329,13 @@ function onMoveLaneTo(onMoveLane, lanes, lane, delta) {
 }
 
 /** A lane that can be dragged by its handle. children(handle) renders its content. */
-function SortableLane({ lane, canDrag, isOver, children }) {
+function SortableLane({ lane, canDrag, isOver, isFocus, children }) {
   const { setNodeRef, setActivatorNodeRef, listeners, attributes, transform, transition, isDragging } =
     useSortable({ id: laneKey(lane.id), data: { type: "lane", laneId: lane.id }, disabled: !canDrag });
   return (
     <section
       ref={setNodeRef}
-      className={`board-lane ${isDragging ? "is-lane-dragging" : ""} ${isOver ? "is-drop" : ""}`}
+      className={`board-lane ${isDragging ? "is-lane-dragging" : ""} ${isOver ? "is-drop" : ""} ${isFocus ? "is-focus" : ""}`}
       aria-label={lane.name}
       style={{ transform: CSS.Translate.toString(transform), transition }}
     >
@@ -382,6 +402,8 @@ function LaneHeader({
   onMoveLeft,
   onMoveRight,
   selectState,
+  isFocus,
+  onFocus,
 }) {
   const { t } = useI18n();
   const [editing, setEditing] = useState(false);
@@ -448,6 +470,17 @@ function LaneHeader({
             <CaretRight weight="bold" />
           </button>
         </span>
+      )}
+      {onFocus && !editing && (
+        <button
+          className={`board-icon-btn board-focus-btn ${isFocus ? "is-on" : ""}`}
+          title={isFocus ? t("board.focusOff") : t("board.focusOn")}
+          aria-label={t("board.focusAria", { name: lane.name })}
+          aria-pressed={Boolean(isFocus)}
+          onClick={onFocus}
+        >
+          <Target weight={isFocus ? "fill" : "regular"} />
+        </button>
       )}
       {onRename && !editing && (
         <button

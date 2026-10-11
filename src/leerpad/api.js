@@ -23,7 +23,7 @@ const nextPosition = (items) =>
 
 export async function loadProgram() {
   const [lanes, lessons] = await Promise.all([
-    supabase.from("lesson_lanes").select("id, name, position").order("position").then(check),
+    supabase.from("lesson_lanes").select("id, name, position, is_focus").order("position").then(check),
     supabase.from("lessons").select(LESSON_FIELDS).order("position").then(check),
   ]);
   return { lanes, lessons };
@@ -33,7 +33,7 @@ export const createLessonLane = (name, lanes) =>
   supabase
     .from("lesson_lanes")
     .insert({ name, position: nextPosition(lanes) })
-    .select("id, name, position")
+    .select("id, name, position, is_focus")
     .single()
     .then(check);
 
@@ -42,6 +42,12 @@ export const renameLessonLane = (id, name) =>
 
 export const moveLessonLane = (id, position) =>
   supabase.from("lesson_lanes").update({ position }).eq("id", id).then(check);
+
+/** Make a lane the board's middle lane (null: none). One per board, so clear first. */
+export async function setFocusLessonLane(laneId) {
+  await supabase.from("lesson_lanes").update({ is_focus: false }).eq("is_focus", true).then(check);
+  if (laneId) await supabase.from("lesson_lanes").update({ is_focus: true }).eq("id", laneId).then(check);
+}
 
 export const deleteLessonLane = (id) =>
   supabase.from("lesson_lanes").delete().eq("id", id).then(check);
@@ -103,7 +109,7 @@ export async function loadLeerpad(studentId, { withNotes = false } = {}) {
   const [lanes, steps] = await Promise.all([
     supabase
       .from("leerpad_lanes")
-      .select("id, name, position")
+      .select("id, name, position, is_focus")
       .eq("student_id", studentId)
       .order("position")
       .then(check),
@@ -130,7 +136,7 @@ export const createLeerpadLane = (studentId, name, lanes) =>
   supabase
     .from("leerpad_lanes")
     .insert({ student_id: studentId, name, position: nextPosition(lanes) })
-    .select("id, name, position")
+    .select("id, name, position, is_focus")
     .single()
     .then(check);
 
@@ -139,6 +145,11 @@ export const renameLeerpadLane = (id, name) =>
 
 export const moveLeerpadLane = (id, position) =>
   supabase.from("leerpad_lanes").update({ position }).eq("id", id).then(check);
+
+export async function setFocusLeerpadLane(studentId, laneId) {
+  await supabase.from("leerpad_lanes").update({ is_focus: false }).eq("student_id", studentId).eq("is_focus", true).then(check);
+  if (laneId) await supabase.from("leerpad_lanes").update({ is_focus: true }).eq("id", laneId).then(check);
+}
 
 export const deleteLeerpadLane = (id) =>
   supabase.from("leerpad_lanes").delete().eq("id", id).then(check);
@@ -190,7 +201,7 @@ export async function leerpadLanes(studentId) {
   await ensureLeerpad(studentId);
   return supabase
     .from("leerpad_lanes")
-    .select("id, name, position")
+    .select("id, name, position, is_focus")
     .eq("student_id", studentId)
     .order("position")
     .then(check);
