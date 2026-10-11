@@ -24,6 +24,7 @@ export const PATHS = {
   exercises: "/bibliotheek/oefeningen",
   sets: "/bibliotheek/sets",
   feedback: "/feedback",
+  flashcards: "/flashcards",
   proposals: "/voorstellen",
   users: "/gebruikers",
 };

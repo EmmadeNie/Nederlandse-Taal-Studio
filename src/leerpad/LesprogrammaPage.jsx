@@ -20,6 +20,7 @@ import { hasWordList, toLists, wordsForLists } from "./wordLists";
 import { SentenceListEditor, SentenceListsView } from "./SentenceList";
 import { hasSentenceList, sentencesForLists } from "./sentenceLists";
 import SelectionBar from "./SelectionBar";
+import ListHeading from "../flashcards/ListHeading";
 import FeedbackButton from "../feedback/FeedbackButton";
 import Board, { AddCardForm } from "./Board";
 import * as api from "./api";
@@ -508,7 +509,7 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
 
       {(editing || lessonVerbs(lesson.verb_ids).length > 0) && (
         <div className="lp-section">
-          <h4>{t("lv.title")}</h4>
+          <ListHeading lesson={editing ? null : lesson} part="verbs">{t("lv.title")}</ListHeading>
           {editing && <VerbsPicker value={form.verb_ids} onChange={choose("verb_ids")} />}
           <VerbsView ids={editing ? form.verb_ids : lesson.verb_ids} />
         </div>
@@ -516,7 +517,7 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
 
       {(editing || toLists(lesson.word_list).some(hasWordList)) && (
         <div className="lp-section">
-          <h4>{t("wl.title")}</h4>
+          <ListHeading lesson={editing ? null : lesson} part="words">{t("wl.title")}</ListHeading>
           {editing && (
             <ListsEditor
               value={form.word_list}
@@ -533,7 +534,7 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
 
       {(editing || toLists(lesson.sentence_list).some(hasSentenceList)) && (
         <div className="lp-section">
-          <h4>{t("sl.title")}</h4>
+          <ListHeading lesson={editing ? null : lesson} part="sentences">{t("sl.title")}</ListHeading>
           {editing && (
             <ListsEditor
               value={form.sentence_list}
