@@ -44,3 +44,24 @@ export default function StepStatus({ status, onChange }) {
     </span>
   );
 }
+
+/** Legend above a leerpad: what each status icon means, and how to change it. */
+export function StatusLegend({ canChange }) {
+  const { t } = useI18n();
+  return (
+    <div className="status-legend" aria-label={t("status.legend")}>
+      {STEP_STATUSES.map((s) => {
+        const Icon = ICON[s];
+        return (
+          <span key={s} className="status-legend-item">
+            <span className={`step-status is-${s}`} aria-hidden="true">
+              <Icon weight="fill" />
+            </span>
+            {t(`status.${s}`)}
+          </span>
+        );
+      })}
+      {canChange && <span className="dim status-legend-hint">{t("status.legendHint")}</span>}
+    </div>
+  );
+}

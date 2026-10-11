@@ -20,7 +20,7 @@ import Board, { AddCardForm } from "./Board";
 import FeedbackButton from "../feedback/FeedbackButton";
 import * as api from "./api";
 import { planByLevel } from "./byLevel";
-import StepStatus from "./StepStatus";
+import StepStatus, { StatusLegend } from "./StepStatus";
 import { BoardFilters, CardBody, Chips, Dialog, LinkList, LinksEditor, MetaItem } from "./shared";
 import { ICONS } from "../icons";
 import { LEVELS, linkCount, matchesFilter, stepContent } from "./util";
@@ -137,11 +137,14 @@ export default function LeerpadBoard({ studentId }) {
         setLabel={setLabel}
         placeholder={t("lp.searchStep")}
       />
-      {isDocent && steps.length > 0 && (
+      {steps.length > 0 && (
         <div className="lp-board-tools">
-          <button type="button" className="fb-btn-secondary" onClick={organiseByLevel}>
-            {t("byLevel.button")}
-          </button>
+          <StatusLegend canChange={canArrange} />
+          {isDocent && (
+            <button type="button" className="fb-btn-secondary" onClick={organiseByLevel}>
+              {t("byLevel.button")}
+            </button>
+          )}
         </div>
       )}
       {error && <div className="lp-error">{error}</div>}
