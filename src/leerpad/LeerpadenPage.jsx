@@ -8,6 +8,7 @@ import LeerpadBoard from "./LeerpadBoard";
 import { AddStudentDialog, PendingStudentPanel } from "./StudentPanels";
 import { listStudents } from "./api";
 import { EnvelopeSimple } from "../icons";
+import { Dialog } from "./shared";
 
 /** Many students → a searchable list instead of a row of buttons. */
 const PICKER_THRESHOLD = 8;
@@ -41,6 +42,7 @@ export default function LeerpadenPage() {
   const [students, setStudents] = useState(null);
   const [filter, setFilter] = useState("");
   const [adding, setAdding] = useState(false);
+  const [managing, setManaging] = useState(false); // invite / edit / link / delete a pending student
   const [error, setError] = useState(null);
 
   const load = useCallback(
@@ -150,19 +152,29 @@ export default function LeerpadenPage() {
             {addButton}
           </div>
 
-          <h3 className="lp-board-title">{t("lpd.pathOf", { name: current.name })}</h3>
-          {current.pending && (
-            <PendingStudentPanel
-              key={`pending-${current.id}`}
-              student={current}
-              accounts={accounts}
-              isDocent={isDocent}
-              onChanged={load}
-              onDeleted={async () => {
-                await load();
-                navigate(pathFor("leerpaden"), { replace: true });
-              }}
-            />
+          <div className="lp-board-head">
+            <h3 className="lp-board-title">{t("lpd.pathOf", { name: current.name })}</h3>
+            {current.pending && (
+              <button type="button" className="fb-btn-secondary lp-manage-btn" onClick={() => setManaging(true)}>
+                <EnvelopeSimple aria-hidden="true" /> {t("lpd.manage")}
+              </button>
+            )}
+          </div>
+          {current.pending && managing && (
+            <Dialog title={t("lpd.manageTitle", { name: current.name })} onClose={() => setManaging(false)} wide>
+              <PendingStudentPanel
+                key={`pending-${current.id}`}
+                student={current}
+                accounts={accounts}
+                isDocent={isDocent}
+                onChanged={load}
+                onDeleted={async () => {
+                  setManaging(false);
+                  await load();
+                  navigate(pathFor("leerpaden"), { replace: true });
+                }}
+              />
+            </Dialog>
           )}
           <LeerpadBoard key={`board-${current.id}`} studentId={current.id} />
         </>

@@ -19,6 +19,7 @@ import { hasSentenceList, sentencesForLists } from "./sentenceLists";
 import Board, { AddCardForm } from "./Board";
 import FeedbackButton from "../feedback/FeedbackButton";
 import * as api from "./api";
+import { planByLevel } from "./byLevel";
 import { BoardFilters, CardBody, Chips, Dialog, LinkList, LinksEditor, MetaItem } from "./shared";
 import { ICONS } from "../icons";
 import { LEVELS, linkCount, matchesFilter, stepContent } from "./util";
@@ -92,6 +93,29 @@ export default function LeerpadBoard({ studentId }) {
       setSteps((ss) => [...ss, created]);
     });
 
+  // Docent: one lane per level, every step with a level in its lane (asks first).
+  const organiseByLevel = () =>
+    run(async () => {
+      const plan = planByLevel(lanes, steps, (s) => stepContent(s).level || null);
+      if (!plan.moves.length && !plan.newLanes.length) {
+        window.alert(t("byLevel.nothing"));
+        return;
+      }
+      const question = [
+        t("byLevel.confirm", { n: plan.moves.length, lanes: plan.levels.join(", ") }),
+        plan.newLanes.length ? t("byLevel.newLanes", { lanes: plan.newLanes.join(", ") }) : "",
+        plan.noLevel ? t("byLevel.noLevel", { n: plan.noLevel }) : "",
+      ]
+        .filter(Boolean)
+        .join("\n\n");
+      if (!window.confirm(question)) return;
+      let current = [...lanes];
+      for (const name of plan.newLanes) current = [...current, await api.createLeerpadLane(studentId, name, current)];
+      const laneId = (name) => current.find((l) => l.name.trim().toUpperCase() === name).id;
+      for (const m of plan.moves) await api.moveStep(m.step.id, laneId(m.lane), m.position);
+      await load();
+    });
+
   const openStep = steps.find((s) => s.id === openId);
 
   if (loading) return <p className="dim">{t("common.loading")}</p>;
@@ -107,6 +131,13 @@ export default function LeerpadBoard({ studentId }) {
         setLabel={setLabel}
         placeholder={t("lp.searchStep")}
       />
+      {isDocent && steps.length > 0 && (
+        <div className="lp-board-tools">
+          <button type="button" className="fb-btn-secondary" onClick={organiseByLevel}>
+            {t("byLevel.button")}
+          </button>
+        </div>
+      )}
       {error && <div className="lp-error">{error}</div>}
       {lanes.length === 0 ? (
         <p className="dim">{t("lp.notCreated")}</p>

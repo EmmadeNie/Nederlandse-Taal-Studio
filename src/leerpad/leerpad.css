@@ -1198,3 +1198,28 @@
   background: color-mix(in srgb, #fde68a 40%, transparent);
   box-shadow: inset 3px 0 0 #f5c542;
 }
+
+.lp-board-tools {
+  display: flex;
+  justify-content: flex-end;
+  margin: -0.25rem 0 0.6rem;
+}
+
+/* Title of a student's leerpad, with the invitation/settings button for a pending student */
+.lp-board-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.lp-board-head .lp-board-title {
+  margin-right: auto;
+}
+
+.lp-manage-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
