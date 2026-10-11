@@ -325,7 +325,7 @@ export const messages = {
     "status.in_class": "Tijdens de les",
     "status.homework": "Huiswerk",
     "status.homework_done": "Huiswerk af",
-    "status.ongoing": "Loopt nog",
+    "status.ongoing": "Doorlopend",
     "status.none": "Geen status",
     "status.legend": "Betekenis van de statussen",
     "status.legendHint": "Klik op het icoon op een kaartje om de status te wisselen.",
