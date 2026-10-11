@@ -1,3 +1,4 @@
+import { FilterBar } from "./Filters";
 import { useContentVersion } from "../data/useContent";
 import { NewItemButton } from "../library/ItemEditing";
 import { queryWords } from "../data";
@@ -42,7 +43,7 @@ export default function VerbBrowser() {
     <div>
       <h2>{t("nav.verbs")}</h2>
       <NewItemButton type="word" extra={{ partOfSpeech: "verb", conjugation: {} }} label={t("ie.new.verb")} />
-      <div className="filters">
+      <FilterBar active={[level, type].filter(Boolean).length}>
         <input
           type="text"
           placeholder={t("verbs.search")}
@@ -71,11 +72,11 @@ export default function VerbBrowser() {
           <option value="fully-regular">{t("dash.fullyRegular")}</option>
           <option value="has-irregular">{t("dash.hasIrregular")}</option>
         </select>
-      </div>
+      </FilterBar>
       <p className="result-count">{t("verbs.found", { n: verbs.length })}</p>
       <div className="card-grid">
         {verbs.map((v) => (
-          <VerbCard key={v.id} verb={v} />
+          <VerbCard key={v.id} verb={v} collapsible />
         ))}
       </div>
     </div>

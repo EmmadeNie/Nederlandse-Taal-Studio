@@ -9,7 +9,7 @@ import { Check, LinkSimple } from "../icons";
  *   path   - app path that opens this view, e.g. "/bibliotheek/grammatica/de-het"
  *   label  - optional button text (defaults to "Kopieer link" / "Copy link")
  */
-export default function CopyLinkButton({ path, label }) {
+export default function CopyLinkButton({ path, label, compact = false }) {
   const { t } = useI18n();
   const [copied, setCopied] = useState(false);
 
@@ -33,11 +33,13 @@ export default function CopyLinkButton({ path, label }) {
 
   return (
     <button
-      className={`copy-link-btn ${copied ? "copied" : ""}`}
+      className={`copy-link-btn ${copied ? "copied" : ""} ${compact ? "is-compact" : ""}`}
+      aria-label={compact ? t("copy.title") : undefined}
       onClick={handleCopy}
       title={t("copy.title")}
     >
-      {copied ? <Check /> : <LinkSimple />} {copied ? t("copy.done") : label || t("copy.label")}
+      {copied ? <Check /> : <LinkSimple />}
+      {!compact && <> {copied ? t("copy.done") : label || t("copy.label")}</>}
     </button>
   );
 }

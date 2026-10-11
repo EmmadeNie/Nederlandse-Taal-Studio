@@ -1,12 +1,32 @@
+import { useState } from "react";
 import { LEVELS, getAllThemes } from "../data";
 import { useI18n } from "../i18n/context";
+
+/**
+ * A row of filters: the search field and dropdowns. On a phone the dropdowns
+ * fold behind a "Filters" button (with how many are set) so the list starts
+ * higher; on a computer everything shows as before.
+ */
+export function FilterBar({ active = 0, children }) {
+  const { t } = useI18n();
+  const [open, setOpen] = useState(false);
+  return (
+    <div className={`filters is-collapsible ${open ? "is-open" : ""}`}>
+      {children}
+      <button type="button" className="filters-toggle" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+        {t("filter.toggle")}
+        {active > 0 && <span className="filters-count">{active}</span>}
+      </button>
+    </div>
+  );
+}
 
 export function WordFilters({ filters, onChange }) {
   const { t } = useI18n();
   const themes = getAllThemes();
 
   return (
-    <div className="filters">
+    <FilterBar active={[filters.level, filters.theme, filters.partOfSpeech].filter(Boolean).length}>
       <input
         type="text"
         placeholder={t("words.search")}
@@ -57,6 +77,6 @@ export function WordFilters({ filters, onChange }) {
           </option>
         ))}
       </select>
-    </div>
+    </FilterBar>
   );
 }

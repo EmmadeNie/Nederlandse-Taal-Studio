@@ -1,8 +1,8 @@
 import { useContentVersion } from "../data/useContent";
 import { EditItemButton, NewItemButton } from "../library/ItemEditing";
 import { useEffect, useRef, useState } from "react";
-import { topics } from "../data";
-import { LevelBadge, ReviewBadge, Tag } from "./Badges";
+import { LEVELS, topics } from "../data";
+import { LevelBadge, ReviewBadge } from "./Badges";
 import FeedbackButton from "../feedback/FeedbackButton";
 import Markdown from "./Markdown";
 import RelatedWords from "./RelatedWords";
@@ -12,6 +12,7 @@ import { navigate, useRoute } from "../hooks/useRoute";
 import { pathFor, topicIdFromSlug, topicSlug } from "../routes";
 import CopyLinkButton from "./CopyLinkButton";
 import { useI18n } from "../i18n/context";
+import { useAuth } from "../auth/context";
 import TopicLangToggle from "./TopicLangToggle";
 import { hasEnglish, topicText } from "./topicLang";
 import CategoryBadge from "./CategoryBadge";
@@ -66,49 +67,66 @@ export default function TopicBrowser() {
       </div>
       <NewItemButton type="topic" extra={cat ? { category: cat } : undefined} />
       <p className="result-count">{t("topics.count", { n: shown.length })}</p>
-      {shown.map((topic) => {
-        const isOpen = expandedId === topic.id;
+      {[...LEVELS, null].map((level) => {
+        const group = shown.filter((topic) => (LEVELS.includes(topic.introducedAtLevel) ? topic.introducedAtLevel : null) === level);
+        if (!group.length) return null;
         return (
-          <TopicCard
-            key={topic.id}
-            topic={topic}
-            isOpen={isOpen}
-            cardRef={isOpen ? openRef : null}
-            onToggle={() => setExpanded(isOpen ? null : topic.id)}
-          />
+          <section key={level ?? "none"} className="topic-group">
+            <h3 className="topic-group-title">{level ?? t("level.none")}</h3>
+            {group.map((topic) => {
+              const isOpen = expandedId === topic.id;
+              return (
+                <TopicCard
+                  key={topic.id}
+                  topic={topic}
+                  isOpen={isOpen}
+                  cardRef={isOpen ? openRef : null}
+                  onToggle={() => setExpanded(isOpen ? null : topic.id)}
+                />
+              );
+            })}
+          </section>
         );
       })}
     </div>
   );
 }
 
-/** One grammar topic; NL/EN switch per card, always starting in Dutch. */
+/**
+ * One topic: title, one quiet line (level · category), the summary; tap to read
+ * the explanation. Tools sit small top right. NL/EN switch per card, always
+ * starting in Dutch.
+ */
 function TopicCard({ topic, isOpen, cardRef, onToggle }) {
+  const { t } = useI18n();
   const [lang, setLang] = useState("nl");
+  const isStaff = useAuth().role !== "leerling";
   const text = topicText(topic, lang);
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- the card folds like before
-    <div ref={cardRef} className="topic-card" onClick={onToggle}>
-      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+    <div ref={cardRef} className={`topic-card ${isOpen ? "is-open" : ""}`} onClick={onToggle}>
+      <div className="topic-head">
         <h3 lang={lang}>{text.title}</h3>
+        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- keeps button clicks from folding the card */}
+        <div className="topic-tools" onClick={(e) => e.stopPropagation()}>
+          {hasEnglish(topic) && <TopicLangToggle lang={lang} onChange={setLang} />}
+          <CopyLinkButton path={pathFor("topics", topicSlug(topic.id))} compact />
+          <FeedbackButton itemType="topic" itemId={topic.id} itemLabel={topic.title} />
+          <EditItemButton item={topic} />
+        </div>
+      </div>
+      <div className="topic-meta">
         <LevelBadge level={topic.introducedAtLevel} />
-        <ReviewBadge status={topic.reviewStatus} />
         <CategoryBadge topic={topic} />
-        {hasEnglish(topic) && <TopicLangToggle lang={lang} onChange={setLang} />}
+        {isStaff && <ReviewBadge status={topic.reviewStatus} />}
       </div>
-      <div className="summary" lang={lang}>
-        {text.summary}
-      </div>
-      <div className="meta">
-        {topic.grammarTags?.map((g) => (
-          <Tag key={g}>{g}</Tag>
-        ))}
-        {topic.themes?.map((th) => (
-          <Tag key={th}>{th}</Tag>
-        ))}
-      </div>
+      {text.summary && (
+        <p className="summary" lang={lang}>
+          {text.summary}
+        </p>
+      )}
 
-      {isOpen && (
+      {isOpen ? (
         <>
           {text.explanation && (
             <div lang={lang}>
@@ -118,13 +136,9 @@ function TopicCard({ topic, isOpen, cardRef, onToggle }) {
           <RelatedWords ids={topic.relatedWordIds} />
           <ExampleSentences ids={topic.exampleSentenceIds} />
         </>
+      ) : (
+        <span className="topic-more">{t("topics.read")} ›</span>
       )}
-      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- keeps button clicks from folding the card */}
-      <div className="card-footer" onClick={(e) => e.stopPropagation()}>
-        <EditItemButton item={topic} />
-        <CopyLinkButton path={pathFor("topics", topicSlug(topic.id))} />
-        <FeedbackButton itemType="topic" itemId={topic.id} itemLabel={topic.title} />
-      </div>
     </div>
   );
 }

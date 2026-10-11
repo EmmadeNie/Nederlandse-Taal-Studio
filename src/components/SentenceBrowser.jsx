@@ -1,3 +1,4 @@
+import { FilterBar } from "./Filters";
 import { useContentVersion } from "../data/useContent";
 import { EditItemButton, NewItemButton } from "../library/ItemEditing";
 import { querySentences, LEVELS } from "../data";
@@ -66,7 +67,12 @@ export default function SentenceBrowser() {
     <div>
       <h2>{t("nav.sentences")}</h2>
       <NewItemButton type="sentence" />
-      <div className="filters">
+      <FilterBar
+        active={
+          [filters.level, filters.grammarTag, filters.tense, filters.sentenceType, filters.wordOrder, filters.theme].filter(Boolean)
+            .length + (sort !== "default" ? 1 : 0)
+        }
+      >
         <input
           type="text"
           placeholder={t("sent.search")}
@@ -167,7 +173,7 @@ export default function SentenceBrowser() {
           <option value="level-asc">{t("sort.levelAsc")}</option>
           <option value="level-desc">{t("sort.levelDesc")}</option>
         </select>
-      </div>
+      </FilterBar>
       <p className="result-count">{t("sent.found", { n: results.length })}</p>
       {results.map((s) => (
         <div key={s.id} className="sentence-card">

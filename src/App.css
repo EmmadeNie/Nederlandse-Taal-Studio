@@ -1826,3 +1826,221 @@ svg[class^="ph"], button svg, h4 svg, .board-meta-item svg {
     transition: none;
   }
 }
+
+/* ----- Topic cards: title, one quiet meta line, summary; tools top right ----- */
+.topic-group-title {
+  margin: 1.25rem 0 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+}
+
+.topic-card {
+  position: relative;
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+}
+
+.topic-card .topic-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.topic-card .topic-head h3 {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.3;
+}
+
+.topic-card:has(.ie-edit) > :first-child {
+  padding-right: 0;
+}
+
+.topic-tools {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex: none;
+}
+
+.topic-tools .ie-edit {
+  position: static;
+}
+
+.topic-tools .topic-lang {
+  margin-left: 0;
+}
+
+.copy-link-btn.is-compact {
+  padding: 0.25rem 0.4rem;
+}
+
+.topic-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0.4rem 0 0.5rem;
+}
+
+.topic-card .summary {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.topic-more {
+  display: inline-block;
+  margin-top: 0.6rem;
+  font-size: 0.82rem;
+  color: var(--accent);
+}
+
+/* ----- Filter row: on a phone the dropdowns fold behind "Filters" ----- */
+.filters-toggle {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .library > .lp-intro {
+    display: none;
+  }
+
+  .filters.is-collapsible {
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .filters.is-collapsible > input {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .filters.is-collapsible > select {
+    display: none;
+    flex: 1 1 45%;
+    order: 3;
+  }
+
+  .filters.is-collapsible.is-open > select {
+    display: block;
+  }
+
+  .filters-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    order: 2;
+    flex: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    font: inherit;
+    font-size: 0.9rem;
+  }
+
+  .filters.is-open .filters-toggle {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .filters-count {
+    background: var(--accent);
+    color: #fff;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    padding: 0 0.4rem;
+    line-height: 1.4;
+  }
+
+  /* Word, verb and sentence cards: compact, without the tag rows */
+  .card,
+  .sentence-card {
+    padding: 0.75rem 0.9rem;
+  }
+
+  .card .note,
+  .sentence-card .note,
+  .card .meta,
+  .sentence-card .meta .tag,
+  .sentence-card .meta .review-badge,
+  .card .review-badge {
+    display: none;
+  }
+
+  .card .card-header {
+    margin-bottom: 0.15rem;
+  }
+
+  .card .translation {
+    margin-bottom: 0;
+  }
+
+  .card .card-footer,
+  .sentence-card .card-footer {
+    border-top: 0;
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+  .card .card-footer:not(:has(.fb-button)),
+  .sentence-card .card-footer:not(:has(.fb-button)) {
+    display: none;
+  }
+
+  /* Feedback button (feedback mode) bottom right instead of its own row */
+  .card,
+  .sentence-card {
+    position: relative;
+  }
+
+  .card .card-footer:has(.fb-button),
+  .sentence-card .card-footer:has(.fb-button) {
+    display: contents;
+  }
+
+  .card .card-footer .fb-button,
+  .sentence-card .card-footer .fb-button {
+    position: absolute;
+    right: 0.55rem;
+    bottom: 0.55rem;
+  }
+
+  .card-grid {
+    gap: 0.5rem;
+  }
+
+  /* Verbs: the conjugation folds behind "Vervoeging" */
+  .card.is-collapsible:not(.is-open) .conjugation,
+  .card.is-collapsible:not(.is-open) > div:has(> .tag) {
+    display: none;
+  }
+
+  .topic-card {
+    padding: 0.85rem 0.95rem;
+  }
+}
+
+.verb-toggle {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .verb-toggle {
+    display: inline-flex;
+    gap: 0.3rem;
+    margin-top: 0.4rem;
+    background: none;
+    border: 0;
+    padding: 0.2rem 0;
+    color: var(--accent);
+    font: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+}
