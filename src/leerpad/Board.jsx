@@ -94,7 +94,8 @@ export default function Board({
   onFocusLane,
 }) {
   const { t } = useI18n();
-  // Open with the middle lane as the third visible lane (scroll left for the others).
+  // Open with the middle lane as the third visible lane (scroll left for the others);
+  // on a phone, where one lane fills the screen, open on the middle lane itself.
   const boardRef = useRef(null);
   const scrolledFor = useRef(null);
   useLayoutEffect(() => {
@@ -104,7 +105,8 @@ export default function Board({
     scrolledFor.current = focusLaneId;
     const laneEls = el.querySelectorAll(":scope > .board-lanes > .board-lane");
     const first = laneEls[0];
-    const target = laneEls[Math.max(0, index - 2)];
+    const lanesBefore = el.clientWidth < 600 ? 0 : 2;
+    const target = laneEls[Math.max(0, index - lanesBefore)];
     if (first && target) el.scrollLeft = target.offsetLeft - first.offsetLeft;
   }, [focusLaneId, lanes]);
   // What is being dragged: { type: "card" | "lane", id }.

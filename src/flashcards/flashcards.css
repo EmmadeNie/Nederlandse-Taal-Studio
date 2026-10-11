@@ -403,3 +403,23 @@
   letter-spacing: normal;
   font-weight: 500;
 }
+
+/* Lists set to done */
+.fc-done-btn:hover {
+  color: var(--green);
+}
+
+.fc-done-list {
+  margin: 0 0 1rem;
+}
+
+.fc-done-list > summary {
+  cursor: pointer;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.fc-decks li.is-done .fc-deck {
+  opacity: 0.6;
+}

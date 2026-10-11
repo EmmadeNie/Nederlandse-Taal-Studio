@@ -1318,6 +1318,7 @@ span.step-status {
 
 .step-status ~ .board-card-title {
   padding-right: 26px;
+}
 
 /* The middle lane (e.g. To do): the board opens with it in 3rd place */
 .board-lane.is-focus {

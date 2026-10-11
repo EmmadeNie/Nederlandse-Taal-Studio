@@ -7,11 +7,11 @@ import { setItems, setsOfType } from "../data";
 import { useContentVersion } from "../data/useContent";
 import { supabase } from "../lib/supabase";
 import { LevelBadge } from "../components/Badges";
-import { Cards, X } from "../icons";
+import { ArrowCounterClockwise, Cards, CheckCircle, X } from "../icons";
 import FlashcardButton from "./FlashcardButton";
 import Practice from "./Practice";
 import { cardOf, deckTitle, itemsOf, partsOf } from "./cards";
-import { loadDecks, removeDeck, useDecks } from "./store";
+import { loadDecks, removeDeck, setDeckDone, useDecks } from "./store";
 import "./flashcards.css";
 
 const LESSON = "id, title, level, word_list, sentence_list, verb_ids";
@@ -79,7 +79,7 @@ export default function FlashcardsPage() {
 
   // Practising one deck, or all of them.
   if (route.param && decks && lessons) {
-    const chosen = route.param === "alles" ? decks : decks.filter((d) => d.id === route.param);
+    const chosen = route.param === "alles" ? decks.filter((d) => !d.done_at) : decks.filter((d) => d.id === route.param);
     const unique = new Map(chosen.flatMap(cardsOf).map((c) => [c.id, c]));
     const title = route.param === "alles" ? t("fc.all") : chosen[0]?.title;
     if (unique.size) {
@@ -93,6 +93,9 @@ export default function FlashcardsPage() {
       );
     }
   }
+
+  const active = (decks || []).filter((d) => !d.done_at);
+  const done = (decks || []).filter((d) => d.done_at);
 
   const shownLessons = (lessons || [])
     .filter((l) => partsOf(l).length)
@@ -116,38 +119,18 @@ export default function FlashcardsPage() {
         </div>
       ) : (
         <>
-          {decks.length > 1 && (
+          {active.length > 1 && (
             <button type="button" className="fb-btn-primary fc-all" onClick={() => navigate(pathFor("flashcards", "alles"))}>
               <Cards aria-hidden="true" /> {t("fc.practiseAll")}
             </button>
           )}
-          <ul className="fc-decks">
-            {decks.map((d) => {
-              const n = cardsOf(d).length;
-              return (
-                <li key={d.id}>
-                  <button
-                    type="button"
-                    className="fc-deck"
-                    onClick={() => navigate(pathFor("flashcards", d.id))}
-                    disabled={!n}
-                  >
-                    <span className="fc-deck-title">{d.title}</span>
-                    <span className="dim">{n ? t("fc.cards", { n }) : t("fc.noCards")}</span>
-                  </button>
-                  <button
-                    type="button"
-                    className="board-icon-btn"
-                    aria-label={t("fc.removeDeck", { name: d.title })}
-                    title={t("fc.removeHint")}
-                    onClick={() => removeDeck(d.id)}
-                  >
-                    <X />
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+          <DeckList decks={active} cardsOf={cardsOf} t={t} />
+          {done.length > 0 && (
+            <details className="fc-done-list">
+              <summary>{t("fc.doneList", { n: done.length })}</summary>
+              <DeckList decks={done} cardsOf={cardsOf} t={t} />
+            </details>
+          )}
           <button type="button" className="fb-link fc-browse-toggle" onClick={() => setBrowse((b) => !b)}>
             {browse ? t("fc.browseHide") : t("fc.browse")}
           </button>
@@ -214,5 +197,42 @@ export default function FlashcardsPage() {
         </section>
       )}
     </div>
+  );
+}
+
+/** My lists, each with practise, done/undo and remove. */
+function DeckList({ decks, cardsOf, t }) {
+  return (
+    <ul className="fc-decks">
+      {decks.map((d) => {
+        const n = cardsOf(d).length;
+        return (
+          <li key={d.id} className={d.done_at ? "is-done" : undefined}>
+            <button type="button" className="fc-deck" onClick={() => navigate(pathFor("flashcards", d.id))} disabled={!n}>
+              <span className="fc-deck-title">{d.title}</span>
+              <span className="dim">{n ? t("fc.cards", { n }) : t("fc.noCards")}</span>
+            </button>
+            <button
+              type="button"
+              className="board-icon-btn fc-done-btn"
+              aria-label={d.done_at ? t("fc.undoDoneAria", { name: d.title }) : t("fc.markDoneAria", { name: d.title })}
+              title={d.done_at ? t("fc.undoDone") : t("fc.markDone")}
+              onClick={() => setDeckDone(d.id, !d.done_at)}
+            >
+              {d.done_at ? <ArrowCounterClockwise /> : <CheckCircle />}
+            </button>
+            <button
+              type="button"
+              className="board-icon-btn"
+              aria-label={t("fc.removeDeck", { name: d.title })}
+              title={t("fc.removeHint")}
+              onClick={() => removeDeck(d.id)}
+            >
+              <X />
+            </button>
+          </li>
+        );
+      })}
+    </ul>
   );
 }
