@@ -21,17 +21,30 @@ export default function Practice({ cards, title, onExit }) {
   const [flipped, setFlipped] = useState(false);
   const [hard, setHard] = useState(() => new Set()); // ids answered "nog eens" at least once
   const [total, setTotal] = useState(cards.length);
+  // Earlier states, so "Vorige" can undo the last answer and show that card again.
+  const [history, setHistory] = useState([]);
 
   const restart = (list, dir = direction) => {
     setTotal(list.length);
     setQueue(start(list, dir));
     setFlipped(false);
     setHard(new Set());
+    setHistory([]);
+  };
+
+  const previous = () => {
+    if (!history.length) return;
+    const last = history[history.length - 1];
+    setHistory((h) => h.slice(0, -1));
+    setQueue(last.queue);
+    setHard(last.hard);
+    setFlipped(false);
   };
 
   const current = queue[0];
   const answer = (knew) => {
     if (!current || !flipped) return;
+    setHistory((h) => [...h, { queue, hard }]);
     setFlipped(false);
     if (knew) {
       setQueue((q) => q.slice(1));
@@ -54,6 +67,7 @@ export default function Practice({ cards, title, onExit }) {
         setFlipped((f) => !f);
       } else if (e.key === "ArrowLeft") answer(false);
       else if (e.key === "ArrowRight") answer(true);
+      else if (e.key === "Backspace") previous();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -106,6 +120,9 @@ export default function Practice({ cards, title, onExit }) {
           <h3>{t("fc.doneTitle")}</h3>
           <p className="dim">{t("fc.doneText", { n: total, hard: hardCards.length })}</p>
           <div className="fc-done-actions">
+            <button type="button" className="fb-link" onClick={previous} disabled={!history.length}>
+              ← {t("fc.previous")}
+            </button>
             {hardCards.length > 0 && (
               <button type="button" className="fb-btn-primary" onClick={() => restart(hardCards)}>
                 {t("fc.onlyHard", { n: hardCards.length })}
@@ -167,6 +184,11 @@ export default function Practice({ cards, title, onExit }) {
           <span className="dim fc-tap">{t("fc.tap")}</span>
         )}
       </button>
+      <div className="fc-nav">
+        <button type="button" className="fb-link" onClick={previous} disabled={!history.length}>
+          ← {t("fc.previous")}
+        </button>
+      </div>
       <div className="fc-actions">
         <button type="button" className="fc-again" onClick={() => answer(false)} disabled={!flipped}>
           {t("fc.notYet")}
