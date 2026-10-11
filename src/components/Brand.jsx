@@ -2,7 +2,8 @@ import { useI18n } from "../i18n/context";
 
 /**
  * The logo: a board whose cards stack up like stairs, with the orange card
- * at the top as the goal (your next level). The favicon (public/logo-icon.svg) is the same cards without the tile;
+ * at the top as the goal (your next level); the two green cards under it are
+ * its stem, so that column reads as a flower. The favicon (public/logo-icon.svg) is the same cards without the tile;
  * the tile and card colours follow the theme (--logo-tile, --logo-card).
  */
 export function LogoMark({ size = 40 }) {
@@ -12,8 +13,8 @@ export function LogoMark({ size = 40 }) {
       <rect x="6" y="26" width="8" height="8" rx="2" style={{ fill: "var(--logo-card)" }} opacity=".5" />
       <rect x="16" y="26" width="8" height="8" rx="2" style={{ fill: "var(--logo-card)" }} opacity=".75" />
       <rect x="16" y="16" width="8" height="8" rx="2" style={{ fill: "var(--logo-card)" }} opacity=".75" />
-      <rect x="26" y="26" width="8" height="8" rx="2" style={{ fill: "var(--logo-card)" }} />
-      <rect x="26" y="16" width="8" height="8" rx="2" style={{ fill: "var(--logo-card)" }} />
+      <rect x="26" y="26" width="8" height="8" rx="2" style={{ fill: "var(--logo-stem)" }} />
+      <rect x="26" y="16" width="8" height="8" rx="2" style={{ fill: "var(--logo-stem)" }} />
       <rect x="26" y="6" width="8" height="8" rx="2" fill="#f08c3c" />
     </svg>
   );
