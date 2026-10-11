@@ -1,14 +1,19 @@
+import { useState } from "react";
 import { LevelBadge, ReviewBadge, Tag } from "./Badges";
 import FeedbackButton from "../feedback/FeedbackButton";
 import { EditItemButton } from "../library/ItemEditing";
 import { useI18n } from "../i18n/context";
 import { Note } from "../icons";
 
-/** A verb with its regularity and full conjugation (Werkwoorden, grammar topics). */
-export default function VerbCard({ verb: v }) {
+/**
+ * A verb with its regularity and full conjugation (Werkwoorden, grammar topics).
+ * `collapsible`: on a phone the conjugation folds until you tap "Vervoeging".
+ */
+export default function VerbCard({ verb: v, collapsible = false }) {
   const { t } = useI18n();
+  const [open, setOpen] = useState(false);
   return (
-    <div className="card">
+    <div className={`card ${collapsible ? "is-collapsible" : ""} ${open ? "is-open" : ""}`}>
       <div className="card-header">
         <span className="word">{v.nl}</span>
         <LevelBadge level={v.introducedAtLevel} />
@@ -28,6 +33,11 @@ export default function VerbCard({ verb: v }) {
         </div>
       )}
 
+      {collapsible && v.conjugation && (
+        <button type="button" className="verb-toggle" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+          {t("verbs.conjugation")} <span aria-hidden="true">{open ? "▴" : "▾"}</span>
+        </button>
+      )}
       {v.conjugation && (
         <div className="conjugation">
           <strong
