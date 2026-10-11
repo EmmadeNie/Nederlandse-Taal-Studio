@@ -14,6 +14,8 @@ import CopyLinkButton from "./CopyLinkButton";
 import { useI18n } from "../i18n/context";
 import TopicLangToggle from "./TopicLangToggle";
 import { hasEnglish, topicText } from "./topicLang";
+import CategoryBadge from "./CategoryBadge";
+import { TOPIC_CATEGORIES, categoryOf } from "../data/topicCategory";
 
 export default function TopicBrowser() {
   const { t } = useI18n();
@@ -30,8 +32,19 @@ export default function TopicBrowser() {
       : null) ||
     null;
 
+  // Grammatica / Spelling / Uitspraak, or all of them (?cat=… keeps the choice in links).
+  const cat = TOPIC_CATEGORIES.includes(urlParams.cat) ? urlParams.cat : null;
+  const search = cat ? `?cat=${cat}` : "";
+  const shown = topics.filter((topic) => !cat || categoryOf(topic) === cat || topic.id === expandedId);
+  const countOf = (c) => topics.filter((topic) => !c || categoryOf(topic) === c).length;
+
   const setExpanded = (id) =>
-    navigate(id ? pathFor("topics", topicSlug(id)) : pathFor("topics"), { replace: true });
+    navigate(id ? pathFor("topics", topicSlug(id)) : pathFor("topics"), { replace: true, search });
+  const setCat = (c) =>
+    navigate(expandedId ? pathFor("topics", topicSlug(expandedId)) : pathFor("topics"), {
+      replace: true,
+      search: c ? `?cat=${c}` : "",
+    });
 
   // Scroll the deep-linked topic into view on load / when it changes.
   const openRef = useRef(null);
@@ -44,9 +57,16 @@ export default function TopicBrowser() {
   return (
     <div>
       <h2>{t("nav.topics")}</h2>
-      <NewItemButton type="topic" />
-      <p className="result-count">{t("topics.count", { n: topics.length })}</p>
-      {topics.map((topic) => {
+      <div className="topic-cats" role="group" aria-label={t("cat.filter")}>
+        {[null, ...TOPIC_CATEGORIES].map((c) => (
+          <button key={c || "all"} type="button" aria-pressed={cat === c} onClick={() => setCat(c)}>
+            {c ? t(`cat.${c}`) : t("cat.all")} <span className="dim">{countOf(c)}</span>
+          </button>
+        ))}
+      </div>
+      <NewItemButton type="topic" extra={cat ? { category: cat } : undefined} />
+      <p className="result-count">{t("topics.count", { n: shown.length })}</p>
+      {shown.map((topic) => {
         const isOpen = expandedId === topic.id;
         return (
           <TopicCard
@@ -73,6 +93,7 @@ function TopicCard({ topic, isOpen, cardRef, onToggle }) {
         <h3 lang={lang}>{text.title}</h3>
         <LevelBadge level={topic.introducedAtLevel} />
         <ReviewBadge status={topic.reviewStatus} />
+        <CategoryBadge topic={topic} />
         {hasEnglish(topic) && <TopicLangToggle lang={lang} onChange={setLang} />}
       </div>
       <div className="summary" lang={lang}>

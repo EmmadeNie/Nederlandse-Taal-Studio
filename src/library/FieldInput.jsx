@@ -55,9 +55,10 @@ export default function FieldInput({ field, value, onChange, onCommit, errors = 
       );
       break;
     case "select":
+      // A field with a default (e.g. a topic's category) shows it and has no empty choice.
       control = (
-        <select value={value ?? ""} onChange={(e) => choose(e.target.value)}>
-          <option value="">—</option>
+        <select value={value ?? field.default ?? ""} onChange={(e) => choose(e.target.value)}>
+          {!field.default && <option value="">—</option>}
           {field.options.map((v) => (
             <option key={v} value={v}>
               {optionText(v)}

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useI18n } from "../i18n/context";
 import TopicLangToggle from "../components/TopicLangToggle";
+import CategoryBadge from "../components/CategoryBadge";
+import { TOPIC_CATEGORIES, categoryOf } from "../data/topicCategory";
 import { hasEnglish, topicText } from "../components/topicLang";
 import { topics } from "../data";
 import Markdown from "../components/Markdown";
@@ -35,7 +37,8 @@ function GrammarItem({ topic }) {
     <li>
       <details>
         <summary>
-          <strong lang={lang}>{text.title}</strong> <LevelBadge level={topic.introducedAtLevel} />
+          <strong lang={lang}>{text.title}</strong> <LevelBadge level={topic.introducedAtLevel} />{" "}
+          <CategoryBadge topic={topic} />
           {hasEnglish(topic) && <TopicLangToggle lang={lang} onChange={setLang} />}
           <div className="dim lg-summary" lang={lang}>
             {text.summary}
@@ -73,7 +76,7 @@ export function GrammarPicker({ value = [], onChange }) {
         <ul className="lg-chosen">
           {chosen.map((topic) => (
             <li key={topic.id}>
-              <LevelBadge level={topic.introducedAtLevel} /> {topic.title}
+              <LevelBadge level={topic.introducedAtLevel} /> <CategoryBadge topic={topic} /> {topic.title}
               <button
                 type="button"
                 className="board-icon-btn"
@@ -94,11 +97,20 @@ export function GrammarPicker({ value = [], onChange }) {
           aria-label={t("lg.add")}
         >
           <option value="">{t("lg.add")}</option>
-          {available.map((topic) => (
-            <option key={topic.id} value={topic.id}>
-              {topic.introducedAtLevel} · {topic.title}
-            </option>
-          ))}
+          {TOPIC_CATEGORIES.map((cat) => {
+            const list = available.filter((topic) => categoryOf(topic) === cat);
+            return (
+              list.length > 0 && (
+                <optgroup key={cat} label={t(`cat.${cat}`)}>
+                  {list.map((topic) => (
+                    <option key={topic.id} value={topic.id}>
+                      {topic.introducedAtLevel} · {topic.title}
+                    </option>
+                  ))}
+                </optgroup>
+              )
+            );
+          })}
         </select>
       )}
     </div>

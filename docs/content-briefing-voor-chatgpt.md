@@ -234,12 +234,13 @@ Laat ze alleen weg als het werkwoord echt geen voltooid deelwoord heeft.
 `difficulty`: 1-5. `tense`: zie lijst. `sentenceType`: statement | question | imperative | negation.
 `wordOrder`: svo | inversion | subordinate. `focusWordIds` = kernwoord(en) voor invuloefeningen.
 
-## Grammatica (topic)
+## Grammatica, spelling en uitspraak (topic)
 
 ```json
 {
   "id": "topic.perfectum",
   "title": "Het perfectum",
+  "category": "grammar",
   "introducedAtLevel": "A2",
   "summary": "Korte omschrijving.",
   "explanation": "<p>Uitgebreide uitleg in HTML, zie hieronder.</p>",
@@ -253,6 +254,22 @@ Laat ze alleen weg als het werkwoord echt geen voltooid deelwoord heeft.
   "exampleSentenceIds": ["sentence.ik-heb-gewerkt"],
   "reviewStatus": "ai-reviewed"
 }
+```
+
+**Categorie.** `category` is `grammar` (grammatica), `spelling` of `pronunciation` (uitspraak).
+Standaard is `grammar`: een onderwerp zonder `category` (ook in oudere exports en changesets) telt als
+grammatica. Het is één soort item (`topic.*`), dus ID's en koppelingen blijven hetzelfde; de categorie
+bepaalt alleen onder welk tabblad het staat. Kies de categorie op basis van de inhoud, niet op basis van
+tags. Voorbeelden:
+
+```json
+{ "op": "add", "type": "topic", "id": "topic.onbeklemtoonde-e",
+  "data": { "title": "De onbeklemtoonde e (sjwa)", "titleEn": "The unstressed e (schwa)",
+            "category": "pronunciation", "introducedAtLevel": "A2", "…": "…" },
+  "reason": "Eigen onderwerp voor de sjwa." }
+
+{ "op": "update", "type": "topic", "id": "topic.lettergrepen", "baseVersion": "…",
+  "data": { "category": "spelling" }, "reason": "Lettergrepen gaan over spelling." }
 ```
 
 **Nederlands en Engels.** `title`, `summary` en `explanation` zijn Nederlands; leerlingen zien die
