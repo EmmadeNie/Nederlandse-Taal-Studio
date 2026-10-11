@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { useAuth, ROLES } from "../auth/context";
 import { useI18n } from "../i18n/context";
+import { Trash } from "../icons";
 
 function formatDate(iso, locale) {
   return new Date(iso).toLocaleDateString(locale, {
@@ -45,6 +46,16 @@ export default function UserManagement() {
     await load();
   };
 
+  // Leerlingen only: their leerpad, profile and login go; feedback stays without a name.
+  const removeStudent = async (p) => {
+    const name = p.display_name || p.email;
+    if (!window.confirm(t("users.confirmDelete", { name }))) return;
+    setError(null);
+    const { error } = await supabase.rpc("delete_student", { student: p.id });
+    if (error) setError(error.message);
+    await load();
+  };
+
   const counts = Object.fromEntries(
     ROLES.map((r) => [r, profiles.filter((p) => p.role === r).length])
   );
@@ -67,6 +78,7 @@ export default function UserManagement() {
             <th>{t("users.email")}</th>
             <th>{t("users.since")}</th>
             <th>{t("users.role")}</th>
+            <th aria-label={t("users.actions")} />
           </tr>
         </thead>
         <tbody>
@@ -93,6 +105,19 @@ export default function UserManagement() {
                       </option>
                     ))}
                   </select>
+                )}
+              </td>
+              <td className="users-actions">
+                {p.role === "leerling" && p.id !== me.id && (
+                  <button
+                    type="button"
+                    className="board-icon-btn users-delete"
+                    title={t("users.delete")}
+                    aria-label={t("users.deleteAria", { name: p.display_name || p.email })}
+                    onClick={() => removeStudent(p)}
+                  >
+                    <Trash />
+                  </button>
                 )}
               </td>
             </tr>
