@@ -170,6 +170,9 @@ export const updateStep = (id, patch) =>
 
 export const deleteStep = (id) => supabase.from("steps").delete().eq("id", id).then(check);
 
+export const setStepStatus = (id, status) =>
+  supabase.rpc("set_step_status", { step: id, new_status: status }).then(check);
+
 export const saveStepNote = (stepId, note) =>
   supabase
     .from("step_notes")

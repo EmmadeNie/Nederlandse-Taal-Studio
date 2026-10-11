@@ -69,6 +69,8 @@ import {
   Signpost,
   Stack,
   SquaresFour,
+  House,
+  HourglassMedium,
   Target,
   Sparkle,
   Student,
@@ -111,6 +113,9 @@ export const ICONS = {
 
 /** Actions and states. */
 export {
+  House,
+  HourglassMedium,
+  ChalkboardTeacher,
   Target,
   ChatCircleDots,
   Moon,
