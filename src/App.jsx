@@ -23,6 +23,7 @@ import NameSetup from "./auth/NameSetup";
 import InviteClaim from "./auth/InviteClaim";
 import UserManagement from "./users/UserManagement";
 import FlashcardsPage from "./flashcards/FlashcardsPage";
+import ReviewPage from "./review/ReviewPage";
 import ProposalsPage from "./proposals/ProposalsPage";
 import { countOpenProposals } from "./proposals/api";
 import LesprogrammaPage from "./leerpad/LesprogrammaPage";
@@ -38,6 +39,7 @@ const PAGES = [
   { id: "library" },
   { id: "feedback" },
   { id: "proposals", roles: ["docent"] },
+  { id: "nakijken", roles: ["nakijker", "docent", "reviewer"] },
   { id: "users", roles: ["docent"] },
 ];
 
@@ -115,7 +117,8 @@ function Studio() {
   const allFeedback = useAllFeedback();
   const { profile, role, signOut } = useAuth();
   const { t } = useI18n();
-  const pages = PAGES.filter((p) => !p.roles || p.roles.includes(role));
+  // A nakijker only checks sentences: that is the whole app for them.
+  const pages = PAGES.filter((p) => (role === "nakijker" ? p.id === "nakijken" : !p.roles || p.roles.includes(role)));
   const [openProposals, setOpenProposals] = useState(0);
   useEffect(() => {
     if (role === "docent") countOpenProposals().then(setOpenProposals, () => {});
@@ -124,7 +127,7 @@ function Studio() {
 
   // The path is the source of truth for the active page (see src/routes.js).
   // Students start on their leerpad; the dashboard is a content-review tool for staff.
-  const homePage = role === "leerling" ? "leerpad" : "dashboard";
+  const homePage = role === "leerling" ? "leerpad" : role === "nakijker" ? "nakijken" : "dashboard";
   const allowed = (id) =>
     validPages.has(id) || (validPages.has("library") && LIBRARY_TAB_IDS.has(id));
   const page = route.page && allowed(route.page) ? route.page : homePage;
@@ -216,6 +219,7 @@ function Studio() {
         )}
         {page === "feedback" && <FeedbackOverview />}
         {page === "flashcards" && <FlashcardsPage />}
+        {page === "nakijken" && <ReviewPage />}
         {page === "proposals" && <ProposalsPage onCountChange={setOpenProposals} />}
         {page === "users" && <UserManagement />}
         {page === "lesprogramma" && <LesprogrammaPage />}

@@ -25,6 +25,7 @@ export const PATHS = {
   sets: "/bibliotheek/sets",
   feedback: "/feedback",
   flashcards: "/flashcards",
+  nakijken: "/nakijken",
   proposals: "/voorstellen",
   users: "/gebruikers",
 };

@@ -1,0 +1,235 @@
+/* Zinnen nakijken: big and simple, made for a phone */
+.rv-page {
+  max-width: 560px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.rv-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.rv-head h2 {
+  margin: 0;
+}
+
+.rv-bar {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.rv-bar-fill {
+  height: 100%;
+  background: var(--green);
+  transition: width 0.3s;
+}
+
+.rv-thanks {
+  text-align: center;
+  color: var(--green);
+  font-weight: 600;
+}
+
+.rv-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1.1rem 1rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.rv-sentence {
+  font-size: 1.45rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* The lines below say what each piece is; the sentence only shows colours. */
+.rv-sentence .sp-label {
+  display: none;
+}
+
+.rv-en {
+  font-size: 0.95rem;
+}
+
+.rv-lines {
+  margin: 0;
+  display: grid;
+  gap: 0.45rem;
+  font-size: 1.05rem;
+}
+
+.rv-line {
+  display: grid;
+  grid-template-columns: minmax(7.5rem, auto) 1fr;
+  gap: 0.6rem;
+  align-items: baseline;
+}
+
+.rv-line dt {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+
+.rv-line dt::first-letter {
+  text-transform: uppercase;
+}
+
+.rv-line dd {
+  margin: 0;
+}
+
+.rv-mark {
+  font-weight: 600;
+  border-bottom: 2px solid currentColor;
+}
+
+.rv-onderwerp { color: var(--a1); }
+.rv-persoonsvorm { color: var(--b2); }
+.rv-werkwoord,
+.rv-scheidbaar-deel { color: var(--b1); }
+.rv-voornaamwoord { color: var(--a0); }
+
+.rv-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.rv-btn {
+  border-radius: 16px;
+  padding: 1.1rem 0.5rem;
+  font: inherit;
+  font-size: 1.15rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.rv-btn:disabled {
+  opacity: 0.5;
+}
+
+.rv-yes,
+.rv-send {
+  background: color-mix(in srgb, var(--green) 18%, var(--surface));
+  color: var(--green);
+  border-color: color-mix(in srgb, var(--green) 45%, transparent);
+}
+
+.rv-no {
+  background: color-mix(in srgb, var(--red) 14%, var(--surface));
+  color: var(--red);
+  border-color: color-mix(in srgb, var(--red) 40%, transparent);
+}
+
+.rv-cancel {
+  background: var(--surface);
+  color: var(--text-dim);
+  border-color: var(--border);
+}
+
+.rv-skip {
+  align-self: center;
+  font-size: 0.95rem;
+}
+
+.rv-problem {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.rv-problem p {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.rv-aspects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.rv-aspects button {
+  font: inherit;
+  font-size: 1rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.rv-aspects button[aria-pressed="true"] {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.rv-problem textarea {
+  width: 100%;
+  font: inherit;
+  font-size: 1.05rem;
+  padding: 0.75rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  box-sizing: border-box;
+}
+
+.rv-empty {
+  text-align: center;
+  padding: 2rem 1rem;
+  font-size: 1.1rem;
+  color: var(--text-dim);
+}
+
+.rv-big {
+  font-size: 3rem;
+}
+
+/* Remarks on sentences, for the docent (Feedback page) */
+.rv-issues {
+  margin-bottom: 2rem;
+}
+
+.rv-issue {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.6rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.rv-issue-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.rv-issue-comment {
+  font-size: 0.95rem;
+}
+
+.rv-issues-tools {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
