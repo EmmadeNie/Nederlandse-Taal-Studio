@@ -90,6 +90,14 @@ export default function FlashcardsPage() {
           cards={[...unique.values()]}
           title={title}
           onExit={() => navigate(pathFor("flashcards"))}
+          onFinish={
+            chosen.length === 1 && !chosen[0].done_at
+              ? async () => {
+                  await setDeckDone(chosen[0], true);
+                  navigate(pathFor("flashcards"));
+                }
+              : undefined
+          }
         />
       );
     }
