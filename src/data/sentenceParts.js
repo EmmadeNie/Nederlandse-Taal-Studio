@@ -20,6 +20,15 @@ export const PART_ROLES = [
   "bijwoordelijke-bepaling",
 ];
 export const PERSONS = ["1sg", "2sg", "3sg", "1pl", "2pl", "3pl"];
+/** A part in a subordinate clause carries clause: "bijzin"; without it, it is in the main clause. */
+export const CLAUSES = ["bijzin"];
+
+/**
+ * Pronouns that change with the person (sentence.pronouns), a separate layer
+ * because a pronoun can also be a part ("Ik" is subject and pronoun):
+ *   { "text": "mijn", "type": "bezittelijk", "person": "1sg" }
+ */
+export const PRONOUN_TYPES = ["persoonlijk", "bezittelijk", "wederkerend"];
 
 /**
  * Where each part sits in the text: [{ part, start, end }] in order, or null

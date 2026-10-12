@@ -9,7 +9,7 @@ import { LEVELS, PARTS_OF_SPEECH, REVIEW_STATUSES, SENTENCE_TYPES, TENSES, WORD_
 import { GRAMMAR_TAGS, TAGS, THEMES } from "./index.js";
 import { PERFECT_FIELDS, hasNoPerfect } from "./verbForms.js";
 import { TOPIC_CATEGORIES } from "./topicCategory.js";
-import { PART_ROLES, PERSONS, VERB_ROLES, locateParts } from "./sentenceParts.js";
+import { CLAUSES, PART_ROLES, PERSONS, PRONOUN_TYPES, VERB_ROLES, locateParts } from "./sentenceParts.js";
 
 /** Allowed value of a vocabulary (theme, tag, grammar tag): lower case, digits, single hyphens. */
 export const VOCAB_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -83,6 +83,7 @@ export function validateItem(type, item, ctx, { isNew = false } = {}) {
     refs("wordIds", item.wordIds, "word");
     refs("focusWordIds", item.focusWordIds, "word");
     checkParts(item, add, ctx);
+    checkPronouns(item, add);
   }
 
   if (type === "topic") {
@@ -148,8 +149,30 @@ function checkParts(item, add, ctx) {
       add("parts", "partPerson", { n, value: part.person });
     }
     if (VERB_ROLES.includes(part.role) && !part.wordId) add("parts", "partVerbId", { n });
+    if (part.clause != null && !CLAUSES.includes(part.clause)) add("parts", "partClause", { n, value: part.clause });
     if (part.wordId && !(part.wordId.startsWith("word.") && ctx.has(part.wordId))) {
       add("parts", "missingRef", { id: part.wordId });
     }
+  });
+}
+
+/** sentence.pronouns: pronouns in the Dutch text, in order, with type and person. */
+function checkPronouns(item, add) {
+  if (item.pronouns == null) return;
+  if (!Array.isArray(item.pronouns)) {
+    add("pronouns", "partsNotList");
+    return;
+  }
+  const where = locateParts(item.nl || "", item.pronouns);
+  item.pronouns.forEach((p, i) => {
+    const n = i + 1;
+    if (!p || typeof p !== "object" || typeof p.text !== "string" || !p.text.trim()) {
+      add("pronouns", "partText", { n });
+      return;
+    }
+    if (!where[i]) add("pronouns", "pronounNotInSentence", { n, text: p.text });
+    if (!PRONOUN_TYPES.includes(p.type)) add("pronouns", "pronounType", { n, value: p.type });
+    if (!PERSONS.includes(p.person)) add("pronouns", "pronounPerson", { n, value: p.person });
+    if (p.clause != null && !CLAUSES.includes(p.clause)) add("pronouns", "partClause", { n, value: p.clause });
   });
 }

@@ -2081,6 +2081,18 @@ svg[class^="ph"], button svg, h4 svg, .board-meta-item svg {
 .sp-naamwoordelijk-deel .sp-text,
 .sp-bijwoordelijke-bepaling .sp-text { color: var(--a2); background: color-mix(in srgb, var(--a2) 10%, transparent); }
 
+.sp-voornaamwoord .sp-text {
+  color: var(--a0);
+  background: color-mix(in srgb, var(--a0) 12%, transparent);
+}
+
+.sp-part.sp-onderwerp.sp-voornaamwoord .sp-text {
+  color: var(--a1);
+  background: color-mix(in srgb, var(--a1) 12%, transparent);
+  border-bottom-style: double;
+  border-bottom-width: 3px;
+}
+
 .sp-missing {
   display: block;
   font-size: 0.75rem;
