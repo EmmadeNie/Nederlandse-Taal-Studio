@@ -73,6 +73,7 @@ export function makeRound(verbs, size = 20) {
 /* ----- In zinnen: "Ik ___ elke dag mijn lunch zelf. (maken)" ----- */
 
 const presentForms = (verb) => Object.values(verb.conjugation?.present || {}).map(clean);
+const PLURAL = "wij|we|jullie|zij|ze";
 const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 /**
@@ -80,7 +81,10 @@ const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
  * the persoonsvorm becomes the gap, the verb is the hint. Sentences with
  * `parts` use their marked persoonsvorm (also of a subclause); sentences
  * without fall back to finding a present form of a verb they list in
- * wordIds (not the infinitive form, which is too often a noun: "eten").
+ * wordIds. The wij form looks like the infinitive ("Wat gaan we eten?"), so
+ * there it only counts right next to a plural pronoun: at the start of the
+ * sentence or after a comma ("We eten vis"), or straight after it
+ * (inversion: "Morgen eten we vis", "Gaan jullie mee?").
  */
 export function gapQuestions(verbs, sentences) {
   const byId = new Map(drillable(verbs).map((v) => [v.id, v]));
@@ -107,6 +111,15 @@ export function gapQuestions(verbs, sentences) {
           out.push(gap(s, verb, start, start + m[2].length));
           return;
         }
+      }
+      const wij = p.wij && !p.wij.includes(" ") ? escape(p.wij) : null;
+      if (!wij) return;
+      const after = new RegExp(`(^|,\\s*)(?:${PLURAL})\\s+(${wij})(?![\\p{L}])`, "iu").exec(s.nl);
+      const before = new RegExp(`(^|[^\\p{L}])(${wij})\\s+(?:${PLURAL})(?![\\p{L}])`, "iu").exec(s.nl);
+      const m = after || before;
+      if (m) {
+        const start = m.index + m[0].indexOf(m[2], m[1].length);
+        out.push(gap(s, verb, start, start + m[2].length));
       }
     });
   });
