@@ -584,3 +584,14 @@
   font-weight: 500;
   line-height: 1.9;
 }
+
+.fc-deck-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  align-items: stretch;
+}
+
+.fc-deck-tools:empty {
+  display: none;
+}

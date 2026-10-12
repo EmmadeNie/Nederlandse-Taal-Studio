@@ -1,7 +1,7 @@
 /** Proposals in the database, and the content export for ChatGPT. */
 import { supabase } from "../lib/supabase";
 import { touchedIds } from "./changeset";
-import { GRAMMAR_TAGS, TAGS, THEMES } from "../data";
+import { GRAMMAR_TAGS, MARK_KINDS, TAGS, THEMES } from "../data";
 import { loadBoard } from "./lessons";
 import { categoryOf } from "../data/topicCategory";
 
@@ -133,6 +133,6 @@ export async function exportContent() {
       }))
     ),
     // Allowed values; a new one needs a "vocab.add" first.
-    vocabularies: { themes: [...THEMES], tags: [...TAGS], grammarTags: [...GRAMMAR_TAGS] },
+    vocabularies: { themes: [...THEMES], tags: [...TAGS], grammarTags: [...GRAMMAR_TAGS], markKinds: [...MARK_KINDS] },
   };
 }

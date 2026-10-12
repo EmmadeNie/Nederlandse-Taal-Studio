@@ -98,6 +98,7 @@
 .rv-werkwoord,
 .rv-scheidbaar-deel { color: var(--b1); }
 .rv-voornaamwoord { color: var(--a0); }
+.rv-woord { color: var(--b1); }
 
 .rv-buttons {
   display: grid;

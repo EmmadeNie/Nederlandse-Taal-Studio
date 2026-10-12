@@ -13,7 +13,7 @@ import { addVocabulary, createItem, createSet, deleteItem, deleteSet, updateItem
 export const ITEM_OPS = ["add", "update", "delete"];
 export const SET_OPS = ["set.create", "set.update", "set.delete", "set.addItem", "set.removeItem", "set.moveItem"];
 export const VOCAB_OPS = ["vocab.add"];
-export const VOCAB_KINDS = ["theme", "tag", "grammarTag"];
+export const VOCAB_KINDS = ["theme", "tag", "grammarTag", "markKind"];
 // Item fields whose values come from a vocabulary.
 const VOCAB_FIELDS = { themes: "theme", tags: "tag", grammarTags: "grammarTag" };
 const ITEM_TYPES = ["word", "sentence", "topic", "exercise"];
@@ -47,7 +47,7 @@ export function parseChangeset(text) {
       if (c.op === "lesson.update" && typeof c.id !== "string") bad("id ontbreekt");
       if (c.op === "lesson.add" && typeof c.lane !== "string") bad("lane ontbreekt");
     } else if (VOCAB_OPS.includes(c.op)) {
-      if (!VOCAB_KINDS.includes(c.kind)) bad("kind moet theme, tag of grammarTag zijn");
+      if (!VOCAB_KINDS.includes(c.kind)) bad("kind moet theme, tag, grammarTag of markKind zijn");
       if (typeof c.value !== "string") bad("value ontbreekt");
     } else if (ITEM_OPS.includes(c.op)) {
       if (typeof c.id !== "string") bad("id ontbreekt");

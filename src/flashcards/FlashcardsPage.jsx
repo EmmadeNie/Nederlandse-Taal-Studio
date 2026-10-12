@@ -7,11 +7,11 @@ import { setItems, setsOfType } from "../data";
 import { useContentVersion } from "../data/useContent";
 import { supabase } from "../lib/supabase";
 import { LevelBadge } from "../components/Badges";
-import { ArrowCounterClockwise, Cards, CheckCircle, PencilSimpleLine, X } from "../icons";
+import { ArrowCounterClockwise, Cards, CheckCircle, PencilSimpleLine, Textbox, X } from "../icons";
 import FlashcardButton from "./FlashcardButton";
 import Practice from "./Practice";
-import VerbDrill from "./VerbDrill";
-import { drillable } from "./conjugate";
+import Drill from "./Drill";
+import { drillable, fillWordsOf } from "./conjugate";
 import { cardOf, deckTitle, itemsOf, partsOf } from "./cards";
 import { loadDecks, removeDeck, setDeckDone, useDecks } from "./store";
 import "./flashcards.css";
@@ -61,7 +61,10 @@ export default function FlashcardsPage() {
   }, [profile.id, isStudent]);
 
   // Vervoegen: /flashcards/vervoegen-<deck id>, -alles, or -les-<lesson id> (from a lesson).
-  const drill = route.param?.startsWith("vervoegen-") ? route.param.slice("vervoegen-".length) : null;
+  // Vervoegen / Invullen: /flashcards/vervoegen-<deck id>, -alles, or -les-<lesson id> (from a lesson).
+  const drillMatch = /^(vervoegen|invullen)-(.+)$/.exec(route.param || "");
+  const drillKind = drillMatch?.[1] === "invullen" ? "fill" : "verbs";
+  const drill = drillMatch?.[2] || null;
   const drillLesson = drill?.startsWith("les-") ? drill.slice(4) : null;
   // Practise a lesson's list straight away: /flashcards/oefen-<part>-<lesson id>.
   const direct = /^oefen-(words|verbs|sentences)-(.+)$/.exec(route.param || "");
@@ -88,15 +91,29 @@ export default function FlashcardsPage() {
   const cardsOf = (deck) => itemsOf(deck.source, lessonMap).map(cardOf);
 
   if (drill && decks && lessons) {
+    const fill = drillKind === "fill";
     const sources = drillLesson
-      ? [{ lesson: drillLesson, part: "verbs" }]
+      ? fill
+        ? [{ lesson: drillLesson, part: "words" }, { lesson: drillLesson, part: "verbs" }]
+        : [{ lesson: drillLesson, part: "verbs" }]
       : (drill === "alles" ? decks.filter((d) => !d.done_at) : decks.filter((d) => d.id === drill)).map((d) => d.source);
-    const verbs = verbsOf(sources.flatMap((src) => itemsOf(src, lessonMap)));
+    const items = sources.flatMap((src) => itemsOf(src, lessonMap));
+    const verbs = fill ? [] : verbsOf(items);
+    const words = fill ? fillWordsOf(items) : [];
     const title = drillLesson ? lessonMap.get(drillLesson)?.title : drill === "alles" ? t("fc.all") : decks.find((d) => d.id === drill)?.title;
-    if (verbs.length) {
-      return <VerbDrill key={drill} verbs={verbs} title={title || ""} onExit={() => (window.history.length > 1 ? window.history.back() : navigate(pathFor("flashcards")))} />;
+    if (verbs.length || words.length) {
+      return (
+        <Drill
+          key={route.param}
+          kind={drillKind}
+          verbs={verbs}
+          words={words}
+          title={title || ""}
+          onExit={() => (window.history.length > 1 ? window.history.back() : navigate(pathFor("flashcards")))}
+        />
+      );
     }
-    if (!drillLesson || lessonMap.has(drillLesson)) return <p className="dim">{t("vd.none")}</p>;
+    if (!drillLesson || lessonMap.has(drillLesson)) return <p className="dim">{fill ? t("fd.none") : t("vd.none")}</p>;
     return <p className="dim">{t("common.loading")}</p>;
   }
 
@@ -175,6 +192,11 @@ export default function FlashcardsPage() {
               {verbsOf(active.flatMap((d) => itemsOf(d.source, lessonMap))).length > 0 && (
                 <button type="button" className="fb-btn-secondary fc-all" onClick={() => navigate(pathFor("flashcards", "vervoegen-alles"))}>
                   <PencilSimpleLine aria-hidden="true" /> {t("vd.allButton")}
+                </button>
+              )}
+              {fillWordsOf(active.flatMap((d) => itemsOf(d.source, lessonMap))).length > 0 && (
+                <button type="button" className="fb-btn-secondary fc-all" onClick={() => navigate(pathFor("flashcards", "invullen-alles"))}>
+                  <Textbox aria-hidden="true" /> {t("fd.allButton")}
                 </button>
               )}
             </div>
@@ -270,16 +292,28 @@ function DeckList({ decks, cardsOf, t }) {
               </span>
               <span className="dim">{n ? t("fc.cards", { n }) : t("fc.noCards")}</span>
             </button>
-            {verbsOf(cardsOf(d).map((c) => c.item)).length > 0 && (
-              <button
-                type="button"
-                className="fc-add vd-open"
-                title={t("vd.hint")}
-                onClick={() => navigate(pathFor("flashcards", `vervoegen-${d.id}`))}
-              >
-                <PencilSimpleLine aria-hidden="true" /> {t("vd.button")}
-              </button>
-            )}
+            <span className="fc-deck-tools">
+              {verbsOf(cardsOf(d).map((c) => c.item)).length > 0 && (
+                <button
+                  type="button"
+                  className="fc-add vd-open"
+                  title={t("vd.hint")}
+                  onClick={() => navigate(pathFor("flashcards", `vervoegen-${d.id}`))}
+                >
+                  <PencilSimpleLine aria-hidden="true" /> {t("vd.button")}
+                </button>
+              )}
+              {fillWordsOf(cardsOf(d).map((c) => c.item)).length > 0 && (
+                <button
+                  type="button"
+                  className="fc-add vd-open"
+                  title={t("fd.hint")}
+                  onClick={() => navigate(pathFor("flashcards", `invullen-${d.id}`))}
+                >
+                  <Textbox aria-hidden="true" /> {t("fd.button")}
+                </button>
+              )}
+            </span>
             <button
               type="button"
               className="board-icon-btn fc-done-btn"

@@ -3,11 +3,12 @@ import { getItem } from "../data";
 import { locateParts } from "../data/sentenceParts";
 
 /**
- * The sentence with its marked parts and pronouns highlighted; under each
- * marked piece a small label says what it is (role · person · verb, or the
- * kind of pronoun). A piece that is both (subject "Ik") gets both labels.
+ * The sentence with its marked parts, pronouns and marked words (marks:
+ * voorzetsel, vraagwoord, …) highlighted; under each marked piece a small
+ * label says what it is (role · person · verb, the kind of pronoun, or the
+ * kind of word). A piece that is both (subject "Ik") gets both labels.
  */
-export default function SentenceParts({ nl = "", parts = [], pronouns = [] }) {
+export default function SentenceParts({ nl = "", parts = [], pronouns = [], marks = [] }) {
   const { t } = useI18n();
   const known = (key, fallback) => (t(key) === key ? String(fallback) : t(key));
   const person = (p) => p && t(`parts.person.${p}`);
@@ -37,6 +38,15 @@ export default function SentenceParts({ nl = "", parts = [], pronouns = [] }) {
     mark(w, "sp-voornaamwoord", [known(`parts.pronoun.${part.type}`, part.type), person(part.person)].filter(Boolean).join(" · "));
   });
 
+  const marksAt = locateParts(nl, marks);
+  marksAt.forEach((w) => {
+    if (!w) return;
+    const { part } = w;
+    const word = part.wordId ? getItem(part.wordId)?.nl : null;
+    const label = [known(`marks.kind.${part.kind}`, part.kind), word && word !== part.text ? word : null].filter(Boolean).join(" · ");
+    mark(w, "sp-mark", label);
+  });
+
   // Overlapping stretches (rare): keep the first, the rest shows in its label list.
   const ordered = [...spans.values()].sort((a, b) => a.start - b.start || b.end - a.end);
   const pieces = [];
@@ -57,7 +67,7 @@ export default function SentenceParts({ nl = "", parts = [], pronouns = [] }) {
     pos = s.end;
   });
   if (pos < nl.length) pieces.push(<span key="end">{nl.slice(pos)}</span>);
-  const missing = [...partsAt, ...pronounsAt].filter((w) => !w).length;
+  const missing = [...partsAt, ...pronounsAt, ...marksAt].filter((w) => !w).length;
   return (
     <span className="sentence-parts">
       {pieces}

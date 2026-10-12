@@ -6,7 +6,7 @@
  * about ("" = the whole item), `key` an i18n key under "val.".
  */
 import { LEVELS, PARTS_OF_SPEECH, REVIEW_STATUSES, SENTENCE_TYPES, TENSES, WORD_ORDERS } from "./schema.js";
-import { GRAMMAR_TAGS, TAGS, THEMES } from "./index.js";
+import { GRAMMAR_TAGS, MARK_KINDS, TAGS, THEMES } from "./index.js";
 import { PERFECT_FIELDS, hasNoPerfect } from "./verbForms.js";
 import { TOPIC_CATEGORIES } from "./topicCategory.js";
 import { CLAUSES, PART_ROLES, PERSONS, PRONOUN_TYPES, VERB_ROLES, locateParts } from "./sentenceParts.js";
@@ -84,6 +84,7 @@ export function validateItem(type, item, ctx, { isNew = false } = {}) {
     refs("focusWordIds", item.focusWordIds, "word");
     checkParts(item, add, ctx);
     checkPronouns(item, add);
+    checkMarks(item, add, ctx);
   }
 
   if (type === "topic") {
@@ -153,6 +154,26 @@ function checkParts(item, add, ctx) {
     if (part.wordId && !(part.wordId.startsWith("word.") && ctx.has(part.wordId))) {
       add("parts", "missingRef", { id: part.wordId });
     }
+  });
+}
+
+/** sentence.marks: marked words for fill-in exercises, in order, with a known kind. */
+function checkMarks(item, add, ctx) {
+  if (item.marks == null) return;
+  if (!Array.isArray(item.marks)) {
+    add("marks", "partsNotList");
+    return;
+  }
+  const where = locateParts(item.nl || "", item.marks);
+  item.marks.forEach((m, i) => {
+    const n = i + 1;
+    if (!m || typeof m !== "object" || typeof m.text !== "string" || !m.text.trim()) {
+      add("marks", "partText", { n });
+      return;
+    }
+    if (!where[i]) add("marks", "markNotInSentence", { n, text: m.text });
+    if (!MARK_KINDS.includes(m.kind)) add("marks", "markKind", { n, value: m.kind });
+    if (m.wordId && !(m.wordId.startsWith("word.") && ctx.has(m.wordId))) add("marks", "missingRef", { id: m.wordId });
   });
 }
 

@@ -8,8 +8,8 @@ import { myReviews, reviewSentence, sentenceVersions } from "./api";
 import { summaryLines } from "./summary";
 import "./review.css";
 
-const ASPECTS = ["onderwerp", "werkwoord", "voornaamwoord", "zin"];
-const analysed = (s) => (s.parts?.length || 0) + (s.pronouns?.length || 0) > 0;
+const ASPECTS = ["onderwerp", "werkwoord", "voornaamwoord", "woord", "zin"];
+const analysed = (s) => (s.parts?.length || 0) + (s.pronouns?.length || 0) + (s.marks?.length || 0) > 0;
 const rank = (s) => {
   const i = LEVELS.indexOf(s.introducedAtLevel);
   return i < 0 ? LEVELS.length : i;
@@ -124,7 +124,7 @@ export default function ReviewPage() {
 
       <div className="rv-card">
         <div className="rv-sentence">
-          <SentenceParts nl={current.nl} parts={current.parts} pronouns={current.pronouns} />
+          <SentenceParts nl={current.nl} parts={current.parts} pronouns={current.pronouns} marks={current.marks} />
         </div>
         {current.en && <div className="rv-en dim">{current.en}</div>}
         <dl className="rv-lines">

@@ -1,5 +1,5 @@
 import { hasNoPerfect } from "./verbForms.js";
-import { LEVELS, THEMES as SEED_THEMES, GRAMMAR_TAGS as SEED_GRAMMAR_TAGS, TAGS as SEED_TAGS } from "./schema.js";
+import { LEVELS, THEMES as SEED_THEMES, GRAMMAR_TAGS as SEED_GRAMMAR_TAGS, TAGS as SEED_TAGS, MARK_KINDS as SEED_MARK_KINDS } from "./schema.js";
 
 /**
  * The content (words, sentences, grammar topics, exercises, sets) lives in the
@@ -101,7 +101,7 @@ export const setsWithItem = (id) => sets.filter((s) => s.itemIds.includes(id));
 
 export { LEVELS };
 
-// ----- Vocabularies (themes, word tags, grammar tags) -----
+// ----- Vocabularies (themes, word tags, grammar tags, kinds of marked words) -----
 
 /**
  * The allowed values, from the vocabularies table (loaded with the content;
@@ -111,7 +111,8 @@ export { LEVELS };
 export const THEMES = [...SEED_THEMES];
 export const TAGS = [...SEED_TAGS];
 export const GRAMMAR_TAGS = [...SEED_GRAMMAR_TAGS];
-export const VOCABULARIES = { theme: THEMES, tag: TAGS, grammarTag: GRAMMAR_TAGS };
+export const MARK_KINDS = [...SEED_MARK_KINDS];
+export const VOCABULARIES = { theme: THEMES, tag: TAGS, grammarTag: GRAMMAR_TAGS, markKind: MARK_KINDS };
 
 /** Replace the vocabularies with rows { kind, value } (in their order). */
 export function setVocabularies(rows) {

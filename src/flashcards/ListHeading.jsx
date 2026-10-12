@@ -1,9 +1,10 @@
 import { useI18n } from "../i18n/context";
 import FlashcardButton from "./FlashcardButton";
-import { deckTitle } from "./cards";
+import { deckTitle, itemsOf } from "./cards";
 import { navigate } from "../hooks/useRoute";
 import { pathFor } from "../routes";
-import { Cards, PencilSimpleLine } from "../icons";
+import { Cards, PencilSimpleLine, Textbox } from "../icons";
+import { fillWordsOf } from "./conjugate";
 
 /**
  * A list heading in a lesson: "Oefenen" practises the list straight away,
@@ -26,6 +27,16 @@ export default function ListHeading({ children, lesson, part, forProfileId, prac
               onClick={() => navigate(pathFor("flashcards", `oefen-${part}-${lesson.id}`))}
             >
               <Cards aria-hidden="true" /> {t("fc.practiseNow")}
+            </button>
+          )}
+          {part === "words" && !forProfileId && fillWordsOf(itemsOf({ lesson: lesson.id, part }, new Map([[lesson.id, lesson]]))).length > 0 && (
+            <button
+              type="button"
+              className="fc-add"
+              title={t("fd.hint")}
+              onClick={() => navigate(pathFor("flashcards", `invullen-les-${lesson.id}`))}
+            >
+              <Textbox aria-hidden="true" /> {t("fd.button")}
             </button>
           )}
           {part === "verbs" && !forProfileId && (

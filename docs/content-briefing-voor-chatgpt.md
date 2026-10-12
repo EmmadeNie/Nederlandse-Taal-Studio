@@ -82,7 +82,7 @@ Regels:
   Maak dan een changeset die precies die punten verbetert (meestal `parts`/`pronouns`).
 - **Nieuwe thema's en tags**: gebruik bij `themes`, `tags` en `grammarTags` alleen waarden uit
   `vocabularies` in de export. Is er echt een nieuwe nodig, zet dan vóór de eerste wijziging die hem
-  gebruikt een `vocab.add` (`kind`: `theme`, `tag` of `grammarTag`; `value`: kleine letters, cijfers
+  gebruikt een `vocab.add` (`kind`: `theme`, `tag`, `grammarTag` of `markKind`; `value`: kleine letters, cijfers
   en streepjes). Die wijzigingen wachten dan tot de docent de nieuwe waarde heeft goedgekeurd.
 
 ## Lessen (kaartjes op het Lesprogramma-bord)
@@ -321,6 +321,32 @@ staat het in beide lijsten. De app gebruikt dit om een zin om te zetten naar een
   met de juiste soort.
 - `clause: "bijzin"` zoals bij de zinsdelen. Een update van `pronouns` vervangt de hele lijst.
 
+### Gemarkeerde woorden (`marks`)
+
+`marks` markeert losse woorden van een bepaalde soort, zodat de app er een **invuloefening** van maakt:
+"Het boek ligt ___ de tafel." → *op*. De oefening start vanuit een woordenlijst (bijvoorbeeld de lijst
+voorzetsels) en gebruikt alle zinnen waarin een woord uit die lijst gemarkeerd is.
+
+```json
+"nl": "Ik loop van school naar huis.",
+"marks": [
+  { "text": "van",  "kind": "voorzetsel", "wordId": "word.van" },
+  { "text": "naar", "kind": "voorzetsel", "wordId": "word.naar" }
+]
+```
+
+- `text`: letterlijk zoals in de zin (hoofdletter meetellen), **in volgorde van links naar rechts**.
+- `kind`: een waarde uit `vocabularies.markKinds` in de export (nu: `voorzetsel`, `vraagwoord`, `lidwoord`,
+  `voegwoord`). Een nieuwe soort voeg je eerst toe met `vocab.add` (`kind: "markKind"`).
+- `wordId`: het woord in de bibliotheek (bijvoorbeeld `word.op`). **Altijd invullen**: zonder `wordId` komt
+  de zin niet in de oefening. Bestaat het woord nog niet, voeg het dan eerst toe.
+- Twee stukjes van één woord: *over … heen* krijgt twee marks met `wordId: "word.overheen"`; de app maakt
+  van het eerste stukje het gat. In één woord vast: bij *ernaartoe* markeer je alleen `naartoe`.
+- Markeer alleen echte gevallen: *voor* als voorzetsel ("voor het huis"), niet als deel van een ander woord;
+  *op* in "Ik wacht op de bus" wél (vast voorzetsel bij *wachten*).
+- `marks` staat los van `parts` en `pronouns`; een zin kan alle drie hebben. Een update van `marks`
+  vervangt de hele lijst.
+
 ## Grammatica, spelling en uitspraak (topic)
 
 ```json
@@ -423,7 +449,7 @@ Wijzig sets alleen met de `set.*`-operaties hierboven, niet via een veld op het 
 
 ## Canonieke vocabulaires
 
-De actuele lijsten staan in de export onder `vocabularies` (`themes`, `tags`, `grammarTags`); die zijn
+De actuele lijsten staan in de export onder `vocabularies` (`themes`, `tags`, `grammarTags`, `markKinds`); die zijn
 leidend. Hieronder de lijsten zoals ze begonnen. Gebruik bestaande waarden; een nieuwe waarde voeg je
 toe met `vocab.add` (zie de changeset). Hernoemen of verwijderen kan niet via een changeset: stel
 dat voor in je toelichting.
@@ -438,3 +464,5 @@ te-infinitief, om-te, aan-het, gebiedende-wijs, vragen, ontkenning, lidwoorden, 
 voornaamwoorden, voorzetsels, vervoegen, klinkers, lettergrepen, uitspraak
 
 **tags:** regelmatig-ww, onregelmatig-ww, hulpwerkwoord, modaal-werkwoord, scheidbaar-ww, formeel, informeel, vraagwoord
+
+**markKinds** (soorten gemarkeerde woorden, zie `marks`): voorzetsel, vraagwoord, lidwoord, voegwoord
