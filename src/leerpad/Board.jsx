@@ -48,7 +48,7 @@ import "./leerpad.css";
  *                 The caller must keep `lanes` sorted by position afterwards.
  *   laneFooter    (lane) => node, e.g. an "add card" form
  *   emptyLaneText text for a lane without cards
- *   focusLaneId   the board's middle lane: the board opens scrolled so it is the 3rd lane
+ *   focusLaneId   the board's middle lane: the board opens scrolled so it is the 4th lane
  *   onFocusLane   (lane | null) => void; omit to hide the middle-lane switch
  *   selection     optional select mode: { selectedIds: Set, onToggle(card, event, laneCards),
  *                 onToggleLane(lane, laneCards) }. While set, clicking a card selects it
@@ -94,7 +94,7 @@ export default function Board({
   onFocusLane,
 }) {
   const { t } = useI18n();
-  // Open with the middle lane as the third visible lane (scroll left for the others);
+  // Open with the middle lane as the fourth visible lane (scroll left for the others);
   // on a phone, where one lane fills the screen, open on the middle lane itself.
   const boardRef = useRef(null);
   const scrolledFor = useRef(null);
@@ -105,7 +105,7 @@ export default function Board({
     scrolledFor.current = focusLaneId;
     const laneEls = el.querySelectorAll(":scope > .board-lanes > .board-lane");
     const first = laneEls[0];
-    const lanesBefore = el.clientWidth < 600 ? 0 : 2;
+    const lanesBefore = el.clientWidth < 600 ? 0 : 3;
     const target = laneEls[Math.max(0, index - lanesBefore)];
     if (first && target) el.scrollLeft = target.offsetLeft - first.offsetLeft;
   }, [focusLaneId, lanes]);
