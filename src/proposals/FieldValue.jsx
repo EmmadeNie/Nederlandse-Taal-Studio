@@ -24,10 +24,12 @@ export default function FieldValue({ type, field, value, item }) {
     );
   }
   if (field === "introducedAtLevel" || field === "level") return <LevelBadge level={value} />;
-  // Parts and pronouns show together in one highlighted sentence (under "parts");
-  // the pronoun row shows only the pronouns.
-  if (field === "parts" && Array.isArray(value)) return <SentenceParts nl={item?.nl} parts={value} pronouns={item?.pronouns} />;
+  // Parts, pronouns and marks show together in one highlighted sentence (under
+  // "parts"); the pronoun and marks rows show only their own layer.
+  if (field === "parts" && Array.isArray(value))
+    return <SentenceParts nl={item?.nl} parts={value} pronouns={item?.pronouns} marks={item?.marks} />;
   if (field === "pronouns" && Array.isArray(value)) return <SentenceParts nl={item?.nl} pronouns={value} />;
+  if (field === "marks" && Array.isArray(value)) return <SentenceParts nl={item?.nl} marks={value} />;
   if (field === "reviewStatus") return <ReviewBadge status={value} />;
 
   switch (f?.kind) {

@@ -27,5 +27,14 @@ export function summaryLines(sentence, t) {
       extra: [t(`parts.pronoun.${p.type}`), person(p.person), p.clause && t("parts.inClause")].filter(Boolean).join(", "),
     })
   );
+  (sentence.marks || []).forEach((m) => {
+    const word = m.wordId ? getItem(m.wordId)?.nl : null;
+    lines.push({
+      key: t(`marks.kind.${m.kind}`) === `marks.kind.${m.kind}` ? m.kind : t(`marks.kind.${m.kind}`),
+      kind: "woord",
+      text: m.text,
+      extra: word && word !== m.text ? word : "",
+    });
+  });
   return lines;
 }

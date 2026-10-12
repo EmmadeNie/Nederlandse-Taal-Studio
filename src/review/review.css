@@ -46,6 +46,12 @@
   gap: 0.75rem;
 }
 
+.rv-only-marks {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--b1);
+}
+
 .rv-sentence {
   font-size: 1.45rem;
   font-weight: 600;
@@ -98,6 +104,7 @@
 .rv-werkwoord,
 .rv-scheidbaar-deel { color: var(--b1); }
 .rv-voornaamwoord { color: var(--a0); }
+.rv-woord { color: var(--b1); }
 
 .rv-buttons {
   display: grid;

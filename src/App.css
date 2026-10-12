@@ -2086,6 +2086,12 @@ svg[class^="ph"], button svg, h4 svg, .board-meta-item svg {
   background: color-mix(in srgb, var(--a0) 12%, transparent);
 }
 
+.sp-mark .sp-text {
+  color: var(--b1);
+  background: color-mix(in srgb, var(--b1) 14%, transparent);
+  border-bottom-style: dotted;
+}
+
 .sp-part.sp-onderwerp.sp-voornaamwoord .sp-text {
   color: var(--a1);
   background: color-mix(in srgb, var(--a1) 12%, transparent);

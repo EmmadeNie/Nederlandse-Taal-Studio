@@ -45,6 +45,7 @@ export default function SentenceIssues() {
         nl: s?.nl,
         parts: s?.parts || [],
         pronouns: s?.pronouns || [],
+        marks: s?.marks || [],
         watKloptNiet: i.aspects,
         opmerking: i.comment || "",
       };
@@ -80,7 +81,7 @@ export default function SentenceIssues() {
                   {t("review.resolve")}
                 </button>
               </div>
-              <div>{s ? <SentenceParts nl={s.nl} parts={s.parts} pronouns={s.pronouns} /> : i.sentence_id}</div>
+              <div>{s ? <SentenceParts nl={s.nl} parts={s.parts} pronouns={s.pronouns} marks={s.marks} /> : i.sentence_id}</div>
               {i.aspects?.length > 0 && (
                 <div className="rv-aspects">
                   {i.aspects.map((a) => (

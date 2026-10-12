@@ -6,6 +6,7 @@
  */
 import { shuffle } from "./cards";
 import { locateParts } from "../data/sentenceParts";
+import { sentences } from "../data";
 
 // Who does it, and which form of the table that needs.
 export const SUBJECTS = [
@@ -137,14 +138,57 @@ function gap(sentence, verb, start, end) {
   };
 }
 
-/** A round of gap sentences, about `size`, spread over the verbs. */
+/** A round of gap sentences, about `size`, spread over the verbs (or words). */
 export function gapRound(questions, size = 20) {
   const byVerb = new Map();
-  shuffle(questions).forEach((q) => byVerb.set(q.verb.id, [...(byVerb.get(q.verb.id) || []), q]));
+  const key = (q) => (q.verb || q.word).id;
+  shuffle(questions).forEach((q) => byVerb.set(key(q), [...(byVerb.get(key(q)) || []), q]));
   const lines = [...byVerb.values()];
   const out = [];
   for (let i = 0; out.length < size && lines.some((l) => l[i]); i++) {
     lines.forEach((l) => l[i] && out.length < size && out.push(l[i]));
   }
   return shuffle(out);
+}
+
+/* ----- Invullen: marked words ("Het boek ligt ___ de tafel." → op) ----- */
+
+/** The words that are marked somewhere in these sentences (so "Invullen" has questions). */
+export const markedWordIds = (list) =>
+  new Set(list.flatMap((s) => (s.marks || []).map((m) => m.wordId)).filter(Boolean));
+
+/** The words among some items that are marked in a library sentence (for Invullen), each once. */
+export function fillWordsOf(items) {
+  const marked = markedWordIds(sentences);
+  return [...new Map(items.filter((i) => i && marked.has(i.id)).map((i) => [i.id, i])).values()];
+}
+
+/**
+ * Gap questions from the sentences' marks (sentence.marks: { text, kind,
+ * wordId }) that point at one of these words: the marked piece becomes the
+ * gap. A word in two pieces ("over … heen" → overheen) gets one question, with
+ * the first piece as the gap.
+ */
+export function markQuestions(words, sentences) {
+  const byId = new Map(words.map((w) => [w.id, w]));
+  const out = [];
+  sentences.forEach((s) => {
+    if (!s.nl || !s.marks?.length) return;
+    const seen = new Set();
+    locateParts(s.nl, s.marks).forEach((w) => {
+      const word = w && byId.get(w.part.wordId);
+      if (!word || seen.has(word.id)) return;
+      seen.add(word.id);
+      out.push({
+        id: `${s.id}@${w.start}`,
+        word,
+        kind: w.part.kind,
+        sentence: s,
+        before: s.nl.slice(0, w.start),
+        after: s.nl.slice(w.end),
+        answers: [s.nl.slice(w.start, w.end)],
+      });
+    });
+  });
+  return out;
 }

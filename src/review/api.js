@@ -32,9 +32,10 @@ export const myReviews = (profileId) =>
     .order("created_at", { ascending: false })
     .then(check);
 
-export const reviewSentence = ({ sentenceId, verdict, seenVersion, aspects = [], comment = "" }) =>
+/** scope: "all" (the whole sentence) or "marks" (only the marked words of a checked sentence). */
+export const reviewSentence = ({ sentenceId, verdict, seenVersion, aspects = [], comment = "", scope = "all" }) =>
   supabase
-    .rpc("review_sentence", { sentence: sentenceId, verdict, seen_version: seenVersion, what: aspects, note: comment })
+    .rpc("review_sentence", { sentence: sentenceId, verdict, seen_version: seenVersion, what: aspects, note: comment, scope })
     .then(check);
 
 /** Open remarks ("klopt niet" not yet handled), for the docent. */
