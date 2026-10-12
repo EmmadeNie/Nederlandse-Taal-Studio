@@ -19,7 +19,7 @@ export function AuthProvider({ children }) {
   const loadProfile = useCallback(async (userId) => {
     const { data, error } = await supabase
       .from("profiles")
-      .select("id, user_id, email, display_name, role, language")
+      .select("id, user_id, email, display_name, role, language, can_review")
       .eq("user_id", userId)
       .maybeSingle();
     if (error) console.error("Profiel laden mislukt:", error.message);
