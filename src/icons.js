@@ -144,6 +144,7 @@ export {
   Package,
   Paperclip,
   PencilSimple,
+  PencilSimpleLine,
   Plus,
   UploadSimple,
   Warning,
