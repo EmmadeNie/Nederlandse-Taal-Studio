@@ -3,7 +3,7 @@ import { useAuth } from "../auth/context";
 import { useI18n } from "../i18n/context";
 import { navigate, useRoute } from "../hooks/useRoute";
 import { pathFor } from "../routes";
-import { setItems, setsOfType } from "../data";
+import { getSet, setItems, setsOfType } from "../data";
 import { useContentVersion } from "../data/useContent";
 import { supabase } from "../lib/supabase";
 import { LevelBadge } from "../components/Badges";
@@ -101,6 +101,9 @@ export default function FlashcardsPage() {
     const verbs = fill ? [] : verbsOf(items);
     const words = fill ? fillWordsOf(items) : [];
     const title = drillLesson ? lessonMap.get(drillLesson)?.title : drill === "alles" ? t("fc.all") : decks.find((d) => d.id === drill)?.title;
+    // Start at the level of the lesson or set (one list only); "alles" starts at all levels.
+    const levelOf = (src) => (src.lesson ? lessonMap.get(src.lesson)?.level : src.set ? getSet(src.set)?.level : null);
+    const level = drill === "alles" ? null : levelOf(sources[0] || {});
     if (verbs.length || words.length) {
       return (
         <Drill
@@ -108,6 +111,8 @@ export default function FlashcardsPage() {
           kind={drillKind}
           verbs={verbs}
           words={words}
+          level={level}
+          settingsKey={route.param}
           title={title || ""}
           onExit={() => (window.history.length > 1 ? window.history.back() : navigate(pathFor("flashcards")))}
         />
