@@ -102,6 +102,7 @@ export const ICONS = {
   dashboard: SquaresFour,
   feedback: ChatCircleDots,
   flashcards: Cards,
+  nakijken: CheckSquare,
   proposals: Sparkle,
   users: Users,
   leerling: Student,

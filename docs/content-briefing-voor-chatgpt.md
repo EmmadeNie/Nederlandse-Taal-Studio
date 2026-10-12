@@ -76,7 +76,10 @@ Regels:
 - Eén item hoort maar één keer in een set; een woord bestaat maar één keer in de hele inhoud.
   Staat iets al, pas het bestaande item aan in plaats van een tweede te maken.
 - Houd een changeset overzichtelijk: liever 5–40 wijzigingen over één onderwerp dan alles tegelijk.
-- Verander nooit `reviewStatus` naar `human-verified`.
+- Verander nooit `reviewStatus` naar `human-verified` en laat `verifiedBy`/`verifiedAt` weg: die zet de app
+  als iemand een zin heeft nagekeken. Pas je zo'n zin aan, dan vervalt dat keurmerk vanzelf.
+- **Opmerkingen van de nakijker**: soms krijg je een lijst zinnen met `watKloptNiet` en `opmerking`.
+  Maak dan een changeset die precies die punten verbetert (meestal `parts`/`pronouns`).
 - **Nieuwe thema's en tags**: gebruik bij `themes`, `tags` en `grammarTags` alleen waarden uit
   `vocabularies` in de export. Is er echt een nieuwe nodig, zet dan vóór de eerste wijziging die hem
   gebruikt een `vocab.add` (`kind`: `theme`, `tag` of `grammarTag`; `value`: kleine letters, cijfers

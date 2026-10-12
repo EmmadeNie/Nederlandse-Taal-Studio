@@ -12,6 +12,7 @@ import { useI18n } from "../i18n/context";
 import { ArrowElbowDownRight, DownloadSimple, UploadSimple, X } from "../icons";
 import { navigate } from "../hooks/useRoute";
 import { pathFor } from "../routes";
+import SentenceIssues from "../review/SentenceIssues";
 
 const ITEM_TYPES = new Set(["word", "verb", "sentence", "topic", "exercise", "lesson", "zijpad", "app", "overig"]);
 
@@ -94,6 +95,8 @@ export default function FeedbackOverview() {
   return (
     <div>
       <h2>Feedback</h2>
+
+      {isDocent && <SentenceIssues />}
 
       <div className="fb-overview-toolbar">
         <button className="fb-btn-primary" onClick={handleExport} disabled={feedback.length === 0}>

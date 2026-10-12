@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 
 /** The app roles, in the order they are offered on the user management page. */
-export const ROLES = ["docent", "reviewer", "leerling"];
+export const ROLES = ["docent", "reviewer", "nakijker", "leerling"];
 
 export const AuthContext = createContext(null);
 
