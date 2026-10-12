@@ -578,3 +578,9 @@
   padding: 0.75rem 1.5rem;
   font-size: 1.05rem;
 }
+
+.vd-sentence.is-long {
+  font-size: 1.3rem;
+  font-weight: 500;
+  line-height: 1.9;
+}
