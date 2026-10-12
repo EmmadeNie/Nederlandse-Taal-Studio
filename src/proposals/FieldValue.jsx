@@ -5,6 +5,7 @@ import { fieldOf } from "./fieldDiff";
 import { LevelBadge, ReviewBadge, Tag } from "../components/Badges";
 import { VerbTile } from "../components/RelatedWords";
 import Markdown from "../components/Markdown";
+import SentenceParts from "../components/SentenceParts";
 
 const empty = (v) => v === undefined || v === null || v === "" || (Array.isArray(v) && v.length === 0);
 const text = (s) => <span className="pr-text">{s}</span>;
@@ -23,6 +24,7 @@ export default function FieldValue({ type, field, value, item }) {
     );
   }
   if (field === "introducedAtLevel" || field === "level") return <LevelBadge level={value} />;
+  if (field === "parts" && Array.isArray(value)) return <SentenceParts nl={item?.nl} parts={value} />;
   if (field === "reviewStatus") return <ReviewBadge status={value} />;
 
   switch (f?.kind) {

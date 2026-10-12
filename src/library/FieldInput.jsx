@@ -125,7 +125,7 @@ export default function FieldInput({ field, value, onChange, onCommit, errors = 
       break;
     }
     case "json":
-      control = <JsonField value={value} onCommit={choose} />;
+      control = <JsonField value={value} onCommit={choose} empty={field.empty ?? {}} />;
       break;
     default:
       control = null;
@@ -147,9 +147,9 @@ export default function FieldInput({ field, value, onChange, onCommit, errors = 
 }
 
 /** JSON object as text; saved when valid. */
-function JsonField({ value, onCommit }) {
+function JsonField({ value, onCommit, empty = {} }) {
   const { t } = useI18n();
-  const [text, setText] = useState(() => JSON.stringify(value ?? {}, null, 2));
+  const [text, setText] = useState(() => JSON.stringify(value ?? empty, null, 2));
   const [bad, setBad] = useState(false);
   return (
     <>
@@ -161,9 +161,10 @@ function JsonField({ value, onCommit }) {
         onChange={(e) => setText(e.target.value)}
         onBlur={() => {
           try {
-            const parsed = JSON.parse(text || "{}");
+            const parsed = JSON.parse(text || JSON.stringify(empty));
             setBad(false);
-            onCommit(parsed);
+            // An empty list means "no parts": leave the field out.
+            onCommit(Array.isArray(parsed) && !parsed.length ? null : parsed);
           } catch {
             setBad(true);
           }

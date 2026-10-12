@@ -234,6 +234,51 @@ Laat ze alleen weg als het werkwoord echt geen voltooid deelwoord heeft.
 `difficulty`: 1-5. `tense`: zie lijst. `sentenceType`: statement | question | imperative | negation.
 `wordOrder`: svo | inversion | subordinate. `focusWordIds` = kernwoord(en) voor invuloefeningen.
 
+### Zinsdelen (`parts`)
+
+`parts` markeert stukjes van de Nederlandse zin, **in de volgorde waarin ze in de zin staan**, elk met een
+rol. De app gebruikt ze voor werkwoordoefeningen: het werkwoord invullen ("Ik ___ in een café. (werken)")
+en later de zin omzetten naar een ander onderwerp ("Hij ___ in een café." → werkt).
+
+```json
+"nl": "Gisteren heb ik slecht geslapen.",
+"parts": [
+  { "text": "heb", "role": "persoonsvorm", "wordId": "word.hebben" },
+  { "text": "ik", "role": "onderwerp", "person": "1sg" },
+  { "text": "geslapen", "role": "werkwoord", "wordId": "word.slapen" }
+]
+```
+
+```json
+"nl": "Ik bel mijn moeder vanavond op.",
+"parts": [
+  { "text": "Ik", "role": "onderwerp", "person": "1sg" },
+  { "text": "bel", "role": "persoonsvorm", "wordId": "word.opbellen" },
+  { "text": "op", "role": "scheidbaar-deel", "wordId": "word.opbellen" }
+]
+```
+
+Regels:
+
+- `text` staat **letterlijk** zo in `nl` (hoofdletters en spelling gelijk, zonder leestekens), en de
+  stukjes staan in volgorde van links naar rechts. Komt hetzelfde woord twee keer voor, dan telt het eerste
+  na het vorige zinsdeel.
+- Markeer nu deze rollen:
+  - `persoonsvorm`: de vervoegde vorm (precies één per hoofdzin; in een bijzin ook die van de bijzin), met
+    `wordId` van het werkwoord (ook als dat een hulpwerkwoord is: `word.hebben`, `word.zijn`, `word.moeten`);
+  - `werkwoord`: de overige werkwoorden van het gezegde (voltooid deelwoord, infinitief), met `wordId`;
+  - `scheidbaar-deel`: het losse deel van een scheidbaar werkwoord (*op* in *bel … op*), met de `wordId`
+    van het hele werkwoord (`word.opbellen`);
+  - `onderwerp`: het hele onderwerp (*Ik*, *Het weer*, *Mijn broer*), met `person`:
+    `1sg` (ik), `2sg` (jij/je/u), `3sg` (hij/zij/het/een enkelvoudig zelfstandig naamwoord),
+    `1pl` (wij/we), `2pl` (jullie), `3pl` (zij mv./een meervoud).
+- Een `wordId` bij een werkwoorddeel moet een bestaand werkwoord zijn. Bestaat het werkwoord nog niet,
+  voeg het dan eerst toe (`add`), of laat dat werkwoorddeel weg.
+- Overige rollen bestaan al voor later en mogen ook: `lijdend-voorwerp`, `meewerkend-voorwerp`,
+  `voorzetselvoorwerp`, `naamwoordelijk-deel`, `bijwoordelijke-bepaling`. Gebruik ze alleen als daarom
+  gevraagd wordt.
+- Een update van `parts` vervangt de hele lijst; geef dus altijd alle zinsdelen van die zin mee.
+
 ## Grammatica, spelling en uitspraak (topic)
 
 ```json
