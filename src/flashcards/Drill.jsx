@@ -4,9 +4,27 @@ import { VerbTile } from "../components/RelatedWords";
 import { CaretLeft } from "../icons";
 import { shuffle } from "./cards";
 import { gapQuestions, gapRound, isRight, makeRound, markQuestions } from "./conjugate";
-import { sentences } from "../data";
+import { LEVELS, sentences } from "../data";
 
 const SIZES = [10, 20];
+const rank = (level) => (LEVELS.includes(level) ? LEVELS.indexOf(level) : LEVELS.length);
+// Sentences up to a level ("all" = every level); a sentence without a level only shows with "all".
+const upToLevel = (questions, upTo) => (upTo === "all" ? questions : questions.filter((q) => rank(q.sentence?.introducedAtLevel) <= rank(upTo)));
+// The chosen level per list, kept on this device.
+const loadLevel = (key) => {
+  try {
+    return localStorage.getItem(`drill-level:${key}`);
+  } catch {
+    return null;
+  }
+};
+const saveLevel = (key, value) => {
+  try {
+    localStorage.setItem(`drill-level:${key}`, value);
+  } catch {
+    // private mode: not remembered
+  }
+};
 // "to work, to labour" → "to work"
 const shortEn = (en) => (en || "").split(/[,;/]/)[0].trim();
 
@@ -21,8 +39,10 @@ const shortEn = (en) => (en || "").split(/[,;/]/)[0].trim();
  * kind="fill" (Invullen): sentences with a marked word from `words` as the gap
  * ("Het boek ligt ___ de tafel."), per kind of word (voorzetsel, vraagwoord,
  * …), with the English sentence as hint (or none).
+ * Sentences go up to a level ("t/m A1"): at first the level of the lesson or
+ * list (`level`), or what was chosen last time for this list (`settingsKey`).
  */
-export default function Drill({ kind = "verbs", verbs = [], words = [], title, onExit }) {
+export default function Drill({ kind = "verbs", verbs = [], words = [], title, level, settingsKey, onExit }) {
   const { t } = useI18n();
   const fill = kind === "fill";
   const gaps = useMemo(() => (fill ? [] : gapQuestions(verbs, sentences)), [fill, verbs]);
@@ -38,12 +58,23 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], title, o
   const [mode, setMode] = useState(fill ? "all" : "forms");
   const [hint, setHint] = useState(fill ? "en" : "nl"); // verbs: nl | en (verb hint); fill: en | none (sentence hint)
   const [size, setSize] = useState(10);
-  const build = (m = mode, n = size) =>
+  const sentenceLevels = LEVELS.filter((l) => [...gaps, ...marked].some((q) => q.sentence.introducedAtLevel === l));
+  const [upTo, setUpTo] = useState(() => {
+    const saved = settingsKey && loadLevel(settingsKey);
+    if (saved === "all" || LEVELS.includes(saved)) return saved;
+    return LEVELS.includes(level) ? level : "all";
+  });
+  const build = (m = mode, n = size, u = upTo) =>
     fill
-      ? gapRound(m === "all" ? marked : marked.filter((q) => q.kind === m), n)
+      ? gapRound(upToLevel(m === "all" ? marked : marked.filter((q) => q.kind === m), u), n)
       : m === "sentences"
-        ? gapRound(gaps, n)
+        ? gapRound(upToLevel(gaps, u), n)
         : makeRound(verbs, n);
+  const chooseLevel = (u) => {
+    setUpTo(u);
+    if (settingsKey) saveLevel(settingsKey, u);
+    start(build(mode, size, u));
+  };
   const [queue, setQueue] = useState(() => build());
   const [total, setTotal] = useState(queue.length);
   const [typed, setTyped] = useState("");
@@ -130,6 +161,20 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], title, o
         </div>
       </div>
       <div className="fc-settings">
+        {(fill || mode === "sentences") && sentenceLevels.length > 1 && (
+          <div className="fc-seg" role="group" aria-label={t("fc.levelFilter")}>
+            {[...LEVELS.slice(0, rank(sentenceLevels[sentenceLevels.length - 1])), "all"].map((l) => (
+              <button
+                key={l}
+                type="button"
+                aria-pressed={upTo === l || (l === "all" && upTo !== "all" && rank(upTo) >= rank(sentenceLevels[sentenceLevels.length - 1]))}
+                onClick={() => chooseLevel(l)}
+              >
+                {l === "all" ? t("fc.allLevels") : t("fd.upTo", { level: l })}
+              </button>
+            ))}
+          </div>
+        )}
         {modes.length > 0 && (
           <div className="fc-seg" role="group" aria-label={t("vd.kind")}>
             {modes.map((m) => (
@@ -169,9 +214,15 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], title, o
       <div className="fc-practice">
         {header}
         <div className="fc-done">
-          <div className="fc-done-big">🎉</div>
-          <h3>{t("fc.doneTitle")}</h3>
-          <p className="dim">{t("vd.doneText", { n: total, wrong: wrong.size })}</p>
+          {total === 0 ? (
+            <p className="dim">{t("fd.noneAtLevel")}</p>
+          ) : (
+            <>
+              <div className="fc-done-big">🎉</div>
+              <h3>{t("fc.doneTitle")}</h3>
+              <p className="dim">{t("vd.doneText", { n: total, wrong: wrong.size })}</p>
+            </>
+          )}
           <div className="fc-done-actions">
             {wrongQuestions.length > 0 && (
               <button type="button" className="fb-btn-primary" onClick={() => start(shuffle(wrongQuestions))}>
