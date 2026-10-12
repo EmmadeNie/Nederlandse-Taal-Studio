@@ -68,6 +68,7 @@ export const FIELDS = {
     { path: "wordIds", label: "f.wordIds", kind: "refs", refType: "word" },
     { path: "focusWordIds", label: "f.focusWordIds", kind: "refs", refType: "word" },
     { path: "parts", label: "f.parts", kind: "json", empty: [] },
+    { path: "pronouns", label: "f.pronouns", kind: "json", empty: [] },
     { ...review[0], group: "f.review" },
     { path: "reviewNotes", label: "f.reviewNotes", kind: "textarea" },
   ],

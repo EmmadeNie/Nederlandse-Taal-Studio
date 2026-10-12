@@ -24,7 +24,10 @@ export default function FieldValue({ type, field, value, item }) {
     );
   }
   if (field === "introducedAtLevel" || field === "level") return <LevelBadge level={value} />;
-  if (field === "parts" && Array.isArray(value)) return <SentenceParts nl={item?.nl} parts={value} />;
+  // Parts and pronouns show together in one highlighted sentence (under "parts");
+  // the pronoun row shows only the pronouns.
+  if (field === "parts" && Array.isArray(value)) return <SentenceParts nl={item?.nl} parts={value} pronouns={item?.pronouns} />;
+  if (field === "pronouns" && Array.isArray(value)) return <SentenceParts nl={item?.nl} pronouns={value} />;
   if (field === "reviewStatus") return <ReviewBadge status={value} />;
 
   switch (f?.kind) {

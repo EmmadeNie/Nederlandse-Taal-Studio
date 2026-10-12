@@ -277,7 +277,43 @@ Regels:
 - Overige rollen bestaan al voor later en mogen ook: `lijdend-voorwerp`, `meewerkend-voorwerp`,
   `voorzetselvoorwerp`, `naamwoordelijk-deel`, `bijwoordelijke-bepaling`. Gebruik ze alleen als daarom
   gevraagd wordt.
+- **Bijzinnen**: markeer ook in een bijzin het onderwerp, de persoonsvorm en de overige werkwoorden, met
+  `"clause": "bijzin"` erbij. Zonder `clause` hoort een zinsdeel bij de hoofdzin.
 - Een update van `parts` vervangt de hele lijst; geef dus altijd alle zinsdelen van die zin mee.
+
+### Voornaamwoorden (`pronouns`)
+
+`pronouns` markeert de voornaamwoorden **die met de persoon meeveranderen**, in volgorde van links naar
+rechts. Een voornaamwoord kan ook een zinsdeel zijn (*Ik* is onderwerp én persoonlijk voornaamwoord); dan
+staat het in beide lijsten. De app gebruikt dit om een zin om te zetten naar een ander onderwerp
+(*Ik was **mijn** handen* → *Hij wast **zijn** handen*) en voor voornaamwoord-oefeningen.
+
+```json
+"nl": "Ik bel mijn moeder vanavond op, omdat ik haar mis.",
+"parts": [
+  { "text": "Ik",  "role": "onderwerp",       "person": "1sg" },
+  { "text": "bel", "role": "persoonsvorm",    "wordId": "word.opbellen" },
+  { "text": "op",  "role": "scheidbaar-deel", "wordId": "word.opbellen" },
+  { "text": "ik",  "role": "onderwerp",       "person": "1sg", "clause": "bijzin" },
+  { "text": "mis", "role": "persoonsvorm",    "wordId": "word.missen", "clause": "bijzin" }
+],
+"pronouns": [
+  { "text": "Ik",   "type": "persoonlijk", "person": "1sg" },
+  { "text": "mijn", "type": "bezittelijk", "person": "1sg" },
+  { "text": "ik",   "type": "persoonlijk", "person": "1sg", "clause": "bijzin" },
+  { "text": "haar", "type": "persoonlijk", "person": "3sg", "clause": "bijzin" }
+]
+```
+
+- `type`: `persoonlijk` (ik, je, hij, me, hem, haar, ons, ze…), `bezittelijk` (mijn, je/jouw, zijn, haar,
+  ons/onze, jullie, hun…) of `wederkerend` (me, je, zich, ons…). Aanwijzende, vragende, betrekkelijke en
+  onbepaalde voornaamwoorden (die, wie, wat, iemand) markeer je niet.
+- `person`: dezelfde codes als bij het onderwerp: de persoon waar het voornaamwoord naar verwijst
+  (*haar* in "ik mis haar" = `3sg`; *ze* als meervoud = `3pl`).
+- Let op dubbelzinnige woorden: *zijn* (werkwoord of bezittelijk), *haar* (haar op je hoofd of voornaamwoord),
+  *je* (persoonlijk of bezittelijk), *ze* (enkelvoud of meervoud). Markeer alleen wat écht een voornaamwoord is,
+  met de juiste soort.
+- `clause: "bijzin"` zoals bij de zinsdelen. Een update van `pronouns` vervangt de hele lijst.
 
 ## Grammatica, spelling en uitspraak (topic)
 
