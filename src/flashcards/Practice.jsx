@@ -33,7 +33,7 @@ function saveSettings(key, settings) {
  * left/right does the same; keys: space, ← →, backspace = vorige.
  * Long lists are practised in rounds (10, 20 or all), optionally one level only.
  */
-export default function Practice({ cards, title, onExit, settingsKey }) {
+export default function Practice({ cards, title, onExit, onFinish, settingsKey }) {
   const { t } = useI18n();
   const levels = LEVELS.filter((l) => cards.some((c) => levelOf(c) === l));
   const [settings, setSettingsState] = useState(() => {
@@ -224,9 +224,16 @@ export default function Practice({ cards, title, onExit, settingsKey }) {
                 {t("fc.roundAgain")}
               </button>
             ) : (
-              <button type="button" className="fb-btn-secondary" onClick={startOver}>
-                {t("fc.again")}
-              </button>
+              <>
+                {onFinish && (
+                  <button type="button" className={hardCards.length ? "fb-btn-secondary" : "fb-btn-primary"} onClick={onFinish}>
+                    {t("fc.finish")}
+                  </button>
+                )}
+                <button type="button" className="fb-btn-secondary" onClick={startOver}>
+                  {t("fc.again")}
+                </button>
+              </>
             )}
             <button type="button" className="fb-link" onClick={previous} disabled={!history.length}>
               ← {t("fc.previous")}
