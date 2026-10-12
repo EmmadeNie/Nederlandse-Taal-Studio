@@ -242,6 +242,9 @@ Laat ze alleen weg als het werkwoord echt geen voltooid deelwoord heeft.
 `parts` markeert stukjes van de Nederlandse zin, **in de volgorde waarin ze in de zin staan**, elk met een
 rol. De app gebruikt ze voor werkwoordoefeningen: het werkwoord invullen ("Ik ___ in een café. (werken)")
 en later de zin omzetten naar een ander onderwerp ("Hij ___ in een café." → werkt).
+Een zin komt in de invuloefening ("Vervoegen → In zinnen") als de **persoonsvorm** een `wordId` heeft
+van een werkwoord met een vervoegingstabel, en in de tegenwoordige tijd staat. Geef de persoonsvorm
+dus altijd een `wordId`, ook bij hulpwerkwoorden.
 
 ```json
 "nl": "Gisteren heb ik slecht geslapen.",

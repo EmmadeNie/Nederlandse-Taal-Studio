@@ -5,6 +5,7 @@
  * the wij form. "___ jij?" practises the trap: no -t when jij comes after it.
  */
 import { shuffle } from "./cards";
+import { locateParts } from "../data/sentenceParts";
 
 // Who does it, and which form of the table that needs.
 export const SUBJECTS = [
@@ -67,4 +68,70 @@ export function makeRound(verbs, size = 20) {
     lines.forEach((l) => l[i] && questions.length < want && questions.push(l[i]));
   }
   return shuffle(questions);
+}
+
+/* ----- In zinnen: "Ik ___ elke dag mijn lunch zelf. (maken)" ----- */
+
+const presentForms = (verb) => Object.values(verb.conjugation?.present || {}).map(clean);
+const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+/**
+ * Gap questions from the sentences that use these verbs in the present tense:
+ * the persoonsvorm becomes the gap, the verb is the hint. Sentences with
+ * `parts` use their marked persoonsvorm (also of a subclause); sentences
+ * without fall back to finding a present form of a verb they list in
+ * wordIds (not the infinitive form, which is too often a noun: "eten").
+ */
+export function gapQuestions(verbs, sentences) {
+  const byId = new Map(drillable(verbs).map((v) => [v.id, v]));
+  const out = [];
+  sentences.forEach((s) => {
+    if (!s.nl) return;
+    if (s.parts?.length) {
+      locateParts(s.nl, s.parts).forEach((w) => {
+        const verb = w && w.part.role === "persoonsvorm" && byId.get(w.part.wordId);
+        if (!verb || !presentForms(verb).includes(clean(w.part.text))) return;
+        out.push(gap(s, verb, w.start, w.end));
+      });
+      return;
+    }
+    (s.wordIds || []).forEach((id) => {
+      const verb = byId.get(id);
+      if (!verb) return;
+      const p = verb.conjugation.present;
+      const forms = [...new Set([p.ik, p.jij, p.hij])].filter((f) => f && !f.includes(" ") && f !== verb.nl);
+      for (const f of forms) {
+        const m = new RegExp(`(^|[^\\p{L}])(${escape(f)})(?![\\p{L}])`, "iu").exec(s.nl);
+        if (m) {
+          const start = m.index + m[1].length;
+          out.push(gap(s, verb, start, start + m[2].length));
+          return;
+        }
+      }
+    });
+  });
+  return out;
+}
+
+function gap(sentence, verb, start, end) {
+  return {
+    id: `${sentence.id}@${start}`,
+    verb,
+    sentence,
+    before: sentence.nl.slice(0, start),
+    after: sentence.nl.slice(end),
+    answers: [sentence.nl.slice(start, end)],
+  };
+}
+
+/** A round of gap sentences, about `size`, spread over the verbs. */
+export function gapRound(questions, size = 20) {
+  const byVerb = new Map();
+  shuffle(questions).forEach((q) => byVerb.set(q.verb.id, [...(byVerb.get(q.verb.id) || []), q]));
+  const lines = [...byVerb.values()];
+  const out = [];
+  for (let i = 0; out.length < size && lines.some((l) => l[i]); i++) {
+    lines.forEach((l) => l[i] && out.length < size && out.push(l[i]));
+  }
+  return shuffle(out);
 }
