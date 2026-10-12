@@ -9,6 +9,7 @@ import { LEVELS, PARTS_OF_SPEECH, REVIEW_STATUSES, SENTENCE_TYPES, TENSES, WORD_
 import { GRAMMAR_TAGS, TAGS, THEMES } from "./index.js";
 import { PERFECT_FIELDS, hasNoPerfect } from "./verbForms.js";
 import { TOPIC_CATEGORIES } from "./topicCategory.js";
+import { PART_ROLES, PERSONS, VERB_ROLES, locateParts } from "./sentenceParts.js";
 
 /** Allowed value of a vocabulary (theme, tag, grammar tag): lower case, digits, single hyphens. */
 export const VOCAB_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -81,6 +82,7 @@ export function validateItem(type, item, ctx, { isNew = false } = {}) {
     }
     refs("wordIds", item.wordIds, "word");
     refs("focusWordIds", item.focusWordIds, "word");
+    checkParts(item, add, ctx);
   }
 
   if (type === "topic") {
@@ -124,4 +126,30 @@ export function validateSet(set, ctx, { isNew = false } = {}) {
     if (!(id.startsWith(`${set.type}.`) && ctx.has(id))) add("itemIds", "missingRef", { id });
   });
   return out;
+}
+
+/** sentence.parts: pieces of the Dutch text, in order, with a known role (see sentenceParts.js). */
+function checkParts(item, add, ctx) {
+  if (item.parts == null) return;
+  if (!Array.isArray(item.parts)) {
+    add("parts", "partsNotList");
+    return;
+  }
+  const where = locateParts(item.nl || "", item.parts);
+  item.parts.forEach((part, i) => {
+    const n = i + 1;
+    if (!part || typeof part !== "object" || typeof part.text !== "string" || !part.text.trim()) {
+      add("parts", "partText", { n });
+      return;
+    }
+    if (!PART_ROLES.includes(part.role)) add("parts", "partRole", { n, value: part.role });
+    if (!where[i]) add("parts", "partNotInSentence", { n, text: part.text });
+    if (part.person != null && (part.role !== "onderwerp" || !PERSONS.includes(part.person))) {
+      add("parts", "partPerson", { n, value: part.person });
+    }
+    if (VERB_ROLES.includes(part.role) && !part.wordId) add("parts", "partVerbId", { n });
+    if (part.wordId && !(part.wordId.startsWith("word.") && ctx.has(part.wordId))) {
+      add("parts", "missingRef", { id: part.wordId });
+    }
+  });
 }
