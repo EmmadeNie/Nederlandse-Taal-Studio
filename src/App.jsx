@@ -118,7 +118,12 @@ function Studio() {
   const { profile, role, signOut } = useAuth();
   const { t } = useI18n();
   // A nakijker only checks sentences: that is the whole app for them.
-  const pages = PAGES.filter((p) => (role === "nakijker" ? p.id === "nakijken" : !p.roles || p.roles.includes(role)));
+  // Zinnen nakijken can also be an extra right on top of the role (can_review).
+  const pages = PAGES.filter((p) =>
+    role === "nakijker"
+      ? p.id === "nakijken"
+      : !p.roles || p.roles.includes(role) || (p.id === "nakijken" && profile.can_review)
+  );
   const [openProposals, setOpenProposals] = useState(0);
   useEffect(() => {
     if (role === "docent") countOpenProposals().then(setOpenProposals, () => {});

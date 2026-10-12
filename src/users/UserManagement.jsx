@@ -17,6 +17,9 @@ function formatDate(iso, locale) {
  * Role changes go through the set_user_role() database function, which
  * re-checks that the caller is a docent.
  */
+// Roles that can check sentences anyway; others get it with the can_review tick.
+const REVIEW_ROLES = ["nakijker", "docent", "reviewer"];
+
 export default function UserManagement() {
   const { profile: me } = useAuth();
   const { t, locale } = useI18n();
@@ -26,7 +29,7 @@ export default function UserManagement() {
   const load = useCallback(async () => {
     const { data, error } = await supabase
       .from("profiles")
-      .select("id, user_id, email, display_name, role, created_at")
+      .select("id, user_id, email, display_name, role, can_review, created_at")
       .order("created_at");
     if (error) setError(error.message);
     else setProfiles(data);
@@ -42,6 +45,13 @@ export default function UserManagement() {
       target_user: targetId,
       new_role: newRole,
     });
+    if (error) setError(error.message);
+    await load();
+  };
+
+  const changeCanReview = async (targetId, allowed) => {
+    setError(null);
+    const { error } = await supabase.rpc("set_can_review", { target_user: targetId, allowed });
     if (error) setError(error.message);
     await load();
   };
@@ -78,6 +88,7 @@ export default function UserManagement() {
             <th>{t("users.email")}</th>
             <th>{t("users.since")}</th>
             <th>{t("users.role")}</th>
+            <th>{t("users.canReview")}</th>
             <th aria-label={t("users.actions")} />
           </tr>
         </thead>
@@ -105,6 +116,19 @@ export default function UserManagement() {
                       </option>
                     ))}
                   </select>
+                )}
+              </td>
+              <td>
+                {REVIEW_ROLES.includes(p.role) ? (
+                  <span className="dim" title={t("users.canReviewByRole")}>✓</span>
+                ) : (
+                  <input
+                    type="checkbox"
+                    checked={!!p.can_review}
+                    onChange={(e) => changeCanReview(p.id, e.target.checked)}
+                    title={t("users.canReviewHint")}
+                    aria-label={t("users.canReviewOf", { name: p.display_name || p.email })}
+                  />
                 )}
               </td>
               <td className="users-actions">
