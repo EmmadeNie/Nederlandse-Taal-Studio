@@ -63,12 +63,15 @@ export default function FlashcardsPage() {
   // Vervoegen: /flashcards/vervoegen-<deck id>, -alles, or -les-<lesson id> (from a lesson).
   const drill = route.param?.startsWith("vervoegen-") ? route.param.slice("vervoegen-".length) : null;
   const drillLesson = drill?.startsWith("les-") ? drill.slice(4) : null;
+  // Practise a lesson's list straight away: /flashcards/oefen-<part>-<lesson id>.
+  const direct = /^oefen-(words|verbs|sentences)-(.+)$/.exec(route.param || "");
+  const directSource = direct ? { lesson: direct[2], part: direct[1] } : null;
 
   // Decks can point at lessons that are not on the leerpad (added from the lesprogramma).
   useEffect(() => {
     if (!decks || !lessons) return;
     const known = new Set(lessons.map((l) => l.id));
-    const wanted = [...decks.map((d) => d.source.lesson), drillLesson];
+    const wanted = [...decks.map((d) => d.source.lesson), drillLesson, directSource?.lesson];
     const missing = [...new Set(wanted.filter((id) => id && !known.has(id)))];
     if (!missing.length) return;
     supabase
@@ -76,7 +79,7 @@ export default function FlashcardsPage() {
       .select(LESSON)
       .in("id", missing)
       .then(({ data }) => setExtra(new Map((data || []).map((l) => [l.id, l]))));
-  }, [decks, lessons, drillLesson]);
+  }, [decks, lessons, drillLesson, directSource?.lesson]);
 
   const lessonMap = useMemo(
     () => new Map([...(lessons || []).map((l) => [l.id, l]), ...extra]),
@@ -95,6 +98,22 @@ export default function FlashcardsPage() {
     }
     if (!drillLesson || lessonMap.has(drillLesson)) return <p className="dim">{t("vd.none")}</p>;
     return <p className="dim">{t("common.loading")}</p>;
+  }
+
+  if (directSource && decks && lessons) {
+    const lesson = lessonMap.get(directSource.lesson);
+    if (!lesson) return <p className="dim">{t("common.loading")}</p>;
+    const cards = itemsOf(directSource, lessonMap).map(cardOf);
+    if (!cards.length) return <p className="dim">{t("fc.noCards")}</p>;
+    return (
+      <Practice
+        key={route.param}
+        settingsKey={route.param}
+        cards={cards}
+        title={deckTitle(lesson, directSource.part, t)}
+        onExit={() => (window.history.length > 1 ? window.history.back() : navigate(pathFor("flashcards")))}
+      />
+    );
   }
 
   // Practising one deck, or all of them.
