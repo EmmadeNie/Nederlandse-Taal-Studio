@@ -509,7 +509,7 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
 
       {(editing || lessonVerbs(lesson.verb_ids).length > 0) && (
         <div className="lp-section">
-          <ListHeading lesson={editing ? null : lesson} part="verbs">{t("lv.title")}</ListHeading>
+          <ListHeading lesson={lesson} practiseOnly={editing} part="verbs">{t("lv.title")}</ListHeading>
           {editing && <VerbsPicker value={form.verb_ids} onChange={choose("verb_ids")} />}
           <VerbsView ids={editing ? form.verb_ids : lesson.verb_ids} />
         </div>
@@ -517,7 +517,7 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
 
       {(editing || toLists(lesson.word_list).some(hasWordList)) && (
         <div className="lp-section">
-          <ListHeading lesson={editing ? null : lesson} part="words">{t("wl.title")}</ListHeading>
+          <ListHeading lesson={lesson} practiseOnly={editing} part="words">{t("wl.title")}</ListHeading>
           {editing && (
             <ListsEditor
               value={form.word_list}
@@ -534,7 +534,7 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
 
       {(editing || toLists(lesson.sentence_list).some(hasSentenceList)) && (
         <div className="lp-section">
-          <ListHeading lesson={editing ? null : lesson} part="sentences">{t("sl.title")}</ListHeading>
+          <ListHeading lesson={lesson} practiseOnly={editing} part="sentences">{t("sl.title")}</ListHeading>
           {editing && (
             <ListsEditor
               value={form.sentence_list}
