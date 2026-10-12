@@ -9,7 +9,11 @@ import { summaryLines } from "./summary";
 import "./review.css";
 
 const ASPECTS = ["onderwerp", "werkwoord", "voornaamwoord", "woord", "zin"];
+const MARK_ASPECTS = ["woord", "zin"];
 const analysed = (s) => (s.parts?.length || 0) + (s.pronouns?.length || 0) + (s.marks?.length || 0) > 0;
+// A checked sentence whose marked words (voorzetsels e.d.) changed since: only those need a look.
+const marksOnly = (s) => s.reviewStatus === "human-verified" && s.marks?.length > 0 && !s.marksVerifiedAt;
+const verified = (s) => s.reviewStatus === "human-verified" && !marksOnly(s);
 const rank = (s) => {
   const i = LEVELS.indexOf(s.introducedAtLevel);
   return i < 0 ? LEVELS.length : i;
@@ -51,14 +55,21 @@ export default function ReviewPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- sentences is filled in place; versions reloads with it
     [versions]
   );
-  const isDone = (s) => checked?.[s.id] && versions?.[s.id] && new Date(checked[s.id]) >= new Date(versions[s.id]);
+  const isDone = (s) =>
+    verified(s) || (checked?.[s.id] && versions?.[s.id] && new Date(checked[s.id]) >= new Date(versions[s.id]));
   const todo = all.filter((s) => !isDone(s));
-  const queue = [...todo.filter((s) => !skipped.includes(s.id)), ...todo.filter((s) => skipped.includes(s.id))];
+  // Skipped sentences go last, in the order they were skipped (so "Deze later" keeps moving on).
+  const queue = [
+    ...todo.filter((s) => !skipped.includes(s.id)),
+    ...skipped.map((id) => todo.find((s) => s.id === id)).filter(Boolean),
+  ];
   const current = queue[0];
   const doneCount = all.length - todo.length;
 
   if (error) return <div className="lp-error">{error}</div>;
   if (!versions || !checked) return <p className="dim">{t("common.loading")}</p>;
+
+  const onlyMarks = current ? marksOnly(current) : false;
 
   const send = async (verdict) => {
     setBusy(true);
@@ -70,6 +81,7 @@ export default function ReviewPage() {
         seenVersion: versions[current.id],
         aspects: verdict === "issue" ? [...problem.aspects] : [],
         comment: verdict === "issue" ? problem.comment.trim() : "",
+        scope: onlyMarks ? "marks" : "all",
       });
       // An "ok" changes the sentence (checked by), so read its new version.
       const fresh = await sentenceVersions();
@@ -113,7 +125,7 @@ export default function ReviewPage() {
     );
   }
 
-  const lines = summaryLines(current, t);
+  const lines = summaryLines(current, t).filter((l) => !onlyMarks || l.kind === "woord");
   return (
     <div className="rv-page">
       {header}
@@ -123,8 +135,13 @@ export default function ReviewPage() {
       {thanks && <div className="rv-thanks">{thanks}</div>}
 
       <div className="rv-card">
+        {onlyMarks && <div className="rv-only-marks">{t("review.onlyMarks")}</div>}
         <div className="rv-sentence">
-          <SentenceParts nl={current.nl} parts={current.parts} pronouns={current.pronouns} marks={current.marks} />
+          {onlyMarks ? (
+            <SentenceParts nl={current.nl} marks={current.marks} />
+          ) : (
+            <SentenceParts nl={current.nl} parts={current.parts} pronouns={current.pronouns} marks={current.marks} />
+          )}
         </div>
         {current.en && <div className="rv-en dim">{current.en}</div>}
         <dl className="rv-lines">
@@ -144,7 +161,7 @@ export default function ReviewPage() {
         <div className="rv-problem">
           <p>{t("review.whatWrong")}</p>
           <div className="rv-aspects">
-            {ASPECTS.map((a) => (
+            {(onlyMarks ? MARK_ASPECTS : ASPECTS).map((a) => (
               <button
                 key={a}
                 type="button"
