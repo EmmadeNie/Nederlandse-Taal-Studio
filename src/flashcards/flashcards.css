@@ -470,3 +470,111 @@
   color: var(--accent);
   background: var(--accent-soft);
 }
+
+/* ----- Vervoegen (typed conjugation drill) ----- */
+.fc-heading-tools {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.35rem;
+}
+
+.fc-all-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.fc-all-row .fc-all {
+  flex: 1 1 12rem;
+}
+
+.vd-open {
+  align-self: center;
+}
+
+.vd-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1.5rem 1rem;
+  display: grid;
+  gap: 0.9rem;
+  justify-items: center;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+
+.vd-card.is-right {
+  border-color: var(--green);
+}
+
+.vd-card.is-wrong {
+  border-color: var(--red);
+}
+
+.vd-verb {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.vd-sentence {
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.vd-input {
+  font: inherit;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--bg);
+  border: none;
+  border-bottom: 2px solid var(--accent);
+  border-radius: 6px 6px 0 0;
+  padding: 0.1rem 0.4rem;
+  text-align: center;
+  min-width: 6ch;
+  max-width: 100%;
+}
+
+.vd-input:focus {
+  outline: none;
+  background: var(--accent-soft);
+}
+
+.is-right .vd-input {
+  border-bottom-color: var(--green);
+  color: var(--green);
+}
+
+.is-wrong .vd-input {
+  border-bottom-color: var(--red);
+  color: var(--red);
+  text-decoration: line-through;
+}
+
+.vd-hint {
+  font-size: 0.85rem;
+}
+
+.vd-feedback {
+  font-size: 1.05rem;
+}
+
+.vd-feedback.is-right {
+  color: var(--green);
+  font-weight: 600;
+}
+
+.vd-feedback.is-wrong strong {
+  color: var(--green);
+  font-size: 1.2rem;
+}
+
+.vd-submit {
+  min-width: 10rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1.05rem;
+}

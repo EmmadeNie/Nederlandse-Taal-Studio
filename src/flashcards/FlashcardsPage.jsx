@@ -7,9 +7,11 @@ import { setItems, setsOfType } from "../data";
 import { useContentVersion } from "../data/useContent";
 import { supabase } from "../lib/supabase";
 import { LevelBadge } from "../components/Badges";
-import { ArrowCounterClockwise, Cards, CheckCircle, X } from "../icons";
+import { ArrowCounterClockwise, Cards, CheckCircle, PencilSimpleLine, X } from "../icons";
 import FlashcardButton from "./FlashcardButton";
 import Practice from "./Practice";
+import VerbDrill from "./VerbDrill";
+import { drillable } from "./conjugate";
 import { cardOf, deckTitle, itemsOf, partsOf } from "./cards";
 import { loadDecks, removeDeck, setDeckDone, useDecks } from "./store";
 import "./flashcards.css";
@@ -58,24 +60,42 @@ export default function FlashcardsPage() {
       .catch((e) => setError(e.message));
   }, [profile.id, isStudent]);
 
+  // Vervoegen: /flashcards/vervoegen-<deck id>, -alles, or -les-<lesson id> (from a lesson).
+  const drill = route.param?.startsWith("vervoegen-") ? route.param.slice("vervoegen-".length) : null;
+  const drillLesson = drill?.startsWith("les-") ? drill.slice(4) : null;
+
   // Decks can point at lessons that are not on the leerpad (added from the lesprogramma).
   useEffect(() => {
     if (!decks || !lessons) return;
     const known = new Set(lessons.map((l) => l.id));
-    const missing = [...new Set(decks.map((d) => d.source.lesson).filter((id) => id && !known.has(id)))];
+    const wanted = [...decks.map((d) => d.source.lesson), drillLesson];
+    const missing = [...new Set(wanted.filter((id) => id && !known.has(id)))];
     if (!missing.length) return;
     supabase
       .from("lessons")
       .select(LESSON)
       .in("id", missing)
       .then(({ data }) => setExtra(new Map((data || []).map((l) => [l.id, l]))));
-  }, [decks, lessons]);
+  }, [decks, lessons, drillLesson]);
 
   const lessonMap = useMemo(
     () => new Map([...(lessons || []).map((l) => [l.id, l]), ...extra]),
     [lessons, extra]
   );
   const cardsOf = (deck) => itemsOf(deck.source, lessonMap).map(cardOf);
+
+  if (drill && decks && lessons) {
+    const sources = drillLesson
+      ? [{ lesson: drillLesson, part: "verbs" }]
+      : (drill === "alles" ? decks.filter((d) => !d.done_at) : decks.filter((d) => d.id === drill)).map((d) => d.source);
+    const verbs = verbsOf(sources.flatMap((src) => itemsOf(src, lessonMap)));
+    const title = drillLesson ? lessonMap.get(drillLesson)?.title : drill === "alles" ? t("fc.all") : decks.find((d) => d.id === drill)?.title;
+    if (verbs.length) {
+      return <VerbDrill key={drill} verbs={verbs} title={title || ""} onExit={() => (window.history.length > 1 ? window.history.back() : navigate(pathFor("flashcards")))} />;
+    }
+    if (!drillLesson || lessonMap.has(drillLesson)) return <p className="dim">{t("vd.none")}</p>;
+    return <p className="dim">{t("common.loading")}</p>;
+  }
 
   // Practising one deck, or all of them.
   if (route.param && decks && lessons) {
@@ -129,9 +149,16 @@ export default function FlashcardsPage() {
       ) : (
         <>
           {active.length > 1 && (
-            <button type="button" className="fb-btn-primary fc-all" onClick={() => navigate(pathFor("flashcards", "alles"))}>
-              <Cards aria-hidden="true" /> {t("fc.practiseAll")}
-            </button>
+            <div className="fc-all-row">
+              <button type="button" className="fb-btn-primary fc-all" onClick={() => navigate(pathFor("flashcards", "alles"))}>
+                <Cards aria-hidden="true" /> {t("fc.practiseAll")}
+              </button>
+              {verbsOf(active.flatMap((d) => itemsOf(d.source, lessonMap))).length > 0 && (
+                <button type="button" className="fb-btn-secondary fc-all" onClick={() => navigate(pathFor("flashcards", "vervoegen-alles"))}>
+                  <PencilSimpleLine aria-hidden="true" /> {t("vd.allButton")}
+                </button>
+              )}
+            </div>
           )}
           <DeckList decks={active} cardsOf={cardsOf} t={t} />
           {done.length > 0 && (
@@ -224,6 +251,16 @@ function DeckList({ decks, cardsOf, t }) {
               </span>
               <span className="dim">{n ? t("fc.cards", { n }) : t("fc.noCards")}</span>
             </button>
+            {verbsOf(cardsOf(d).map((c) => c.item)).length > 0 && (
+              <button
+                type="button"
+                className="fc-add vd-open"
+                title={t("vd.hint")}
+                onClick={() => navigate(pathFor("flashcards", `vervoegen-${d.id}`))}
+              >
+                <PencilSimpleLine aria-hidden="true" /> {t("vd.button")}
+              </button>
+            )}
             <button
               type="button"
               className="board-icon-btn fc-done-btn"
@@ -247,4 +284,9 @@ function DeckList({ decks, cardsOf, t }) {
       })}
     </ul>
   );
+}
+
+/** The verbs (with a present-tense table) among some items, each once. */
+function verbsOf(items) {
+  return drillable([...new Map(items.filter((i) => i?.partOfSpeech === "verb").map((i) => [i.id, i])).values()]);
 }
