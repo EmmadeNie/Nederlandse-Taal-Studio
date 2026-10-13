@@ -4,6 +4,7 @@ import { useI18n } from "../i18n/context";
 import Markdown from "../components/Markdown";
 import { InternalLinkContext, lessonIdFromHref } from "../components/internalLinks";
 import { navigate } from "../hooks/useRoute";
+import { pathFor } from "../routes";
 import RichEditor from "../editor/RichEditor";
 import LessonFiles from "./LessonFiles";
 import { WordListsView } from "./WordList";
@@ -426,6 +427,12 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
     onClose();
   };
 
+  // The lesson itself (title, explanation, lists) is edited in the lesprogramma.
+  const editLesson = async () => {
+    if (!(await saveText())) return;
+    navigate(pathFor("lesprogramma", step.lesson_id));
+  };
+
   const followLink = async (href) => {
     if (!(await saveText())) return;
     onLessonLink(href);
@@ -460,6 +467,9 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
             <>
               <strong>{t("step.stapSource")}</strong>
               {t("step.stapSourceText")}
+              <button type="button" className="fb-btn-secondary lp-edit-lesson" onClick={editLesson}>
+                <ICONS.lesprogramma aria-hidden="true" /> {t("step.editLesson")}
+              </button>
             </>
           )}
         </div>
