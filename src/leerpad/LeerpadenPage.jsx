@@ -10,7 +10,7 @@ import { listStudents } from "./api";
 import { EnvelopeSimple } from "../icons";
 import { Dialog } from "./shared";
 
-/** Many students → a searchable list instead of a row of buttons. */
+/** Many students → a search field above the dropdown. */
 const PICKER_THRESHOLD = 8;
 
 /**
@@ -111,8 +111,8 @@ export default function LeerpadenPage() {
       ) : (
         <>
           <div className="lp-students-row">
-            {students.length > PICKER_THRESHOLD ? (
-              <div className="filters lp-filters">
+            <div className="filters lp-filters">
+              {students.length > PICKER_THRESHOLD && (
                 <input
                   type="search"
                   value={filter}
@@ -120,35 +120,21 @@ export default function LeerpadenPage() {
                   placeholder={t("lpd.searchStudent")}
                   aria-label={t("lpd.searchStudent")}
                 />
-                <select
-                  value={current.id}
-                  onChange={(e) => choose(students.find((s) => s.id === e.target.value))}
-                  aria-label={t("lp.student")}
-                >
-                  {(shown.some((s) => s.id === current.id) ? shown : [current, ...shown]).map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name}
-                      {s.pending ? ` (${t("users.pending")})` : ""}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            ) : (
-              <div className="lp-students" role="group" aria-label={t("lp.student")}>
-                {students.map((s) => (
-                  <button
-                    key={s.id}
-                    className={s.id === current.id ? "active" : ""}
-                    aria-pressed={s.id === current.id}
-                    title={s.pending ? t("users.pending") : undefined}
-                    onClick={() => choose(s)}
-                  >
+              )}
+              <select
+                className="lp-student-select"
+                value={current.id}
+                onChange={(e) => choose(students.find((s) => s.id === e.target.value))}
+                aria-label={t("lp.student")}
+              >
+                {(shown.some((s) => s.id === current.id) ? shown : [current, ...shown]).map((s) => (
+                  <option key={s.id} value={s.id}>
                     {s.name}
-                    {s.pending && <> <EnvelopeSimple aria-label={t("users.pending")} /></>}
-                  </button>
+                    {s.pending ? ` (${t("users.pending")})` : ""}
+                  </option>
                 ))}
-              </div>
-            )}
+              </select>
+            </div>
             {addButton}
           </div>
 

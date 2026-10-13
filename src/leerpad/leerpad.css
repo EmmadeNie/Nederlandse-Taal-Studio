@@ -1384,3 +1384,8 @@ span.step-status {
     flex-wrap: wrap;
   }
 }
+
+.lp-student-select {
+  min-width: 14rem;
+  font-weight: 600;
+}
