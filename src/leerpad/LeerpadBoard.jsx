@@ -19,6 +19,7 @@ import { useAutosave } from "./useAutosave";
 import { hasSentenceList, sentencesForLists } from "./sentenceLists";
 import Board, { AddCardForm } from "./Board";
 import FeedbackButton from "../feedback/FeedbackButton";
+import CardPractise from "../flashcards/CardPractise";
 import * as api from "./api";
 import { planByLevel } from "./byLevel";
 import ListHeading from "../flashcards/ListHeading";
@@ -188,6 +189,7 @@ export default function LeerpadBoard({ studentId }) {
                       {c.attachments.length > 0 && t("files.count", { n: c.attachments.length })}
                     </MetaItem>
                     <MetaItem icon={ICONS.notitie}>{isDocent && notes[s.id] && t("lp.hasNote")}</MetaItem>
+                    <CardPractise lesson={s.lesson} />
                     <StepFeedback step={s} title={c.title} />
                   </>
                 }

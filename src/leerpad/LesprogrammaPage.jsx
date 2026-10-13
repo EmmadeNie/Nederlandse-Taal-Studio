@@ -22,6 +22,7 @@ import { hasSentenceList, sentencesForLists } from "./sentenceLists";
 import SelectionBar from "./SelectionBar";
 import ListHeading from "../flashcards/ListHeading";
 import FeedbackButton from "../feedback/FeedbackButton";
+import CardPractise from "../flashcards/CardPractise";
 import Board, { AddCardForm } from "./Board";
 import * as api from "./api";
 import { BoardFilters, CardBody, Chips, Dialog, MetaItem } from "./shared";
@@ -204,6 +205,7 @@ export default function LesprogrammaPage() {
                   <MetaItem icon={ICONS.bestand}>
                     {l.attachments?.length > 0 && t("files.count", { n: l.attachments.length })}
                   </MetaItem>
+                  <CardPractise lesson={l} />
                   <FeedbackButton itemType="lesson" itemId={l.id} itemLabel={l.title} />
                 </>
               }
