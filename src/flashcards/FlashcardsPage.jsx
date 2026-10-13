@@ -12,7 +12,7 @@ import FlashcardButton from "./FlashcardButton";
 import Practice from "./Practice";
 import Drill from "./Drill";
 import { drillable, fillWordsOf } from "./conjugate";
-import { cardOf, deckTitle, itemsOf, partsOf } from "./cards";
+import { cardOf, deckTitle, itemsOf, lessonLists, parseListKey, partsOf } from "./cards";
 import { loadDecks, removeDeck, setDeckDone, useDecks } from "./store";
 import "./flashcards.css";
 
@@ -65,10 +65,13 @@ export default function FlashcardsPage() {
   const drillMatch = /^(vervoegen|invullen)-(.+)$/.exec(route.param || "");
   const drillKind = drillMatch?.[1] === "invullen" ? "fill" : "verbs";
   const drill = drillMatch?.[2] || null;
-  const drillLesson = drill?.startsWith("les-") ? drill.slice(4) : null;
-  // Practise a lesson's list straight away: /flashcards/oefen-<part>-<lesson id>.
-  const direct = /^oefen-(words|verbs|sentences)-(.+)$/.exec(route.param || "");
-  const directSource = direct ? { lesson: direct[2], part: direct[1] } : null;
+  // From a lesson: "les-<id>" (all its lists) or "les.<list key>-<id>" (one list, e.g. les.words.0-<id>).
+  const drillFrom = /^les(?:\.((?:words|sentences)\.\d+|verbs))?-(.+)$/.exec(drill || "");
+  const drillLesson = drillFrom?.[2] || null;
+  const drillList = parseListKey(drillFrom?.[1]);
+  // Flashcards of a lesson's list straight away: oefen-<part>-<id> (all lists of that part) or oefen-words.1-<id> (one list).
+  const direct = /^oefen-((?:words|sentences)(?:\.\d+)?|verbs)-(.+)$/.exec(route.param || "");
+  const directSource = direct ? { lesson: direct[2], ...parseListKey(direct[1]) } : null;
 
   // Decks can point at lessons that are not on the leerpad (added from the lesprogramma).
   useEffect(() => {
@@ -92,10 +95,10 @@ export default function FlashcardsPage() {
 
   if (drill && decks && lessons) {
     const fill = drillKind === "fill";
-    const sources = drillLesson
-      ? fill
-        ? [{ lesson: drillLesson, part: "words" }, { lesson: drillLesson, part: "verbs" }]
-        : [{ lesson: drillLesson, part: "verbs" }]
+    const sources = drillList
+      ? [{ lesson: drillLesson, ...drillList }]
+      : drillLesson
+      ? [{ lesson: drillLesson, part: "words" }, { lesson: drillLesson, part: "verbs" }] // verbs can also sit in a word list
       : (drill === "alles" ? decks.filter((d) => !d.done_at) : decks.filter((d) => d.id === drill)).map((d) => d.source);
     const items = sources.flatMap((src) => itemsOf(src, lessonMap));
     const verbs = fill ? [] : verbsOf(items);
@@ -132,7 +135,7 @@ export default function FlashcardsPage() {
         key={route.param}
         settingsKey={route.param}
         cards={cards}
-        title={deckTitle(lesson, directSource.part, t)}
+        title={directTitle(lesson, directSource, t)}
         onExit={() => (window.history.length > 1 ? window.history.back() : navigate(pathFor("flashcards")))}
       />
     );
@@ -347,4 +350,11 @@ function DeckList({ decks, cardsOf, t }) {
 /** The verbs (with a present-tense table) among some items, each once. */
 function verbsOf(items) {
   return drillable([...new Map(items.filter((i) => i?.partOfSpeech === "verb").map((i) => [i.id, i])).values()]);
+}
+
+/** "Werkwoorden vervoegen · Woorden", or with one list: "Werkwoorden vervoegen · Dieren A1". */
+function directTitle(lesson, source, t) {
+  if (source.index == null) return deckTitle(lesson, source.part, t);
+  const list = lessonLists(lesson, t).find((l) => l.part === source.part && l.index === source.index);
+  return list ? `${lesson.title} · ${list.label}` : deckTitle(lesson, source.part, t);
 }

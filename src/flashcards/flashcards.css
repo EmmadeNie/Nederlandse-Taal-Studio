@@ -640,6 +640,34 @@
   cursor: pointer;
 }
 
+.cp-option > span {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.cp-option .dim {
+  font-size: 0.82rem;
+}
+
+.cp-option.is-all {
+  border-style: dashed;
+}
+
+.cp-question {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 0.75rem;
+  font-weight: 600;
+}
+
+.cp-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.75rem;
+}
+
 .cp-option:hover {
   border-color: var(--accent);
   color: var(--accent);
