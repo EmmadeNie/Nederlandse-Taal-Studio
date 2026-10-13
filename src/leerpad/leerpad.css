@@ -165,7 +165,9 @@
   overflow-wrap: anywhere;
 }
 
-.board-lane-head input {
+/* The inline lane name field only: the lane settings dialog also renders
+   inside the head, and its inputs (the middle-lane checkbox) must not stretch. */
+.board-lane-head > input:not([type="checkbox"]) {
   flex: 1;
   min-width: 0;
   background: var(--surface-2);
