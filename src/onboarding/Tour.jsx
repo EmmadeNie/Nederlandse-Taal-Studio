@@ -5,6 +5,7 @@ import { navigate } from "../hooks/useRoute";
 import { pathFor } from "../routes";
 import { supabase } from "../lib/supabase";
 import * as api from "../leerpad/api";
+import LanguageToggle from "../i18n/LanguageToggle";
 import "./tour.css";
 
 /**
@@ -145,9 +146,23 @@ export default function Tour({ page, onClose }) {
         <div className="tour-dim" />
       )}
       <div className="tour-card" style={cardStyle}>
-        <div className="tour-progress dim">{t("tour.step", { n: index + 1, total: STEPS.length })}</div>
+        <div className="tour-head">
+          <span className="tour-progress">{t("tour.step", { n: index + 1, total: STEPS.length })}</span>
+          <span className="tour-dots" aria-hidden="true">
+            {STEPS.map((s, i) => (
+              <span key={s.id} className={i === index ? "is-on" : i < index ? "is-done" : ""} />
+            ))}
+          </span>
+        </div>
         <h3 id="tour-title">{t(`tour.${step.id}.title`)}</h3>
         <p>{t(`tour.${step.id}.text`)}</p>
+        {index === 0 && (
+          // The tour (and the whole app) also in English: switch right here.
+          <div className="tour-lang">
+            <span>{t("tour.lang")}</span>
+            <LanguageToggle />
+          </div>
+        )}
         {message && <p className={message.error ? "auth-error" : "note-ok"}>{message.text}</p>}
         <div className="tour-actions">
           {!last && (
