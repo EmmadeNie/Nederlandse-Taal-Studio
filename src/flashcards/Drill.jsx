@@ -43,18 +43,36 @@ const shortEn = (en) => (en || "").split(/[,;/]/)[0].trim();
  * Sentences go up to a level ("t/m A1"): at first the level of the lesson or
  * list (`level`), or what was chosen last time for this list (`settingsKey`).
  */
-export default function Drill({ kind = "verbs", verbs = [], words = [], pronounSentences = [], tense: startTense, title, level, settingsKey, onExit, onFinish, finishLabel }) {
+export default function Drill({
+  kind = "verbs",
+  verbs = [],
+  words = [],
+  pronounSentences = [],
+  sentencePool = null, // In zinnen from these sentences (a lesson's sentence list) instead of the whole library
+  tense: startTense,
+  title,
+  level,
+  settingsKey,
+  onExit,
+  onFinish,
+  finishLabel,
+}) {
   const { t } = useI18n();
   const fill = kind === "fill";
   const pron = kind === "pronouns"; // Voornaamwoorden: the marked pronouns of `pronounSentences` are the gaps
   // Vervoegen: tegenwoordige tijd, verleden tijd or perfectum (only the tenses these verbs have forms for).
   const tenses = fill || pron ? [] : TENSES.filter((tn) => drillable(verbs, tn).length);
   const [tense, setTense] = useState(() => (tenses.includes(startTense) ? startTense : "present"));
-  const gapsByTense = useMemo(
-    () => Object.fromEntries(TENSES.map((tn) => [tn, fill || pron ? [] : gapQuestions(verbs, sentences, tn)])),
-    [fill, pron, verbs]
-  );
+  const gapsByTense = useMemo(() => {
+    const pool = sentencePool || sentences;
+    const by = Object.fromEntries(TENSES.map((tn) => [tn, fill || pron ? [] : gapQuestions(verbs, pool, tn)]));
+    by.perfectAux = fill || pron ? [] : gapQuestions(verbs, pool, "perfect", { auxOnly: true });
+    return by;
+  }, [fill, pron, verbs, sentencePool]);
   const gaps = gapsByTense[tense];
+  // Perfectum in zinnen: both boxes (hulpwerkwoord + deelwoord) or "alleen hebben/zijn".
+  const [auxOnly, setAuxOnly] = useState(false);
+  const gapsFor = (tn, aux = auxOnly) => (tn === "perfect" && aux ? gapsByTense.perfectAux : gapsByTense[tn]);
   const marked = useMemo(() => (fill ? markQuestions(words, sentences) : []), [fill, words]);
   const pronouns = useMemo(() => (pron ? pronounQuestions(pronounSentences) : []), [pron, pronounSentences]);
   const markKinds = [...new Set(marked.map((q) => q.kind))];
@@ -86,8 +104,12 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], pronounS
       : fill
       ? gapRound(upToLevel(m === "all" ? marked : marked.filter((q) => q.kind === m), u), n)
       : m === "sentences"
-        ? gapRound(upToLevel(gapsByTense[tn], u), n)
+        ? gapRound(upToLevel(gapsFor(tn), u), n)
         : makeRound(verbs, n, tn);
+  const chooseAuxOnly = (aux) => {
+    setAuxOnly(aux);
+    start(gapRound(upToLevel(gapsFor("perfect", aux), upTo), size));
+  };
   const chooseTense = (tn) => {
     setTense(tn);
     // No sentences in that tense: back to loose forms.
@@ -237,6 +259,15 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], pronounS
             {tenses.map((tn) => (
               <button key={tn} type="button" aria-pressed={tense === tn} onClick={() => chooseTense(tn)}>
                 {t(`vd.tense.${tn}`)}
+              </button>
+            ))}
+          </div>
+        )}
+        {!fill && !pron && tense === "perfect" && mode === "sentences" && gapsByTense.perfectAux.length > 0 && (
+          <div className="fc-seg" role="group" aria-label={t("vd.gaps")}>
+            {[false, true].map((aux) => (
+              <button key={String(aux)} type="button" aria-pressed={auxOnly === aux} onClick={() => chooseAuxOnly(aux)}>
+                {aux ? t("vd.auxOnly") : t("vd.auxAndParticiple")}
               </button>
             ))}
           </div>
@@ -436,6 +467,7 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], pronounS
             {t("vd.wrong")} <strong>{current.answers[0]}</strong>
           </span>
         )}
+        {result === "wrong" && current.tense === "perfect" && <span className="vd-rule">{t("vd.auxRule")}</span>}
         {result === "wrong" && verb && (
           <span className="fc-verb">
             <VerbTile verb={verb} />

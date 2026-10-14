@@ -800,3 +800,12 @@
     justify-content: center;
   }
 }
+
+/* Perfectum: the mnemonic under a wrong answer */
+.vd-rule {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  background: var(--surface-2);
+  border-radius: 8px;
+  padding: 0.35rem 0.6rem;
+}

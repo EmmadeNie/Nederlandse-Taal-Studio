@@ -7,7 +7,7 @@ import { CaretLeft, Cards, PencilSimpleLine, Textbox, UserList } from "../icons"
 import { getItem } from "../data";
 import { sentencesForLists } from "../leerpad/sentenceLists";
 import { lessonLists } from "./cards";
-import { drillable, fillWordsOf } from "./conjugate";
+import { drillable, fillWordsOf, verbsInSentences } from "./conjugate";
 
 const verbsIn = (items) => drillable(items.filter((i) => i.partOfSpeech === "verb"));
 
@@ -41,9 +41,14 @@ function practiseKinds(lesson, t) {
       icon: PencilSimpleLine,
       label: t("vd.title"),
       all: `vervoegen-les-${lesson.id}`,
+      // Verbs from word lists and verb tiles, and from a sentence list the verbs in its sentences
+      // (then it practises exactly those sentences).
       lists: lists
-        .filter((l) => l.part !== "sentences")
-        .map((l) => ({ ...l, count: verbsIn(l.items).length, path: `vervoegen-les.${l.key}-${lesson.id}` }))
+        .map((l) => ({
+          ...l,
+          count: (l.part === "sentences" ? verbsInSentences(l.items) : verbsIn(l.items)).length,
+          path: `vervoegen-les.${l.key}-${lesson.id}`,
+        }))
         .filter((l) => l.count > 0),
     },
   ];
