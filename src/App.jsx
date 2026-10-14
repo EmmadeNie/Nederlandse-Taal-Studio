@@ -230,7 +230,10 @@ function Studio() {
                     <button
                       className="fb-link"
                       aria-describedby="tour-tip"
-                      onClick={() => startTour(null)}
+                      onClick={(e) => {
+                        e.currentTarget.blur(); // else its tooltip stays open behind the tour
+                        startTour(null);
+                      }}
                     >
                       <ICONS.tour aria-hidden="true" /> {t("tour.again")}
                     </button>

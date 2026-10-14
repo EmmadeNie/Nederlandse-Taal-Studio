@@ -295,10 +295,15 @@
 }
 
 .tour-tip-wrap:hover .tour-tip,
-.tour-tip-wrap:focus-within .tour-tip {
+.tour-tip-wrap:has(:focus-visible) .tour-tip {
   opacity: 1;
   visibility: visible;
   transform: none;
+}
+
+/* While the tour runs, no tooltip about it (it would sit dimmed behind the tour). */
+body:has(.tour) .tour-tip {
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
