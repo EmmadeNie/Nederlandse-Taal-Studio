@@ -346,3 +346,27 @@
   text-overflow: ellipsis;
   min-width: 0;
 }
+
+.tour-flip-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.tour-flip-actions button {
+  padding: 0.65rem;
+  border-radius: 12px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.tour-flip-actions button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.tour-flip-actions button[aria-pressed="true"] {
+  box-shadow: 0 0 0 2px currentColor;
+}
