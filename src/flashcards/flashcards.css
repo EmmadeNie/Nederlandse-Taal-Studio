@@ -703,3 +703,16 @@
   color: var(--text-dim);
   font-weight: 500;
 }
+
+/* Oefenen on a card: the recommended exercise + ▾ for the others */
+.cp-button.has-more {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.cp-button.cp-more {
+  border-left: none;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  padding: 0.1rem 0.4rem;
+}
