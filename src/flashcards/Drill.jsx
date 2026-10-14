@@ -305,7 +305,7 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], pronounS
   const gapHint = (i) => {
     const h = current.hints?.[i];
     if (!h) return undefined;
-    const person = hint === "person" && h.person ? ` · ${t(`parts.person.${h.person}`)}` : "";
+    const person = (hint === "person" || h.showPerson) && h.person ? ` · ${t(`parts.person.${h.person}`)}` : "";
     return t(`pd.role.${h.role}`) + person;
   };
   // After a wrong answer with several gaps, the right boxes turn green (only the wrong ones red).
