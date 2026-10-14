@@ -703,3 +703,87 @@
   color: var(--text-dim);
   font-weight: 500;
 }
+
+/* A list in Mijn flashcards: title + actions, then one button per kind of practice */
+.fc-decks li.fc-deck-card {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.85rem 0.9rem 0.9rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.fc-deck-card.is-done {
+  opacity: 0.7;
+}
+
+.fc-deck-head {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.fc-deck-head .fc-deck-title {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+}
+
+.fc-kinds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.fc-kind {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.fc-kind svg {
+  color: var(--accent);
+}
+
+.fc-kind:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.fc-kind-n {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  background: var(--surface-2);
+  border-radius: 999px;
+  padding: 0 0.4rem;
+}
+
+.fc-kind.is-done {
+  border-color: color-mix(in srgb, var(--green) 55%, var(--border));
+  background: color-mix(in srgb, var(--green) 10%, var(--bg));
+}
+
+.fc-kind.is-done svg {
+  color: var(--green);
+}
+
+.fc-kind-tick {
+  color: var(--green);
+  font-weight: 700;
+}
+
+@media (max-width: 600px) {
+  .fc-kind {
+    flex: 1 1 calc(50% - 0.45rem);
+    justify-content: center;
+  }
+}
