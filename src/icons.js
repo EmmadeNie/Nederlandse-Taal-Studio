@@ -4,6 +4,7 @@
  * IconContext in main.jsx (1.15em, regular); active nav items use weight="fill".
  */
 import {
+  UserList,
   Compass,
   Textbox,
   Moon,
@@ -149,6 +150,7 @@ export {
   PencilSimple,
   PencilSimpleLine,
   Textbox,
+  UserList,
   Plus,
   UploadSimple,
   Warning,

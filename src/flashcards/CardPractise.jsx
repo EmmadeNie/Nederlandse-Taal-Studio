@@ -3,7 +3,9 @@ import { useI18n } from "../i18n/context";
 import { navigate } from "../hooks/useRoute";
 import { pathFor } from "../routes";
 import { Dialog } from "../leerpad/shared";
-import { CaretLeft, Cards, PencilSimpleLine, Textbox } from "../icons";
+import { CaretLeft, Cards, PencilSimpleLine, Textbox, UserList } from "../icons";
+import { getItem } from "../data";
+import { sentencesForLists } from "../leerpad/sentenceLists";
 import { lessonLists } from "./cards";
 import { drillable, fillWordsOf } from "./conjugate";
 
@@ -45,6 +47,17 @@ function practiseKinds(lesson, t) {
         .filter((l) => l.count > 0),
     },
   ];
+  // Voornaamwoorden: a lesson about them (grammar topic), or whose sentences have marked pronouns.
+  const aboutPronouns = (lesson.topic_ids || []).some((id) => (getItem(id)?.grammarTags || []).includes("voornaamwoorden"));
+  const ownWithPronouns = sentencesForLists(lesson.sentence_list).filter((s) => s.pronouns?.length).length;
+  if (aboutPronouns || ownWithPronouns) {
+    kinds.push({
+      key: "pronouns",
+      icon: UserList,
+      label: t("pd.title"),
+      lists: [{ key: "pronouns", label: t("pd.title"), count: ownWithPronouns, path: `voornaamwoorden-les-${lesson.id}` }],
+    });
+  }
   return kinds.filter((k) => k.lists.length > 0);
 }
 

@@ -679,3 +679,22 @@
   color: var(--green);
   text-decoration: none;
 }
+
+.fc-page-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+/* Long choices (Alle soorten · Persoonlijk · …) scroll sideways on a narrow phone */
+.fc-settings .fc-seg {
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.fc-settings .fc-seg button {
+  white-space: nowrap;
+}
