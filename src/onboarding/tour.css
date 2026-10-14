@@ -39,6 +39,7 @@
 
 .tour-card {
   position: fixed;
+  z-index: 2;
   width: min(380px, calc(100vw - 24px));
   background: var(--surface);
   border: 2px solid var(--accent);
@@ -304,4 +305,128 @@
   .tour-tip {
     transition: none;
   }
+}
+
+/* The page the tour is on, lit up in the menu over the dimmed sidebar */
+.tour-page {
+  position: fixed;
+  z-index: 1; /* above the dim layer */
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 0.6rem 0 1.25rem;
+  box-sizing: border-box;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--accent) 22%, var(--surface));
+  color: var(--accent);
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow:
+    0 0 0 2px var(--accent),
+    0 0 18px color-mix(in srgb, var(--accent) 45%, transparent);
+  pointer-events: none;
+  transition: all 0.25s ease;
+}
+
+.tour-page-here {
+  margin-left: auto;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--bg);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.tour-page > span:not(.tour-page-here) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.tour-flip-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.tour-flip-actions button {
+  padding: 0.65rem;
+  border-radius: 12px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.tour-flip-actions button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.tour-flip-actions button[aria-pressed="true"] {
+  box-shadow: 0 0 0 2px currentColor;
+}
+
+/* The compass on a menu item: shows on hover, starts the tour at that page */
+.nav-item {
+  position: relative;
+}
+
+.sidebar nav .nav-tour {
+  position: absolute;
+  right: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3rem;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
+  background: var(--surface);
+  color: var(--accent);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.nav-item:hover .nav-tour,
+.sidebar nav .nav-tour:focus-visible {
+  opacity: 1;
+}
+
+.sidebar nav .nav-tour:hover {
+  background: var(--accent-soft);
+}
+
+/* On a phone there is no hover: always show it, quietly. */
+@media (hover: none) {
+  .sidebar nav .nav-tour {
+    opacity: 0.7;
+  }
+}
+
+.tour-tip.is-shown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(-50%);
+}
+
+.nav-tour-tip {
+  bottom: auto;
+  z-index: 4000;
+}
+
+.tour-tip strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.fb-link svg {
+  vertical-align: -0.15em;
 }

@@ -4,6 +4,7 @@
  * IconContext in main.jsx (1.15em, regular); active nav items use weight="fill".
  */
 import {
+  Compass,
   Textbox,
   Moon,
   Sun,
@@ -93,6 +94,7 @@ export const ICONS = {
   les: Notebook,
   stap: Footprints,
   zijpad: Signpost,
+  tour: Compass,
   library: Books,
   words: TextAa,
   verbs: ArrowsClockwise,

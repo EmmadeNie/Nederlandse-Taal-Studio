@@ -6,7 +6,8 @@ import { pathFor } from "../routes";
 import { supabase } from "../lib/supabase";
 import * as api from "../leerpad/api";
 import LanguageToggle from "../i18n/LanguageToggle";
-import { ConjugateDemo, FillDemo, FlipDemo } from "./TourDemos";
+import { STEPS, TOUR_STEP_KEY } from "./tourSteps";
+import { ICONS } from "../icons";
 import "./tour.css";
 
 /**
@@ -16,31 +17,18 @@ import "./tour.css";
  * the page (data-tour / a selector) and opens the page it belongs to.
  * Finishing or skipping sets profiles.onboarded_at, so it shows once.
  */
-const STEPS = [
-  { id: "welcome", page: "leerpad", anchor: ".board" },
-  { id: "program", page: "leerpad", anchor: '[data-tour="nav-lesprogramma"]' },
-  { id: "levels", page: "lesprogramma", anchor: '[data-tour="add-levels"]', curriculum: ["A0", "A1"] },
-  { id: "select", page: "lesprogramma", anchor: '[data-tour="select"]' },
-  { id: "practise", page: "leerpad", anchor: ".cp-button, .board" },
-  // Mijn flashcards: the three kinds of exercise, each with a tiny example to try.
-  { id: "flashcards", page: "flashcards", anchor: '[data-tour="nav-flashcards"]' },
-  { id: "demoFlip", page: "flashcards", demo: FlipDemo },
-  { id: "demoFill", page: "flashcards", demo: FillDemo },
-  { id: "demoConjugate", page: "flashcards", demo: ConjugateDemo },
-];
 
-const KEY = "tour-step";
 const readStep = () => {
   try {
-    return Number(sessionStorage.getItem(KEY)) || 0;
+    return Number(sessionStorage.getItem(TOUR_STEP_KEY)) || 0;
   } catch {
     return 0;
   }
 };
 const writeStep = (i) => {
   try {
-    if (i == null) sessionStorage.removeItem(KEY);
-    else sessionStorage.setItem(KEY, String(i));
+    if (i == null) sessionStorage.removeItem(TOUR_STEP_KEY);
+    else sessionStorage.setItem(TOUR_STEP_KEY, String(i));
   } catch {
     // private mode: the tour starts over on reload
   }
@@ -61,6 +49,7 @@ export default function Tour({ page, onClose }) {
   const { profile, reloadProfile } = useAuth();
   const [index, setIndex] = useState(readStep);
   const [rect, setRect] = useState(null);
+  const [navRect, setNavRect] = useState(null); // the menu item of the page this step is on
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState(null);
   const step = STEPS[Math.min(index, STEPS.length - 1)];
@@ -74,7 +63,10 @@ export default function Tour({ page, onClose }) {
   useLayoutEffect(() => {
     const el = step.anchor && document.querySelector(step.anchor);
     el?.scrollIntoView?.({ block: "nearest", inline: "nearest" });
-    const update = () => setRect(rectOf(step.anchor));
+    const update = () => {
+      setRect(rectOf(step.anchor));
+      setNavRect(rectOf(`[data-tour="nav-${step.page}"]`));
+    };
     update();
     const timer = setInterval(update, 300);
     window.addEventListener("resize", update);
@@ -84,7 +76,7 @@ export default function Tour({ page, onClose }) {
       window.removeEventListener("resize", update);
       window.removeEventListener("scroll", update, true);
     };
-  }, [step.anchor, page]);
+  }, [step.anchor, step.page, page]);
 
   const go = (i) => {
     setMessage(null);
@@ -143,6 +135,10 @@ export default function Tour({ page, onClose }) {
 
   return (
     <div className="tour" role="dialog" aria-modal="true" aria-labelledby="tour-title">
+      {navRect && (
+        // "Je bent hier": the current page lit up in the menu (drawn over the dimmed sidebar).
+        <PageMarker rect={navRect} page={step.page} label={t(`nav.${step.page}`)} here={t("tour.here")} />
+      )}
       {rect ? (
         <div
           className="tour-spot"
@@ -199,6 +195,17 @@ export default function Tour({ page, onClose }) {
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+function PageMarker({ rect, page, label, here }) {
+  const Icon = ICONS[page];
+  return (
+    <div className="tour-page" style={{ top: rect.top, left: rect.left, width: rect.width, height: rect.height }} aria-hidden="true">
+      {Icon && <Icon weight="fill" size={20} />}
+      <span>{label}</span>
+      <span className="tour-page-here">{here}</span>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useI18n } from "../i18n/context";
+import "../flashcards/flashcards.css"; // the Nog eens / Ik wist het buttons
 
 /**
  * Tiny try-it-yourself examples in the tour, one per kind of exercise, at the
@@ -7,18 +8,33 @@ import { useI18n } from "../i18n/context";
  * what the real exercise feels like.
  */
 
-/** Flashcards: tap to turn. */
+/** Flashcards: tap to turn, then "Nog eens" or "Ik wist het", like the real thing. */
 export function FlipDemo() {
   const { t } = useI18n();
   const [turned, setTurned] = useState(false);
+  const [answer, setAnswer] = useState(null); // null | "again" | "knew"
+  const turn = () => {
+    setTurned((x) => !x);
+    setAnswer(null);
+  };
   return (
     <div className="tour-demo">
-      <button type="button" className={`tour-flip ${turned ? "is-turned" : ""}`} onClick={() => setTurned((x) => !x)}>
+      <button type="button" className={`tour-flip ${turned ? "is-turned" : ""}`} onClick={turn}>
         <span className="tour-flip-lang">{turned ? "EN" : "NL"}</span>
         <strong lang={turned ? "en" : "nl"}>{turned ? "house" : "het huis"}</strong>
         <span className="dim">{turned ? t("tour.demo.flipBack") : t("tour.demo.tap")}</span>
       </button>
-      {turned && <p className="dim tour-demo-note">{t("tour.demo.flipNote")}</p>}
+      <div className="tour-flip-actions">
+        <button type="button" className="fc-again" disabled={!turned} aria-pressed={answer === "again"} onClick={() => setAnswer("again")}>
+          {t("fc.notYet")}
+        </button>
+        <button type="button" className="fc-knew" disabled={!turned} aria-pressed={answer === "knew"} onClick={() => setAnswer("knew")}>
+          {t("fc.knew")}
+        </button>
+      </div>
+      <p className={`tour-demo-note ${answer ? "" : "dim"}`}>
+        {answer === "knew" ? t("tour.demo.knew") : answer === "again" ? t("tour.demo.again") : turned ? t("tour.demo.choose") : t("tour.demo.turnFirst")}
+      </p>
     </div>
   );
 }

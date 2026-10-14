@@ -2,6 +2,8 @@ import { useContentVersion } from "./data/useContent";
 import Brand from "./components/Brand";
 import { useEffect, useState } from "react";
 import Tour from "./onboarding/Tour";
+import NavTour from "./onboarding/NavTour";
+import { firstStepFor, setTourStart } from "./onboarding/tourSteps";
 import ContentGate from "./components/ContentGate";
 import "./App.css";
 import Dashboard from "./components/Dashboard";
@@ -116,6 +118,13 @@ function Studio() {
   // The tour: by itself once for a new student, or again from the sidebar.
   const [tourOpen, setTourOpen] = useState(false);
   const [tourDone, setTourDone] = useState(false);
+  // From the beginning, or (from a menu item's compass) at the first step of that page.
+  const startTour = (atPage) => {
+    setTourStart(atPage ? firstStepFor(atPage) : 0);
+    setMenuOpen(false);
+    setTourOpen(false);
+    setTimeout(() => setTourOpen(true)); // reopen so it reads the new start
+  };
   const { feedbackMode } = usePrefs();
   const stats = getStats();
   const allFeedback = useAllFeedback();
@@ -185,20 +194,24 @@ function Studio() {
         <Brand tagline />
         <nav>
           {pages.map((p) => (
-            <button
-              key={p.id}
-              data-tour={`nav-${p.id}`}
-              className={navId === p.id ? "active" : ""}
-              onClick={() => setPage(p.id)}
-            >
-              <span className="icon">
-                <NavIcon id={p.id} active={navId === p.id} />
-              </span>
-              {t(`nav.${p.id}`)}
-              {badges[p.id] !== undefined && (
-                <span className="badge">{badges[p.id]}</span>
+            <div key={p.id} className="nav-item">
+              <button
+                data-tour={`nav-${p.id}`}
+                className={navId === p.id ? "active" : ""}
+                onClick={() => setPage(p.id)}
+              >
+                <span className="icon">
+                  <NavIcon id={p.id} active={navId === p.id} />
+                </span>
+                {t(`nav.${p.id}`)}
+                {badges[p.id] !== undefined && (
+                  <span className="badge">{badges[p.id]}</span>
+                )}
+              </button>
+              {role === "leerling" && firstStepFor(p.id) != null && (
+                <NavTour page={p.id} label={t(`nav.${p.id}`)} onStart={startTour} />
               )}
-            </button>
+            </div>
           ))}
         </nav>
 
@@ -217,12 +230,9 @@ function Studio() {
                     <button
                       className="fb-link"
                       aria-describedby="tour-tip"
-                      onClick={() => {
-                        setMenuOpen(false);
-                        setTourOpen(true);
-                      }}
+                      onClick={() => startTour(null)}
                     >
-                      {t("tour.again")}
+                      <ICONS.tour aria-hidden="true" /> {t("tour.again")}
                     </button>
                     <span className="tour-tip" id="tour-tip" role="tooltip">
                       <strong>{t("tour.tipTitle")}</strong>
