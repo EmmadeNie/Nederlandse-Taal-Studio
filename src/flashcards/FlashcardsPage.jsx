@@ -12,7 +12,7 @@ import { ArrowCounterClockwise, Cards, CheckCircle, PencilSimpleLine, Textbox, X
 import FlashcardButton from "./FlashcardButton";
 import Practice from "./Practice";
 import Drill from "./Drill";
-import { drillable, fillWordsOf } from "./conjugate";
+import { drillable, fillWordsOf, tenseForLesson } from "./conjugate";
 import { cardOf, deckTitle, itemsOf, lessonLists, parseListKey, partsOf } from "./cards";
 import { loadDecks, removeDeck, setDeckDone, useDecks } from "./store";
 import "./flashcards.css";
@@ -141,6 +141,7 @@ export default function FlashcardsPage() {
           verbs={verbs}
           words={words}
           level={level}
+          tense={tenseForLesson(lessonMap.get(sources[0]?.lesson))}
           settingsKey={route.param}
           title={title || ""}
           onExit={() => (window.history.length > 1 ? window.history.back() : navigate(pathFor("flashcards")))}

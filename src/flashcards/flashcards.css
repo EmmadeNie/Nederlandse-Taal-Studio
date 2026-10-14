@@ -698,3 +698,8 @@
 .fc-settings .fc-seg button {
   white-space: nowrap;
 }
+
+.vd-tense {
+  color: var(--text-dim);
+  font-weight: 500;
+}
