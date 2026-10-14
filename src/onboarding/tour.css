@@ -242,3 +242,66 @@
 .tour-wrong strong {
   color: var(--green);
 }
+
+/* "Rondleiding" in the sidebar: a tooltip in the style of the tour card */
+.tour-tip-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+/* Fixed beside the sidebar (240px wide, scrolls: a tooltip inside it would be clipped). */
+.tour-tip {
+  position: fixed;
+  left: 252px;
+  bottom: 20px;
+  z-index: 60;
+  width: 260px;
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.85rem 0.95rem 0.8rem;
+  background: var(--surface);
+  color: var(--text);
+  border: 2px solid var(--accent);
+  border-radius: 14px;
+  box-shadow:
+    0 0 0 5px color-mix(in srgb, var(--accent) 18%, transparent),
+    0 16px 40px rgba(0, 0, 0, 0.45);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  text-align: left;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-6px);
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease,
+    visibility 0.15s;
+  pointer-events: none;
+}
+
+.tour-tip::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent), var(--green), var(--a0, var(--accent)));
+}
+
+.tour-tip strong {
+  font-size: 0.9rem;
+  color: var(--accent);
+}
+
+.tour-tip-wrap:hover .tour-tip,
+.tour-tip-wrap:focus-within .tour-tip {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tour-tip {
+    transition: none;
+  }
+}

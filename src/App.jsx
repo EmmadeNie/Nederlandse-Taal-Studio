@@ -213,15 +213,22 @@ function Studio() {
               {role === "leerling" && (
                 <>
                   {" · "}
-                  <button
-                    className="fb-link"
-                    onClick={() => {
-                      setMenuOpen(false);
-                      setTourOpen(true);
-                    }}
-                  >
-                    {t("tour.again")}
-                  </button>
+                  <span className="tour-tip-wrap">
+                    <button
+                      className="fb-link"
+                      aria-describedby="tour-tip"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        setTourOpen(true);
+                      }}
+                    >
+                      {t("tour.again")}
+                    </button>
+                    <span className="tour-tip" id="tour-tip" role="tooltip">
+                      <strong>{t("tour.tipTitle")}</strong>
+                      {t("tour.tipText")}
+                    </span>
+                  </span>
                 </>
               )}
             </div>
