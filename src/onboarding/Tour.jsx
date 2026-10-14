@@ -7,6 +7,7 @@ import { supabase } from "../lib/supabase";
 import * as api from "../leerpad/api";
 import LanguageToggle from "../i18n/LanguageToggle";
 import { ConjugateDemo, FillDemo, FlipDemo } from "./TourDemos";
+import { ICONS } from "../icons";
 import "./tour.css";
 
 /**
@@ -61,6 +62,7 @@ export default function Tour({ page, onClose }) {
   const { profile, reloadProfile } = useAuth();
   const [index, setIndex] = useState(readStep);
   const [rect, setRect] = useState(null);
+  const [navRect, setNavRect] = useState(null); // the menu item of the page this step is on
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState(null);
   const step = STEPS[Math.min(index, STEPS.length - 1)];
@@ -74,7 +76,10 @@ export default function Tour({ page, onClose }) {
   useLayoutEffect(() => {
     const el = step.anchor && document.querySelector(step.anchor);
     el?.scrollIntoView?.({ block: "nearest", inline: "nearest" });
-    const update = () => setRect(rectOf(step.anchor));
+    const update = () => {
+      setRect(rectOf(step.anchor));
+      setNavRect(rectOf(`[data-tour="nav-${step.page}"]`));
+    };
     update();
     const timer = setInterval(update, 300);
     window.addEventListener("resize", update);
@@ -84,7 +89,7 @@ export default function Tour({ page, onClose }) {
       window.removeEventListener("resize", update);
       window.removeEventListener("scroll", update, true);
     };
-  }, [step.anchor, page]);
+  }, [step.anchor, step.page, page]);
 
   const go = (i) => {
     setMessage(null);
@@ -143,6 +148,10 @@ export default function Tour({ page, onClose }) {
 
   return (
     <div className="tour" role="dialog" aria-modal="true" aria-labelledby="tour-title">
+      {navRect && (
+        // "Je bent hier": the current page lit up in the menu (drawn over the dimmed sidebar).
+        <PageMarker rect={navRect} page={step.page} label={t(`nav.${step.page}`)} here={t("tour.here")} />
+      )}
       {rect ? (
         <div
           className="tour-spot"
@@ -199,6 +208,17 @@ export default function Tour({ page, onClose }) {
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+function PageMarker({ rect, page, label, here }) {
+  const Icon = ICONS[page];
+  return (
+    <div className="tour-page" style={{ top: rect.top, left: rect.left, width: rect.width, height: rect.height }} aria-hidden="true">
+      {Icon && <Icon weight="fill" size={20} />}
+      <span>{label}</span>
+      <span className="tour-page-here">{here}</span>
     </div>
   );
 }
