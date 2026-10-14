@@ -63,6 +63,23 @@ function practiseKinds(lesson, t) {
   return kinds.filter((k) => k.lists.length > 0);
 }
 
+// What a lesson is about, from its grammar topics and title → the exercise that fits it.
+const VERB_TAGS = [
+  "vervoegen", "tegenwoordige-tijd", "verleden-tijd", "perfectum", "plusquamperfectum", "futurum",
+  "modale-werkwoorden", "scheidbare-werkwoorden", "reflexieve-werkwoorden", "hoeven", "positiewerkwoorden",
+];
+const VERB_TITLE = /werkwoord|vervoeg|perfectum|imperfectum|verleden tijd/i;
+
+/** The kind of practice the lesson is about (conjugate / pronouns / fill), or null. */
+function recommendedKind(lesson, kinds) {
+  const tags = (lesson.topic_ids || []).flatMap((id) => getItem(id)?.grammarTags || []);
+  const has = (key) => kinds.some((k) => k.key === key);
+  if (tags.includes("voornaamwoorden") && has("pronouns")) return "pronouns";
+  if ((tags.some((x) => VERB_TAGS.includes(x)) || VERB_TITLE.test(lesson.title || "")) && has("conjugate")) return "conjugate";
+  if (tags.includes("voorzetsels") && has("fill")) return "fill";
+  return null;
+}
+
 /**
  * "Oefenen" on a lesson card on the board: first what (flashcards, Invullen,
  * Vervoegen — only what this lesson has), then which of the lesson's lists.
@@ -84,12 +101,17 @@ export default function CardPractise({ lesson }) {
       setOpen(true);
     }
   };
+  // A lesson about verbs (pronouns, prepositions) starts that exercise straight away, all its lists
+  // together; ▾ next to the button opens the menu with every kind.
+  const recommended = kinds.find((k) => k.key === recommendedKind(lesson, kinds));
+  const openMenu = () => {
+    setKindKey(null);
+    setOpen(true);
+  };
   const start = () => {
-    if (kinds.length === 1) choose(kinds[0]);
-    else {
-      setKindKey(null);
-      setOpen(true);
-    }
+    if (recommended) go(recommended.lists.length > 1 && recommended.all ? recommended.all : recommended.lists[0].path);
+    else if (kinds.length === 1) choose(kinds[0]);
+    else openMenu();
   };
   const kind = kinds.find((k) => k.key === kindKey);
   const close = () => {
@@ -100,9 +122,21 @@ export default function CardPractise({ lesson }) {
   return (
     // Keep clicks and keys inside: the card around this opens the lesson.
     <span className="cp-wrap" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
-      <button type="button" className="cp-button" title={t("cp.hint")} aria-label={t("cp.aria", { name: lesson.title })} onClick={start}>
-        <Cards aria-hidden="true" /> {t("fc.practiseNow")}
+      <button
+        type="button"
+        className={`cp-button ${recommended && kinds.length > 1 ? "has-more" : ""}`}
+        title={recommended ? t("cp.startKind", { kind: recommended.label }) : t("cp.hint")}
+        aria-label={t("cp.aria", { name: lesson.title })}
+        onClick={start}
+      >
+        {recommended ? <recommended.icon aria-hidden="true" /> : <Cards aria-hidden="true" />}{" "}
+        {recommended ? recommended.label : t("fc.practiseNow")}
       </button>
+      {recommended && kinds.length > 1 && (
+        <button type="button" className="cp-button cp-more" title={t("cp.otherKinds")} aria-label={t("cp.otherKinds")} onClick={openMenu}>
+          ▾
+        </button>
+      )}
       {open && (
         <Dialog title={t("cp.title", { name: lesson.title })} onClose={close}>
           {!kind ? (
