@@ -322,6 +322,11 @@ staat het in beide lijsten. De app gebruikt dit om een zin om te zetten naar een
   *je* (persoonlijk of bezittelijk), *ze* (enkelvoud of meervoud). Markeer alleen wat écht een voornaamwoord is,
   met de juiste soort.
 - `clause: "bijzin"` zoals bij de zinsdelen. Een update van `pronouns` vervangt de hele lijst.
+- **Wederkerende werkwoorden** (`zich aanmelden`, tag `reflexief-ww`): markeer het wederkerende voornaamwoord
+  in de zin altijd (`type: "wederkerend"`, met `clause` als het in de bijzin staat). De app maakt er bij
+  "Vervoegen in zinnen" een tweede gat van ("Ik [interesseer] [me] voor kunst"); zonder die markering laat
+  hij de zin weg. In de vervoeging van het werkwoord zelf komt géén voornaamwoord (`"ik": "meld aan"`):
+  de app voegt me/je/zich/ons zelf toe.
 
 ### Gemarkeerde woorden (`marks`)
 

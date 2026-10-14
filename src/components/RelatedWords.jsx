@@ -5,6 +5,7 @@ import { Dialog } from "../leerpad/shared";
 import { LevelBadge } from "./Badges";
 import FeedbackButton from "../feedback/FeedbackButton";
 import VerbCard from "./VerbCard";
+import { REFLEXIVE_PRONOUN, isReflexive, withPronoun } from "../data/reflexive";
 
 /**
  * The words linked to a grammar topic (relatedWordIds), as tiles: verbs with only
@@ -91,6 +92,9 @@ export function VerbTile({ verb: v, onOpen }) {
   const { t } = useI18n();
   const c = v.conjugation;
   const irregular = (form) => c.regularity?.[form] === "irregular";
+  // Wederkerend: the pronoun in each form ("ik meld me aan"); the past reads as "hij/zij".
+  const refl = isReflexive(v);
+  const p = (form, person) => (refl ? withPronoun(form, REFLEXIVE_PRONOUN[person]) : form);
   return (
     <div className="rw-tile">
       {onOpen ? (
@@ -101,13 +105,13 @@ export function VerbTile({ verb: v, onOpen }) {
         <span className="rw-tile-name">{c.infinitive || v.nl}</span>
       )}
       {v.en && <div className="dim rw-tile-en">{v.en}</div>}
-      <Row label="ik" value={c.present?.ik} irregular={irregular("present")} />
-      <Row label="jij" value={c.present?.jij} irregular={irregular("present")} />
-      <Row label="hij/zij" value={c.present?.hij} irregular={irregular("present")} />
-      <Row label="wij" value={c.present?.wij} irregular={irregular("present")} />
+      <Row label="ik" value={p(c.present?.ik, "ik")} irregular={irregular("present")} />
+      <Row label="jij" value={p(c.present?.jij, "jij")} irregular={irregular("present")} />
+      <Row label="hij/zij" value={p(c.present?.hij, "hij")} irregular={irregular("present")} />
+      <Row label="wij" value={p(c.present?.wij, "wij")} irregular={irregular("present")} />
       <div className="rw-sep" />
-      <Row label={t("verbs.sg")} value={c.past?.singular} irregular={irregular("past")} />
-      <Row label={t("verbs.pl")} value={c.past?.plural} irregular={irregular("past")} />
+      <Row label={t("verbs.sg")} value={p(c.past?.singular, "hij")} irregular={irregular("past")} />
+      <Row label={t("verbs.pl")} value={p(c.past?.plural, "zij")} irregular={irregular("past")} />
       <div className="rw-sep" />
       {c.participle ? (
         <Row label={t("verbs.participle")} prefix={c.auxiliary} value={c.participle} irregular={irregular("participle")} />

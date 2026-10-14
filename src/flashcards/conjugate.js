@@ -7,28 +7,36 @@
 import { shuffle } from "./cards";
 import { locateParts } from "../data/sentenceParts";
 import { sentences } from "../data";
+import { REFLEXIVE_PRONOUN, isReflexive, withPronoun } from "../data/reflexive";
 
-// Who does it, and which form of the table that needs.
+// Who does it, which form of the table that needs, and (wederkerende
+// werkwoorden) which pronoun: "Jullie" takes the wij form but "je".
 export const SUBJECTS = [
-  { text: "Ik", form: "ik" },
-  { text: "Jij", form: "jij" },
-  { text: "Hij", form: "hij" },
-  { text: "Mijn moeder", form: "hij" },
-  { text: "Het kind", form: "hij" },
-  { text: "Wij", form: "wij" },
-  { text: "Jullie", form: "wij" },
-  { text: "De kinderen", form: "wij" },
-  { text: "Mijn ouders", form: "wij" },
+  { text: "Ik", form: "ik", person: "ik" },
+  { text: "Jij", form: "jij", person: "jij" },
+  { text: "Hij", form: "hij", person: "hij" },
+  { text: "Mijn moeder", form: "hij", person: "hij" },
+  { text: "Het kind", form: "hij", person: "hij" },
+  { text: "Wij", form: "wij", person: "wij" },
+  { text: "Jullie", form: "wij", person: "jullie" },
+  { text: "De kinderen", form: "wij", person: "zij" },
+  { text: "Mijn ouders", form: "wij", person: "zij" },
   { text: "jij", form: "jij-vraag", question: true },
 ];
 
 const clean = (s) => (s || "").trim().toLowerCase().replace(/\s+/g, " ");
 
-/** The right answers for one verb and form; the first is the one we show. */
-export function answersFor(verb, form) {
+/**
+ * The right answers for one verb and form; the first is the one we show. A
+ * wederkerend werkwoord gets its pronoun for `person`: "meld me aan".
+ */
+export function answersFor(verb, form, person) {
   const p = verb.conjugation?.present;
   if (!p) return [];
-  if (form !== "jij-vraag") return [p[form]].filter(Boolean);
+  if (form !== "jij-vraag") {
+    const answer = isReflexive(verb) ? withPronoun(p[form], REFLEXIVE_PRONOUN[person]) : p[form];
+    return [answer].filter(Boolean);
+  }
   // Werk jij? Heb jij? Ben jij? — the ik form; with a separate jij form
   // (kunt/kan) the jij form without -t is right too: kun jij.
   const out = [p.ik];
@@ -51,15 +59,16 @@ export function makeRound(verbs, size = 20) {
   const list = shuffle(drillable(verbs));
   if (!list.length) return [];
   const lines = list.map((verb) => {
-    const separable = verb.conjugation.present.ik.includes(" ");
-    const subjects = shuffle(SUBJECTS.filter((s) => !(s.question && separable)));
+    // The question form splits separable verbs and moves the pronoun ("Meld jij je aan?"): skip it there.
+    const noQuestion = verb.conjugation.present.ik.includes(" ") || isReflexive(verb);
+    const subjects = shuffle(SUBJECTS.filter((s) => !(s.question && noQuestion)));
     const seen = new Set();
     const first = subjects.filter((s) => !seen.has(s.form) && seen.add(s.form));
     return [...first, ...subjects.filter((s) => !first.includes(s))].map((subject) => ({
       id: `${verb.id}|${subject.text}`,
       verb,
       subject,
-      answers: answersFor(verb, subject.form),
+      answers: answersFor(verb, subject.form, subject.person),
     }));
   });
   // Round robin over the verbs until the round is full.
@@ -73,7 +82,9 @@ export function makeRound(verbs, size = 20) {
 
 /* ----- In zinnen: "Ik ___ elke dag mijn lunch zelf. (maken)" ----- */
 
-const presentForms = (verb) => Object.values(verb.conjugation?.present || {}).map(clean);
+// The persoonsvorm of a separable verb is only the first word ("meld" of "meld aan").
+const presentForms = (verb) =>
+  Object.values(verb.conjugation?.present || {}).flatMap((f) => [clean(f), clean(f).split(" ")[0]]);
 const PLURAL = "wij|we|jullie|zij|ze";
 const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
@@ -93,16 +104,21 @@ export function gapQuestions(verbs, sentences) {
   sentences.forEach((s) => {
     if (!s.nl) return;
     if (s.parts?.length) {
+      const reflexives = locateParts(s.nl, s.pronouns || []).filter((p) => p && p.part.type === "wederkerend");
       locateParts(s.nl, s.parts).forEach((w) => {
         const verb = w && w.part.role === "persoonsvorm" && byId.get(w.part.wordId);
         if (!verb || !presentForms(verb).includes(clean(w.part.text))) return;
-        out.push(gap(s, verb, w.start, w.end));
+        if (!isReflexive(verb)) return out.push(gap(s, verb, w.start, w.end));
+        // Wederkerend: the pronoun of the same clause is a second gap ("Ik [interesseer] [me] voor kunst").
+        // Without a marked pronoun the sentence is left out: no half answers.
+        const own = reflexives.find((p) => (p.part.clause || null) === (w.part.clause || null));
+        if (own) out.push(twoGaps(s, verb, w, own));
       });
       return;
     }
     (s.wordIds || []).forEach((id) => {
       const verb = byId.get(id);
-      if (!verb) return;
+      if (!verb || isReflexive(verb)) return; // the pronoun can't be found reliably without parts
       const p = verb.conjugation.present;
       const forms = [...new Set([p.ik, p.jij, p.hij])].filter((f) => f && !f.includes(" ") && f !== verb.nl);
       for (const f of forms) {
@@ -137,6 +153,28 @@ function gap(sentence, verb, start, end) {
     answers: [sentence.nl.slice(start, end)],
   };
 }
+
+/**
+ * Two gaps in one sentence (persoonsvorm + wederkerend voornaamwoord), in
+ * sentence order: `pieces` is the text around them, `gapAnswers` per gap.
+ */
+function twoGaps(sentence, verb, x, y) {
+  const [a, b] = [x, y].sort((p, q) => p.start - q.start);
+  const nl = sentence.nl;
+  const gapAnswers = [nl.slice(a.start, a.end), nl.slice(b.start, b.end)];
+  return {
+    id: `${sentence.id}@${a.start}+${b.start}`,
+    verb,
+    sentence,
+    pieces: [nl.slice(0, a.start), nl.slice(a.end, b.start), nl.slice(b.end)],
+    gapAnswers,
+    answers: [gapAnswers.join(" … ")],
+  };
+}
+
+/** Both gaps right (when a question has two)? */
+export const isRightGaps = (question, typed) =>
+  question.gapAnswers.every((a, i) => clean(a) === clean(typed[i]));
 
 /** A round of gap sentences, about `size`, spread over the verbs (or words). */
 export function gapRound(questions, size = 20) {
