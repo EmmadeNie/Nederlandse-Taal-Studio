@@ -35,6 +35,7 @@ const AUX = {
   zijn: { ik: "ben", jij: "bent", hij: "is", wij: "zijn" },
 };
 const AUX_FORMS = new Set(Object.values(AUX).flatMap((f) => Object.values(f)));
+const AUX_IDS = new Set(["word.hebben", "word.zijn"]);
 const auxiliariesOf = (verb) =>
   String(verb.conjugation?.auxiliary || "")
     .split(/[\/,]| of /)
@@ -82,6 +83,25 @@ export const drillable = (verbs, tense = "present") =>
     if (tense === "perfect") return Boolean(c.participle && auxiliariesOf(v).length);
     return true;
   });
+
+/**
+ * The verbs practised in some sentences, from their parts: the persoonsvorm,
+ * the other verbs and the separable part. hebben/zijn as auxiliary of a
+ * perfectum ("heeft … geholpen") don't count: the main verb does.
+ */
+export function verbsInSentences(list) {
+  const ids = new Set();
+  list.forEach((s) => {
+    const parts = s.parts || [];
+    const perfect = parts.some((p) => p.role === "werkwoord");
+    parts.forEach((p) => {
+      if (!["persoonsvorm", "werkwoord", "scheidbaar-deel"].includes(p.role) || !p.wordId) return;
+      if (perfect && p.role === "persoonsvorm" && AUX_IDS.has(p.wordId)) return;
+      ids.add(p.wordId);
+    });
+  });
+  return drillable([...ids].map((id) => getItem(id)).filter((v) => v?.conjugation));
+}
 
 /** The tense a lesson is about (its grammar topics or title): perfectum, verleden tijd, else present. */
 export function tenseForLesson(lesson) {
@@ -155,7 +175,7 @@ const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
  * sentence or after a comma ("We eten vis"), or straight after it
  * (inversion: "Morgen eten we vis", "Gaan jullie mee?").
  */
-export function gapQuestions(verbs, sentences, tense = "present") {
+export function gapQuestions(verbs, sentences, tense = "present", { auxOnly = false } = {}) {
   const byId = new Map(drillable(verbs, tense).map((v) => [v.id, v]));
   const formsOf = tense === "past" ? pastForms : presentForms;
   const out = [];
@@ -173,6 +193,8 @@ export function gapQuestions(verbs, sentences, tense = "present") {
           if (!verb || clean(w.part.text) !== clean(verb.conjugation.participle)) return;
           const aux = located.find((p) => p.part.role === "persoonsvorm" && AUX_FORMS.has(clean(p.part.text)) && sameClause(p, w));
           if (!aux) return;
+          // "Alleen hebben/zijn": only the auxiliary is a gap, the participle stays ("Wij [___] … gegaan.").
+          if (auxOnly) return out.push({ ...gap(s, verb, aux.start, aux.end), tense, auxOnly: true });
           const gaps = [aux, w];
           if (isReflexive(verb)) {
             const own = reflexives.find((p) => sameClause(p, w));

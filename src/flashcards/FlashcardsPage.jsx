@@ -12,7 +12,7 @@ import { ArrowCounterClockwise, Cards, CheckCircle, PencilSimpleLine, Textbox, X
 import FlashcardButton from "./FlashcardButton";
 import Practice from "./Practice";
 import Drill from "./Drill";
-import { drillable, fillWordsOf, tenseForLesson } from "./conjugate";
+import { drillable, fillWordsOf, tenseForLesson, verbsInSentences } from "./conjugate";
 import { cardOf, deckTitle, itemsOf, lessonLists, parseListKey, partsOf } from "./cards";
 import { loadDecks, removeDeck, setDeckDone, setDeckKindDone, useDecks } from "./store";
 import "./flashcards.css";
@@ -140,7 +140,13 @@ export default function FlashcardsPage() {
       ? [{ lesson: drillLesson, part: "words" }, { lesson: drillLesson, part: "verbs" }] // verbs can also sit in a word list
       : (drill === "alles" ? decks.filter((d) => !d.done_at) : decks.filter((d) => d.id === drill)).map((d) => d.source);
     const items = sources.flatMap((src) => itemsOf(src, lessonMap));
-    const verbs = fill ? [] : verbsOf(items);
+    // Vervoegen from a sentence list (or a lesson that only has sentences): the verbs in those
+    // sentences, practised in exactly those sentences.
+    const lessonOnlySentences =
+      drillLesson && !drillList && !items.length ? itemsOf({ lesson: drillLesson, part: "sentences" }, lessonMap) : [];
+    // Only when the practice is about sentences alone; with word lists In zinnen uses the whole library.
+    const ownSentences = items.length && items.every(isSentence) ? items : lessonOnlySentences;
+    const verbs = fill ? [] : verbsOf([...items, ...lessonOnlySentences]);
     const words = fill ? fillWordsOf(items) : [];
     const title = drillLesson ? lessonMap.get(drillLesson)?.title : drill === "alles" ? t("fc.all") : decks.find((d) => d.id === drill)?.title;
     // Start at the level of the lesson or set (one list only); "alles" starts at all levels.
@@ -153,6 +159,7 @@ export default function FlashcardsPage() {
           kind={drillKind}
           verbs={verbs}
           words={words}
+          sentencePool={ownSentences.length ? ownSentences : null}
           {...finishProps(decks.find((d) => d.id === drill) || null, fill ? "invullen" : "vervoegen")}
           level={level}
           tense={tenseForLesson(lessonMap.get(sources[0]?.lesson))}
@@ -410,10 +417,14 @@ function DeckList({ decks, cardsOf, t }) {
   );
 }
 
-/** The verbs (with a present-tense table) among some items, each once. */
+const isSentence = (item) => item?.id?.startsWith("sentence.");
+
+/** The verbs (with a present-tense table) among some items, each once; for sentences the verbs in them. */
 function verbsOf(items) {
-  return drillable([...new Map(items.filter((i) => i?.partOfSpeech === "verb").map((i) => [i.id, i])).values()]);
+  const fromSentences = verbsInSentences(items.filter(isSentence));
+  return drillable([...new Map([...items.filter((i) => i?.partOfSpeech === "verb"), ...fromSentences].map((i) => [i.id, i])).values()]);
 }
+
 
 /** "Werkwoorden vervoegen · Woorden", or with one list: "Werkwoorden vervoegen · Dieren A1". */
 function directTitle(lesson, source, t) {
