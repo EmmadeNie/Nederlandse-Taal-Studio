@@ -3,7 +3,7 @@ import { useI18n } from "../i18n/context";
 import { VerbTile } from "../components/RelatedWords";
 import { CaretLeft } from "../icons";
 import { shuffle } from "./cards";
-import { gapQuestions, gapRound, isRight, isRightGaps, makeRound, markQuestions } from "./conjugate";
+import { gapIsRight, gapQuestions, gapRound, isRight, isRightGaps, makeRound, markQuestions } from "./conjugate";
 import { LEVELS, sentences } from "../data";
 
 const SIZES = [10, 20];
@@ -78,11 +78,11 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], title, l
   const [queue, setQueue] = useState(() => build());
   const [total, setTotal] = useState(queue.length);
   const [typed, setTyped] = useState("");
-  const [typed2, setTyped2] = useState(""); // the second gap (wederkerend voornaamwoord)
+  const [more, setMore] = useState([]); // the other gaps of a sentence (voornaamwoord, separable part)
   const [result, setResult] = useState(null); // null | "right" | "wrong"
   const [wrong, setWrong] = useState(() => new Map()); // id → question answered wrong this round
   const input = useRef(null);
-  const input2 = useRef(null);
+  const moreInputs = useRef([]);
   const timer = useRef(null);
 
   const current = queue[0];
@@ -94,7 +94,7 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], title, l
     setQueue(list);
     setTotal(list.length);
     setTyped("");
-    setTyped2("");
+    setMore([]);
     setResult(null);
     setWrong(new Map());
   };
@@ -102,7 +102,7 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], title, l
   const next = () => {
     clearTimeout(timer.current);
     setTyped("");
-    setTyped2("");
+    setMore([]);
     if (result === "wrong") {
       // Back in a few questions later.
       setQueue((q) => {
@@ -120,14 +120,17 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], title, l
     e.preventDefault();
     if (result) return next();
     if (!typed.trim()) return;
-    const two = Boolean(current.gapAnswers);
-    // Two gaps: Enter in the first one moves on to the second.
-    if (two && !typed2.trim()) return input2.current?.focus();
-    if (two ? isRightGaps(current, [typed, typed2]) : isRight(current, typed)) {
+    const several = Boolean(current.gapAnswers);
+    // Several gaps: Enter moves on to the next empty one.
+    if (several) {
+      const empty = current.gapAnswers.slice(1).findIndex((_, i) => !(more[i] || "").trim());
+      if (empty >= 0) return moreInputs.current[empty]?.focus();
+    }
+    if (several ? isRightGaps(current, [typed, ...more]) : isRight(current, typed)) {
       setResult("right");
       timer.current = setTimeout(() => {
         setTyped("");
-        setTyped2("");
+        setMore([]);
         setResult(null);
         setQueue((q) => q.slice(1));
       }, 700);
@@ -265,20 +268,29 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], title, l
     spellCheck: false,
     enterKeyHint: result ? "next" : "done",
   };
-  const field2 = (
+  // After a wrong answer with several gaps, the right boxes turn green (only the wrong ones red).
+  const okClass = (i, value) =>
+    result === "wrong" && current.gapAnswers && gapIsRight(current, i, value) ? "vd-input is-ok" : "vd-input";
+  const moreField = (i) => (
     <input
       {...inputProps}
-      ref={input2}
-      value={typed2}
-      onChange={(e) => !result && setTyped2(e.target.value)}
-      aria-label={t("vd.answer2")}
-      size={Math.max(3, typed2.length + 1)}
+      className={okClass(i + 1, more[i] || "")}
+      key={`gap${i}`}
+      ref={(el) => (moreInputs.current[i] = el)}
+      value={more[i] || ""}
+      onChange={(e) => {
+        if (result) return;
+        const v = e.target.value;
+        setMore((m) => Object.assign([...m], { [i]: v }));
+      }}
+      aria-label={t("vd.answerN", { n: i + 2 })}
+      size={Math.max(3, (more[i] || "").length + 1)}
     />
   );
   const field = (
     <input
       ref={input}
-      className="vd-input"
+      className={okClass(0, typed)}
       value={typed}
       onChange={(e) => !result && setTyped(e.target.value)}
       readOnly={!!result}
@@ -311,9 +323,12 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], title, l
           <span className="vd-sentence is-long" lang="nl">
             {current.pieces[0]}
             {field}
-            {current.pieces[1]}
-            {field2}
-            {current.pieces[2]}
+            {current.pieces.slice(1).map((piece, i) => (
+              <span key={i}>
+                {i > 0 && moreField(i - 1)}
+                {piece}
+              </span>
+            ))}
           </span>
         ) : sentence ? (
           <span className="vd-sentence is-long" lang="nl">
