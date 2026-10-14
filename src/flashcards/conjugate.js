@@ -82,9 +82,18 @@ export function makeRound(verbs, size = 20) {
 
 /* ----- In zinnen: "Ik ___ elke dag mijn lunch zelf. (maken)" ----- */
 
-// The persoonsvorm of a separable verb is only the first word ("meld" of "meld aan").
+// A separable verb's persoonsvorm is the first word in a main clause ("meld" of
+// "meld aan") and written together in a subclause ("…omdat ik me aanmeld").
+const together = (form) => {
+  const [first, ...rest] = form.split(" ");
+  return rest.join("") + first;
+};
 const presentForms = (verb) =>
-  Object.values(verb.conjugation?.present || {}).flatMap((f) => [clean(f), clean(f).split(" ")[0]]);
+  Object.values(verb.conjugation?.present || {}).flatMap((f) => {
+    const c = clean(f);
+    return c.includes(" ") ? [c, c.split(" ")[0], together(c)] : [c];
+  });
+const isSeparable = (verb) => (verb.conjugation?.present?.ik || "").includes(" ");
 const PLURAL = "wij|we|jullie|zij|ze";
 const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
@@ -105,14 +114,24 @@ export function gapQuestions(verbs, sentences) {
     if (!s.nl) return;
     if (s.parts?.length) {
       const reflexives = locateParts(s.nl, s.pronouns || []).filter((p) => p && p.part.type === "wederkerend");
-      locateParts(s.nl, s.parts).forEach((w) => {
-        const verb = w && w.part.role === "persoonsvorm" && byId.get(w.part.wordId);
+      const located = locateParts(s.nl, s.parts).filter(Boolean);
+      const sameClause = (a, b) => (a.part.clause || null) === (b.part.clause || null);
+      located.forEach((w) => {
+        const verb = w.part.role === "persoonsvorm" && byId.get(w.part.wordId);
         if (!verb || !presentForms(verb).includes(clean(w.part.text))) return;
-        if (!isReflexive(verb)) return out.push(gap(s, verb, w.start, w.end));
-        // Wederkerend: the pronoun of the same clause is a second gap ("Ik [interesseer] [me] voor kunst").
-        // Without a marked pronoun the sentence is left out: no half answers.
-        const own = reflexives.find((p) => (p.part.clause || null) === (w.part.clause || null));
-        if (own) out.push(twoGaps(s, verb, w, own));
+        // The persoonsvorm, plus what belongs to it in the same (sub)clause, each a gap in sentence
+        // order: the wederkerend voornaamwoord ("Ik [meld] [me] [aan]") and the separable part.
+        const gaps = [w];
+        if (isReflexive(verb)) {
+          const own = reflexives.find((p) => sameClause(p, w));
+          if (!own) return; // not marked: leave the sentence out, no half answers
+          gaps.push(own);
+        }
+        if (isSeparable(verb)) {
+          const rest = located.find((p) => p.part.role === "scheidbaar-deel" && p.part.wordId === verb.id && sameClause(p, w));
+          if (rest) gaps.push(rest);
+        }
+        out.push(gaps.length === 1 ? gap(s, verb, w.start, w.end) : multiGap(s, verb, gaps));
       });
       return;
     }
@@ -155,24 +174,35 @@ function gap(sentence, verb, start, end) {
 }
 
 /**
- * Two gaps in one sentence (persoonsvorm + wederkerend voornaamwoord), in
- * sentence order: `pieces` is the text around them, `gapAnswers` per gap.
+ * Several gaps in one sentence (persoonsvorm, wederkerend voornaamwoord,
+ * separable part), in sentence order: `pieces` is the text around them
+ * (one more than the gaps), `gapAnswers` per gap.
  */
-function twoGaps(sentence, verb, x, y) {
-  const [a, b] = [x, y].sort((p, q) => p.start - q.start);
+function multiGap(sentence, verb, spots) {
+  const sorted = [...spots].sort((p, q) => p.start - q.start);
   const nl = sentence.nl;
-  const gapAnswers = [nl.slice(a.start, a.end), nl.slice(b.start, b.end)];
+  const pieces = [];
+  let pos = 0;
+  sorted.forEach((g) => {
+    pieces.push(nl.slice(pos, g.start));
+    pos = g.end;
+  });
+  pieces.push(nl.slice(pos));
+  const gapAnswers = sorted.map((g) => nl.slice(g.start, g.end));
   return {
-    id: `${sentence.id}@${a.start}+${b.start}`,
+    id: `${sentence.id}@${sorted.map((g) => g.start).join("+")}`,
     verb,
     sentence,
-    pieces: [nl.slice(0, a.start), nl.slice(a.end, b.start), nl.slice(b.end)],
+    pieces,
     gapAnswers,
     answers: [gapAnswers.join(" … ")],
   };
 }
 
-/** Both gaps right (when a question has two)? */
+/** Is one gap of a several-gap question right? */
+export const gapIsRight = (question, i, typed) => clean(question.gapAnswers[i]) === clean(typed);
+
+/** Every gap right (when a question has several)? */
 export const isRightGaps = (question, typed) =>
   question.gapAnswers.every((a, i) => clean(a) === clean(typed[i]));
 

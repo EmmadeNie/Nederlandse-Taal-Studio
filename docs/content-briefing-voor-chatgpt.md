@@ -276,7 +276,9 @@ Regels:
     `wordId` van het werkwoord (ook als dat een hulpwerkwoord is: `word.hebben`, `word.zijn`, `word.moeten`);
   - `werkwoord`: de overige werkwoorden van het gezegde (voltooid deelwoord, infinitief), met `wordId`;
   - `scheidbaar-deel`: het losse deel van een scheidbaar werkwoord (*op* in *bel … op*), met de `wordId`
-    van het hele werkwoord (`word.opbellen`);
+    van het hele werkwoord (`word.opbellen`). Markeer het altijd als het los staat: de app maakt er bij
+    "Vervoegen in zinnen" een eigen vakje van ("Morgen [ruim] ik mijn kamer [op]"). In een bijzin staat het
+    werkwoord aan elkaar (*…omdat ik hem **opbel***): dan is `opbel` de persoonsvorm en is er geen `scheidbaar-deel`;
   - `onderwerp`: het hele onderwerp (*Ik*, *Het weer*, *Mijn broer*), met `person`:
     `1sg` (ik), `2sg` (jij/je/u), `3sg` (hij/zij/het/een enkelvoudig zelfstandig naamwoord),
     `1pl` (wij/we), `2pl` (jullie), `3pl` (zij mv./een meervoud).

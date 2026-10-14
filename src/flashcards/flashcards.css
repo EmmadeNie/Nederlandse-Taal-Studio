@@ -672,3 +672,10 @@
   border-color: var(--accent);
   color: var(--accent);
 }
+
+/* Several gaps, wrong answer: the boxes that were right stay green */
+.is-wrong .vd-input.is-ok {
+  border-bottom-color: var(--green);
+  color: var(--green);
+  text-decoration: none;
+}
