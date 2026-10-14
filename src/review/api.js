@@ -50,3 +50,10 @@ export const openIssues = () =>
 
 export const resolveIssue = (id) =>
   supabase.from("sentence_reviews").update({ resolved_at: new Date().toISOString() }).eq("id", id).then(check);
+
+/** Nakijklijsten: per approved proposal the sentences it added or changed (newest first). */
+export const reviewBatches = () =>
+  supabase
+    .rpc("review_batches")
+    .then(check)
+    .then((rows) => rows.map((r) => ({ id: r.id, title: r.title, approvedAt: r.approved_at, ids: new Set(r.sentence_ids) })));
