@@ -200,16 +200,16 @@ function multiGap(sentence, verb, spots) {
 }
 
 /** Is one gap of a several-gap question right? */
-export const gapIsRight = (question, i, typed) => clean(question.gapAnswers[i]) === clean(typed);
+export const gapIsRight = (question, i, typed) =>
+  (question.gapAlts?.[i] || [question.gapAnswers[i]]).some((a) => clean(a) === clean(typed));
 
 /** Every gap right (when a question has several)? */
-export const isRightGaps = (question, typed) =>
-  question.gapAnswers.every((a, i) => clean(a) === clean(typed[i]));
+export const isRightGaps = (question, typed) => question.gapAnswers.every((_, i) => gapIsRight(question, i, typed[i]));
 
 /** A round of gap sentences, about `size`, spread over the verbs (or words). */
 export function gapRound(questions, size = 20) {
   const byVerb = new Map();
-  const key = (q) => (q.verb || q.word).id;
+  const key = (q) => (q.verb || q.word || q).id;
   shuffle(questions).forEach((q) => byVerb.set(key(q), [...(byVerb.get(key(q)) || []), q]));
   const lines = [...byVerb.values()];
   const out = [];

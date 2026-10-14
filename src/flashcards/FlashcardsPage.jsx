@@ -3,7 +3,8 @@ import { useAuth } from "../auth/context";
 import { useI18n } from "../i18n/context";
 import { navigate, useRoute } from "../hooks/useRoute";
 import { pathFor } from "../routes";
-import { getSet, setItems, setsOfType } from "../data";
+import { getSet, sentences, setItems, setsOfType } from "../data";
+import { sentencesForLists } from "../leerpad/sentenceLists";
 import { useContentVersion } from "../data/useContent";
 import { supabase } from "../lib/supabase";
 import { LevelBadge } from "../components/Badges";
@@ -61,6 +62,10 @@ export default function FlashcardsPage() {
   }, [profile.id, isStudent]);
 
   // Vervoegen: /flashcards/vervoegen-<deck id>, -alles, or -les-<lesson id> (from a lesson).
+  // Voornaamwoorden: /flashcards/voornaamwoorden (all sentences) or -les-<lesson id>.
+  const pronounMatch = /^voornaamwoorden(?:-les-(.+))?$/.exec(route.param || "");
+  const pronounLesson = pronounMatch?.[1] || null;
+
   // Vervoegen / Invullen: /flashcards/vervoegen-<deck id>, -alles, or -les-<lesson id> (from a lesson).
   const drillMatch = /^(vervoegen|invullen)-(.+)$/.exec(route.param || "");
   const drillKind = drillMatch?.[1] === "invullen" ? "fill" : "verbs";
@@ -77,7 +82,7 @@ export default function FlashcardsPage() {
   useEffect(() => {
     if (!decks || !lessons) return;
     const known = new Set(lessons.map((l) => l.id));
-    const wanted = [...decks.map((d) => d.source.lesson), drillLesson, directSource?.lesson];
+    const wanted = [...decks.map((d) => d.source.lesson), drillLesson, directSource?.lesson, pronounLesson];
     const missing = [...new Set(wanted.filter((id) => id && !known.has(id)))];
     if (!missing.length) return;
     supabase
@@ -85,13 +90,34 @@ export default function FlashcardsPage() {
       .select(LESSON)
       .in("id", missing)
       .then(({ data }) => setExtra(new Map((data || []).map((l) => [l.id, l]))));
-  }, [decks, lessons, drillLesson, directSource?.lesson]);
+  }, [decks, lessons, drillLesson, directSource?.lesson, pronounLesson]);
 
   const lessonMap = useMemo(
     () => new Map([...(lessons || []).map((l) => [l.id, l]), ...extra]),
     [lessons, extra]
   );
   const cardsOf = (deck) => itemsOf(deck.source, lessonMap).map(cardOf);
+
+  if (pronounMatch && decks && lessons) {
+    const withPronouns = (list) => list.filter((s) => s.pronouns?.length);
+    const lesson = pronounLesson ? lessonMap.get(pronounLesson) : null;
+    if (pronounLesson && !lesson) return <p className="dim">{t("common.loading")}</p>;
+    // A lesson's own sentences when they have pronouns, otherwise the whole library.
+    const own = lesson ? withPronouns(sentencesForLists(lesson.sentence_list)) : [];
+    const list = own.length ? own : withPronouns(sentences);
+    if (!list.length) return <p className="dim">{t("pd.none")}</p>;
+    return (
+      <Drill
+        key={route.param}
+        kind="pronouns"
+        pronounSentences={list}
+        level={lesson?.level}
+        settingsKey={route.param}
+        title={lesson?.title || t("pd.title")}
+        onExit={() => (window.history.length > 1 ? window.history.back() : navigate(pathFor("flashcards")))}
+      />
+    );
+  }
 
   if (drill && decks && lessons) {
     const fill = drillKind === "fill";
@@ -177,7 +203,14 @@ export default function FlashcardsPage() {
 
   return (
     <div className="fc-page">
-      <h2>{t("nav.flashcards")}</h2>
+      <div className="fc-page-head">
+        <h2>{t("nav.flashcards")}</h2>
+        {sentences.some((s) => s.pronouns?.length) && (
+          <button type="button" className="fc-add" title={t("pd.hint")} onClick={() => navigate(pathFor("flashcards", "voornaamwoorden"))}>
+            <Textbox aria-hidden="true" /> {t("pd.button")}
+          </button>
+        )}
+      </div>
       {error && <div className="lp-error">{error}</div>}
 
       {decks === null ? (

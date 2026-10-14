@@ -5,6 +5,7 @@ import { CaretLeft } from "../icons";
 import { shuffle } from "./cards";
 import { gapIsRight, gapQuestions, gapRound, isRight, isRightGaps, makeRound, markQuestions } from "./conjugate";
 import { LEVELS, sentences } from "../data";
+import { pronounKindsIn, pronounQuestions } from "./pronouns";
 
 const SIZES = [10, 20];
 const rank = (level) => (LEVELS.includes(level) ? LEVELS.indexOf(level) : LEVELS.length);
@@ -42,30 +43,40 @@ const shortEn = (en) => (en || "").split(/[,;/]/)[0].trim();
  * Sentences go up to a level ("t/m A1"): at first the level of the lesson or
  * list (`level`), or what was chosen last time for this list (`settingsKey`).
  */
-export default function Drill({ kind = "verbs", verbs = [], words = [], title, level, settingsKey, onExit }) {
+export default function Drill({ kind = "verbs", verbs = [], words = [], pronounSentences = [], title, level, settingsKey, onExit }) {
   const { t } = useI18n();
   const fill = kind === "fill";
-  const gaps = useMemo(() => (fill ? [] : gapQuestions(verbs, sentences)), [fill, verbs]);
+  const pron = kind === "pronouns"; // Voornaamwoorden: the marked pronouns of `pronounSentences` are the gaps
+  const gaps = useMemo(() => (fill || pron ? [] : gapQuestions(verbs, sentences)), [fill, pron, verbs]);
   const marked = useMemo(() => (fill ? markQuestions(words, sentences) : []), [fill, words]);
+  const pronouns = useMemo(() => (pron ? pronounQuestions(pronounSentences) : []), [pron, pronounSentences]);
   const markKinds = [...new Set(marked.map((q) => q.kind))];
-  const modes = fill
-    ? markKinds.length > 1
-      ? ["all", ...markKinds]
+  const pronounKinds = pron ? pronounKindsIn(pronounSentences) : [];
+  const modes = pron
+    ? pronounKinds.length > 1
+      ? ["all", ...pronounKinds]
       : []
-    : gaps.length
-      ? ["forms", "sentences"]
-      : [];
-  const [mode, setMode] = useState(fill ? "all" : "forms");
-  const [hint, setHint] = useState(fill ? "en" : "nl"); // verbs: nl | en (verb hint); fill: en | none (sentence hint)
+    : fill
+      ? markKinds.length > 1
+        ? ["all", ...markKinds]
+        : []
+      : gaps.length
+        ? ["forms", "sentences"]
+        : [];
+  const [mode, setMode] = useState(fill || pron ? "all" : "forms");
+  // verbs: nl | en (verb hint); fill: en | none (sentence hint); pronouns: kind | person (what each gap says)
+  const [hint, setHint] = useState(fill ? "en" : pron ? "kind" : "nl");
   const [size, setSize] = useState(10);
-  const sentenceLevels = LEVELS.filter((l) => [...gaps, ...marked].some((q) => q.sentence.introducedAtLevel === l));
+  const sentenceLevels = LEVELS.filter((l) => [...gaps, ...marked, ...pronouns].some((q) => q.sentence.introducedAtLevel === l));
   const [upTo, setUpTo] = useState(() => {
     const saved = settingsKey && loadLevel(settingsKey);
     if (saved === "all" || LEVELS.includes(saved)) return saved;
     return LEVELS.includes(level) ? level : "all";
   });
   const build = (m = mode, n = size, u = upTo) =>
-    fill
+    pron
+      ? gapRound(upToLevel(m === "all" ? pronouns : pronounQuestions(pronounSentences, m), u), n)
+      : fill
       ? gapRound(upToLevel(m === "all" ? marked : marked.filter((q) => q.kind === m), u), n)
       : m === "sentences"
         ? gapRound(upToLevel(gaps, u), n)
@@ -142,7 +153,8 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], title, l
 
   const done = total - queue.length;
   const kindLabel = (k) => (t(`marks.kinds.${k}`) === `marks.kinds.${k}` ? k : t(`marks.kinds.${k}`));
-  const modeLabel = (m) => (!fill ? t(`vd.mode.${m}`) : m === "all" ? t("fd.all") : kindLabel(m));
+  const modeLabel = (m) =>
+    pron ? (m === "all" ? t("pd.allKinds") : t(`pd.kind.${m}`)) : !fill ? t(`vd.mode.${m}`) : m === "all" ? t("fd.all") : kindLabel(m);
   const header = (
     <>
       <div className="fc-top">
@@ -151,7 +163,7 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], title, l
         </button>
         <div className="fc-title">
           <strong>
-            {fill ? t("fd.title") : t("vd.title")} · {title}
+            {pron ? t("pd.title") : fill ? t("fd.title") : t("vd.title")} · {title}
           </strong>
           <span className="dim">{t("fc.progress", { done, n: total })}</span>
         </div>
@@ -172,7 +184,7 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], title, l
         </div>
       </div>
       <div className="fc-settings">
-        {(fill || mode === "sentences") &&
+        {(fill || pron || mode === "sentences") &&
           // Several levels, or one that lies above the chosen one (else there would be no way up).
           (sentenceLevels.length > 1 || (sentenceLevels.length === 1 && upTo !== "all" && rank(upTo) < rank(sentenceLevels[0]))) && (
           <div className="fc-seg" role="group" aria-label={t("fc.levelFilter")}>
@@ -205,9 +217,9 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], title, l
             ))}
           </div>
         )}
-        {(fill || mode === "sentences") && (
+        {(fill || pron || mode === "sentences") && (
           <div className="fc-seg" role="group" aria-label={t("vd.hintLang")}>
-            {(fill ? ["en", "none"] : ["nl", "en"]).map((h) => (
+            {(pron ? ["kind", "person"] : fill ? ["en", "none"] : ["nl", "en"]).map((h) => (
               <button key={h} type="button" aria-pressed={hint === h} onClick={() => setHint(h)}>
                 {t(`vd.hint.${h}`)}
               </button>
@@ -268,6 +280,13 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], title, l
     spellCheck: false,
     enterKeyHint: result ? "next" : "done",
   };
+  // Voornaamwoorden: what a gap asks for ("bezittelijk", with "· hij" when the person hint is on).
+  const gapHint = (i) => {
+    const h = current.hints?.[i];
+    if (!h) return undefined;
+    const person = hint === "person" && h.person ? ` · ${t(`parts.person.${h.person}`)}` : "";
+    return t(`pd.role.${h.role}`) + person;
+  };
   // After a wrong answer with several gaps, the right boxes turn green (only the wrong ones red).
   const okClass = (i, value) =>
     result === "wrong" && current.gapAnswers && gapIsRight(current, i, value) ? "vd-input is-ok" : "vd-input";
@@ -284,13 +303,15 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], title, l
         setMore((m) => Object.assign([...m], { [i]: v }));
       }}
       aria-label={t("vd.answerN", { n: i + 2 })}
-      size={Math.max(3, (more[i] || "").length + 1)}
+      placeholder={result ? undefined : gapHint(i + 1)}
+      size={Math.max(3, (more[i] || "").length + 1, (gapHint(i + 1) || "").length)}
     />
   );
   const field = (
     <input
       ref={input}
       className={okClass(0, typed)}
+      placeholder={result || !current.pieces ? undefined : gapHint(0)}
       value={typed}
       onChange={(e) => !result && setTyped(e.target.value)}
       readOnly={!!result}
@@ -300,7 +321,7 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], title, l
       spellCheck={false}
       enterKeyHint={result ? "next" : "done"}
       aria-label={t("vd.answer")}
-      size={Math.max(6, typed.length + 1)}
+      size={Math.max(6, typed.length + 1, current.pieces ? (gapHint(0) || "").length : 0)}
     />
   );
   // In English-hint mode the Dutch verb only shows once answered.
@@ -311,7 +332,11 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], title, l
     <div className="fc-practice">
       {header}
       <form className={`vd-card ${result ? `is-${result}` : ""}`} onSubmit={check}>
-        {word ? (
+        {current.pronoun ? (
+          <span className="vd-verb">
+            {current.hints.length === 1 ? gapHint(0) : t("pd.fillAll", { n: current.hints.length })}
+          </span>
+        ) : word ? (
           <span className="vd-verb">{t(`marks.kind.${current.kind}`) === `marks.kind.${current.kind}` ? current.kind : t(`marks.kind.${current.kind}`)}</span>
         ) : (
           <span className="vd-verb">
