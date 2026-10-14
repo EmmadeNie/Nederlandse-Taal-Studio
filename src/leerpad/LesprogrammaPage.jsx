@@ -213,6 +213,14 @@ export default function LesprogrammaPage() {
         ) : (
           <>
             {isStudent ? t("lp.studentIntro") : t("lp.programIntro")}
+            {isStudent && plannedIds?.size > 0 && (
+              <>
+                {" "}
+                <span className="planned-legend">
+                  <span className="planned-swatch" aria-hidden="true" /> {t("lp.plannedLegend")}
+                </span>
+              </>
+            )}
             {canEdit && " " + t("lp.programIntroDrag")}
           </>
         )}
@@ -235,6 +243,8 @@ export default function LesprogrammaPage() {
           cards={lessons}
           isCardVisible={(l) => matchesFilter({ ...l, labelIds: l.label_ids }, search, level, label)}
           renderCard={(l) => (
+            <>
+            {isStudent && plannedIds?.has(l.id) && <span className="planned-badge">✓ {t("lp.onYourPath")}</span>}
             <CardBody
               title={l.title}
               level={l.level}
@@ -261,6 +271,7 @@ export default function LesprogrammaPage() {
                 </>
               }
             />
+            </>
           )}
           cardClass={(l) => ((selecting || isStudent) && plannedIds?.has(l.id) ? "is-planned" : "")}
           onOpenCard={(l) => setOpenId(l.id)}
