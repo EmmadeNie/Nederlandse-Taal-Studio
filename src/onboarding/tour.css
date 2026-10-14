@@ -1,0 +1,58 @@
+/* The first-time tour: the page dims, the step's target stays lit, a card explains. */
+.tour {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+}
+
+.tour-dim {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.tour-spot {
+  position: fixed;
+  border-radius: 12px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55);
+  outline: 2px solid var(--accent);
+  transition: all 0.25s ease;
+  pointer-events: none;
+}
+
+.tour-card {
+  position: fixed;
+  width: min(360px, calc(100vw - 24px));
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1rem 1.1rem;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  display: grid;
+  gap: 0.5rem;
+}
+
+.tour-card h3 {
+  margin: 0;
+}
+
+.tour-card p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.tour-progress {
+  font-size: 0.75rem;
+}
+
+.tour-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+}
+
+.tour-spacer {
+  flex: 1;
+}

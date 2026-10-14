@@ -6,8 +6,9 @@ import { leerpadLanes, listStudents, planLessons, plannedLessonIds } from "./api
  * Bottom bar while lessons are selected on the lesprogramma: put them all on
  * one student's leerpad, in a lane of choice. Choosing a student highlights the
  * lessons already on their leerpad (onPlanned gets the set of lesson ids).
+ * With `selfId` (a student) it is their own leerpad: no student to choose.
  */
-export default function SelectionBar({ lessonIds, onClear, onPlanned, plannedCount, levelOf }) {
+export default function SelectionBar({ lessonIds, onClear, onPlanned, plannedCount, levelOf, selfId, onDone }) {
   const { t } = useI18n();
   const [students, setStudents] = useState([]);
   const [studentId, setStudentId] = useState("");
@@ -18,8 +19,10 @@ export default function SelectionBar({ lessonIds, onClear, onPlanned, plannedCou
   const [message, setMessage] = useState(null);
 
   useEffect(() => {
-    listStudents().then(setStudents).catch(() => setStudents([]));
-  }, []);
+    if (selfId) chooseStudent(selfId);
+    else listStudents().then(setStudents).catch(() => setStudents([]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once, for the own leerpad
+  }, [selfId]);
 
   const showPlanned = (id) =>
     id ? plannedLessonIds(id).then(onPlanned, () => onPlanned(null)) : onPlanned(null);
@@ -47,12 +50,15 @@ export default function SelectionBar({ lessonIds, onClear, onPlanned, plannedCou
       const result = await planLessons(lessonIds, studentId, laneId, byLevel ? { levelOf } : {});
       const { added, skipped } = result;
       const student = students.find((s) => s.id === studentId);
-      const planned = added
-        ? t("select.planned", { n: added, name: student?.display_name || student?.email, lane: result.lanes.join(", ") })
-        : "";
+      const planned = !added
+        ? ""
+        : selfId
+          ? t("select.plannedSelf", { n: added, lane: result.lanes.join(", ") })
+          : t("select.planned", { n: added, name: student?.display_name || student?.email, lane: result.lanes.join(", ") });
       if (byLevel) setLanes(await leerpadLanes(studentId)); // new level lanes
       setMessage({ text: [planned, skipped ? t("select.skipped", { n: skipped }) : ""].filter(Boolean).join(" ") });
       showPlanned(studentId); // the new ones are highlighted too
+      if (added) onDone?.();
     } catch (e) {
       setMessage({ error: true, text: t(e.message) });
     } finally {
@@ -67,15 +73,17 @@ export default function SelectionBar({ lessonIds, onClear, onPlanned, plannedCou
         {t("select.clear")}
       </button>
       <span className="selection-bar-spacer" />
-      <select value={studentId} onChange={(e) => chooseStudent(e.target.value)} aria-label={t("lp.student")}>
-        <option value="">{t("lp.chooseStudent")}</option>
-        {students.map((s) => (
-          <option key={s.id} value={s.id}>
-            {s.display_name || s.email}
-            {s.user_id ? "" : ` (${t("users.pending")})`}
-          </option>
-        ))}
-      </select>
+      {!selfId && (
+        <select value={studentId} onChange={(e) => chooseStudent(e.target.value)} aria-label={t("lp.student")}>
+          <option value="">{t("lp.chooseStudent")}</option>
+          {students.map((s) => (
+            <option key={s.id} value={s.id}>
+              {s.display_name || s.email}
+              {s.user_id ? "" : ` (${t("users.pending")})`}
+            </option>
+          ))}
+        </select>
+      )}
       <label className="selection-bylevel" title={t("select.byLevelHint")}>
         <input type="checkbox" checked={byLevel} onChange={(e) => setByLevel(e.target.checked)} /> {t("select.byLevel")}
       </label>
@@ -102,7 +110,7 @@ export default function SelectionBar({ lessonIds, onClear, onPlanned, plannedCou
         onClick={plan}
         disabled={busy || !lessonIds.length || !studentId || !laneId}
       >
-        {t("select.plan")}
+        {selfId ? t("select.planSelf") : t("select.plan")}
       </button>
       {message && (
         <span className={message.error ? "auth-error" : "note-ok"} role="status">

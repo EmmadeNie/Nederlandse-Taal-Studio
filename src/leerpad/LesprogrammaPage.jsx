@@ -34,7 +34,7 @@ import { LEVELS, matchesFilter } from "./util";
  * level is a label on each les. Docent edits, reviewers read.
  */
 export default function LesprogrammaPage() {
-  const { role } = useAuth();
+  const { role, profile } = useAuth();
   const { t } = useI18n();
   const canEdit = role === "docent";
   const isStudent = role === "leerling";
@@ -132,11 +132,45 @@ export default function LesprogrammaPage() {
     setSelecting(false);
     setSelected(new Set());
     setAnchor(null);
-    setPlannedIds(null);
+    if (isStudent) api.plannedLessonIds(profile.id).then(setPlannedIds, () => {});
+    else setPlannedIds(null);
   };
 
   // Selected lessons in board order (lane order, then position in the lane).
   const laneOrder = new Map(lanes.map((l, i) => [l.id, i]));
+  // Students: put a whole level on their own leerpad (each lesson in its level lane).
+  const [levelBusy, setLevelBusy] = useState(null);
+  const [levelMessage, setLevelMessage] = useState(null);
+  const inBoardOrder = (list) =>
+    [...list].sort((a, b) => laneOrder.get(a.lane_id) - laneOrder.get(b.lane_id) || a.position - b.position);
+  const levelsOffered = LEVELS.filter((lv) => lessons.some((l) => l.level === lv));
+  const addLevels = async (levels) => {
+    setLevelBusy(levels.join("+"));
+    setLevelMessage(null);
+    try {
+      const ids = inBoardOrder(lessons.filter((l) => levels.includes(l.level))).map((l) => l.id);
+      const { added, skipped, lanes: used } = await api.planLessons(ids, profile.id, null, {
+        levelOf: (id) => lessons.find((l) => l.id === id)?.level || null,
+      });
+      setPlannedIds(await api.plannedLessonIds(profile.id));
+      setLevelMessage({
+        text: added
+          ? t("lp.levelAdded", { n: added, lane: used.join(", ") }) + (skipped ? " " + t("select.skipped", { n: skipped }) : "")
+          : t("lp.levelAlready"),
+      });
+      return added;
+    } catch (e) {
+      setLevelMessage({ error: true, text: t(e.message) });
+      return null;
+    } finally {
+      setLevelBusy(null);
+    }
+  };
+  // What is already on the student's own leerpad shows highlighted.
+  useEffect(() => {
+    if (isStudent && profile?.id) api.plannedLessonIds(profile.id).then(setPlannedIds, () => {});
+  }, [isStudent, profile?.id]);
+
   const selectedInOrder = lessons
     .filter((l) => selected.has(l.id))
     .sort((a, b) => laneOrder.get(a.lane_id) - laneOrder.get(b.lane_id) || a.position - b.position)
@@ -147,8 +181,9 @@ export default function LesprogrammaPage() {
       <div className="lp-page-head">
         <h2>{t("nav.lesprogramma")}</h2>
         <span className="result-count">{t("lp.lessons", { n: lessons.length })}</span>
-        {canEdit && (
+        {(canEdit || isStudent) && (
           <button
+            data-tour="select"
             className={selecting ? "fb-btn-primary" : "fb-btn-secondary"}
             onClick={() => (selecting ? stopSelecting() : setSelecting(true))}
           >
@@ -156,6 +191,21 @@ export default function LesprogrammaPage() {
           </button>
         )}
       </div>
+      {isStudent && !selecting && levelsOffered.length > 0 && (
+        <div className="lp-add-levels" data-tour="add-levels">
+          <span>{t("lp.addLevelLabel")}</span>
+          {levelsOffered.map((lv) => (
+            <button key={lv} type="button" className="fb-btn-secondary" disabled={!!levelBusy} onClick={() => addLevels([lv])}>
+              {levelBusy === lv ? t("common.loading") : t("lp.addLevel", { level: lv })}
+            </button>
+          ))}
+          {levelMessage && (
+            <span className={levelMessage.error ? "auth-error" : "note-ok"} role="status">
+              {levelMessage.text}
+            </span>
+          )}
+        </div>
+      )}
       <p className="lp-intro">
         {selecting ? (
           t("select.hint")
@@ -211,7 +261,7 @@ export default function LesprogrammaPage() {
               }
             />
           )}
-          cardClass={(l) => (selecting && plannedIds?.has(l.id) ? "is-planned" : "")}
+          cardClass={(l) => ((selecting || isStudent) && plannedIds?.has(l.id) ? "is-planned" : "")}
           onOpenCard={(l) => setOpenId(l.id)}
           onMoveCard={canEdit ? moveLesson : undefined}
           selection={
@@ -280,6 +330,8 @@ export default function LesprogrammaPage() {
           onClear={() => setSelected(new Set())}
           onPlanned={setPlannedIds}
           levelOf={(id) => lessons.find((l) => l.id === id)?.level || null}
+          selfId={isStudent ? profile.id : undefined}
+          onDone={isStudent ? () => setSelected(new Set()) : undefined}
           plannedCount={plannedIds ? lessons.filter((l) => plannedIds.has(l.id)).length : null}
         />
       )}
