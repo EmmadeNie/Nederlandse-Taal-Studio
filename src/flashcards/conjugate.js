@@ -6,7 +6,7 @@
  */
 import { shuffle } from "./cards";
 import { locateParts } from "../data/sentenceParts";
-import { sentences } from "../data";
+import { getItem, sentences } from "../data";
 import { REFLEXIVE_PRONOUN, isReflexive, withPronoun } from "../data/reflexive";
 
 // Who does it, which form of the table that needs, and (wederkerende
@@ -26,12 +26,39 @@ export const SUBJECTS = [
 
 const clean = (s) => (s || "").trim().toLowerCase().replace(/\s+/g, " ");
 
+/* ----- Tenses: tegenwoordige tijd, verleden tijd, perfectum ----- */
+
+export const TENSES = ["present", "past", "perfect"];
+// The auxiliaries of the perfectum, per form of the table (jullie / zij mv take the wij form).
+const AUX = {
+  hebben: { ik: "heb", jij: "hebt", hij: "heeft", wij: "hebben" },
+  zijn: { ik: "ben", jij: "bent", hij: "is", wij: "zijn" },
+};
+const AUX_FORMS = new Set(Object.values(AUX).flatMap((f) => Object.values(f)));
+const auxiliariesOf = (verb) =>
+  String(verb.conjugation?.auxiliary || "")
+    .split(/[\/,]| of /)
+    .map((a) => a.trim())
+    .filter((a) => AUX[a]);
+
 /**
- * The right answers for one verb and form; the first is the one we show. A
- * wederkerend werkwoord gets its pronoun for `person`: "meld me aan".
+ * The right answers for one verb, form and tense; the first is the one we
+ * show. A wederkerend werkwoord gets its pronoun for `person`: "meld me aan",
+ * "meldde me aan", "heb me aangemeld".
  */
-export function answersFor(verb, form, person) {
-  const p = verb.conjugation?.present;
+export function answersFor(verb, form, person, tense = "present") {
+  const c = verb.conjugation || {};
+  const pron = isReflexive(verb) ? REFLEXIVE_PRONOUN[person] : null;
+  if (tense === "past") {
+    const f = form === "wij" ? c.past?.plural : c.past?.singular;
+    return [pron ? withPronoun(f, pron) : f].filter(Boolean);
+  }
+  if (tense === "perfect") {
+    if (!c.participle) return [];
+    // hebben and/or zijn ("is/heeft gelopen"): both count when the verb allows both.
+    return auxiliariesOf(verb).map((a) => [AUX[a][form], pron, c.participle].filter(Boolean).join(" "));
+  }
+  const p = c.present;
   if (!p) return [];
   if (form !== "jij-vraag") {
     const answer = isReflexive(verb) ? withPronoun(p[form], REFLEXIVE_PRONOUN[person]) : p[form];
@@ -46,8 +73,25 @@ export function answersFor(verb, form, person) {
 
 export const isRight = (question, typed) => question.answers.some((a) => clean(a) === clean(typed));
 
-/** Verbs the drill can use: those with a present-tense table. */
-export const drillable = (verbs) => verbs.filter((v) => v.conjugation?.present?.ik && v.conjugation.present.wij);
+/** Verbs the drill can use in a tense: present table, past forms, or participle + auxiliary. */
+export const drillable = (verbs, tense = "present") =>
+  verbs.filter((v) => {
+    const c = v.conjugation;
+    if (!c?.present?.ik || !c.present.wij) return false;
+    if (tense === "past") return Boolean(c.past?.singular && c.past?.plural);
+    if (tense === "perfect") return Boolean(c.participle && auxiliariesOf(v).length);
+    return true;
+  });
+
+/** The tense a lesson is about (its grammar topics or title): perfectum, verleden tijd, else present. */
+export function tenseForLesson(lesson) {
+  if (!lesson) return "present";
+  const tags = (lesson.topic_ids || []).flatMap((id) => getItem(id)?.grammarTags || []);
+  const title = (lesson.title || "").toLowerCase();
+  if (tags.includes("perfectum") || title.includes("perfectum")) return "perfect";
+  if (tags.includes("verleden-tijd") || /imperfectum|verleden tijd/.test(title)) return "past";
+  return "present";
+}
 
 /**
  * A round of questions: every verb comes up, with varied subjects, `size`
@@ -55,20 +99,22 @@ export const drillable = (verbs) => verbs.filter((v) => v.conjugation?.present?.
  * goes through the forms (ik, jij, hij, wij, vraag) before repeating one.
  * Separable verbs skip the question form ("Was jij af?" splits the verb).
  */
-export function makeRound(verbs, size = 20) {
-  const list = shuffle(drillable(verbs));
+export function makeRound(verbs, size = 20, tense = "present") {
+  const list = shuffle(drillable(verbs, tense));
   if (!list.length) return [];
   const lines = list.map((verb) => {
-    // The question form splits separable verbs and moves the pronoun ("Meld jij je aan?"): skip it there.
-    const noQuestion = verb.conjugation.present.ik.includes(" ") || isReflexive(verb);
+    // The question form splits separable verbs and moves the pronoun ("Meld jij je aan?"): skip it
+    // there, and in the past and perfectum (it practises the present-tense -t only).
+    const noQuestion = verb.conjugation.present.ik.includes(" ") || isReflexive(verb) || tense !== "present";
     const subjects = shuffle(SUBJECTS.filter((s) => !(s.question && noQuestion)));
     const seen = new Set();
     const first = subjects.filter((s) => !seen.has(s.form) && seen.add(s.form));
     return [...first, ...subjects.filter((s) => !first.includes(s))].map((subject) => ({
-      id: `${verb.id}|${subject.text}`,
+      id: `${verb.id}|${subject.text}|${tense}`,
       verb,
       subject,
-      answers: answersFor(verb, subject.form, subject.person),
+      tense,
+      answers: answersFor(verb, subject.form, subject.person, tense),
     }));
   });
   // Round robin over the verbs until the round is full.
@@ -88,11 +134,13 @@ const together = (form) => {
   const [first, ...rest] = form.split(" ");
   return rest.join("") + first;
 };
-const presentForms = (verb) =>
-  Object.values(verb.conjugation?.present || {}).flatMap((f) => {
+const withVariants = (forms) =>
+  forms.filter(Boolean).flatMap((f) => {
     const c = clean(f);
     return c.includes(" ") ? [c, c.split(" ")[0], together(c)] : [c];
   });
+const presentForms = (verb) => withVariants(Object.values(verb.conjugation?.present || {}));
+const pastForms = (verb) => withVariants([verb.conjugation?.past?.singular, verb.conjugation?.past?.plural]);
 const isSeparable = (verb) => (verb.conjugation?.present?.ik || "").includes(" ");
 const PLURAL = "wij|we|jullie|zij|ze";
 const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -107,8 +155,9 @@ const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
  * sentence or after a comma ("We eten vis"), or straight after it
  * (inversion: "Morgen eten we vis", "Gaan jullie mee?").
  */
-export function gapQuestions(verbs, sentences) {
-  const byId = new Map(drillable(verbs).map((v) => [v.id, v]));
+export function gapQuestions(verbs, sentences, tense = "present") {
+  const byId = new Map(drillable(verbs, tense).map((v) => [v.id, v]));
+  const formsOf = tense === "past" ? pastForms : presentForms;
   const out = [];
   sentences.forEach((s) => {
     if (!s.nl) return;
@@ -116,9 +165,27 @@ export function gapQuestions(verbs, sentences) {
       const reflexives = locateParts(s.nl, s.pronouns || []).filter((p) => p && p.part.type === "wederkerend");
       const located = locateParts(s.nl, s.parts).filter(Boolean);
       const sameClause = (a, b) => (a.part.clause || null) === (b.part.clause || null);
+      if (tense === "perfect") {
+        // Perfectum: the participle of one of the verbs, with a form of hebben/zijn as persoonsvorm in the
+        // same (sub)clause: "Hij [heeft] mij met mijn huiswerk [geholpen]." (+ the wederkerend pronoun).
+        located.forEach((w) => {
+          const verb = w.part.role === "werkwoord" && byId.get(w.part.wordId);
+          if (!verb || clean(w.part.text) !== clean(verb.conjugation.participle)) return;
+          const aux = located.find((p) => p.part.role === "persoonsvorm" && AUX_FORMS.has(clean(p.part.text)) && sameClause(p, w));
+          if (!aux) return;
+          const gaps = [aux, w];
+          if (isReflexive(verb)) {
+            const own = reflexives.find((p) => sameClause(p, w));
+            if (!own) return;
+            gaps.push(own);
+          }
+          out.push({ ...multiGap(s, verb, gaps), tense });
+        });
+        return;
+      }
       located.forEach((w) => {
         const verb = w.part.role === "persoonsvorm" && byId.get(w.part.wordId);
-        if (!verb || !presentForms(verb).includes(clean(w.part.text))) return;
+        if (!verb || !formsOf(verb).includes(clean(w.part.text))) return;
         // The persoonsvorm, plus what belongs to it in the same (sub)clause, each a gap in sentence
         // order: the wederkerend voornaamwoord ("Ik [meld] [me] [aan]") and the separable part.
         const gaps = [w];
@@ -131,23 +198,27 @@ export function gapQuestions(verbs, sentences) {
           const rest = located.find((p) => p.part.role === "scheidbaar-deel" && p.part.wordId === verb.id && sameClause(p, w));
           if (rest) gaps.push(rest);
         }
-        out.push(gaps.length === 1 ? gap(s, verb, w.start, w.end) : multiGap(s, verb, gaps));
+        out.push({ ...(gaps.length === 1 ? gap(s, verb, w.start, w.end) : multiGap(s, verb, gaps)), tense });
       });
       return;
     }
+    // Without parts: only simple forms that can be found as a word (no perfectum: it needs the parts).
+    if (tense === "perfect") return;
     (s.wordIds || []).forEach((id) => {
       const verb = byId.get(id);
       if (!verb || isReflexive(verb)) return; // the pronoun can't be found reliably without parts
       const p = verb.conjugation.present;
-      const forms = [...new Set([p.ik, p.jij, p.hij])].filter((f) => f && !f.includes(" ") && f !== verb.nl);
+      const candidates = tense === "past" ? [verb.conjugation.past.singular, verb.conjugation.past.plural] : [p.ik, p.jij, p.hij];
+      const forms = [...new Set(candidates)].filter((f) => f && !f.includes(" ") && f !== verb.nl);
       for (const f of forms) {
         const m = new RegExp(`(^|[^\\p{L}])(${escape(f)})(?![\\p{L}])`, "iu").exec(s.nl);
         if (m) {
           const start = m.index + m[1].length;
-          out.push(gap(s, verb, start, start + m[2].length));
+          out.push({ ...gap(s, verb, start, start + m[2].length), tense });
           return;
         }
       }
+      if (tense !== "present") return;
       const wij = p.wij && !p.wij.includes(" ") ? escape(p.wij) : null;
       if (!wij) return;
       const after = new RegExp(`(^|,\\s*)(?:${PLURAL})\\s+(${wij})(?![\\p{L}])`, "iu").exec(s.nl);
@@ -155,7 +226,7 @@ export function gapQuestions(verbs, sentences) {
       const m = after || before;
       if (m) {
         const start = m.index + m[0].indexOf(m[2], m[1].length);
-        out.push(gap(s, verb, start, start + m[2].length));
+        out.push({ ...gap(s, verb, start, start + m[2].length), tense });
       }
     });
   });

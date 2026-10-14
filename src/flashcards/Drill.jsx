@@ -3,7 +3,7 @@ import { useI18n } from "../i18n/context";
 import { VerbTile } from "../components/RelatedWords";
 import { CaretLeft } from "../icons";
 import { shuffle } from "./cards";
-import { gapIsRight, gapQuestions, gapRound, isRight, isRightGaps, makeRound, markQuestions } from "./conjugate";
+import { TENSES, drillable, gapIsRight, gapQuestions, gapRound, isRight, isRightGaps, makeRound, markQuestions } from "./conjugate";
 import { LEVELS, sentences } from "../data";
 import { pronounKindsIn, pronounQuestions } from "./pronouns";
 
@@ -43,11 +43,18 @@ const shortEn = (en) => (en || "").split(/[,;/]/)[0].trim();
  * Sentences go up to a level ("t/m A1"): at first the level of the lesson or
  * list (`level`), or what was chosen last time for this list (`settingsKey`).
  */
-export default function Drill({ kind = "verbs", verbs = [], words = [], pronounSentences = [], title, level, settingsKey, onExit }) {
+export default function Drill({ kind = "verbs", verbs = [], words = [], pronounSentences = [], tense: startTense, title, level, settingsKey, onExit }) {
   const { t } = useI18n();
   const fill = kind === "fill";
   const pron = kind === "pronouns"; // Voornaamwoorden: the marked pronouns of `pronounSentences` are the gaps
-  const gaps = useMemo(() => (fill || pron ? [] : gapQuestions(verbs, sentences)), [fill, pron, verbs]);
+  // Vervoegen: tegenwoordige tijd, verleden tijd or perfectum (only the tenses these verbs have forms for).
+  const tenses = fill || pron ? [] : TENSES.filter((tn) => drillable(verbs, tn).length);
+  const [tense, setTense] = useState(() => (tenses.includes(startTense) ? startTense : "present"));
+  const gapsByTense = useMemo(
+    () => Object.fromEntries(TENSES.map((tn) => [tn, fill || pron ? [] : gapQuestions(verbs, sentences, tn)])),
+    [fill, pron, verbs]
+  );
+  const gaps = gapsByTense[tense];
   const marked = useMemo(() => (fill ? markQuestions(words, sentences) : []), [fill, words]);
   const pronouns = useMemo(() => (pron ? pronounQuestions(pronounSentences) : []), [pron, pronounSentences]);
   const markKinds = [...new Set(marked.map((q) => q.kind))];
@@ -73,14 +80,21 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], pronounS
     if (saved === "all" || LEVELS.includes(saved)) return saved;
     return LEVELS.includes(level) ? level : "all";
   });
-  const build = (m = mode, n = size, u = upTo) =>
+  const build = (m = mode, n = size, u = upTo, tn = tense) =>
     pron
       ? gapRound(upToLevel(m === "all" ? pronouns : pronounQuestions(pronounSentences, m), u), n)
       : fill
       ? gapRound(upToLevel(m === "all" ? marked : marked.filter((q) => q.kind === m), u), n)
       : m === "sentences"
-        ? gapRound(upToLevel(gaps, u), n)
-        : makeRound(verbs, n);
+        ? gapRound(upToLevel(gapsByTense[tn], u), n)
+        : makeRound(verbs, n, tn);
+  const chooseTense = (tn) => {
+    setTense(tn);
+    // No sentences in that tense: back to loose forms.
+    const m = mode === "sentences" && !gapsByTense[tn].length ? "forms" : mode;
+    setMode(m);
+    start(build(m, size, upTo, tn));
+  };
   const chooseLevel = (u) => {
     setUpTo(u);
     if (settingsKey) saveLevel(settingsKey, u);
@@ -214,6 +228,15 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], pronounS
                 onClick={() => chooseLevel(l)}
               >
                 {l === "all" ? t("fc.allLevels") : t("fd.upTo", { level: l })}
+              </button>
+            ))}
+          </div>
+        )}
+        {tenses.length > 1 && (
+          <div className="fc-seg" role="group" aria-label={t("vd.tense")}>
+            {tenses.map((tn) => (
+              <button key={tn} type="button" aria-pressed={tense === tn} onClick={() => chooseTense(tn)}>
+                {t(`vd.tense.${tn}`)}
               </button>
             ))}
           </div>
@@ -363,6 +386,7 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], pronounS
           <span className="vd-verb">
             {showNl ? verb.nl : <span lang="en">{shortEn(verb.en)}</span>}
             {showNl && verb.en && !sentence && <span className="dim"> · {verb.en}</span>}
+            {tenses.length > 1 && <span className="vd-tense"> · {t(`vd.tense.${current.tense || tense}`)}</span>}
           </span>
         )}
         {sentence && current.pieces ? (
