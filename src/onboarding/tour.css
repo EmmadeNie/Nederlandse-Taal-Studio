@@ -8,41 +8,123 @@
 .tour-dim {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(5, 8, 15, 0.7);
+  backdrop-filter: blur(2px);
 }
 
 .tour-spot {
   position: fixed;
-  border-radius: 12px;
-  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55);
-  outline: 2px solid var(--accent);
+  border-radius: 14px;
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--accent) 55%, transparent),
+    0 0 0 9999px rgba(5, 8, 15, 0.7);
   transition: all 0.25s ease;
   pointer-events: none;
+  animation: tour-pulse 2s ease-in-out infinite;
+}
+
+@keyframes tour-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 4px color-mix(in srgb, var(--accent) 55%, transparent),
+      0 0 0 9999px rgba(5, 8, 15, 0.7);
+  }
+  50% {
+    box-shadow:
+      0 0 0 9px color-mix(in srgb, var(--accent) 25%, transparent),
+      0 0 0 9999px rgba(5, 8, 15, 0.7);
+  }
 }
 
 .tour-card {
   position: fixed;
-  width: min(360px, calc(100vw - 24px));
+  width: min(380px, calc(100vw - 24px));
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 1rem 1.1rem;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  border: 2px solid var(--accent);
+  border-radius: 18px;
+  padding: 1.1rem 1.2rem 1rem;
+  box-shadow:
+    0 0 0 6px color-mix(in srgb, var(--accent) 18%, transparent),
+    0 24px 60px rgba(0, 0, 0, 0.55);
   display: grid;
+  gap: 0.6rem;
+  overflow: hidden;
+  animation: tour-in 0.25s ease-out;
+}
+
+/* A coloured band along the top, so the card reads as "the guide". */
+.tour-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 5px;
+  background: linear-gradient(90deg, var(--accent), var(--green), var(--a0, var(--accent)));
+}
+
+@keyframes tour-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+.tour-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 0.5rem;
+}
+
+.tour-progress {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.tour-dots {
+  display: inline-flex;
+  gap: 0.3rem;
+}
+
+.tour-dots span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--border);
+}
+
+.tour-dots span.is-done {
+  background: color-mix(in srgb, var(--accent) 50%, var(--border));
+}
+
+.tour-dots span.is-on {
+  width: 18px;
+  border-radius: 4px;
+  background: var(--accent);
 }
 
 .tour-card h3 {
   margin: 0;
+  font-size: 1.2rem;
 }
 
 .tour-card p {
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
-.tour-progress {
-  font-size: 0.75rem;
+.tour-lang {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  font-size: 0.88rem;
 }
 
 .tour-actions {
@@ -50,9 +132,16 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 0.4rem;
-  margin-top: 0.4rem;
+  margin-top: 0.3rem;
 }
 
 .tour-spacer {
   flex: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tour-spot,
+  .tour-card {
+    animation: none;
+  }
 }
