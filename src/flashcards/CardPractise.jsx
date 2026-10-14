@@ -47,10 +47,12 @@ function practiseKinds(lesson, t) {
         .filter((l) => l.count > 0),
     },
   ];
-  // Voornaamwoorden: a lesson about them (grammar topic), or whose sentences have marked pronouns.
+  // Voornaamwoorden: only on a lesson about them (grammar topic). Pronouns are marked in nearly
+  // every sentence, so "has sentences with pronouns" would put it on almost every card; anyone can
+  // still practise them from Mijn flashcards.
   const aboutPronouns = (lesson.topic_ids || []).some((id) => (getItem(id)?.grammarTags || []).includes("voornaamwoorden"));
   const ownWithPronouns = sentencesForLists(lesson.sentence_list).filter((s) => s.pronouns?.length).length;
-  if (aboutPronouns || ownWithPronouns) {
+  if (aboutPronouns) {
     kinds.push({
       key: "pronouns",
       icon: UserList,
