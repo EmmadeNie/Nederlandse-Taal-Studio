@@ -3,7 +3,7 @@ import { useI18n } from "../i18n/context";
 import { VerbTile } from "../components/RelatedWords";
 import { CaretLeft } from "../icons";
 import { shuffle } from "./cards";
-import { gapQuestions, gapRound, isRight, makeRound, markQuestions } from "./conjugate";
+import { gapQuestions, gapRound, isRight, isRightGaps, makeRound, markQuestions } from "./conjugate";
 import { LEVELS, sentences } from "../data";
 
 const SIZES = [10, 20];
@@ -78,9 +78,11 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], title, l
   const [queue, setQueue] = useState(() => build());
   const [total, setTotal] = useState(queue.length);
   const [typed, setTyped] = useState("");
+  const [typed2, setTyped2] = useState(""); // the second gap (wederkerend voornaamwoord)
   const [result, setResult] = useState(null); // null | "right" | "wrong"
   const [wrong, setWrong] = useState(() => new Map()); // id → question answered wrong this round
   const input = useRef(null);
+  const input2 = useRef(null);
   const timer = useRef(null);
 
   const current = queue[0];
@@ -92,6 +94,7 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], title, l
     setQueue(list);
     setTotal(list.length);
     setTyped("");
+    setTyped2("");
     setResult(null);
     setWrong(new Map());
   };
@@ -99,6 +102,7 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], title, l
   const next = () => {
     clearTimeout(timer.current);
     setTyped("");
+    setTyped2("");
     if (result === "wrong") {
       // Back in a few questions later.
       setQueue((q) => {
@@ -116,10 +120,14 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], title, l
     e.preventDefault();
     if (result) return next();
     if (!typed.trim()) return;
-    if (isRight(current, typed)) {
+    const two = Boolean(current.gapAnswers);
+    // Two gaps: Enter in the first one moves on to the second.
+    if (two && !typed2.trim()) return input2.current?.focus();
+    if (two ? isRightGaps(current, [typed, typed2]) : isRight(current, typed)) {
       setResult("right");
       timer.current = setTimeout(() => {
         setTyped("");
+        setTyped2("");
         setResult(null);
         setQueue((q) => q.slice(1));
       }, 700);
@@ -161,7 +169,9 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], title, l
         </div>
       </div>
       <div className="fc-settings">
-        {(fill || mode === "sentences") && sentenceLevels.length > 1 && (
+        {(fill || mode === "sentences") &&
+          // Several levels, or one that lies above the chosen one (else there would be no way up).
+          (sentenceLevels.length > 1 || (sentenceLevels.length === 1 && upTo !== "all" && rank(upTo) < rank(sentenceLevels[0]))) && (
           <div className="fc-seg" role="group" aria-label={t("fc.levelFilter")}>
             {[...LEVELS.slice(0, rank(sentenceLevels[sentenceLevels.length - 1])), "all"].map((l) => (
               <button
@@ -246,6 +256,25 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], title, l
   }
 
   const { verb, subject, sentence, word } = current;
+  const inputProps = {
+    className: "vd-input",
+    readOnly: !!result,
+    autoCapitalize: "none",
+    autoComplete: "off",
+    autoCorrect: "off",
+    spellCheck: false,
+    enterKeyHint: result ? "next" : "done",
+  };
+  const field2 = (
+    <input
+      {...inputProps}
+      ref={input2}
+      value={typed2}
+      onChange={(e) => !result && setTyped2(e.target.value)}
+      aria-label={t("vd.answer2")}
+      size={Math.max(3, typed2.length + 1)}
+    />
+  );
   const field = (
     <input
       ref={input}
@@ -278,7 +307,15 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], title, l
             {showNl && verb.en && !sentence && <span className="dim"> · {verb.en}</span>}
           </span>
         )}
-        {sentence ? (
+        {sentence && current.pieces ? (
+          <span className="vd-sentence is-long" lang="nl">
+            {current.pieces[0]}
+            {field}
+            {current.pieces[1]}
+            {field2}
+            {current.pieces[2]}
+          </span>
+        ) : sentence ? (
           <span className="vd-sentence is-long" lang="nl">
             {current.before}
             {field}

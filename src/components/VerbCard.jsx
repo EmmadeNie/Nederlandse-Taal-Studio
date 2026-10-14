@@ -4,6 +4,7 @@ import FeedbackButton from "../feedback/FeedbackButton";
 import { EditItemButton } from "../library/ItemEditing";
 import { useI18n } from "../i18n/context";
 import { Note } from "../icons";
+import { REFLEXIVE_PRONOUN, isReflexive, withPronoun } from "../data/reflexive";
 
 /**
  * A verb with its regularity and full conjugation (Werkwoorden, grammar topics).
@@ -50,7 +51,7 @@ export default function VerbCard({ verb: v, collapsible = false }) {
               ([person, form]) => (
                 <div className="row" key={person}>
                   <span className="label">{person}</span>
-                  <span>{form}</span>
+                  <span>{isReflexive(v) ? withPronoun(form, REFLEXIVE_PRONOUN[person]) : form}</span>
                 </div>
               )
             )}
