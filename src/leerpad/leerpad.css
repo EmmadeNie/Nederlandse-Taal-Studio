@@ -1399,3 +1399,22 @@ span.step-status {
   margin: 0 0 0.75rem;
   font-size: 0.88rem;
 }
+
+/* Deleting a lesson: where it still is */
+.del-usage {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0.75rem;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.del-usage li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}

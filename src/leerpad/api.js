@@ -93,6 +93,24 @@ export async function studentsWithLesson(lessonId) {
   }));
 }
 
+/** Where a lesson is on leerpaden, per step: [{ stepId, studentId, name, lane, status }]. */
+export async function lessonUsage(lessonId) {
+  const rows = await supabase
+    .from("steps")
+    .select("id, student_id, status, student:profiles(display_name, email), lane:leerpad_lanes(name)")
+    .eq("lesson_id", lessonId)
+    .then(check);
+  return rows
+    .map((r) => ({
+      stepId: r.id,
+      studentId: r.student_id,
+      name: r.student?.display_name || r.student?.email || "Onbekend",
+      lane: r.lane?.name || "",
+      status: r.status || null,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name, "nl"));
+}
+
 // ----- Leerpaden -----
 
 export const listStudents = () =>

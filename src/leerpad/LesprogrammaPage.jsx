@@ -20,6 +20,7 @@ import { hasWordList, toLists, wordsForLists } from "./wordLists";
 import { SentenceListEditor, SentenceListsView } from "./SentenceList";
 import { hasSentenceList, sentencesForLists } from "./sentenceLists";
 import SelectionBar from "./SelectionBar";
+import DeleteLessonDialog from "./DeleteLessonDialog";
 import ListHeading from "../flashcards/ListHeading";
 import FeedbackButton from "../feedback/FeedbackButton";
 import CardPractise from "../flashcards/CardPractise";
@@ -435,15 +436,11 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
   };
 
 
-  const remove = async () => {
-    if (!window.confirm(t("lp.confirmDeleteLesson", { title: lesson.title }))) return;
+  // Deleting shows where the lesson still is on leerpaden (to take it off there first).
+  const [deleting, setDeleting] = useState(false);
+  const remove = () => {
     setError(null);
-    try {
-      await api.deleteLesson(lesson.id);
-      onDeleted(lesson.id);
-    } catch (e) {
-      setError(t(e.message));
-    }
+    setDeleting(true);
   };
 
   const plan = async () => {
@@ -652,6 +649,7 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
           </button>
         </div>
       )}
+      {deleting && <DeleteLessonDialog lesson={lesson} onClose={() => setDeleting(false)} onDeleted={onDeleted} />}
     </Dialog>
   );
 }
