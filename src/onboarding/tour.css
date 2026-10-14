@@ -145,3 +145,100 @@
     animation: none;
   }
 }
+
+/* Try-it examples in the tour */
+.tour-demo {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+
+.tour-demo-note {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.tour-flip {
+  display: grid;
+  justify-items: center;
+  gap: 0.3rem;
+  padding: 1.1rem 0.75rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.tour-flip strong {
+  font-size: 1.35rem;
+}
+
+.tour-flip.is-turned {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.tour-flip-lang {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-dim);
+}
+
+.tour-demo-hint {
+  font-size: 0.85rem;
+  color: var(--accent);
+}
+
+.tour-gap-sentence {
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.8;
+}
+
+.tour-gap-sentence input {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: none;
+  border-bottom: 2px solid var(--accent);
+  border-radius: 6px 6px 0 0;
+  padding: 0 0.3rem;
+  text-align: center;
+  min-width: 4ch;
+}
+
+.tour-gap-sentence input:focus {
+  outline: none;
+  background: var(--accent-soft);
+}
+
+.tour-gap.is-right input {
+  border-bottom-color: var(--green);
+  color: var(--green);
+}
+
+.tour-gap.is-wrong input {
+  border-bottom-color: var(--red);
+  color: var(--red);
+}
+
+.tour-gap-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.tour-ok {
+  color: var(--green);
+  font-weight: 600;
+}
+
+.tour-wrong strong {
+  color: var(--green);
+}

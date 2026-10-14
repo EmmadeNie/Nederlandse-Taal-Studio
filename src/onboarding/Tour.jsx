@@ -6,6 +6,7 @@ import { pathFor } from "../routes";
 import { supabase } from "../lib/supabase";
 import * as api from "../leerpad/api";
 import LanguageToggle from "../i18n/LanguageToggle";
+import { ConjugateDemo, FillDemo, FlipDemo } from "./TourDemos";
 import "./tour.css";
 
 /**
@@ -21,6 +22,11 @@ const STEPS = [
   { id: "levels", page: "lesprogramma", anchor: '[data-tour="add-levels"]', curriculum: ["A0", "A1"] },
   { id: "select", page: "lesprogramma", anchor: '[data-tour="select"]' },
   { id: "practise", page: "leerpad", anchor: ".cp-button, .board" },
+  // Mijn flashcards: the three kinds of exercise, each with a tiny example to try.
+  { id: "flashcards", page: "flashcards", anchor: '[data-tour="nav-flashcards"]' },
+  { id: "demoFlip", page: "flashcards", demo: FlipDemo },
+  { id: "demoFill", page: "flashcards", demo: FillDemo },
+  { id: "demoConjugate", page: "flashcards", demo: ConjugateDemo },
 ];
 
 const KEY = "tour-step";
@@ -66,7 +72,7 @@ export default function Tour({ page, onClose }) {
 
   // Follow the anchor (it may render late, move with scrolling, or be off screen on a phone).
   useLayoutEffect(() => {
-    const el = document.querySelector(step.anchor);
+    const el = step.anchor && document.querySelector(step.anchor);
     el?.scrollIntoView?.({ block: "nearest", inline: "nearest" });
     const update = () => setRect(rectOf(step.anchor));
     update();
@@ -156,6 +162,7 @@ export default function Tour({ page, onClose }) {
         </div>
         <h3 id="tour-title">{t(`tour.${step.id}.title`)}</h3>
         <p>{t(`tour.${step.id}.text`)}</p>
+        {step.demo && <step.demo key={step.id} />}
         {index === 0 && (
           // The tour (and the whole app) also in English: switch right here.
           <div className="tour-lang">
