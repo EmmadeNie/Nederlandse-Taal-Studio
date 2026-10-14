@@ -52,7 +52,14 @@ export function pronounQuestions(sentences, kind = null) {
     });
     pieces.push(s.nl.slice(pos));
     const gapAnswers = spots.map((g) => s.nl.slice(g.start, g.end));
-    const hints = spots.map((g) => ({ role: g.isSubject ? "onderwerp" : g.part.type, person: g.part.person || null }));
+    // Without a sentence before the gap ("___ gaan naar de bioscoop.") wij, zij or jullie could all
+    // fit: then the hint always gives the person. With context ("Lisa woont … . ___ werkt") it doesn't.
+    const hasContext = (g) => /[.!?]\s/.test(s.nl.slice(0, g.start));
+    const hints = spots.map((g) => ({
+      role: g.isSubject ? "onderwerp" : g.part.type,
+      person: g.part.person || null,
+      showPerson: !hasContext(g),
+    }));
     const base = { id: `${s.id}#${kind || "all"}`, sentence: s, pronoun: true, hints };
     if (spots.length === 1) {
       out.push({ ...base, before: pieces[0], after: pieces[1], answers: spots[0].alts });

@@ -108,10 +108,27 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], pronounS
     setMore([]);
     setResult(null);
     setWrong(new Map());
+    setHistory([]);
+  };
+
+  // "Vorige": every step on remembers where we were, so you can go back and answer again.
+  const [history, setHistory] = useState([]);
+  const remember = () => setHistory((h) => [...h, { queue, wrong }]);
+  const previous = () => {
+    if (!history.length) return;
+    clearTimeout(timer.current);
+    const last = history[history.length - 1];
+    setHistory((h) => h.slice(0, -1));
+    setQueue(last.queue);
+    setWrong(last.wrong);
+    setTyped("");
+    setMore([]);
+    setResult(null);
   };
 
   const next = () => {
     clearTimeout(timer.current);
+    remember();
     setTyped("");
     setMore([]);
     if (result === "wrong") {
@@ -140,6 +157,7 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], pronounS
     if (several ? isRightGaps(current, [typed, ...more]) : isRight(current, typed)) {
       setResult("right");
       timer.current = setTimeout(() => {
+        remember();
         setTyped("");
         setMore([]);
         setResult(null);
@@ -261,6 +279,9 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], pronounS
             >
               {t("vd.newRound")}
             </button>
+            <button type="button" className="fb-link" onClick={previous} disabled={!history.length}>
+              ← {t("fc.previous")}
+            </button>
             <button type="button" className="fb-link" onClick={onExit}>
               {t("fc.back")}
             </button>
@@ -284,7 +305,7 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], pronounS
   const gapHint = (i) => {
     const h = current.hints?.[i];
     if (!h) return undefined;
-    const person = hint === "person" && h.person ? ` · ${t(`parts.person.${h.person}`)}` : "";
+    const person = (hint === "person" || h.showPerson) && h.person ? ` · ${t(`parts.person.${h.person}`)}` : "";
     return t(`pd.role.${h.role}`) + person;
   };
   // After a wrong answer with several gaps, the right boxes turn green (only the wrong ones red).
@@ -395,6 +416,11 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], pronounS
           {result === "wrong" ? t("vd.next") : t("vd.check")}
         </button>
       </form>
+      <div className="fc-nav">
+        <button type="button" className="fb-link" onClick={previous} disabled={!history.length}>
+          ← {t("fc.previous")}
+        </button>
+      </div>
     </div>
   );
 }
