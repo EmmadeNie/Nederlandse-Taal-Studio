@@ -14,7 +14,7 @@ import Practice from "./Practice";
 import Drill from "./Drill";
 import { drillable, fillWordsOf, tenseForLesson } from "./conjugate";
 import { cardOf, deckTitle, itemsOf, lessonLists, parseListKey, partsOf } from "./cards";
-import { loadDecks, removeDeck, setDeckDone, useDecks } from "./store";
+import { loadDecks, removeDeck, setDeckDone, setDeckKindDone, useDecks } from "./store";
 import "./flashcards.css";
 
 const LESSON = "id, title, level, word_list, sentence_list, verb_ids";
@@ -98,6 +98,19 @@ export default function FlashcardsPage() {
   );
   const cardsOf = (deck) => itemsOf(deck.source, lessonMap).map(cardOf);
 
+  // "Klaar met …" at the end of a round of one list: ticks that kind; with one kind it is "Lijst afronden".
+  const finishProps = (deck, kind) => {
+    if (!deck || deck.done_at || (deck.done_kinds || []).includes(kind)) return {};
+    const kinds = deckKinds(deck, cardsOf).map((k) => k.kind);
+    return {
+      finishLabel: kinds.length > 1 ? t("fc.finishKind", { kind: t(`fc.kind.${kind}`) }) : t("fc.finish"),
+      onFinish: async () => {
+        await setDeckKindDone(deck, kind, true, kinds);
+        navigate(pathFor("flashcards"));
+      },
+    };
+  };
+
   if (pronounMatch && decks && lessons) {
     const withPronouns = (list) => list.filter((s) => s.pronouns?.length);
     const lesson = pronounLesson ? lessonMap.get(pronounLesson) : null;
@@ -140,6 +153,7 @@ export default function FlashcardsPage() {
           kind={drillKind}
           verbs={verbs}
           words={words}
+          {...finishProps(decks.find((d) => d.id === drill) || null, fill ? "invullen" : "vervoegen")}
           level={level}
           tense={tenseForLesson(lessonMap.get(sources[0]?.lesson))}
           settingsKey={route.param}
@@ -181,14 +195,7 @@ export default function FlashcardsPage() {
           cards={[...unique.values()]}
           title={title}
           onExit={() => navigate(pathFor("flashcards"))}
-          onFinish={
-            chosen.length === 1 && !chosen[0].done_at
-              ? async () => {
-                  await setDeckDone(chosen[0], true);
-                  navigate(pathFor("flashcards"));
-                }
-              : undefined
-          }
+          {...finishProps(chosen.length === 1 ? chosen[0] : null, "flashcards")}
         />
       );
     }
@@ -319,61 +326,83 @@ export default function FlashcardsPage() {
   );
 }
 
-/** My lists, each with practise, done/undo and remove. */
+/**
+ * The kinds of practice a list offers (only those it has material for), each
+ * with its count and path: flashcards for every list, Vervoegen when it has
+ * verbs with a conjugation, Invullen when its words are marked in sentences.
+ */
+function deckKinds(deck, cardsOf) {
+  const cards = cardsOf(deck);
+  const items = cards.map((c) => c.item);
+  return [
+    { kind: "flashcards", n: cards.length, path: deck.id },
+    { kind: "vervoegen", n: verbsOf(items).length, path: `vervoegen-${deck.id}` },
+    { kind: "invullen", n: fillWordsOf(items).length, path: `invullen-${deck.id}` },
+  ].filter((k) => k.n > 0);
+}
+
+const KIND_ICONS = { flashcards: Cards, vervoegen: PencilSimpleLine, invullen: Textbox };
+
+/**
+ * My lists: each a card with its title, ✓ (the whole list done / again) and
+ * remove, and below one button per kind of practice that starts it; a kind
+ * the student finished shows a tick.
+ */
 function DeckList({ decks, cardsOf, t }) {
   return (
     <ul className="fc-decks">
       {decks.map((d) => {
-        const n = cardsOf(d).length;
+        const kinds = deckKinds(d, cardsOf);
+        const done = new Set(d.done_kinds || []);
         return (
-          <li key={d.id} className={d.done_at ? "is-done" : undefined}>
-            <button type="button" className="fc-deck" onClick={() => navigate(pathFor("flashcards", d.id))} disabled={!n}>
+          <li key={d.id} className={`fc-deck-card ${d.done_at ? "is-done" : ""}`}>
+            <div className="fc-deck-head">
               <span className="fc-deck-title">
                 {d.title}
                 {d.added_by && d.added_by !== d.profile_id && <span className="fc-from-docent">{t("fc.fromDocent")}</span>}
               </span>
-              <span className="dim">{n ? t("fc.cards", { n }) : t("fc.noCards")}</span>
-            </button>
-            <span className="fc-deck-tools">
-              {verbsOf(cardsOf(d).map((c) => c.item)).length > 0 && (
-                <button
-                  type="button"
-                  className="fc-add vd-open"
-                  title={t("vd.hint")}
-                  onClick={() => navigate(pathFor("flashcards", `vervoegen-${d.id}`))}
-                >
-                  <PencilSimpleLine aria-hidden="true" /> {t("vd.button")}
-                </button>
-              )}
-              {fillWordsOf(cardsOf(d).map((c) => c.item)).length > 0 && (
-                <button
-                  type="button"
-                  className="fc-add vd-open"
-                  title={t("fd.hint")}
-                  onClick={() => navigate(pathFor("flashcards", `invullen-${d.id}`))}
-                >
-                  <Textbox aria-hidden="true" /> {t("fd.button")}
-                </button>
-              )}
-            </span>
-            <button
-              type="button"
-              className="board-icon-btn fc-done-btn"
-              aria-label={d.done_at ? t("fc.undoDoneAria", { name: d.title }) : t("fc.markDoneAria", { name: d.title })}
-              title={d.done_at ? t("fc.undoDone") : t("fc.markDone")}
-              onClick={() => setDeckDone(d, !d.done_at)}
-            >
-              {d.done_at ? <ArrowCounterClockwise /> : <CheckCircle />}
-            </button>
-            <button
-              type="button"
-              className="board-icon-btn"
-              aria-label={t("fc.removeDeck", { name: d.title })}
-              title={t("fc.removeHint")}
-              onClick={() => removeDeck(d)}
-            >
-              <X />
-            </button>
+              <button
+                type="button"
+                className="board-icon-btn fc-done-btn"
+                aria-label={d.done_at ? t("fc.undoDoneAria", { name: d.title }) : t("fc.markDoneAria", { name: d.title })}
+                title={d.done_at ? t("fc.undoDone") : t("fc.markDone")}
+                onClick={() => setDeckDone(d, !d.done_at)}
+              >
+                {d.done_at ? <ArrowCounterClockwise /> : <CheckCircle />}
+              </button>
+              <button
+                type="button"
+                className="board-icon-btn"
+                aria-label={t("fc.removeDeck", { name: d.title })}
+                title={t("fc.removeHint")}
+                onClick={() => removeDeck(d)}
+              >
+                <X />
+              </button>
+            </div>
+            {kinds.length === 0 ? (
+              <span className="dim">{t("fc.noCards")}</span>
+            ) : (
+              <div className="fc-kinds">
+                {kinds.map((k) => {
+                  const Icon = KIND_ICONS[k.kind];
+                  return (
+                    <button
+                      key={k.kind}
+                      type="button"
+                      className={`fc-kind ${done.has(k.kind) ? "is-done" : ""}`}
+                      onClick={() => navigate(pathFor("flashcards", k.path))}
+                      title={t(`fc.kindHint.${k.kind}`)}
+                    >
+                      <Icon aria-hidden="true" />
+                      <span className="fc-kind-label">{t(`fc.kind.${k.kind}`)}</span>
+                      <span className="fc-kind-n">{k.n}</span>
+                      {done.has(k.kind) && <span className="fc-kind-tick" aria-label={t("fc.kindDone")}>✓</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </li>
         );
       })}

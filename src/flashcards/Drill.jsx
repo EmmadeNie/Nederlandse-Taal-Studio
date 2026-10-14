@@ -43,7 +43,7 @@ const shortEn = (en) => (en || "").split(/[,;/]/)[0].trim();
  * Sentences go up to a level ("t/m A1"): at first the level of the lesson or
  * list (`level`), or what was chosen last time for this list (`settingsKey`).
  */
-export default function Drill({ kind = "verbs", verbs = [], words = [], pronounSentences = [], tense: startTense, title, level, settingsKey, onExit }) {
+export default function Drill({ kind = "verbs", verbs = [], words = [], pronounSentences = [], tense: startTense, title, level, settingsKey, onExit, onFinish, finishLabel }) {
   const { t } = useI18n();
   const fill = kind === "fill";
   const pron = kind === "pronouns"; // Voornaamwoorden: the marked pronouns of `pronounSentences` are the gaps
@@ -295,9 +295,14 @@ export default function Drill({ kind = "verbs", verbs = [], words = [], pronounS
                 {t("vd.onlyWrong", { n: wrongQuestions.length })}
               </button>
             )}
+            {onFinish && (
+              <button type="button" className={wrongQuestions.length ? "fb-btn-secondary" : "fb-btn-primary"} onClick={onFinish}>
+                {finishLabel}
+              </button>
+            )}
             <button
               type="button"
-              className={wrongQuestions.length ? "fb-btn-secondary" : "fb-btn-primary"}
+              className={wrongQuestions.length || onFinish ? "fb-btn-secondary" : "fb-btn-primary"}
               onClick={() => start(build())}
             >
               {t("vd.newRound")}

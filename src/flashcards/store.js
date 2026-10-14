@@ -7,7 +7,7 @@
 import { useCallback, useEffect, useSyncExternalStore } from "react";
 import { supabase } from "../lib/supabase";
 
-const FIELDS = "id, profile_id, source, title, created_at, done_at, added_by";
+const FIELDS = "id, profile_id, source, title, created_at, done_at, done_kinds, added_by";
 const decks = new Map(); // profile id → rows (missing until loaded)
 const loading = new Map(); // profile id → promise
 const listeners = new Set();
@@ -92,6 +92,25 @@ export async function setDeckDone(deck, done) {
     .single()
     .then(check);
   replace(deck.profile_id, (list) => list.map((d) => (d.id === deck.id ? row : d)));
+}
+
+/**
+ * Tick (or untick) one kind of practice on a list: "flashcards", "vervoegen",
+ * "invullen". When every kind in `allKinds` is ticked, the list is afgerond
+ * too; unticking one opens it again.
+ */
+export async function setDeckKindDone(deck, kind, done, allKinds) {
+  const kinds = new Set(deck.done_kinds || []);
+  if (done) kinds.add(kind);
+  else kinds.delete(kind);
+  const doneKinds = [...kinds];
+  const allDone = allKinds.length > 0 && allKinds.every((k) => kinds.has(k));
+  const patch = { done_kinds: doneKinds };
+  if (allDone && !deck.done_at) patch.done_at = new Date().toISOString();
+  if (!allDone && deck.done_at && !done) patch.done_at = null;
+  const row = await supabase.from("flashcard_decks").update(patch).eq("id", deck.id).select(FIELDS).single().then(check);
+  replace(deck.profile_id, (list) => list.map((d) => (d.id === deck.id ? row : d)));
+  return row;
 }
 
 export async function removeDeck(deck) {
