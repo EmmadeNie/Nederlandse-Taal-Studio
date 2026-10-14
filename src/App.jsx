@@ -1,6 +1,7 @@
 import { useContentVersion } from "./data/useContent";
 import Brand from "./components/Brand";
 import { useEffect, useState } from "react";
+import Tour from "./onboarding/Tour";
 import ContentGate from "./components/ContentGate";
 import "./App.css";
 import Dashboard from "./components/Dashboard";
@@ -112,6 +113,9 @@ function Studio() {
   const route = useRoute();
   const [appFeedbackOpen, setAppFeedbackOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false); // phone: the menu slides in
+  // The tour: by itself once for a new student, or again from the sidebar.
+  const [tourOpen, setTourOpen] = useState(false);
+  const [tourDone, setTourDone] = useState(false);
   const { feedbackMode } = usePrefs();
   const stats = getStats();
   const allFeedback = useAllFeedback();
@@ -183,6 +187,7 @@ function Studio() {
           {pages.map((p) => (
             <button
               key={p.id}
+              data-tour={`nav-${p.id}`}
               className={navId === p.id ? "active" : ""}
               onClick={() => setPage(p.id)}
             >
@@ -205,6 +210,20 @@ function Studio() {
               <button className="fb-link" onClick={signOut}>
                 {t("app.signOut")}
               </button>
+              {role === "leerling" && (
+                <>
+                  {" · "}
+                  <button
+                    className="fb-link"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      setTourOpen(true);
+                    }}
+                  >
+                    {t("tour.again")}
+                  </button>
+                </>
+              )}
             </div>
           </div>
           {feedbackMode && (
@@ -231,6 +250,16 @@ function Studio() {
         {page === "leerpaden" && <LeerpadenPage />}
         {page === "leerpad" && <MijnLeerpadPage />}
       </main>
+
+      {(tourOpen || (role === "leerling" && !profile.onboarded_at && !tourDone)) && (
+        <Tour
+          page={page}
+          onClose={() => {
+            setTourOpen(false);
+            setTourDone(true);
+          }}
+        />
+      )}
 
       {appFeedbackOpen && (
         <FeedbackDialog

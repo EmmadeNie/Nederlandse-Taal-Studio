@@ -243,17 +243,20 @@ export default function LeerpadBoard({ studentId }) {
             })
           }
           laneFooter={
-            isDocent &&
+            // The student adds lessons from the lesprogramma too; zijpaden stay with the docent.
+            canArrange &&
             ((lane) => (
               <>
                 <button className="board-add-btn" onClick={() => setPickerLane(lane)}>
                   {t("lp.fromProgram")}
                 </button>
-                <AddCardForm
-                  label={t("lp.addZijpad")}
-                  placeholder={t("lp.zijpadTitle")}
-                  onAdd={(title) => addStep({ lane_id: lane.id, title, position: nextPos(lane.id) })}
-                />
+                {isDocent && (
+                  <AddCardForm
+                    label={t("lp.addZijpad")}
+                    placeholder={t("lp.zijpadTitle")}
+                    onAdd={(title) => addStep({ lane_id: lane.id, title, position: nextPos(lane.id) })}
+                  />
+                )}
               </>
             ))
           }
