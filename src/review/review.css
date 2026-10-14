@@ -240,3 +240,68 @@
   gap: 0.5rem;
   margin-bottom: 0.6rem;
 }
+
+/* Nakijklijsten */
+.rv-list {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem 0.75rem;
+  align-items: center;
+  width: 100%;
+  padding: 1rem 1.1rem;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.rv-list:hover {
+  border-color: var(--accent);
+}
+
+.rv-list-text {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.rv-list-text strong {
+  font-size: 1.1rem;
+}
+
+.rv-list-count {
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.rv-list-count.is-done {
+  color: var(--green);
+}
+
+.rv-list .rv-bar {
+  grid-column: 1 / -1;
+  display: block;
+}
+
+.rv-list .rv-bar-fill {
+  display: block;
+}
+
+.rv-finished > summary {
+  cursor: pointer;
+  color: var(--text-dim);
+  margin: 0.5rem 0;
+}
+
+.rv-finished .rv-list {
+  margin-bottom: 0.6rem;
+  opacity: 0.8;
+}
+
+.rv-all-link,
+.rv-back {
+  align-self: flex-start;
+}
