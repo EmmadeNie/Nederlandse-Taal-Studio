@@ -113,7 +113,10 @@ De export bevat ook het bord: `lanes` (de kolommen, van links naar rechts), `lab
 - `wordLists` / `sentenceLists`: lijstjes in de les. Elk lijstje is een "recept": een `set`
   (aanbevolen, geordend) en/of filters `theme`, `level` (+ `upTo: true` = t/m dat niveau);
   woordenlijsten ook `partOfSpeech`, zinnenlijsten ook `grammarTag`.
-- `topicIds`: grammatica-onderwerpen; `verbIds`: werkwoorden die als vervoegingstegels getoond worden.
+- `topicIds`: grammatica-onderwerpen; `verbIds`: werkwoorden die als vervoegingstegels getoond worden. **Alleen
+  deze werkwoorden** krijgen de oefening "Vervoegen" (losse vormen en in zinnen); werkwoorden in een woordenlijst
+  of zinnenlijst niet. Geef een les over werkwoorden (vervoegen, perfectum, verleden tijd, modale/scheidbare/
+  wederkerende werkwoorden, hebben of zijn …) dus altijd de bijbehorende `verbIds`.
 - `labelIds`: alleen bestaande labels uit `labels`. `attachments` (bestanden) zijn alleen ter info;
   die kun je niet wijzigen.
 - Les-ID's zijn vaste ID's uit de database: gebruik ze zoals ze in de export staan. Een nieuwe les
