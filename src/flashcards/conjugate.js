@@ -175,7 +175,7 @@ const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
  * sentence or after a comma ("We eten vis"), or straight after it
  * (inversion: "Morgen eten we vis", "Gaan jullie mee?").
  */
-export function gapQuestions(verbs, all, tense = "present", { auxOnly = false } = {}) {
+export function gapQuestions(verbs, all, tense = "present") {
   const sentences = all.filter(inExercises); // no sentences flagged "weghalen"
   const byId = new Map(drillable(verbs, tense).map((v) => [v.id, v]));
   const formsOf = tense === "past" ? pastForms : presentForms;
@@ -194,8 +194,6 @@ export function gapQuestions(verbs, all, tense = "present", { auxOnly = false } 
           if (!verb || clean(w.part.text) !== clean(verb.conjugation.participle)) return;
           const aux = located.find((p) => p.part.role === "persoonsvorm" && AUX_FORMS.has(clean(p.part.text)) && sameClause(p, w));
           if (!aux) return;
-          // "Alleen hebben/zijn": only the auxiliary is a gap, the participle stays ("Wij [___] … gegaan.").
-          if (auxOnly) return out.push({ ...gap(s, verb, aux.start, aux.end), tense, auxOnly: true });
           const gaps = [aux, w];
           if (isReflexive(verb)) {
             const own = reflexives.find((p) => sameClause(p, w));
