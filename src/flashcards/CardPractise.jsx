@@ -7,7 +7,7 @@ import { CaretLeft, Cards, PencilSimpleLine, Textbox, UserList } from "../icons"
 import { getItem } from "../data";
 import { sentencesForLists } from "../leerpad/sentenceLists";
 import { lessonLists } from "./cards";
-import { drillable, fillWordsOf, verbsInSentences } from "./conjugate";
+import { drillable, fillWordsOf, isAboutVerbs, verbsInSentences } from "./conjugate";
 
 const verbsIn = (items) => drillable(items.filter((i) => i.partOfSpeech === "verb"));
 
@@ -41,9 +41,11 @@ function practiseKinds(lesson, t) {
       icon: PencilSimpleLine,
       label: t("vd.title"),
       all: `vervoegen-les-${lesson.id}`,
-      // Verbs from word lists and verb tiles, and from a sentence list the verbs in its sentences
-      // (then it practises exactly those sentences).
+      // Verbs from word lists and verb tiles; from a sentence list only in a lesson about verbs (nearly
+      // every sentence has a verb, so otherwise "Vragen stellen" would offer Vervoegen too). Then it
+      // practises exactly those sentences.
       lists: lists
+        .filter((l) => l.part !== "sentences" || isAboutVerbs(lesson))
         .map((l) => ({
           ...l,
           count: (l.part === "sentences" ? verbsInSentences(l.items) : verbsIn(l.items)).length,
@@ -68,19 +70,13 @@ function practiseKinds(lesson, t) {
   return kinds.filter((k) => k.lists.length > 0);
 }
 
-// What a lesson is about, from its grammar topics and title → the exercise that fits it.
-const VERB_TAGS = [
-  "vervoegen", "tegenwoordige-tijd", "verleden-tijd", "perfectum", "plusquamperfectum", "futurum",
-  "modale-werkwoorden", "scheidbare-werkwoorden", "reflexieve-werkwoorden", "hoeven", "positiewerkwoorden",
-];
-const VERB_TITLE = /werkwoord|vervoeg|perfectum|imperfectum|verleden tijd/i;
-
+// What a lesson is about (grammar topics and title) → the exercise that fits it.
 /** The kind of practice the lesson is about (conjugate / pronouns / fill), or null. */
 function recommendedKind(lesson, kinds) {
   const tags = (lesson.topic_ids || []).flatMap((id) => getItem(id)?.grammarTags || []);
   const has = (key) => kinds.some((k) => k.key === key);
   if (tags.includes("voornaamwoorden") && has("pronouns")) return "pronouns";
-  if ((tags.some((x) => VERB_TAGS.includes(x)) || VERB_TITLE.test(lesson.title || "")) && has("conjugate")) return "conjugate";
+  if (isAboutVerbs(lesson) && has("conjugate")) return "conjugate";
   if (tags.includes("voorzetsels") && has("fill")) return "fill";
   return null;
 }

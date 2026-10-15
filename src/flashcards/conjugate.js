@@ -104,6 +104,20 @@ export function verbsInSentences(list) {
 }
 
 /** The tense a lesson is about (its grammar topics or title): perfectum, verleden tijd, else present. */
+// A lesson (or list) about verbs: its grammar topics or its title.
+const VERB_TAGS = [
+  "vervoegen", "tegenwoordige-tijd", "verleden-tijd", "perfectum", "plusquamperfectum", "futurum",
+  "modale-werkwoorden", "scheidbare-werkwoorden", "reflexieve-werkwoorden", "hoeven", "positiewerkwoorden",
+];
+const VERB_TITLE = /werkwoord|vervoeg|perfectum|imperfectum|verleden tijd/i;
+export function isAboutVerbs(lesson) {
+  if (!lesson) return false;
+  const tags = (lesson.topic_ids || []).flatMap((id) => getItem(id)?.grammarTags || []);
+  return tags.some((x) => VERB_TAGS.includes(x)) || VERB_TITLE.test(lesson.title || "");
+}
+/** A set about verbs, by its title ("Perfectum: hebben of zijn"). */
+export const isVerbTitle = (title) => VERB_TITLE.test(title || "");
+
 export function tenseForLesson(lesson) {
   if (!lesson) return "present";
   const tags = (lesson.topic_ids || []).flatMap((id) => getItem(id)?.grammarTags || []);
