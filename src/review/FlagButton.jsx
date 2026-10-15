@@ -4,16 +4,16 @@ import { useI18n } from "../i18n/context";
 import { Dialog } from "../leerpad/shared";
 import { hiddenSentences, setHiddenSentences } from "../data";
 import { Flag } from "../icons";
-import { flagSentence } from "./api";
+import { flagItem } from "./api";
 import "./review.css";
 
 /**
- * 🚩 on a sentence, for the docent: "Weghalen" or "Aanpassen" plus a remark.
- * It lands under Opmerkingen bij zinnen (Feedback); "weghalen" also takes the
- * sentence out of the exercises right away. Clicks stay inside (cards around
- * it open on click).
+ * 🚩 on a sentence, word or verb, for the docent: "Weghalen" or "Aanpassen"
+ * plus a remark. It lands under Opmerkingen bij zinnen en woorden (Feedback);
+ * "weghalen" also takes it out of the exercises right away. Clicks stay inside
+ * (cards around it open on click).
  */
-export default function FlagButton({ sentence }) {
+export default function FlagButton({ item, sentence = item }) {
   const { t } = useI18n();
   const { role } = useAuth();
   const [open, setOpen] = useState(false);
@@ -34,7 +34,7 @@ export default function FlagButton({ sentence }) {
     setBusy(true);
     setError(null);
     try {
-      await flagSentence({ sentenceId: sentence.id, kind, comment: comment.trim() });
+      await flagItem({ itemId: sentence.id, kind, comment: comment.trim() });
       if (kind === "weghalen") setHiddenSentences([...hiddenSentences, sentence.id]);
       setDone(kind);
       close();
@@ -57,8 +57,12 @@ export default function FlagButton({ sentence }) {
         <Flag weight={done ? "fill" : "regular"} aria-hidden="true" />
       </button>
       {open && (
-        <Dialog title={t("flag.title")} onClose={close}>
-          <p className="flag-sentence">{sentence.nl}</p>
+        <Dialog title={sentence.id.startsWith("sentence.") ? t("flag.title") : t("flag.titleWord")} onClose={close}>
+          <p className="flag-sentence">
+            {sentence.article ? `${sentence.article} ` : ""}
+            {sentence.nl}
+            {!sentence.id.startsWith("sentence.") && sentence.en && <span className="dim"> · {sentence.en}</span>}
+          </p>
           <div className="flag-kinds">
             {["weghalen", "aanpassen"].map((k) => (
               <button key={k} type="button" className="flag-kind" aria-pressed={kind === k} onClick={() => setKind(k)}>

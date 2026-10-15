@@ -59,14 +59,12 @@ export const reviewBatches = () =>
     .then((rows) => rows.map((r) => ({ id: r.id, title: r.title, approvedAt: r.approved_at, ids: new Set(r.sentence_ids) })));
 
 /**
- * The docent flags a sentence: "weghalen" (it goes, and stays out of the
- * exercises until handled) or "aanpassen", with an optional remark. It is a
- * remark like the checker's, so it shows under Opmerkingen bij zinnen.
+ * The docent flags a sentence, word or verb: "weghalen" (it goes, and stays out
+ * of the exercises until handled) or "aanpassen", with an optional remark. It
+ * is a remark like the checker's, so it shows under Opmerkingen.
  */
-export async function flagSentence({ sentenceId, kind, comment = "" }) {
-  const row = await supabase.from("content_items").select("updated_at").eq("id", sentenceId).single().then(check);
-  return reviewSentence({ sentenceId, verdict: "issue", seenVersion: row.updated_at, aspects: [kind], comment });
-}
+export const flagItem = ({ itemId, kind, comment = "" }) =>
+  supabase.rpc("flag_item", { item: itemId, kind, note: comment }).then(check);
 
 /** Ids of sentences flagged "weghalen" and not handled yet. */
 export const hiddenSentenceIds = () =>

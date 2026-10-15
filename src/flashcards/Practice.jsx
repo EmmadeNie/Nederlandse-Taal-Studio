@@ -296,7 +296,7 @@ export default function Practice({ cards, title, onExit, onFinish, finishLabel, 
         <button type="button" className="fb-link" onClick={previous} disabled={!history.length}>
           ← {t("fc.previous")}
         </button>
-        {card.kind === "sentence" && <FlagButton sentence={card.item} />}
+        <FlagButton item={card.item} />
       </div>
       <div className="fc-actions">
         <button type="button" className="fc-again" onClick={() => answer(false)} disabled={!flipped}>

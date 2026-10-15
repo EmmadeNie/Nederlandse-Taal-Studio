@@ -463,7 +463,7 @@ export default function Drill({
         <button type="button" className="fb-link" onClick={previous} disabled={!history.length}>
           ← {t("fc.previous")}
         </button>
-        {sentence && <FlagButton sentence={sentence} />}
+        {sentence ? <FlagButton item={sentence} /> : <FlagButton item={verb || word} />}
       </div>
     </div>
   );
