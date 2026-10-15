@@ -65,14 +65,9 @@ export default function Drill({
   const [tense, setTense] = useState(() => (tenses.includes(startTense) ? startTense : "present"));
   const gapsByTense = useMemo(() => {
     const pool = sentencePool || sentences;
-    const by = Object.fromEntries(TENSES.map((tn) => [tn, fill || pron ? [] : gapQuestions(verbs, pool, tn)]));
-    by.perfectAux = fill || pron ? [] : gapQuestions(verbs, pool, "perfect", { auxOnly: true });
-    return by;
+    return Object.fromEntries(TENSES.map((tn) => [tn, fill || pron ? [] : gapQuestions(verbs, pool, tn)]));
   }, [fill, pron, verbs, sentencePool]);
   const gaps = gapsByTense[tense];
-  // Perfectum in zinnen: both boxes (hulpwerkwoord + deelwoord) or "alleen hebben/zijn".
-  const [auxOnly, setAuxOnly] = useState(false);
-  const gapsFor = (tn, aux = auxOnly) => (tn === "perfect" && aux ? gapsByTense.perfectAux : gapsByTense[tn]);
   const marked = useMemo(() => (fill ? markQuestions(words, sentences) : []), [fill, words]);
   const pronouns = useMemo(() => (pron ? pronounQuestions(pronounSentences) : []), [pron, pronounSentences]);
   const markKinds = [...new Set(marked.map((q) => q.kind))];
@@ -104,12 +99,8 @@ export default function Drill({
       : fill
       ? gapRound(upToLevel(m === "all" ? marked : marked.filter((q) => q.kind === m), u), n)
       : m === "sentences"
-        ? gapRound(upToLevel(gapsFor(tn), u), n)
+        ? gapRound(upToLevel(gapsByTense[tn], u), n)
         : makeRound(verbs, n, tn);
-  const chooseAuxOnly = (aux) => {
-    setAuxOnly(aux);
-    start(gapRound(upToLevel(gapsFor("perfect", aux), upTo), size));
-  };
   const chooseTense = (tn) => {
     setTense(tn);
     // No sentences in that tense: back to loose forms.
@@ -259,15 +250,6 @@ export default function Drill({
             {tenses.map((tn) => (
               <button key={tn} type="button" aria-pressed={tense === tn} onClick={() => chooseTense(tn)}>
                 {t(`vd.tense.${tn}`)}
-              </button>
-            ))}
-          </div>
-        )}
-        {!fill && !pron && tense === "perfect" && mode === "sentences" && gapsByTense.perfectAux.length > 0 && (
-          <div className="fc-seg" role="group" aria-label={t("vd.gaps")}>
-            {[false, true].map((aux) => (
-              <button key={String(aux)} type="button" aria-pressed={auxOnly === aux} onClick={() => chooseAuxOnly(aux)}>
-                {aux ? t("vd.auxOnly") : t("vd.auxAndParticiple")}
               </button>
             ))}
           </div>
