@@ -12,7 +12,7 @@ import { ArrowCounterClockwise, Cards, CheckCircle, PencilSimpleLine, Textbox, X
 import FlashcardButton from "./FlashcardButton";
 import Practice from "./Practice";
 import Drill from "./Drill";
-import { drillable, fillWordsOf, tenseForLesson, verbsInSentences } from "./conjugate";
+import { drillable, fillWordsOf, tenseForLesson } from "./conjugate";
 import { cardOf, deckTitle, itemsOf, lessonLists, parseListKey, partsOf } from "./cards";
 import { loadDecks, removeDeck, setDeckDone, setDeckKindDone, useDecks } from "./store";
 import "./flashcards.css";
@@ -137,16 +137,14 @@ export default function FlashcardsPage() {
     const sources = drillList
       ? [{ lesson: drillLesson, ...drillList }]
       : drillLesson
-      ? [{ lesson: drillLesson, part: "words" }, { lesson: drillLesson, part: "verbs" }] // verbs can also sit in a word list
+      ? fill
+        ? [{ lesson: drillLesson, part: "words" }, { lesson: drillLesson, part: "verbs" }]
+        : [{ lesson: drillLesson, part: "verbs" }] // Vervoegen: only the lesson's linked verbs
       : (drill === "alles" ? decks.filter((d) => !d.done_at) : decks.filter((d) => d.id === drill)).map((d) => d.source);
-    const items = sources.flatMap((src) => itemsOf(src, lessonMap));
-    // Vervoegen from a sentence list (or a lesson that only has sentences): the verbs in those
-    // sentences, practised in exactly those sentences.
-    const lessonOnlySentences =
-      drillLesson && !drillList && !items.length ? itemsOf({ lesson: drillLesson, part: "sentences" }, lessonMap) : [];
-    // Only when the practice is about sentences alone; with word lists In zinnen uses the whole library.
-    const ownSentences = items.length && items.every(isSentence) ? items : lessonOnlySentences;
-    const verbs = fill ? [] : verbsOf([...items, ...lessonOnlySentences]);
+    // Vervoegen only from verb lists (a lesson's linked verbs); In zinnen uses the whole library.
+    const verbSources = fill ? sources : sources.filter((src) => src.part === "verbs");
+    const items = verbSources.flatMap((src) => itemsOf(src, lessonMap));
+    const verbs = fill ? [] : verbsOf(items);
     const words = fill ? fillWordsOf(items) : [];
     const title = drillLesson ? lessonMap.get(drillLesson)?.title : drill === "alles" ? t("fc.all") : decks.find((d) => d.id === drill)?.title;
     // Start at the level of the lesson or set (one list only); "alles" starts at all levels.
@@ -159,7 +157,6 @@ export default function FlashcardsPage() {
           kind={drillKind}
           verbs={verbs}
           words={words}
-          sentencePool={ownSentences.length ? ownSentences : null}
           {...finishProps(decks.find((d) => d.id === drill) || null, fill ? "invullen" : "vervoegen")}
           level={level}
           tense={tenseForLesson(lessonMap.get(sources[0]?.lesson))}
@@ -245,7 +242,7 @@ export default function FlashcardsPage() {
               <button type="button" className="fb-btn-primary fc-all" onClick={() => navigate(pathFor("flashcards", "alles"))}>
                 <Cards aria-hidden="true" /> {t("fc.practiseAll")}
               </button>
-              {verbsOf(active.flatMap((d) => itemsOf(d.source, lessonMap))).length > 0 && (
+              {verbsOf(active.filter((d) => d.source?.part === "verbs").flatMap((d) => itemsOf(d.source, lessonMap))).length > 0 && (
                 <button type="button" className="fb-btn-secondary fc-all" onClick={() => navigate(pathFor("flashcards", "vervoegen-alles"))}>
                   <PencilSimpleLine aria-hidden="true" /> {t("vd.allButton")}
                 </button>
@@ -343,7 +340,8 @@ function deckKinds(deck, cardsOf) {
   const items = cards.map((c) => c.item);
   return [
     { kind: "flashcards", n: cards.length, path: deck.id },
-    { kind: "vervoegen", n: verbsOf(items).length, path: `vervoegen-${deck.id}` },
+    // Vervoegen only for a lesson's verb list; word and sentence lists get flashcards (and Invullen).
+    { kind: "vervoegen", n: deck.source?.part === "verbs" ? verbsOf(items).length : 0, path: `vervoegen-${deck.id}` },
     { kind: "invullen", n: fillWordsOf(items).length, path: `invullen-${deck.id}` },
   ].filter((k) => k.n > 0);
 }
@@ -417,12 +415,9 @@ function DeckList({ decks, cardsOf, t }) {
   );
 }
 
-const isSentence = (item) => item?.id?.startsWith("sentence.");
-
-/** The verbs (with a present-tense table) among some items, each once; for sentences the verbs in them. */
+/** The verbs (with a present-tense table) among some items, each once. */
 function verbsOf(items) {
-  const fromSentences = verbsInSentences(items.filter(isSentence));
-  return drillable([...new Map([...items.filter((i) => i?.partOfSpeech === "verb"), ...fromSentences].map((i) => [i.id, i])).values()]);
+  return drillable([...new Map(items.filter((i) => i?.partOfSpeech === "verb").map((i) => [i.id, i])).values()]);
 }
 
 

@@ -35,7 +35,6 @@ const AUX = {
   zijn: { ik: "ben", jij: "bent", hij: "is", wij: "zijn" },
 };
 const AUX_FORMS = new Set(Object.values(AUX).flatMap((f) => Object.values(f)));
-const AUX_IDS = new Set(["word.hebben", "word.zijn"]);
 const auxiliariesOf = (verb) =>
   String(verb.conjugation?.auxiliary || "")
     .split(/[\/,]| of /)
@@ -83,25 +82,6 @@ export const drillable = (verbs, tense = "present") =>
     if (tense === "perfect") return Boolean(c.participle && auxiliariesOf(v).length);
     return true;
   });
-
-/**
- * The verbs practised in some sentences, from their parts: the persoonsvorm,
- * the other verbs and the separable part. hebben/zijn as auxiliary of a
- * perfectum ("heeft … geholpen") don't count: the main verb does.
- */
-export function verbsInSentences(list) {
-  const ids = new Set();
-  list.forEach((s) => {
-    const parts = s.parts || [];
-    const perfect = parts.some((p) => p.role === "werkwoord");
-    parts.forEach((p) => {
-      if (!["persoonsvorm", "werkwoord", "scheidbaar-deel"].includes(p.role) || !p.wordId) return;
-      if (perfect && p.role === "persoonsvorm" && AUX_IDS.has(p.wordId)) return;
-      ids.add(p.wordId);
-    });
-  });
-  return drillable([...ids].map((id) => getItem(id)).filter((v) => v?.conjugation));
-}
 
 /** The tense a lesson is about (its grammar topics or title): perfectum, verleden tijd, else present. */
 export function tenseForLesson(lesson) {

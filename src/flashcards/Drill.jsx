@@ -49,7 +49,6 @@ export default function Drill({
   verbs = [],
   words = [],
   pronounSentences = [],
-  sentencePool = null, // In zinnen from these sentences (a lesson's sentence list) instead of the whole library
   tense: startTense,
   title,
   level,
@@ -64,10 +63,10 @@ export default function Drill({
   // Vervoegen: tegenwoordige tijd, verleden tijd or perfectum (only the tenses these verbs have forms for).
   const tenses = fill || pron ? [] : TENSES.filter((tn) => drillable(verbs, tn).length);
   const [tense, setTense] = useState(() => (tenses.includes(startTense) ? startTense : "present"));
-  const gapsByTense = useMemo(() => {
-    const pool = sentencePool || sentences;
-    return Object.fromEntries(TENSES.map((tn) => [tn, fill || pron ? [] : gapQuestions(verbs, pool, tn)]));
-  }, [fill, pron, verbs, sentencePool]);
+  const gapsByTense = useMemo(
+    () => Object.fromEntries(TENSES.map((tn) => [tn, fill || pron ? [] : gapQuestions(verbs, sentences, tn)])),
+    [fill, pron, verbs]
+  );
   const gaps = gapsByTense[tense];
   const marked = useMemo(() => (fill ? markQuestions(words, sentences) : []), [fill, words]);
   const pronouns = useMemo(() => (pron ? pronounQuestions(pronounSentences) : []), [pron, pronounSentences]);
