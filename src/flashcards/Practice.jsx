@@ -4,6 +4,7 @@ import { LEVELS } from "../data";
 import { VerbTile } from "../components/RelatedWords";
 import { CaretLeft } from "../icons";
 import { shuffle } from "./cards";
+import FlagButton from "../review/FlagButton";
 
 const DIRECTIONS = ["nl-en", "en-nl", "mix"];
 const SIZES = [10, 20, 0]; // 0 = all at once
@@ -295,6 +296,7 @@ export default function Practice({ cards, title, onExit, onFinish, finishLabel, 
         <button type="button" className="fb-link" onClick={previous} disabled={!history.length}>
           ← {t("fc.previous")}
         </button>
+        {card.kind === "sentence" && <FlagButton sentence={card.item} />}
       </div>
       <div className="fc-actions">
         <button type="button" className="fc-again" onClick={() => answer(false)} disabled={!flipped}>

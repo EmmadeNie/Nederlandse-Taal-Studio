@@ -1,6 +1,6 @@
 /** Load all content from the database into src/data (see setContent there). */
 import { supabase } from "../lib/supabase";
-import { setContent, setVocabularies } from "./index";
+import { setContent, setHiddenSentences, setVocabularies } from "./index";
 
 const PAGE = 1000; // PostgREST returns at most this many rows per request
 
@@ -26,4 +26,7 @@ export async function loadContent() {
   ]);
   setVocabularies(vocab);
   setContent(items, setRows);
+  // Flagged "weghalen": out of the exercises (a failure here only means nothing is hidden).
+  const hidden = await supabase.rpc("hidden_sentence_ids");
+  if (!hidden.error) setHiddenSentences(hidden.data.map((r) => (typeof r === "string" ? r : r.hidden_sentence_ids)));
 }

@@ -9,6 +9,7 @@ import { navigate, useRoute } from "../hooks/useRoute";
 import { pathFor } from "../routes";
 import { summaryLines } from "./summary";
 import "./review.css";
+import FlagButton from "./FlagButton";
 
 const ASPECTS = ["onderwerp", "werkwoord", "voornaamwoord", "woord", "zin"];
 const MARK_ASPECTS = ["woord", "zin"];
@@ -207,6 +208,7 @@ export default function ReviewPage() {
       {thanks && <div className="rv-thanks">{thanks}</div>}
 
       <div className="rv-card">
+        <FlagButton sentence={current} />
         {onlyMarks && <div className="rv-only-marks">{t("review.onlyMarks")}</div>}
         <div className="rv-sentence">
           {onlyMarks ? (

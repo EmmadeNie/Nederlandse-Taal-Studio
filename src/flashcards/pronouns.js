@@ -8,6 +8,7 @@
  * the noun (de or het).
  */
 import { locateParts } from "../data/sentenceParts";
+import { inExercises } from "../data";
 
 export const PRONOUN_KINDS = ["persoonlijk", "bezittelijk", "wederkerend"];
 
@@ -30,7 +31,7 @@ function alternatives(text, type, isSubject) {
  */
 export function pronounQuestions(sentences, kind = null) {
   const out = [];
-  sentences.forEach((s) => {
+  sentences.filter(inExercises).forEach((s) => {
     if (!s.nl || !s.pronouns?.length) return;
     // A pronoun that is (the start of) the subject: "Zij werkt…", "Morgen ga ik…".
     const subjects = locateParts(s.nl, s.parts || []).filter((p) => p && p.part.role === "onderwerp");
