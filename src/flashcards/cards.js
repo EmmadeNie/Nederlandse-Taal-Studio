@@ -2,7 +2,7 @@
  * Which cards a deck holds, worked out from the lesson or set it points at
  * (so a deck follows changes to its list).
  */
-import { getSet, setItems } from "../data";
+import { getSet, inExercises, setItems } from "../data";
 import { hasWordList, toLists, wordsForList, wordsForLists } from "../leerpad/wordLists";
 import { hasSentenceList, sentencesForList, sentencesForLists } from "../leerpad/sentenceLists";
 import { lessonVerbs } from "../leerpad/verbIds";
@@ -15,6 +15,10 @@ export const PARTS = ["words", "verbs", "sentences"];
  * one of the lesson's word or sentence lists.
  */
 export function itemsOf(source, lessons) {
+  return rawItemsOf(source, lessons).filter(inExercises); // no sentences flagged "weghalen"
+}
+
+function rawItemsOf(source, lessons) {
   if (source.set) return setItems(getSet(source.set));
   const lesson = lessons.get(source.lesson);
   if (!lesson) return [];

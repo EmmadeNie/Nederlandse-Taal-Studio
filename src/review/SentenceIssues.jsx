@@ -3,7 +3,8 @@ import { useI18n } from "../i18n/context";
 import { getItem } from "../data";
 import { useContentVersion } from "../data/useContent";
 import SentenceParts from "../components/SentenceParts";
-import { openIssues, resolveIssue } from "./api";
+import { hiddenSentenceIds, openIssues, resolveIssue } from "./api";
+import { setHiddenSentences } from "../data";
 import "./review.css";
 
 const when = (ts, locale) => new Date(ts).toLocaleDateString(locale, { day: "numeric", month: "short" });
@@ -32,6 +33,8 @@ export default function SentenceIssues() {
     try {
       await resolveIssue(id);
       setIssues((list) => list.filter((i) => i.id !== id));
+      // A handled "weghalen" flag lets the sentence back into the exercises.
+      hiddenSentenceIds().then(setHiddenSentences, () => {});
     } catch (e) {
       setError(e.message);
     }

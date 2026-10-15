@@ -413,3 +413,17 @@ export function getQualityIndicators({ thinThreshold = 3 } = {}) {
     thinVocabLevels,
   };
 }
+
+// ----- Sentences flagged "weghalen" by the docent (not yet handled) -----
+
+/** Ids of sentences that stay out of the exercises until the flag is handled. */
+export const hiddenSentences = new Set();
+
+export function setHiddenSentences(ids) {
+  hiddenSentences.clear();
+  ids.forEach((id) => hiddenSentences.add(id));
+  changed();
+}
+
+/** May this item be used in an exercise (flashcards, Vervoegen, Invullen, Voornaamwoorden)? */
+export const inExercises = (item) => !hiddenSentences.has(item?.id);

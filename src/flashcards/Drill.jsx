@@ -6,6 +6,7 @@ import { shuffle } from "./cards";
 import { TENSES, drillable, gapIsRight, gapQuestions, gapRound, isRight, isRightGaps, makeRound, markQuestions } from "./conjugate";
 import { LEVELS, sentences } from "../data";
 import { pronounKindsIn, pronounQuestions } from "./pronouns";
+import FlagButton from "../review/FlagButton";
 
 const SIZES = [10, 20];
 const rank = (level) => (LEVELS.includes(level) ? LEVELS.indexOf(level) : LEVELS.length);
@@ -463,6 +464,7 @@ export default function Drill({
         <button type="button" className="fb-link" onClick={previous} disabled={!history.length}>
           ← {t("fc.previous")}
         </button>
+        {sentence && <FlagButton sentence={sentence} />}
       </div>
     </div>
   );

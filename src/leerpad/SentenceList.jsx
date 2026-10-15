@@ -6,6 +6,7 @@ import SetSelect from "./SetSelect";
 import { LEVELS } from "./util";
 import { THEMES, themeLabel, toLists } from "./wordLists";
 import { GRAMMAR_TAGS, hasSentenceList, sentencesForList, slugLabel } from "./sentenceLists";
+import FlagButton from "../review/FlagButton";
 
 /** Short description of a recipe: "mijn eerste ontmoetingsgesprek" or "communicatie · t/m A1". */
 function Summary({ spec }) {
@@ -41,7 +42,7 @@ export function SentenceListView({ spec }) {
           {items.map((s) => (
             <li key={s.id}>
               <div className="sl-nl">
-                {s.nl} <LevelBadge level={s.introducedAtLevel} />
+                {s.nl} <LevelBadge level={s.introducedAtLevel} /> <FlagButton sentence={s} />
               </div>
               <div className="dim sl-en">{s.en}</div>
             </li>

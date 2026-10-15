@@ -6,7 +6,7 @@
  */
 import { shuffle } from "./cards";
 import { locateParts } from "../data/sentenceParts";
-import { getItem, sentences } from "../data";
+import { getItem, inExercises, sentences } from "../data";
 import { REFLEXIVE_PRONOUN, isReflexive, withPronoun } from "../data/reflexive";
 
 // Who does it, which form of the table that needs, and (wederkerende
@@ -175,7 +175,8 @@ const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
  * sentence or after a comma ("We eten vis"), or straight after it
  * (inversion: "Morgen eten we vis", "Gaan jullie mee?").
  */
-export function gapQuestions(verbs, sentences, tense = "present") {
+export function gapQuestions(verbs, all, tense = "present") {
+  const sentences = all.filter(inExercises); // no sentences flagged "weghalen"
   const byId = new Map(drillable(verbs, tense).map((v) => [v.id, v]));
   const formsOf = tense === "past" ? pastForms : presentForms;
   const out = [];
@@ -328,7 +329,8 @@ export function fillWordsOf(items) {
  * gap. A word in two pieces ("over … heen" → overheen) gets one question, with
  * the first piece as the gap.
  */
-export function markQuestions(words, sentences) {
+export function markQuestions(words, all) {
+  const sentences = all.filter(inExercises);
   const byId = new Map(words.map((w) => [w.id, w]));
   const out = [];
   sentences.forEach((s) => {

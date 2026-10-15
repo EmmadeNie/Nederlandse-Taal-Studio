@@ -9,6 +9,7 @@ import FeedbackButton from "../feedback/FeedbackButton";
 import { useUrlParams, useSetUrlParams } from "../hooks/useUrlParams";
 import { useI18n } from "../i18n/context";
 import { Note } from "../icons";
+import FlagButton from "../review/FlagButton";
 
 export default function SentenceBrowser() {
   const { t } = useI18n();
@@ -196,6 +197,7 @@ export default function SentenceBrowser() {
           {s.reviewNotes && <div className="note"><Note /> {s.reviewNotes}</div>}
           <div className="card-footer">
             <EditItemButton item={s} />
+            <FlagButton sentence={s} />
             <FeedbackButton
               itemType="sentence"
               itemId={s.id}

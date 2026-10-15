@@ -305,3 +305,82 @@
 .rv-back {
   align-self: flex-start;
 }
+
+/* 🚩 Markeren (docent) */
+.flag-wrap {
+  display: inline-flex;
+}
+
+.flag-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: none;
+  color: var(--text-dim);
+  cursor: pointer;
+}
+
+.flag-btn:hover {
+  color: var(--red);
+  border-color: color-mix(in srgb, var(--red) 40%, transparent);
+}
+
+.flag-btn.is-flagged {
+  color: var(--red);
+}
+
+.rv-card > .flag-wrap {
+  justify-self: end;
+}
+
+.fc-nav .flag-wrap {
+  margin-left: auto;
+}
+
+.flag-sentence {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+}
+
+.flag-kinds {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.flag-kind {
+  display: grid;
+  gap: 0.15rem;
+  text-align: left;
+  padding: 0.7rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.flag-kind[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.flag-kind .dim {
+  font-size: 0.82rem;
+}
+
+.flag-comment {
+  width: 100%;
+  box-sizing: border-box;
+  font: inherit;
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+}
