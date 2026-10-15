@@ -5,6 +5,7 @@ import { EditItemButton } from "../library/ItemEditing";
 import { useI18n } from "../i18n/context";
 import { Note } from "../icons";
 import { REFLEXIVE_PRONOUN, isReflexive, withPronoun } from "../data/reflexive";
+import FlagButton from "../review/FlagButton";
 
 /**
  * A verb with its regularity and full conjugation (Werkwoorden, grammar topics).
@@ -129,6 +130,7 @@ export default function VerbCard({ verb: v, collapsible = false }) {
       )}
       <div className="card-footer">
         <EditItemButton item={v} />
+        <FlagButton item={v} />
         <FeedbackButton
           itemType="verb"
           itemId={v.id}

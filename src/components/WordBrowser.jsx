@@ -7,6 +7,7 @@ import QuizletExport from "./QuizletExport";
 import FeedbackButton from "../feedback/FeedbackButton";
 import { useUrlParams, useSetUrlParams } from "../hooks/useUrlParams";
 import { useI18n } from "../i18n/context";
+import FlagButton from "../review/FlagButton";
 
 export default function WordBrowser() {
   const { t } = useI18n();
@@ -72,6 +73,7 @@ export default function WordBrowser() {
             </div>
             <div className="card-footer">
               <EditItemButton item={w} />
+              <FlagButton item={w} />
               <FeedbackButton
                 itemType="word"
                 itemId={w.id}

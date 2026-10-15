@@ -66,6 +66,7 @@ export default function SentenceIssues() {
       const s = getItem(i.sentence_id);
       return {
         id: i.sentence_id,
+        type: i.sentence_id.split(".")[0],
         nl: s?.nl,
         parts: s?.parts || [],
         pronouns: s?.pronouns || [],
@@ -112,7 +113,22 @@ export default function SentenceIssues() {
                   </button>
                 </span>
               </div>
-              <div>{s ? <SentenceParts nl={s.nl} parts={s.parts} pronouns={s.pronouns} marks={s.marks} /> : i.sentence_id}</div>
+              <div>
+                {!s ? (
+                  i.sentence_id
+                ) : i.sentence_id.startsWith("sentence.") ? (
+                  <SentenceParts nl={s.nl} parts={s.parts} pronouns={s.pronouns} marks={s.marks} />
+                ) : (
+                  <span className="rv-issue-word">
+                    <strong>
+                      {s.article ? `${s.article} ` : ""}
+                      {s.nl}
+                    </strong>
+                    {s.en && <span className="dim"> · {s.en}</span>}
+                    <span className="tag">{s.partOfSpeech === "verb" ? t("flag.verb") : t("flag.word")}</span>
+                  </span>
+                )}
+              </div>
               {i.aspects?.length > 0 && (
                 <div className="rv-aspects">
                   {i.aspects.map((a) => (
