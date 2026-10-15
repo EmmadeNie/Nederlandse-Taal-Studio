@@ -145,7 +145,11 @@ function Studio() {
 
   // The path is the source of truth for the active page (see src/routes.js).
   // Students start on their leerpad; the dashboard is a content-review tool for staff.
-  const homePage = role === "leerling" ? "leerpad" : role === "nakijker" ? "nakijken" : "dashboard";
+  // Opening the app: students on their leerpad, checkers on Zinnen nakijken; the docent on the
+  // Dashboard, but on a phone straight on the Leerpaden (what you look at there in class).
+  const onPhone = typeof window !== "undefined" && window.matchMedia?.("(max-width: 700px)").matches;
+  const homePage =
+    role === "leerling" ? "leerpad" : role === "nakijker" ? "nakijken" : onPhone && validPages.has("leerpaden") ? "leerpaden" : "dashboard";
   const allowed = (id) =>
     validPages.has(id) || (validPages.has("library") && LIBRARY_TAB_IDS.has(id));
   const page = route.page && allowed(route.page) ? route.page : homePage;
