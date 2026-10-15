@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useI18n } from "../i18n/context";
-import { getItem } from "../data";
+import { getItem, setsWithItem } from "../data";
+import { deleteItem } from "../data/contentApi";
+import { Dialog } from "../leerpad/shared";
 import { useContentVersion } from "../data/useContent";
 import SentenceParts from "../components/SentenceParts";
 import { hiddenSentenceIds, openIssues, resolveIssue } from "./api";
@@ -19,6 +21,8 @@ export default function SentenceIssues() {
   const [issues, setIssues] = useState(null);
   const [error, setError] = useState(null);
   const [copied, setCopied] = useState(false);
+  const [deleting, setDeleting] = useState(null); // the sentence id being confirmed for deletion
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     openIssues()
@@ -28,6 +32,23 @@ export default function SentenceIssues() {
 
   if (error) return <div className="lp-error">{error}</div>;
   if (!issues) return null;
+
+  // "Nu verwijderen" on a weghalen flag: first where the sentence still is, then gone for good
+  // (its remarks go with it; sets and other references are cleaned up by deleteItem).
+  const removeSentence = async (id) => {
+    setBusy(true);
+    setError(null);
+    try {
+      await deleteItem(id);
+      setIssues((list) => list.filter((i) => i.sentence_id !== id));
+      setDeleting(null);
+      hiddenSentenceIds().then(setHiddenSentences, () => {});
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const resolve = async (id) => {
     try {
@@ -80,9 +101,16 @@ export default function SentenceIssues() {
             <div key={i.id} className="rv-issue">
               <div className="rv-issue-head">
                 <span>{t("review.by", { name, date: when(i.created_at, locale) })}</span>
-                <button type="button" className="fb-btn-primary" onClick={() => resolve(i.id)}>
-                  {t("review.resolve")}
-                </button>
+                <span className="rv-issue-actions">
+                  {s && i.aspects?.includes("weghalen") && (
+                    <button type="button" className="lp-danger" onClick={() => setDeleting(i.sentence_id)}>
+                      {t("flag.deleteNow")}
+                    </button>
+                  )}
+                  <button type="button" className="fb-btn-primary" onClick={() => resolve(i.id)}>
+                    {t("review.resolve")}
+                  </button>
+                </span>
               </div>
               <div>{s ? <SentenceParts nl={s.nl} parts={s.parts} pronouns={s.pronouns} marks={s.marks} /> : i.sentence_id}</div>
               {i.aspects?.length > 0 && (
@@ -98,6 +126,32 @@ export default function SentenceIssues() {
             </div>
           );
         })
+      )}
+      {deleting && (
+        <Dialog title={t("flag.deleteTitle")} onClose={() => setDeleting(null)}>
+          <p className="flag-sentence">{getItem(deleting)?.nl}</p>
+          {setsWithItem(deleting).length > 0 ? (
+            <>
+              <p>{t("flag.inSets")}</p>
+              <ul className="flag-sets">
+                {setsWithItem(deleting).map((set) => (
+                  <li key={set.id}>{set.title}</li>
+                ))}
+              </ul>
+              <p className="dim">{t("flag.inSetsNote")}</p>
+            </>
+          ) : (
+            <p className="dim">{t("flag.inNoSet")}</p>
+          )}
+          <div className="fb-actions">
+            <button type="button" className="fb-btn-secondary" onClick={() => setDeleting(null)} disabled={busy}>
+              {t("common.cancel")}
+            </button>
+            <button type="button" className="lp-danger" onClick={() => removeSentence(deleting)} disabled={busy}>
+              {t("flag.deleteForGood")}
+            </button>
+          </div>
+        </Dialog>
       )}
     </section>
   );
