@@ -7,6 +7,9 @@ import { LEVELS } from "./util";
 import { THEMES, themeLabel, toLists } from "./wordLists";
 import { GRAMMAR_TAGS, hasSentenceList, sentencesForList, slugLabel } from "./sentenceLists";
 import FlagButton from "../review/FlagButton";
+import { useAuth } from "../auth/context";
+import { updateSet } from "../data/contentApi";
+import { Scissors } from "../icons";
 
 /** Short description of a recipe: "mijn eerste ontmoetingsgesprek" or "communicatie · t/m A1". */
 function Summary({ spec }) {
@@ -27,6 +30,17 @@ const exportName = (spec) =>
 /** The sentences of a lesson's sentence list, numbered, Dutch with English below. */
 export function SentenceListView({ spec }) {
   const { t } = useI18n();
+  const { role } = useAuth();
+  // Docent, list built on a set: take a sentence out of that set (it stays in the library).
+  const set = role === "docent" && spec?.set ? getSet(spec.set) : null;
+  const unlist = async (s) => {
+    if (!window.confirm(t("flag.unlistConfirm", { text: s.nl, set: set.title }))) return;
+    try {
+      await updateSet(set.id, { itemIds: set.itemIds.filter((id) => id !== s.id) });
+    } catch (e) {
+      window.alert(e.message);
+    }
+  };
   if (!hasSentenceList(spec)) return null;
   const items = sentencesForList(spec);
   // Folded by default, like the word list.
@@ -43,6 +57,17 @@ export function SentenceListView({ spec }) {
             <li key={s.id}>
               <div className="sl-nl">
                 {s.nl} <LevelBadge level={s.introducedAtLevel} /> <FlagButton sentence={s} />
+                {set && (
+                  <button
+                    type="button"
+                    className="flag-btn"
+                    title={t("flag.unlistHint", { set: set.title })}
+                    aria-label={t("flag.unlistAria", { text: s.nl })}
+                    onClick={() => unlist(s)}
+                  >
+                    <Scissors aria-hidden="true" />
+                  </button>
+                )}
               </div>
               <div className="dim sl-en">{s.en}</div>
             </li>

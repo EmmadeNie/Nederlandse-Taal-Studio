@@ -384,3 +384,14 @@
   background: var(--bg);
   color: var(--text);
 }
+
+.rv-issue-actions {
+  display: inline-flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.flag-sets {
+  margin: 0.25rem 0 0.5rem;
+  padding-left: 1.2rem;
+}
