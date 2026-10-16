@@ -103,15 +103,16 @@ export default function CardPractise({ lesson }) {
   };
   // A lesson about verbs (pronouns, prepositions) starts that exercise straight away, all its lists
   // together; ▾ next to the button opens the menu with every kind.
-  const recommended = kinds.find((k) => k.key === recommendedKind(lesson, kinds));
+  // Without a clear topic the button is Flashcards: it always names what it starts.
+  const recommended =
+    kinds.find((k) => k.key === recommendedKind(lesson, kinds)) || kinds.find((k) => k.key === "flashcards") || kinds[0];
   const openMenu = () => {
     setKindKey(null);
     setOpen(true);
   };
   const start = () => {
-    if (recommended) go(recommended.lists.length > 1 && recommended.all ? recommended.all : recommended.lists[0].path);
-    else if (kinds.length === 1) choose(kinds[0]);
-    else openMenu();
+    if (recommended.lists.length > 1 && recommended.all) go(recommended.all);
+    else choose(recommended); // one list: straight there; several (flashcards): pick the list
   };
   const kind = kinds.find((k) => k.key === kindKey);
   const close = () => {
@@ -124,15 +125,15 @@ export default function CardPractise({ lesson }) {
     <span className="cp-wrap" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
       <button
         type="button"
-        className={`cp-button ${recommended && kinds.length > 1 ? "has-more" : ""}`}
-        title={recommended ? t("cp.startKind", { kind: recommended.label }) : t("cp.hint")}
+        className={`cp-button ${kinds.length > 1 ? "has-more" : ""}`}
+        title={t("cp.startKind", { kind: recommended.label })}
         aria-label={t("cp.aria", { name: lesson.title })}
         onClick={start}
       >
-        {recommended ? <recommended.icon aria-hidden="true" /> : <Cards aria-hidden="true" />}{" "}
-        {recommended ? recommended.label : t("fc.practiseNow")}
+        <recommended.icon aria-hidden="true" />{" "}
+        {recommended.label}
       </button>
-      {recommended && kinds.length > 1 && (
+      {kinds.length > 1 && (
         <button type="button" className="cp-button cp-more" title={t("cp.otherKinds")} aria-label={t("cp.otherKinds")} onClick={openMenu}>
           ▾
         </button>
