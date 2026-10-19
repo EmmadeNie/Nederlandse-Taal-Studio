@@ -30,6 +30,24 @@ export const CLAUSES = ["bijzin"];
  */
 export const PRONOUN_TYPES = ["persoonlijk", "bezittelijk", "wederkerend"];
 
+const LETTER = /[\p{L}\p{N}]/u;
+
+/**
+ * Where `text` is in `nl` from `from` on, as a whole word: "de" in "Mijn moeder koopt de
+ * fiets" is the article, not the "de" inside "moeder". Only when there is no whole-word
+ * match, the first match inside a word.
+ */
+function findWord(nl, text, from) {
+  const first = nl.indexOf(text, from);
+  for (let at = first; at >= 0; at = nl.indexOf(text, at + 1)) {
+    const before = nl[at - 1];
+    const after = nl[at + text.length];
+    const edge = (c, inner) => !c || !LETTER.test(c) || !LETTER.test(inner);
+    if (edge(before, text[0]) && edge(after, text[text.length - 1])) return at;
+  }
+  return first;
+}
+
 /**
  * Where each part sits in the text: [{ part, start, end }] in order, or null
  * for a part that can't be found after the previous one.
@@ -37,7 +55,7 @@ export const PRONOUN_TYPES = ["persoonlijk", "bezittelijk", "wederkerend"];
 export function locateParts(nl, parts = []) {
   let from = 0;
   return parts.map((part) => {
-    const at = typeof part?.text === "string" && part.text ? nl.indexOf(part.text, from) : -1;
+    const at = typeof part?.text === "string" && part.text ? findWord(nl, part.text, from) : -1;
     if (at < 0) return null;
     from = at + part.text.length;
     return { part, start: at, end: from };
