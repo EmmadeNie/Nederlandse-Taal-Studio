@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { LEVELS, topics } from "../data";
 import { LevelBadge, ReviewBadge } from "./Badges";
 import FeedbackButton from "../feedback/FeedbackButton";
-import Markdown from "./Markdown";
+import TopicExplanation from "./TopicExplanation";
 import RelatedWords from "./RelatedWords";
 import ExampleSentences from "./ExampleSentences";
 import { useUrlParams } from "../hooks/useUrlParams";
@@ -128,11 +128,7 @@ function TopicCard({ topic, isOpen, cardRef, onToggle }) {
 
       {isOpen ? (
         <>
-          {text.explanation && (
-            <div lang={lang}>
-              <Markdown className="explanation">{text.explanation}</Markdown>
-            </div>
-          )}
+          <TopicExplanation text={text} lang={lang} className="explanation" />
           <RelatedWords ids={topic.relatedWordIds} />
           <ExampleSentences ids={topic.exampleSentenceIds} />
         </>

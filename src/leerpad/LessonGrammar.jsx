@@ -5,7 +5,7 @@ import CategoryBadge from "../components/CategoryBadge";
 import { TOPIC_CATEGORIES, categoryOf } from "../data/topicCategory";
 import { hasEnglish, topicText } from "../components/topicLang";
 import { topics } from "../data";
-import Markdown from "../components/Markdown";
+import TopicExplanation from "../components/TopicExplanation";
 import RelatedWords from "../components/RelatedWords";
 import ExampleSentences from "../components/ExampleSentences";
 import { LevelBadge } from "../components/Badges";
@@ -45,11 +45,7 @@ function GrammarItem({ topic }) {
             {text.summary}
           </div>
         </summary>
-        {text.explanation && (
-          <div lang={lang}>
-            <Markdown className="lp-explanation">{text.explanation}</Markdown>
-          </div>
-        )}
+        <TopicExplanation text={text} lang={lang} className="lp-explanation" />
         <RelatedWords ids={topic.relatedWordIds} />
         <ExampleSentences ids={topic.exampleSentenceIds} />
         <a href={pathFor("topics", topicSlug(topic.id))} target="_blank" rel="noopener noreferrer">
