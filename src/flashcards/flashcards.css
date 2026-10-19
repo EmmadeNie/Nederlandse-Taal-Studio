@@ -714,7 +714,9 @@
   border-left: none;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
-  padding: 0.1rem 0.4rem;
+  padding: 0.1rem 0.5rem;
+  color: var(--text-dim);
+  white-space: nowrap;
 }
 
 /* A list in Mijn flashcards: title + actions, then one button per kind of practice */
