@@ -599,8 +599,10 @@
 /* "Oefenen" on a lesson card */
 .cp-wrap {
   display: inline-flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.3rem;
+  min-width: 0;
 }
 
 .cp-button {
@@ -610,8 +612,9 @@
   background: none;
   border: 1px solid var(--border);
   border-radius: 999px;
-  padding: 0.1rem 0.55rem;
+  padding: 0.15rem 0.6rem;
   color: var(--accent);
+  white-space: nowrap;
   font: inherit;
   font-size: 0.75rem;
   cursor: pointer;
@@ -706,30 +709,16 @@
   font-weight: 500;
 }
 
-/* Oefenen on a card: the recommended exercise, then the others as round icons */
-.cp-icon {
-  display: inline-grid;
-  place-items: center;
-  width: 1.6rem;
-  height: 1.6rem;
-  padding: 0;
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  color: var(--text-dim);
-  cursor: pointer;
-}
-
-.cp-icon svg {
-  width: 0.85rem;
-  height: 0.85rem;
-}
-
-.cp-icon:hover,
-.cp-icon:focus-visible {
+/* Oefenen on a card: one label per exercise, the recommended one filled */
+.cp-button.is-recommended {
+  background: var(--accent);
   border-color: var(--accent);
-  color: var(--accent);
-  background: var(--accent-soft);
+  color: #fff;
+}
+
+.cp-button.is-recommended:hover {
+  filter: brightness(1.1);
+  background: var(--accent);
 }
 
 /* A list in Mijn flashcards: title + actions, then one button per kind of practice */

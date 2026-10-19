@@ -121,31 +121,18 @@ export default function CardPractise({ lesson }) {
   return (
     // Keep clicks and keys inside: the card around this opens the lesson.
     <span className="cp-wrap" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
-      <button
-        type="button"
-        className="cp-button"
-        title={t("cp.startKind", { kind: recommended.label })}
-        aria-label={t("cp.aria", { name: lesson.title })}
-        onClick={start}
-      >
-        <recommended.icon aria-hidden="true" />{" "}
-        {recommended.label}
-      </button>
-      {/* The other exercises as small round icons next to it: all visible, the name on hover. */}
-      {kinds
-        .filter((k) => k !== recommended)
-        .map((k) => (
-          <button
-            key={k.key}
-            type="button"
-            className="cp-icon"
-            title={t("cp.startKind", { kind: k.label })}
-            aria-label={t("cp.startKind", { kind: k.label })}
-            onClick={() => choose(k)}
-          >
-            <k.icon aria-hidden="true" />
-          </button>
-        ))}
+      {/* Every exercise as a small label; the one the lesson is about is filled and comes first. */}
+      {[recommended, ...kinds.filter((k) => k !== recommended)].map((k) => (
+        <button
+          key={k.key}
+          type="button"
+          className={`cp-button ${k === recommended ? "is-recommended" : ""}`}
+          title={t("cp.startKind", { kind: k.label })}
+          onClick={() => (k === recommended ? start() : choose(k))}
+        >
+          {k.label}
+        </button>
+      ))}
       {open && (
         <Dialog title={t("cp.title", { name: lesson.title })} onClose={close}>
           {!kind ? (
