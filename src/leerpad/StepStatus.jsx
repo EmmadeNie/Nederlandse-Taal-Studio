@@ -1,5 +1,5 @@
 import { useI18n } from "../i18n/context";
-import { ChalkboardTeacher, CheckCircle, HourglassMedium, House } from "../icons";
+import { ChalkboardTeacher, CheckCircle, HourglassMedium, House, Star } from "../icons";
 
 /** Statuses of a step on a leerpad, in click order (after the last: none). */
 const STEP_STATUSES = ["in_class", "homework", "homework_done", "ongoing"];
@@ -63,5 +63,37 @@ export function StatusLegend({ canChange }) {
       })}
       {canChange && <span className="dim status-legend-hint">{t("status.legendHint")}</span>}
     </div>
+  );
+}
+
+/**
+ * ⭐ Belangrijk on a card: the student marks what they find important. A click
+ * toggles it (without opening the card); without onChange only shown when set.
+ */
+export function StepImportant({ important, onChange }) {
+  const { t } = useI18n();
+  if (!important && !onChange) return null;
+  const title = important ? t("important.on") : t("important.off");
+  const stop = (e) => e.stopPropagation();
+  return onChange ? (
+    <button
+      type="button"
+      className={`step-important ${important ? "is-on" : ""}`}
+      title={title}
+      aria-label={title}
+      aria-pressed={important}
+      onPointerDown={stop}
+      onKeyDown={stop}
+      onClick={(e) => {
+        e.stopPropagation();
+        onChange(!important);
+      }}
+    >
+      <Star weight={important ? "fill" : "regular"} />
+    </button>
+  ) : (
+    <span className="step-important is-on" title={title} aria-label={title} role="img">
+      <Star weight="fill" />
+    </span>
   );
 }

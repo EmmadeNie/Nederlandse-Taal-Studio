@@ -189,6 +189,10 @@ export const updateStep = (id, patch) =>
 
 export const deleteStep = (id) => supabase.from("steps").delete().eq("id", id).then(check);
 
+/** ⭐ Belangrijk on a step (the student on their own leerpad, or the docent). */
+export const setStepImportant = (id, value) =>
+  supabase.rpc("set_step_important", { step: id, value }).then(check);
+
 export const setStepStatus = (id, status) =>
   supabase.rpc("set_step_status", { step: id, new_status: status }).then(check);
 
