@@ -13,6 +13,7 @@ import { pathFor, topicSlug } from "../routes";
 import { ArrowSquareOut, X } from "../icons";
 import { LEVELS } from "./util";
 import { knownTopics as known } from "./grammarTopics";
+import { ItemPicker } from "../library/FieldInput";
 
 
 /** The grammar of a lesson: title, level, summary; the explanation opens in place. */
@@ -89,6 +90,10 @@ export function GrammarPicker({ value = [], onChange }) {
             </li>
           ))}
         </ul>
+      )}
+      {available.length > 0 && (
+        // Type to find a topic; the list below is for browsing per category.
+        <ItemPicker type="topic" exclude={value} label={t("lg.search")} onPick={(topic) => onChange([...value, topic.id])} />
       )}
       {available.length > 0 && (
         <select

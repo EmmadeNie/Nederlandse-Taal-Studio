@@ -481,6 +481,7 @@
 .lp-row > input,
 .lp-row > select,
 .lp-row > .ie-picker input,
+.lg-picker > .ie-picker input,
 .lg-picker > select {
   flex: 0 0 auto;
   min-width: 0;
