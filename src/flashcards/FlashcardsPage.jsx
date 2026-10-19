@@ -13,6 +13,7 @@ import FlashcardButton from "./FlashcardButton";
 import Practice from "./Practice";
 import Drill from "./Drill";
 import { drillable, fillWordsOf, tenseForLesson } from "./conjugate";
+import { lessonPronounKind, withPronounsOf } from "./pronouns";
 import { cardOf, deckTitle, itemsOf, lessonLists, parseListKey, partsOf } from "./cards";
 import { loadDecks, removeDeck, setDeckDone, setDeckKindDone, useDecks } from "./store";
 import "./flashcards.css";
@@ -112,18 +113,20 @@ export default function FlashcardsPage() {
   };
 
   if (pronounMatch && decks && lessons) {
-    const withPronouns = (list) => list.filter((s) => s.pronouns?.length);
     const lesson = pronounLesson ? lessonMap.get(pronounLesson) : null;
     if (pronounLesson && !lesson) return <p className="dim">{t("common.loading")}</p>;
-    // A lesson's own sentences when they have pronouns, otherwise the whole library.
-    const own = lesson ? withPronouns(sentencesForLists(lesson.sentence_list)) : [];
-    const list = own.length ? own : withPronouns(sentences);
+    // Reflexive verbs: only the reflexive pronouns (zich, me, je …).
+    const pronounKind = lessonPronounKind(lesson);
+    // A lesson's own sentences when they have those pronouns, otherwise the whole library.
+    const own = lesson ? withPronounsOf(sentencesForLists(lesson.sentence_list), pronounKind) : [];
+    const list = own.length ? own : withPronounsOf(sentences, pronounKind);
     if (!list.length) return <p className="dim">{t("pd.none")}</p>;
     return (
       <Drill
         key={route.param}
         kind="pronouns"
         pronounSentences={list}
+        pronounKind={pronounKind}
         level={lesson?.level}
         settingsKey={route.param}
         title={lesson?.title || t("pd.title")}
