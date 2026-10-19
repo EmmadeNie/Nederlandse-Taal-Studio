@@ -303,6 +303,45 @@ export function fillWordsOf(items) {
   return [...new Map(items.filter((i) => i && marked.has(i.id)).map((i) => [i.id, i])).values()];
 }
 
+const isSentence = (item) => item?.id?.startsWith("sentence.");
+
+/** How much Invullen some items give: their words marked in library sentences + the marks in their own sentences. */
+export const fillCount = (items) =>
+  fillWordsOf(items.filter((i) => !isSentence(i))).length + sentenceMarkQuestions(items.filter(isSentence)).length;
+
+/** The sentences among some items that have marks (Invullen straight from a sentence list). */
+export const markSentencesOf = (items) => items.filter((i) => isSentence(i) && i.marks?.length);
+
+/**
+ * Invullen from a sentence list: every marked piece in these sentences becomes
+ * a gap, with or without a wordId ("de", "het" as lidwoord). The same piece
+ * twice in one sentence is asked once (the first).
+ */
+export function sentenceMarkQuestions(list) {
+  const out = [];
+  list.filter(inExercises).forEach((s) => {
+    if (!s.nl || !s.marks?.length) return;
+    const seen = new Set();
+    locateParts(s.nl, s.marks).forEach((w) => {
+      if (!w) return;
+      const text = s.nl.slice(w.start, w.end);
+      const key = `${w.part.wordId || ""}|${text.toLowerCase()}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      out.push({
+        id: `${s.id}@${w.start}`,
+        word: (w.part.wordId && getItem(w.part.wordId)) || { id: `mark.${text.toLowerCase()}`, nl: text },
+        kind: w.part.kind,
+        sentence: s,
+        before: s.nl.slice(0, w.start),
+        after: s.nl.slice(w.end),
+        answers: [text],
+      });
+    });
+  });
+  return out;
+}
+
 /**
  * Gap questions from the sentences' marks (sentence.marks: { text, kind,
  * wordId }) that point at one of these words: the marked piece becomes the

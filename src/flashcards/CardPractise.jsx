@@ -7,7 +7,7 @@ import { CaretLeft, Cards, PencilSimpleLine, Textbox, UserList } from "../icons"
 import { getItem } from "../data";
 import { sentencesForLists } from "../leerpad/sentenceLists";
 import { lessonLists } from "./cards";
-import { drillable, fillWordsOf } from "./conjugate";
+import { drillable, fillCount } from "./conjugate";
 import { lessonPronounKind, withPronounsOf } from "./pronouns";
 
 const verbsIn = (items) => drillable(items.filter((i) => i.partOfSpeech === "verb"));
@@ -32,9 +32,9 @@ function practiseKinds(lesson, t) {
       icon: Textbox,
       label: t("fd.title"),
       all: `invullen-les-${lesson.id}`,
+      // Word lists whose words are marked in sentences, and sentence lists with marks of their own.
       lists: lists
-        .filter((l) => l.part !== "sentences")
-        .map((l) => ({ ...l, count: fillWordsOf(l.items).length, path: `invullen-les.${l.key}-${lesson.id}` }))
+        .map((l) => ({ ...l, count: fillCount(l.items), path: `invullen-les.${l.key}-${lesson.id}` }))
         .filter((l) => l.count > 0),
     },
     {
@@ -78,7 +78,7 @@ function recommendedKind(lesson, kinds) {
   // Verbs first: a lesson about reflexive verbs also has a pronoun topic, but its linked verbs are the point.
   if ((tags.some((x) => VERB_TAGS.includes(x)) || VERB_TITLE.test(lesson.title || "")) && has("conjugate")) return "conjugate";
   if (tags.includes("voornaamwoorden") && has("pronouns")) return "pronouns";
-  if (tags.includes("voorzetsels") && has("fill")) return "fill";
+  if (["voorzetsels", "lidwoorden", "de-het", "voegwoorden"].some((x) => tags.includes(x)) && has("fill")) return "fill";
   return null;
 }
 
