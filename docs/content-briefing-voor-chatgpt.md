@@ -390,13 +390,18 @@ staat het in beide lijsten. De app gebruikt dit om een zin om te zetten naar een
 ```
 
 **Korte uitleg (`short`).** Leerlingen zien eerst de korte uitleg, met een knop "Lees meer" die de
-volledige `explanation` laat zien. De korte uitleg is **net genoeg om de oefening te maken**, niet meer:
+volledige `explanation` laat zien. De korte uitleg is **compleet maar compact**: alles wat een leerling
+nodig heeft om de vorm zelf te maken en de oefening goed te doen, zonder de rest.
 
-- Maximaal ongeveer 60–80 woorden, plus hooguit één kleine tabel of lijstje.
-- De regel in 1–3 zinnen, in gewone taal op het niveau van het onderwerp (A0/A1 heel eenvoudig).
-- 2–3 korte voorbeelden, met het belangrijke stukje in `<strong>`.
-- Geen uitzonderingen, geschiedenis, achtergrond of "let op"-lijstjes: die staan in de volledige uitleg.
-- Geen kop (`<h2>`/`<h3>`): de titel staat er al boven.
+- **Volledig voor de kern.** Elke stap om tot de vorm te komen staat erin. Bij het perfectum dus: dat het
+  *hebben* of *zijn* + voltooid deelwoord is, wanneer *hebben* en wanneer *zijn*, en hoe je het voltooid
+  deelwoord maakt (ge- + stam + -t/-d, 't kofschip, en dat sterke werkwoorden een eigen vorm hebben).
+- **Compact.** Ongeveer 100–200 woorden. Liever een klein tabelletje of lijstje dan lange zinnen.
+- Gewone taal op het niveau van het onderwerp (A0/A1 heel eenvoudig).
+- Bij elke stap een kort Nederlands voorbeeld, met het belangrijke stukje in `<strong>`.
+- Laat weg wat niet nodig is om de oefening te maken: zeldzame uitzonderingen, achtergrond,
+  vergelijkingen met andere talen, lange "let op"-lijstjes. Die staan in de volledige uitleg.
+- Geen kop (`<h2>`) bovenaan: de titel staat er al boven. Een `<h3>` per stap mag als dat helpt.
 - Zelfde HTML-bouwstenen als `explanation` (zie *Uitleg opmaken*).
 - `shortEn` is dezelfde korte uitleg in eenvoudig Engels (B1); voorbeelden blijven Nederlands.
 - Laat `explanation` staan zoals hij is: de korte versie komt erbij, hij vervangt niets.
@@ -404,13 +409,23 @@ volledige `explanation` laat zien. De korte uitleg is **net genoeg om de oefenin
 Voorbeeld (`topic.perfectum`):
 
 ```html
-<p>Over iets dat klaar is, praat je vaak in het perfectum: <strong>hebben/zijn + voltooid deelwoord</strong>.
-Het deelwoord staat achteraan.</p>
+<p>Over iets dat klaar is, praat je vaak in het perfectum: <strong>hebben of zijn + voltooid deelwoord</strong>.
+Het voltooid deelwoord staat achteraan in de zin.</p>
+<h3>1. Hebben of zijn?</h3>
 <ul>
-  <li>Ik <strong>heb</strong> gisteren <strong>gewerkt</strong>.</li>
-  <li>Zij <strong>is</strong> naar huis <strong>gegaan</strong>.</li>
+  <li>Meestal <strong>hebben</strong>: Ik <strong>heb</strong> gewerkt.</li>
+  <li><strong>Zijn</strong> bij beweging naar een plek of bij verandering: Ik <strong>ben</strong> naar huis gegaan.
+  Ook bij <em>zijn</em>, <em>worden</em> en <em>blijven</em>.</li>
 </ul>
-<p>Meestal <em>hebben</em>; <em>zijn</em> bij beweging naar een plek of verandering (gaan, komen, worden).</p>
+<h3>2. Het voltooid deelwoord</h3>
+<ul>
+  <li>Regelmatig: <strong>ge- + stam + t of d</strong>. Eindigt de stam op een letter uit
+  <strong>'t kofschip</strong> (t, k, f, s, ch, p)? Dan <strong>-t</strong>: werk → <strong>gewerkt</strong>.
+  Anders <strong>-d</strong>: woon → <strong>gewoond</strong>.</li>
+  <li>Onregelmatig: een eigen vorm, die leer je uit je hoofd: gaan → <strong>gegaan</strong>,
+  zien → <strong>gezien</strong>, eten → <strong>gegeten</strong>.</li>
+  <li>Begint het werkwoord met be-, ge-, her-, ont-, ver-? Dan geen ge-: betalen → <strong>betaald</strong>.</li>
+</ul>
 ```
 
 **Categorie.** `category` is `grammar` (grammatica), `spelling` of `pronunciation` (uitspraak).
