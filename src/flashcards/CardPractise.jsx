@@ -108,10 +108,6 @@ export default function CardPractise({ lesson }) {
   // Without a clear topic the button is Flashcards: it always names what it starts.
   const recommended =
     kinds.find((k) => k.key === recommendedKind(lesson, kinds)) || kinds.find((k) => k.key === "flashcards") || kinds[0];
-  const openMenu = () => {
-    setKindKey(null);
-    setOpen(true);
-  };
   const start = () => {
     if (recommended.lists.length > 1 && recommended.all) go(recommended.all);
     else choose(recommended); // one list: straight there; several (flashcards): pick the list
@@ -127,7 +123,7 @@ export default function CardPractise({ lesson }) {
     <span className="cp-wrap" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
       <button
         type="button"
-        className={`cp-button ${kinds.length > 1 ? "has-more" : ""}`}
+        className="cp-button"
         title={t("cp.startKind", { kind: recommended.label })}
         aria-label={t("cp.aria", { name: lesson.title })}
         onClick={start}
@@ -135,12 +131,21 @@ export default function CardPractise({ lesson }) {
         <recommended.icon aria-hidden="true" />{" "}
         {recommended.label}
       </button>
-      {kinds.length > 1 && (
-        // Says how many other exercises there are, so the button isn't mistaken for the only one.
-        <button type="button" className="cp-button cp-more" title={t("cp.otherKinds")} aria-label={t("cp.otherKinds")} onClick={openMenu}>
-          {t("cp.more", { n: kinds.length - 1 })} <span aria-hidden="true">▾</span>
-        </button>
-      )}
+      {/* The other exercises as small round icons next to it: all visible, the name on hover. */}
+      {kinds
+        .filter((k) => k !== recommended)
+        .map((k) => (
+          <button
+            key={k.key}
+            type="button"
+            className="cp-icon"
+            title={t("cp.startKind", { kind: k.label })}
+            aria-label={t("cp.startKind", { kind: k.label })}
+            onClick={() => choose(k)}
+          >
+            <k.icon aria-hidden="true" />
+          </button>
+        ))}
       {open && (
         <Dialog title={t("cp.title", { name: lesson.title })} onClose={close}>
           {!kind ? (
