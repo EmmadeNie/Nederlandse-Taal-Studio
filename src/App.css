@@ -2104,3 +2104,10 @@ svg[class^="ph"], button svg, h4 svg, .board-meta-item svg {
   font-size: 0.75rem;
   color: var(--error-text);
 }
+
+/* "Lees meer" under the short explanation of a grammar topic */
+.topic-readmore {
+  display: inline-block;
+  margin-top: 0.35rem;
+  font-weight: 600;
+}

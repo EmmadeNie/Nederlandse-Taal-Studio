@@ -336,8 +336,11 @@ staat het in beide lijsten. De app gebruikt dit om een zin om te zetten naar een
 ### Gemarkeerde woorden (`marks`)
 
 `marks` markeert losse woorden van een bepaalde soort, zodat de app er een **invuloefening** van maakt:
-"Het boek ligt ___ de tafel." → *op*. De oefening start vanuit een woordenlijst (bijvoorbeeld de lijst
-voorzetsels) en gebruikt alle zinnen waarin een woord uit die lijst gemarkeerd is.
+"Het boek ligt ___ de tafel." → *op*. Invullen verschijnt op twee manieren:
+
+- vanuit een **zinnenlijst** van een les: elk gemarkeerd stukje in die zinnen wordt een gat;
+- vanuit een **woordenlijst** (bijvoorbeeld de lijst voorzetsels): alle zinnen in de bibliotheek waarin een
+  woord uit die lijst gemarkeerd is (via `wordId`).
 
 ```json
 "nl": "Ik loop van school naar huis.",
@@ -350,8 +353,11 @@ voorzetsels) en gebruikt alle zinnen waarin een woord uit die lijst gemarkeerd i
 - `text`: letterlijk zoals in de zin (hoofdletter meetellen), **in volgorde van links naar rechts**.
 - `kind`: een waarde uit `vocabularies.markKinds` in de export (nu: `voorzetsel`, `vraagwoord`, `lidwoord`,
   `voegwoord`). Een nieuwe soort voeg je eerst toe met `vocab.add` (`kind: "markKind"`).
-- `wordId`: het woord in de bibliotheek (bijvoorbeeld `word.op`). **Altijd invullen**: zonder `wordId` komt
-  de zin niet in de oefening. Bestaat het woord nog niet, voeg het dan eerst toe.
+- `wordId`: het woord in de bibliotheek (bijvoorbeeld `word.op`). Vul het in waar het woord bestaat: alleen
+  dan werkt Invullen ook vanuit een woordenlijst. Voor een zinnenlijst is het niet nodig (lidwoorden
+  *de*/*het*/*een* mogen zonder `wordId`).
+- Hetzelfde stukje twee keer in één zin ("in **de** stad met **de** fiets") wordt één keer gevraagd: het
+  eerste. Markeer dus bij voorkeur het stukje waar het om gaat.
 - Twee stukjes van één woord: *over … heen* krijgt twee marks met `wordId: "word.overheen"`; de app maakt
   van het eerste stukje het gat. In één woord vast: bij *ernaartoe* markeer je alleen `naartoe`.
 - Markeer alleen echte gevallen: *voor* als voorzetsel ("voor het huis"), niet als deel van een ander woord;
@@ -368,9 +374,11 @@ voorzetsels) en gebruikt alle zinnen waarin een woord uit die lijst gemarkeerd i
   "category": "grammar",
   "introducedAtLevel": "A2",
   "summary": "Korte omschrijving.",
+  "short": "<p>Korte uitleg in HTML: net genoeg om de oefening te maken.</p>",
   "explanation": "<p>Uitgebreide uitleg in HTML, zie hieronder.</p>",
   "titleEn": "The present perfect",
   "summaryEn": "Short description in English.",
+  "shortEn": "<p>The same short explanation in English.</p>",
   "explanationEn": "<p>The same explanation in English, in the same HTML.</p>",
   "grammarTags": ["perfectum"],
   "themes": ["grammatica"],
@@ -379,6 +387,45 @@ voorzetsels) en gebruikt alle zinnen waarin een woord uit die lijst gemarkeerd i
   "exampleSentenceIds": ["sentence.ik-heb-gewerkt"],
   "reviewStatus": "ai-reviewed"
 }
+```
+
+**Korte uitleg (`short`).** Leerlingen zien eerst de korte uitleg, met een knop "Lees meer" die de
+volledige `explanation` laat zien. De korte uitleg is **compleet maar compact**: alles wat een leerling
+nodig heeft om de vorm zelf te maken en de oefening goed te doen, zonder de rest.
+
+- **Volledig voor de kern.** Elke stap om tot de vorm te komen staat erin. Bij het perfectum dus: dat het
+  *hebben* of *zijn* + voltooid deelwoord is, wanneer *hebben* en wanneer *zijn*, en hoe je het voltooid
+  deelwoord maakt (ge- + stam + -t/-d, 't kofschip, en dat sterke werkwoorden een eigen vorm hebben).
+- **Compact.** Ongeveer 100–200 woorden. Liever een klein tabelletje of lijstje dan lange zinnen.
+- Gewone taal op het niveau van het onderwerp (A0/A1 heel eenvoudig).
+- Bij elke stap een kort Nederlands voorbeeld, met het belangrijke stukje in `<strong>`.
+- Laat weg wat niet nodig is om de oefening te maken: zeldzame uitzonderingen, achtergrond,
+  vergelijkingen met andere talen, lange "let op"-lijstjes. Die staan in de volledige uitleg.
+- Geen kop (`<h2>`) bovenaan: de titel staat er al boven. Een `<h3>` per stap mag als dat helpt.
+- Zelfde HTML-bouwstenen als `explanation` (zie *Uitleg opmaken*).
+- `shortEn` is dezelfde korte uitleg in eenvoudig Engels (B1); voorbeelden blijven Nederlands.
+- Laat `explanation` staan zoals hij is: de korte versie komt erbij, hij vervangt niets.
+
+Voorbeeld (`topic.perfectum`):
+
+```html
+<p>Over iets dat klaar is, praat je vaak in het perfectum: <strong>hebben of zijn + voltooid deelwoord</strong>.
+Het voltooid deelwoord staat achteraan in de zin.</p>
+<h3>1. Hebben of zijn?</h3>
+<ul>
+  <li>Meestal <strong>hebben</strong>: Ik <strong>heb</strong> gewerkt.</li>
+  <li><strong>Zijn</strong> bij beweging naar een plek of bij verandering: Ik <strong>ben</strong> naar huis gegaan.
+  Ook bij <em>zijn</em>, <em>worden</em> en <em>blijven</em>.</li>
+</ul>
+<h3>2. Het voltooid deelwoord</h3>
+<ul>
+  <li>Regelmatig: <strong>ge- + stam + t of d</strong>. Eindigt de stam op een letter uit
+  <strong>'t kofschip</strong> (t, k, f, s, ch, p)? Dan <strong>-t</strong>: werk → <strong>gewerkt</strong>.
+  Anders <strong>-d</strong>: woon → <strong>gewoond</strong>.</li>
+  <li>Onregelmatig: een eigen vorm, die leer je uit je hoofd: gaan → <strong>gegaan</strong>,
+  zien → <strong>gezien</strong>, eten → <strong>gegeten</strong>.</li>
+  <li>Begint het werkwoord met be-, ge-, her-, ont-, ver-? Dan geen ge-: betalen → <strong>betaald</strong>.</li>
+</ul>
 ```
 
 **Categorie.** `category` is `grammar` (grammatica), `spelling` of `pronunciation` (uitspraak).
@@ -397,8 +444,8 @@ tags. Voorbeelden:
   "data": { "category": "spelling" }, "reason": "Lettergrepen gaan over spelling." }
 ```
 
-**Nederlands en Engels.** `title`, `summary` en `explanation` zijn Nederlands; leerlingen zien die
-altijd eerst. `titleEn`, `summaryEn` en `explanationEn` zijn dezelfde teksten in het Engels: leerlingen
+**Nederlands en Engels.** `title`, `summary`, `short` en `explanation` zijn Nederlands; leerlingen zien die
+altijd eerst. `titleEn`, `summaryEn`, `shortEn` en `explanationEn` zijn dezelfde teksten in het Engels: leerlingen
 kunnen per regel naar Engels omschakelen. Vertaal de inhoud, niet de voorbeelden: Nederlandse
 voorbeeldwoorden en -zinnen blijven Nederlands, met eventueel de Engelse betekenis erachter
 (*Ik heb gewerkt* = I have worked). Houd dezelfde opbouw, kaders en tabellen aan als in de Nederlandse
