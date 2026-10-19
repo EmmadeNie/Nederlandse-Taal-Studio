@@ -175,7 +175,7 @@ export default function LeerpadBoard({ studentId }) {
           lanes={lanes}
           cards={steps}
           isCardVisible={(s) => (!onlyImportant || s.important) && matchesFilter(stepContent(s), search, level, label)}
-          cardClass={(s) => [s.lesson_id ? "" : "is-zijpad", s.important ? "is-important" : ""].join(" ").trim()}
+          cardClass={(s) => (s.lesson_id ? "" : "is-zijpad")}
           renderCard={(s) => {
             const c = stepContent(s);
             return (
