@@ -8,7 +8,7 @@
  * the noun (de or het).
  */
 import { locateParts } from "../data/sentenceParts";
-import { inExercises } from "../data";
+import { getItem, inExercises } from "../data";
 
 export const PRONOUN_KINDS = ["persoonlijk", "bezittelijk", "wederkerend"];
 
@@ -70,6 +70,20 @@ export function pronounQuestions(sentences, kind = null) {
   });
   return out;
 }
+
+/**
+ * The kind of pronoun a lesson is about, or null for all: a lesson about reflexive verbs
+ * practises the reflexive pronouns (me, je, zich, ons …), not every pronoun in its sentences.
+ */
+export function lessonPronounKind(lesson) {
+  if (!lesson) return null;
+  const tags = (lesson.topic_ids || []).flatMap((id) => getItem(id)?.grammarTags || []);
+  return tags.includes("reflexieve-werkwoorden") || /reflexie|wederkerend/i.test(lesson.title || "") ? "wederkerend" : null;
+}
+
+/** Sentences with a marked pronoun of `kind` (any kind when null). */
+export const withPronounsOf = (sentences, kind = null) =>
+  sentences.filter((s) => (s.pronouns || []).some((p) => !kind || p.type === kind));
 
 /** The kinds that occur (for the Alles / Persoonlijk / … choice). */
 export const pronounKindsIn = (sentences) =>

@@ -49,6 +49,7 @@ export default function Drill({
   verbs = [],
   words = [],
   pronounSentences = [],
+  pronounKind = null,
   tense: startTense,
   title,
   level,
@@ -83,7 +84,8 @@ export default function Drill({
       : gaps.length
         ? ["forms", "sentences"]
         : [];
-  const [mode, setMode] = useState(fill || pron ? "all" : "forms");
+  // A lesson about one kind of pronoun (reflexive verbs → wederkerend) starts with that kind.
+  const [mode, setMode] = useState(fill ? "all" : pron ? (pronounKinds.includes(pronounKind) ? pronounKind : "all") : "forms");
   // verbs: nl | en (verb hint); fill: en | none (sentence hint); pronouns: kind | person (what each gap says)
   const [hint, setHint] = useState(fill ? "en" : pron ? "kind" : "nl");
   const [size, setSize] = useState(10);

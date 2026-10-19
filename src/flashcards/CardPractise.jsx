@@ -8,6 +8,7 @@ import { getItem } from "../data";
 import { sentencesForLists } from "../leerpad/sentenceLists";
 import { lessonLists } from "./cards";
 import { drillable, fillWordsOf } from "./conjugate";
+import { lessonPronounKind, withPronounsOf } from "./pronouns";
 
 const verbsIn = (items) => drillable(items.filter((i) => i.partOfSpeech === "verb"));
 
@@ -51,7 +52,7 @@ function practiseKinds(lesson, t) {
   // every sentence, so "has sentences with pronouns" would put it on almost every card; anyone can
   // still practise them from Mijn flashcards.
   const aboutPronouns = (lesson.topic_ids || []).some((id) => (getItem(id)?.grammarTags || []).includes("voornaamwoorden"));
-  const ownWithPronouns = sentencesForLists(lesson.sentence_list).filter((s) => s.pronouns?.length).length;
+  const ownWithPronouns = withPronounsOf(sentencesForLists(lesson.sentence_list), lessonPronounKind(lesson)).length;
   if (aboutPronouns) {
     kinds.push({
       key: "pronouns",
@@ -74,8 +75,9 @@ const VERB_TITLE = /werkwoord|vervoeg|perfectum|imperfectum|verleden tijd/i;
 function recommendedKind(lesson, kinds) {
   const tags = (lesson.topic_ids || []).flatMap((id) => getItem(id)?.grammarTags || []);
   const has = (key) => kinds.some((k) => k.key === key);
-  if (tags.includes("voornaamwoorden") && has("pronouns")) return "pronouns";
+  // Verbs first: a lesson about reflexive verbs also has a pronoun topic, but its linked verbs are the point.
   if ((tags.some((x) => VERB_TAGS.includes(x)) || VERB_TITLE.test(lesson.title || "")) && has("conjugate")) return "conjugate";
+  if (tags.includes("voornaamwoorden") && has("pronouns")) return "pronouns";
   if (tags.includes("voorzetsels") && has("fill")) return "fill";
   return null;
 }
@@ -134,8 +136,9 @@ export default function CardPractise({ lesson }) {
         {recommended.label}
       </button>
       {kinds.length > 1 && (
+        // Says how many other exercises there are, so the button isn't mistaken for the only one.
         <button type="button" className="cp-button cp-more" title={t("cp.otherKinds")} aria-label={t("cp.otherKinds")} onClick={openMenu}>
-          ▾
+          {t("cp.more", { n: kinds.length - 1 })} <span aria-hidden="true">▾</span>
         </button>
       )}
       {open && (
