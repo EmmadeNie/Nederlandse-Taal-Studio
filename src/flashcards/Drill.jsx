@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useI18n } from "../i18n/context";
 import { VerbTile } from "../components/RelatedWords";
 import { CaretLeft } from "../icons";
-import { shuffle } from "./cards";
+import { requeue, shuffle } from "./cards";
 import { TENSES, drillable, gapIsRight, gapQuestions, gapRound, isRight, isRightGaps, makeRound, markQuestions } from "./conjugate";
 import { LEVELS, sentences } from "../data";
 import { pronounKindsIn, pronounQuestions } from "./pronouns";
@@ -135,12 +135,15 @@ export default function Drill({
     setMore([]);
     setResult(null);
     setWrong(new Map());
+    setMisses(new Map());
     setHistory([]);
   };
 
   // "Vorige": every step on remembers where we were, so you can go back and answer again.
   const [history, setHistory] = useState([]);
-  const remember = () => setHistory((h) => [...h, { queue, wrong }]);
+  // How often each question was answered wrong this round (it comes back further each time).
+  const [misses, setMisses] = useState(() => new Map());
+  const remember = () => setHistory((h) => [...h, { queue, wrong, misses }]);
   const previous = () => {
     if (!history.length) return;
     clearTimeout(timer.current);
@@ -148,6 +151,7 @@ export default function Drill({
     setHistory((h) => h.slice(0, -1));
     setQueue(last.queue);
     setWrong(last.wrong);
+    setMisses(last.misses);
     setTyped("");
     setMore([]);
     setResult(null);
@@ -159,12 +163,10 @@ export default function Drill({
     setTyped("");
     setMore([]);
     if (result === "wrong") {
-      // Back in a few questions later.
-      setQueue((q) => {
-        const rest = q.slice(1);
-        const at = Math.min(3, rest.length);
-        return [...rest.slice(0, at), q[0], ...rest.slice(at)];
-      });
+      // Back in the round, each time a bit further (see requeue).
+      const n = (misses.get(current.id) || 0) + 1;
+      setMisses((m) => new Map(m).set(current.id, n));
+      setQueue((q) => requeue(q, n));
     } else {
       setQueue((q) => q.slice(1));
     }

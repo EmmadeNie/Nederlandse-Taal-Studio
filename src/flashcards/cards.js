@@ -109,3 +109,16 @@ export function parseListKey(key) {
   const m = /^(words|verbs|sentences)(?:\.(\d+))?$/.exec(key || "");
   return m ? { part: m[1], index: m[2] != null ? Number(m[2]) : null } : null;
 }
+
+/**
+ * "Nog eens": where a card (or question) goes back in the pile. Each time a bit
+ * further: 1st after 3, 2nd after 6, 3rd at the end of the round; after that it
+ * leaves the round (it is in "Alleen de fouten"). Never twice in a row: with
+ * nothing else left it leaves the round too. Returns the new queue.
+ */
+export function requeue(queue, misses) {
+  const [current, ...rest] = queue;
+  if (!rest.length || misses > 3) return rest;
+  const at = misses === 1 ? Math.min(3, rest.length) : misses === 2 ? Math.min(6, rest.length) : rest.length;
+  return [...rest.slice(0, at), current, ...rest.slice(at)];
+}

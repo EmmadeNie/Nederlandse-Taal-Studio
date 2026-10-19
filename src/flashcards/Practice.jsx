@@ -3,7 +3,7 @@ import { useI18n } from "../i18n/context";
 import { LEVELS } from "../data";
 import { VerbTile } from "../components/RelatedWords";
 import { CaretLeft } from "../icons";
-import { shuffle } from "./cards";
+import { requeue, shuffle } from "./cards";
 import FlagButton from "../review/FlagButton";
 
 const DIRECTIONS = ["nl-en", "en-nl", "mix"];
@@ -51,6 +51,7 @@ export default function Practice({ cards, title, onExit, onFinish, finishLabel, 
   const [queue, setQueue] = useState(() => deal(chunk(0)));
   const [flipped, setFlipped] = useState(false);
   const [hard, setHard] = useState(() => new Set()); // ids answered "nog eens" in this round
+  const [misses, setMisses] = useState(() => new Map()); // id → how often "nog eens" this round
   const [total, setTotal] = useState(() => chunk(0).length);
   // Earlier states, so "Vorige" can undo the last answer and show that card again.
   const [history, setHistory] = useState([]);
@@ -60,6 +61,7 @@ export default function Practice({ cards, title, onExit, onFinish, finishLabel, 
     setQueue(deal(list, dir));
     setFlipped(false);
     setHard(new Set());
+    setMisses(new Map());
     setHistory([]);
   };
 
@@ -103,24 +105,23 @@ export default function Practice({ cards, title, onExit, onFinish, finishLabel, 
     setHistory((h) => h.slice(0, -1));
     setQueue(last.queue);
     setHard(last.hard);
+    setMisses(last.misses);
     setFlipped(false);
   };
 
   const current = queue[0];
   const answer = (knew) => {
     if (!current || !flipped) return;
-    setHistory((h) => [...h, { queue, hard }]);
+    setHistory((h) => [...h, { queue, hard, misses }]);
     setFlipped(false);
     if (knew) {
       setQueue((q) => q.slice(1));
     } else {
       setHard((h) => new Set(h).add(current.card.id));
-      // Back into the pile a few cards later (or last, near the end).
-      setQueue((q) => {
-        const rest = q.slice(1);
-        const at = Math.min(3, rest.length);
-        return [...rest.slice(0, at), q[0], ...rest.slice(at)];
-      });
+      // Back into the pile, each time a bit further (see requeue).
+      const n = (misses.get(current.card.id) || 0) + 1;
+      setMisses((m) => new Map(m).set(current.card.id, n));
+      setQueue((q) => requeue(q, n));
     }
   };
 
