@@ -1438,3 +1438,67 @@ span.step-status {
   gap: 0.35rem;
   white-space: nowrap;
 }
+
+/* ⭐ Belangrijk on a leerpad card: next to the status icon, top right */
+.step-important {
+  position: absolute;
+  top: 6px;
+  right: 36px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  background: none;
+  padding: 0;
+  font-size: 15px;
+  color: var(--text-dim);
+  cursor: pointer;
+  opacity: 0.55;
+}
+
+.step-important:hover {
+  opacity: 1;
+  border-color: var(--border);
+}
+
+.step-important.is-on {
+  color: #f5c542;
+  opacity: 1;
+}
+
+span.step-important {
+  cursor: default;
+}
+
+.step-important ~ .board-card-title {
+  padding-right: 62px;
+}
+
+.board-card.is-important {
+  border-color: color-mix(in srgb, #f5c542 60%, var(--border));
+  box-shadow: inset 0 3px 0 #f5c542;
+}
+
+.important-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.important-filter.is-on {
+  color: #e0ad1f;
+  border-color: #f5c542;
+  background: color-mix(in srgb, #f5c542 15%, var(--surface));
+}

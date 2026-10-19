@@ -4,6 +4,7 @@
  * IconContext in main.jsx (1.15em, regular); active nav items use weight="fill".
  */
 import {
+  Star,
   Scissors,
   Flag,
   UserList,
@@ -155,6 +156,7 @@ export {
   UserList,
   Flag,
   Scissors,
+  Star,
   Plus,
   UploadSimple,
   Warning,

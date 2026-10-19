@@ -23,9 +23,9 @@ import CardPractise from "../flashcards/CardPractise";
 import * as api from "./api";
 import { planByLevel } from "./byLevel";
 import ListHeading from "../flashcards/ListHeading";
-import StepStatus, { StatusLegend } from "./StepStatus";
+import StepStatus, { StatusLegend, StepImportant } from "./StepStatus";
 import { BoardFilters, CardBody, Chips, Dialog, LinkList, LinksEditor, MetaItem } from "./shared";
-import { ICONS } from "../icons";
+import { ICONS, Star } from "../icons";
 import { LEVELS, linkCount, matchesFilter, stepContent } from "./util";
 
 /**
@@ -120,6 +120,13 @@ export default function LeerpadBoard({ studentId }) {
       await load();
     });
 
+  // ⭐ Belangrijk, and the filter that shows only those.
+  const [onlyImportant, setOnlyImportant] = useState(false);
+  const changeImportant = (step, important) => {
+    setSteps((ss) => ss.map((s) => (s.id === step.id ? { ...s, important } : s)));
+    run(() => api.setStepImportant(step.id, important));
+  };
+
   const changeStatus = (step, status) => {
     setSteps((ss) => ss.map((s) => (s.id === step.id ? { ...s, status } : s)));
     run(() => api.setStepStatus(step.id, status));
@@ -143,6 +150,16 @@ export default function LeerpadBoard({ studentId }) {
       {steps.length > 0 && (
         <div className="lp-board-tools">
           <StatusLegend canChange={canArrange} />
+          {steps.some((s) => s.important) && (
+            <button
+              type="button"
+              className={`important-filter ${onlyImportant ? "is-on" : ""}`}
+              aria-pressed={onlyImportant}
+              onClick={() => setOnlyImportant((x) => !x)}
+            >
+              <Star weight={onlyImportant ? "fill" : "regular"} /> {t("important.filter")}
+            </button>
+          )}
           {isDocent && (
             <button type="button" className="fb-btn-secondary" onClick={organiseByLevel}>
               {t("byLevel.button")}
@@ -157,13 +174,14 @@ export default function LeerpadBoard({ studentId }) {
         <Board
           lanes={lanes}
           cards={steps}
-          isCardVisible={(s) => matchesFilter(stepContent(s), search, level, label)}
-          cardClass={(s) => (s.lesson_id ? "" : "is-zijpad")}
+          isCardVisible={(s) => (!onlyImportant || s.important) && matchesFilter(stepContent(s), search, level, label)}
+          cardClass={(s) => [s.lesson_id ? "" : "is-zijpad", s.important ? "is-important" : ""].join(" ").trim()}
           renderCard={(s) => {
             const c = stepContent(s);
             return (
               <>
               <StepStatus status={s.status} onChange={canArrange ? (status) => changeStatus(s, status) : undefined} />
+              <StepImportant important={s.important} onChange={canArrange ? (v) => changeImportant(s, v) : undefined} />
               <CardBody
                 title={c.title}
                 level={c.level}
