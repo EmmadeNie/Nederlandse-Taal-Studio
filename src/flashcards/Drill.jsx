@@ -3,7 +3,7 @@ import { useI18n } from "../i18n/context";
 import { VerbTile } from "../components/RelatedWords";
 import { CaretLeft } from "../icons";
 import { requeue, shuffle } from "./cards";
-import { TENSES, drillable, gapIsRight, gapQuestions, gapRound, isRight, isRightGaps, makeRound, markQuestions } from "./conjugate";
+import { TENSES, drillable, gapIsRight, gapQuestions, gapRound, isRight, isRightGaps, makeRound, markQuestions, sentenceMarkQuestions } from "./conjugate";
 import { LEVELS, sentences } from "../data";
 import { pronounKindsIn, pronounQuestions } from "./pronouns";
 import FlagButton from "../review/FlagButton";
@@ -48,6 +48,7 @@ export default function Drill({
   kind = "verbs",
   verbs = [],
   words = [],
+  markSentences = [],
   pronounSentences = [],
   pronounKind = null,
   tense: startTense,
@@ -69,7 +70,12 @@ export default function Drill({
     [fill, pron, verbs]
   );
   const gaps = gapsByTense[tense];
-  const marked = useMemo(() => (fill ? markQuestions(words, sentences) : []), [fill, words]);
+  // Invullen: the words' marks in library sentences + every mark in the list's own sentences.
+  const marked = useMemo(() => {
+    if (!fill) return [];
+    const all = [...markQuestions(words, sentences), ...sentenceMarkQuestions(markSentences)];
+    return [...new Map(all.map((q) => [q.id, q])).values()];
+  }, [fill, words, markSentences]);
   const pronouns = useMemo(() => (pron ? pronounQuestions(pronounSentences) : []), [pron, pronounSentences]);
   const markKinds = [...new Set(marked.map((q) => q.kind))];
   const pronounKinds = pron ? pronounKindsIn(pronounSentences) : [];
