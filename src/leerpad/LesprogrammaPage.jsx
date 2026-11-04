@@ -29,6 +29,7 @@ import * as api from "./api";
 import { BoardFilters, CardBody, Chips, Dialog, MetaItem } from "./shared";
 import { CheckSquare, Eye, ICONS } from "../icons";
 import { LEVELS, matchesFilter } from "./util";
+import LessonExplanation from "./LessonExplanation";
 
 /**
  * Lesprogramma: the master board. Lanes are free (like Trello); the CEFR
@@ -379,9 +380,11 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
   const { t } = useI18n();
   const [form, setForm] = useState({
     title: lesson.title,
+    title_en: lesson.title_en || "",
     level: lesson.level || "",
     label_ids: lesson.label_ids,
     explanation: lesson.explanation,
+    explanation_en: lesson.explanation_en || "",
     lane_id: lesson.lane_id,
     word_list: lesson.word_list || null,
     sentence_list: lesson.sentence_list || null,
@@ -400,7 +403,12 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
   const set = (k) => (v) => setForm((f) => ({ ...f, [k]: v }));
   const autosave = useAutosave();
   // Text as last sent to the database, so blur + close don't save twice.
-  const sent = useRef({ title: lesson.title, explanation: lesson.explanation });
+  const sent = useRef({
+    title: lesson.title,
+    explanation: lesson.explanation,
+    title_en: lesson.title_en || "",
+    explanation_en: lesson.explanation_en || "",
+  });
 
   useEffect(() => {
     // Who has this lesson is staff information; students only see the lesson.
@@ -426,6 +434,10 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
     if (!title) set("title")(sent.current.title); // an empty title is not saved
     else if (title !== sent.current.title) patch.title = title;
     if (form.explanation !== sent.current.explanation) patch.explanation = form.explanation;
+    // English: optional, an empty field clears it.
+    const titleEn = form.title_en.trim();
+    if (titleEn !== (sent.current.title_en || "")) patch.title_en = titleEn || null;
+    if (form.explanation_en !== (sent.current.explanation_en || "")) patch.explanation_en = form.explanation_en || null;
     return patch;
   };
   const saveText = () => {
@@ -532,6 +544,16 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
         </>
       )}
 
+      {!editing ? (
+        <InternalLinkContext.Provider value={followLink}>
+          <LessonExplanation
+            explanation={form.explanation}
+            explanationEn={form.explanation_en}
+            titleEn={form.title_en}
+            empty={<p className="dim lp-empty">{t("lp.noExplanation")}</p>}
+          />
+        </InternalLinkContext.Provider>
+      ) : (
       <div className="lp-section">
         <h4>
           {t("lp.explanation")}{" "}
@@ -559,7 +581,35 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
             label={t("lp.explanation")}
           />
         )}
+        {/* The same lesson in English (optional): students can switch to it. */}
+        <details className="lp-english" open={Boolean(form.title_en || form.explanation_en) || undefined}>
+          <summary>{t("lp.english")}</summary>
+          <label className="fb-field">
+            <span>{t("lp.titleEn")}</span>
+            <input value={form.title_en} onChange={(e) => set("title_en")(e.target.value)} onBlur={saveText} lang="en" />
+          </label>
+          <div className="fb-field">
+            <span>{t("lp.explanationEn")}</span>
+            {preview ? (
+              form.explanation_en.trim() ? (
+                <Markdown className="lp-explanation">{form.explanation_en}</Markdown>
+              ) : (
+                <p className="dim lp-empty">{t("lp.noExplanation")}</p>
+              )
+            ) : (
+              <RichEditor
+                value={form.explanation_en}
+                onChange={set("explanation_en")}
+                onBlur={saveText}
+                lessons={lessons}
+                excludeLessonId={lesson.id}
+                label={t("lp.explanationEn")}
+              />
+            )}
+          </div>
+        </details>
       </div>
+      )}
 
       {(editing || grammarCount(lesson.topic_ids) > 0) && (
         <div className="lp-section">

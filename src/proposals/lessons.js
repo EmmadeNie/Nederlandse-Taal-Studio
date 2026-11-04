@@ -5,7 +5,7 @@
  *   { "op": "lesson.update", "id": "<lessonId>", "baseVersion": "<updatedAt>",
  *     "data": { …changed fields; null clears }, "lane"?: "<laneId>", "after"?: "<lessonId>|null" }
  *
- * Fields (as in the export): title, level, labelIds, explanation (HTML), links [{label, url}],
+ * Fields (as in the export): title, titleEn, level, labelIds, explanation (HTML), explanationEn, links [{label, url}],
  * wordLists, sentenceLists (recipes, as in the lesson editor), topicIds, verbIds.
  * Lessons keep their database ids (uuid); a new lesson gets one when it is created.
  */
@@ -20,9 +20,11 @@ export const LESSON_OPS = ["lesson.add", "lesson.update"];
 // Field in a changeset → column in lessons.
 const COLUMNS = {
   title: "title",
+  titleEn: "title_en",
   level: "level",
   labelIds: "label_ids",
   explanation: "explanation",
+  explanationEn: "explanation_en",
   links: "links",
   wordLists: "word_list",
   sentenceLists: "sentence_list",
@@ -30,7 +32,7 @@ const COLUMNS = {
   verbIds: "verb_ids",
 };
 export const LESSON_FIELDS = Object.keys(COLUMNS);
-const EMPTY = { level: null, labelIds: [], explanation: "", links: [], wordLists: [], sentenceLists: [], topicIds: [], verbIds: [] };
+const EMPTY = { titleEn: null, level: null, labelIds: [], explanation: "", explanationEn: null, links: [], wordLists: [], sentenceLists: [], topicIds: [], verbIds: [] };
 
 const p = (key, vars) => ({ key: `pr.${key}`, vars });
 
@@ -43,9 +45,11 @@ export function lessonFromRow(row) {
     laneId: row.lane_id,
     position: row.position,
     title: row.title,
+    titleEn: row.title_en || null,
     level: row.level || null,
     labelIds: row.label_ids || [],
     explanation: row.explanation || "",
+    explanationEn: row.explanation_en || null,
     links: row.links || [],
     wordLists: lists(row.word_list),
     sentenceLists: lists(row.sentence_list),
@@ -54,7 +58,7 @@ export function lessonFromRow(row) {
   };
 }
 
-const ROW = "id, lane_id, position, title, level, label_ids, explanation, links, word_list, sentence_list, topic_ids, verb_ids, updated_at";
+const ROW = "id, lane_id, position, title, title_en, level, label_ids, explanation, explanation_en, links, word_list, sentence_list, topic_ids, verb_ids, updated_at";
 
 /** Lanes, lessons (sorted per lane) and labels, for checking and the export. */
 export async function loadBoard() {

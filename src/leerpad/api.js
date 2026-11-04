@@ -12,7 +12,7 @@ function check({ data, error }) {
 }
 
 const LESSON_FIELDS =
-  "id, lane_id, position, title, level, label_ids, explanation, links, word_list, sentence_list, topic_ids, verb_ids, " +
+  "id, lane_id, position, title, title_en, level, label_ids, explanation, explanation_en, links, word_list, sentence_list, topic_ids, verb_ids, " +
   "attachments:lesson_attachments(id, file_name, mime_type, size_bytes, storage_path, created_at)";
 
 export { positionBetween } from "./positions";

@@ -35,6 +35,7 @@ export default function LessonValue({ field, value, board }) {
         </span>
       );
     case "explanation":
+    case "explanationEn":
       return (
         <div className="pr-rich">
           <Markdown>{value}</Markdown>

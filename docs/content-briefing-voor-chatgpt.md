@@ -98,9 +98,11 @@ De export bevat ook het bord: `lanes` (de kolommen, van links naar rechts), `lab
   "updatedAt": "2026-10-10T22:52:09.95+00:00",
   "laneId": "9d845284-…", "lane": "A", "order": 1,
   "title": "Werkwoorden vervoegen",
+  "titleEn": "Conjugating verbs",
   "level": "A1",
   "labelIds": ["c162de31-…"], "labels": ["Oefenen"],
   "explanation": "<p>Uitleg in HTML, zoals bij grammatica.</p>",
+  "explanationEn": "<p>The same explanation in English, in the same HTML.</p>",
   "links": [{ "label": "nt2taalmenu.nl", "url": "https://nt2taalmenu.nl/…" }],
   "wordLists": [{ "set": "eerste-regelmatige-werkwoorden" }, { "theme": "dieren", "level": "A1", "upTo": true }],
   "sentenceLists": [{ "set": "mijn-eerste-zinnen-a0" }],
@@ -117,6 +119,11 @@ De export bevat ook het bord: `lanes` (de kolommen, van links naar rechts), `lab
   deze werkwoorden** krijgen de oefening "Vervoegen" (losse vormen en in zinnen); werkwoorden in een woordenlijst
   of zinnenlijst niet. Geef een les over werkwoorden (vervoegen, perfectum, verleden tijd, modale/scheidbare/
   wederkerende werkwoorden, hebben of zijn …) dus altijd de bijbehorende `verbIds`.
+- `titleEn` / `explanationEn`: de les in het Engels. Leerlingen zien eerst het Nederlands en kunnen per
+  les naar Engels omschakelen. Dezelfde regels als bij grammatica (*Nederlands en Engels*): vertaal de
+  inhoud, niet de voorbeelden (Nederlandse woorden en zinnen blijven Nederlands, eventueel met de Engelse
+  betekenis erachter), houd dezelfde HTML-opbouw aan, en schrijf eenvoudig Engels (B1). Links in de uitleg
+  (`href`) blijven hetzelfde; vertaal alleen de linktekst. `null` = alleen Nederlands.
 - `labelIds`: alleen bestaande labels uit `labels`. `attachments` (bestanden) zijn alleen ter info;
   die kun je niet wijzigen.
 - Les-ID's zijn vaste ID's uit de database: gebruik ze zoals ze in de export staan. Een nieuwe les
