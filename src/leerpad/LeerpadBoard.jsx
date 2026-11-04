@@ -28,6 +28,8 @@ import { BoardFilters, CardBody, Chips, Dialog, LinkList, LinksEditor, MetaItem 
 import { ICONS, Star } from "../icons";
 import { LEVELS, linkCount, matchesFilter, stepContent } from "./util";
 import LessonExplanation, { hasEnglishLesson } from "./LessonExplanation";
+import TopicLangToggle from "../components/TopicLangToggle";
+import { useContentLang } from "../components/useContentLang";
 
 /**
  * One student's leerpad. The student and the docent can create, rename and
@@ -370,7 +372,8 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
   const { t } = useI18n();
   const content = stepContent(step);
   // English (switch top right) when the lesson has it: the title at the top and the explanation together.
-  const { lang } = useI18n();
+  // The switch top right sets the start; NL | EN in the lesson switches this lesson only.
+  const [lang, setLang] = useContentLang();
   const hasEn = hasEnglishLesson(content);
   const shownTitle = hasEn && lang === "en" && content.titleEn ? content.titleEn : content.title;
   const isZijpad = !step.lesson_id;
@@ -472,6 +475,7 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
       <div className="lp-feedback">
         <Chips level={content.level} labelIds={content.labelIds} categories={content.categories} kind={isZijpad ? t("kind.zijpad") : t("kind.stap")} />
         <StepFeedback step={step} title={content.title} />
+        {hasEn && <TopicLangToggle lang={lang} onChange={setLang} />}
       </div>
       {isDocent && (
         <div className="lp-source">
@@ -532,7 +536,7 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
       {grammarCount(content.topicIds) > 0 && (
         <div className="lp-section">
           <h4>{t("lg.title")}</h4>
-          <GrammarView ids={content.topicIds} />
+          <GrammarView ids={content.topicIds} lang={lang} />
         </div>
       )}
 

@@ -15,21 +15,22 @@ import { ItemPicker } from "../library/FieldInput";
 
 
 /** The grammar of a lesson: title, level, summary; the explanation opens in place. */
-export function GrammarView({ ids }) {
+export function GrammarView({ ids, lang }) {
   const list = known(ids);
   if (!list.length) return null;
   return (
     <ul className="lg-list">
       {list.map((topic) => (
-        <GrammarItem key={topic.id} topic={topic} />
+        <GrammarItem key={topic.id} topic={topic} lang={lang} />
       ))}
     </ul>
   );
 }
 
-/** One topic in a lesson; NL/EN switch per topic, always starting in Dutch. */
-function GrammarItem({ topic }) {
-  const { t, lang } = useI18n(); // the language switch top right decides
+/** One topic in a lesson, in the lesson's language. */
+function GrammarItem({ topic, lang: lessonLang }) {
+  const { t, lang: appLang } = useI18n();
+  const lang = lessonLang || appLang; // the lesson's NL | EN, else the switch top right
   const text = topicText(topic, lang);
   return (
     <li>
