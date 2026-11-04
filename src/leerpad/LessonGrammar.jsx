@@ -1,9 +1,7 @@
-import { useContentLang } from "../components/useContentLang";
 import { useI18n } from "../i18n/context";
-import TopicLangToggle from "../components/TopicLangToggle";
 import CategoryBadge from "../components/CategoryBadge";
 import { TOPIC_CATEGORIES, categoryOf } from "../data/topicCategory";
-import { hasEnglish, topicText } from "../components/topicLang";
+import { topicText } from "../components/topicLang";
 import { topics } from "../data";
 import TopicExplanation from "../components/TopicExplanation";
 import RelatedWords from "../components/RelatedWords";
@@ -31,8 +29,7 @@ export function GrammarView({ ids }) {
 
 /** One topic in a lesson; NL/EN switch per topic, always starting in Dutch. */
 function GrammarItem({ topic }) {
-  const { t } = useI18n();
-  const [lang, setLang] = useContentLang();
+  const { t, lang } = useI18n(); // the language switch top right decides
   const text = topicText(topic, lang);
   return (
     <li>
@@ -40,7 +37,6 @@ function GrammarItem({ topic }) {
         <summary>
           <strong lang={lang}>{text.title}</strong> <LevelBadge level={topic.introducedAtLevel} />{" "}
           <CategoryBadge topic={topic} />
-          {hasEnglish(topic) && <TopicLangToggle lang={lang} onChange={setLang} />}
           <div className="dim lg-summary" lang={lang}>
             {text.summary}
           </div>

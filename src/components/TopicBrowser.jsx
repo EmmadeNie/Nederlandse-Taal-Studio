@@ -1,5 +1,4 @@
 import { useContentVersion } from "../data/useContent";
-import { useContentLang } from "./useContentLang";
 import { EditItemButton, NewItemButton } from "../library/ItemEditing";
 import { useEffect, useRef } from "react";
 import { LEVELS, topics } from "../data";
@@ -14,8 +13,7 @@ import { pathFor, topicIdFromSlug, topicSlug } from "../routes";
 import CopyLinkButton from "./CopyLinkButton";
 import { useI18n } from "../i18n/context";
 import { useAuth } from "../auth/context";
-import TopicLangToggle from "./TopicLangToggle";
-import { hasEnglish, topicText } from "./topicLang";
+import { topicText } from "./topicLang";
 import CategoryBadge from "./CategoryBadge";
 import { TOPIC_CATEGORIES, categoryOf } from "../data/topicCategory";
 
@@ -99,8 +97,8 @@ export default function TopicBrowser() {
  * starting in Dutch.
  */
 function TopicCard({ topic, isOpen, cardRef, onToggle }) {
-  const { t } = useI18n();
-  const [lang, setLang] = useContentLang();
+  // Dutch or English: the language switch top right decides, for everything.
+  const { t, lang } = useI18n();
   const isStaff = useAuth().role !== "leerling";
   const text = topicText(topic, lang);
   return (
@@ -110,7 +108,6 @@ function TopicCard({ topic, isOpen, cardRef, onToggle }) {
         <h3 lang={lang}>{text.title}</h3>
         {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- keeps button clicks from folding the card */}
         <div className="topic-tools" onClick={(e) => e.stopPropagation()}>
-          {hasEnglish(topic) && <TopicLangToggle lang={lang} onChange={setLang} />}
           <CopyLinkButton path={pathFor("topics", topicSlug(topic.id))} compact />
           <FeedbackButton itemType="topic" itemId={topic.id} itemLabel={topic.title} />
           <EditItemButton item={topic} />
