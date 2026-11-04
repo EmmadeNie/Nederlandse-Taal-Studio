@@ -1527,6 +1527,7 @@ span.step-important {
 .board-card:hover .board-card-title.has-alt .title-alt,
 .board-card:focus-visible .board-card-title.has-alt .title-alt {
   display: inline;
+}
 
 /* Leerpad: "Lesprogramma bekijken" next to the title (students); the way back on the curriculum */
 .lp-browse {
