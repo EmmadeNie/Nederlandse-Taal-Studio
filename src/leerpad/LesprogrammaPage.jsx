@@ -249,6 +249,7 @@ export default function LesprogrammaPage() {
             {isStudent && plannedIds?.has(l.id) && <span className="planned-badge">✓ {t("lp.onYourPath")}</span>}
             <CardBody
               title={(lang === "en" && l.title_en) || l.title}
+              altTitle={lang === "en" ? l.title_en && l.title : l.title_en}
               level={l.level}
               labelIds={l.label_ids}
               meta={
