@@ -27,6 +27,7 @@ import StepStatus, { StatusLegend, StepImportant } from "./StepStatus";
 import { BoardFilters, CardBody, Chips, Dialog, LinkList, LinksEditor, MetaItem } from "./shared";
 import { ICONS, Star } from "../icons";
 import { LEVELS, linkCount, matchesFilter, stepContent } from "./util";
+import LessonExplanation from "./LessonExplanation";
 
 /**
  * One student's leerpad. The student and the docent can create, rename and
@@ -532,12 +533,7 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
           </div>
         </>
       ) : (
-        content.explanation.trim() && (
-          <div className="lp-section">
-            <h4>{t("lp.explanation")}</h4>
-            <Markdown className="lp-explanation">{content.explanation}</Markdown>
-          </div>
-        )
+        <LessonExplanation explanation={content.explanation} explanationEn={content.explanationEn} titleEn={content.titleEn} />
       )}
 
       {grammarCount(content.topicIds) > 0 && (

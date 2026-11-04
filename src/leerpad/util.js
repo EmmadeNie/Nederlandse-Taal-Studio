@@ -19,9 +19,11 @@ export function stepContent(step) {
     const l = step.lesson;
     return {
       title: l.title,
+      titleEn: l.title_en || "",
       level: l.level,
       labelIds: l.label_ids,
       explanation: l.explanation,
+      explanationEn: l.explanation_en || "",
       links: l.links,
       attachments: l.attachments || [],
       wordList: l.word_list || null,
