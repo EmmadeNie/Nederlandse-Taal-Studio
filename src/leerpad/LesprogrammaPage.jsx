@@ -30,6 +30,8 @@ import { BoardFilters, CardBody, Chips, Dialog, MetaItem } from "./shared";
 import { CheckSquare, Eye, ICONS } from "../icons";
 import { LEVELS, matchesFilter } from "./util";
 import LessonExplanation, { hasEnglishLesson } from "./LessonExplanation";
+import TopicLangToggle from "../components/TopicLangToggle";
+import { useContentLang } from "../components/useContentLang";
 
 /**
  * Lesprogramma: the master board. Lanes are free (like Trello); the CEFR
@@ -387,7 +389,8 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
     verb_ids: lesson.verb_ids || [],
   });
   const [preview, setPreview] = useState(!canEdit);
-  const { lang } = useI18n(); // English (switch top right): title and explanation together
+  // The switch top right sets the start; NL | EN in the lesson switches this lesson only.
+  const [lang, setLang] = useContentLang();
   // Docent: see the lesson exactly as a student does (no editors, no staff info).
   const [asStudent, setAsStudent] = useState(false);
   const editing = canEdit && !asStudent;
@@ -478,7 +481,7 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
   };
 
   const planned = new Set((students || []).map((s) => s.id));
-  const hasEn = hasEnglishLesson({ titleEn: form.title_en, explanationEn: form.explanation_en });
+  const hasEn = hasEnglishLesson({ titleEn: form.title_en, explanationEn: form.explanation_en, topicIds: form.topic_ids });
   const shownTitle = hasEn && lang === "en" && form.title_en.trim() ? form.title_en : lesson.title;
 
   return (
@@ -494,6 +497,7 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
       <div className="lp-feedback">
         {!editing && <Chips level={lesson.level} labelIds={lesson.label_ids} />}
         <FeedbackButton itemType="lesson" itemId={lesson.id} itemLabel={lesson.title} />
+        {!editing && hasEn && <TopicLangToggle lang={lang} onChange={setLang} />}
       </div>
       {!isStudent && !asStudent && (
         <div className="lp-source">
@@ -614,7 +618,7 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
         <div className="lp-section">
           <h4>{t("lg.title")}</h4>
           {editing && <GrammarPicker value={form.topic_ids} onChange={choose("topic_ids")} />}
-          <GrammarView ids={editing ? form.topic_ids : lesson.topic_ids} />
+          <GrammarView ids={editing ? form.topic_ids : lesson.topic_ids} lang={editing ? undefined : lang} />
         </div>
       )}
 
