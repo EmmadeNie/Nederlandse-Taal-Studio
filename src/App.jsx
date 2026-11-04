@@ -72,7 +72,6 @@ function App() {
   return (
     <>
       <div className="lang-corner">
-        <FeedbackModeToggle />
         <ThemeToggle />
         <LanguageToggle />
       </div>
@@ -250,6 +249,8 @@ function Studio() {
               )}
             </div>
           </div>
+          {/* Feedback: the switch for the buttons on cards, and (when on) feedback about the app. */}
+          <FeedbackModeToggle />
           {feedbackMode && (
             <button
               className="app-feedback-btn"
