@@ -182,6 +182,12 @@ export default function LesprogrammaPage() {
   return (
     <>
       <div className="lp-page-head">
+        {isStudent && (
+          // Not in a student's menu: the way back to their own board.
+          <button type="button" className="fb-link lp-back" onClick={() => navigate(pathFor("leerpad"))}>
+            ← {t("lp.backToPath")}
+          </button>
+        )}
         <h2>{t("nav.lesprogramma")}</h2>
         <span className="result-count">{t("lp.lessons", { n: lessons.length })}</span>
         {(canEdit || isStudent) && (
