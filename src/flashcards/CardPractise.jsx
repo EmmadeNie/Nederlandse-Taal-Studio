@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useI18n } from "../i18n/context";
+import { translate, useI18n } from "../i18n/context";
+import { HoverAlt, otherLang } from "../leerpad/HoverAlt";
 import { navigate } from "../hooks/useRoute";
 import { pathFor } from "../routes";
 import { Dialog } from "../leerpad/shared";
@@ -25,12 +26,14 @@ function practiseKinds(lesson, t) {
       key: "flashcards",
       icon: Cards,
       label: t("cp.flashcards"),
+      labelKey: "cp.flashcards",
       lists: lists.map((l) => ({ ...l, count: l.items.length, path: `oefen-${l.key}-${lesson.id}` })),
     },
     {
       key: "fill",
       icon: Textbox,
       label: t("fd.title"),
+      labelKey: "fd.title",
       all: `invullen-les-${lesson.id}`,
       // Word lists whose words are marked in sentences, and sentence lists with marks of their own.
       lists: lists
@@ -41,6 +44,7 @@ function practiseKinds(lesson, t) {
       key: "conjugate",
       icon: PencilSimpleLine,
       label: t("vd.title"),
+      labelKey: "vd.title",
       // Only the lesson's linked verbs (verb tiles): word and sentence lists are for flashcards.
       lists: lists
         .filter((l) => l.part === "verbs")
@@ -58,6 +62,7 @@ function practiseKinds(lesson, t) {
       key: "pronouns",
       icon: UserList,
       label: t("pd.title"),
+      labelKey: "pd.title",
       lists: [{ key: "pronouns", label: t("pd.title"), count: ownWithPronouns, path: `voornaamwoorden-les-${lesson.id}` }],
     });
   }
@@ -88,7 +93,7 @@ function recommendedKind(lesson, kinds) {
  * A step with only one choice is skipped. Clicks don't open the card itself.
  */
 export default function CardPractise({ lesson }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [open, setOpen] = useState(false);
   const [kindKey, setKindKey] = useState(null);
   if (!lesson?.id) return null;
@@ -130,7 +135,7 @@ export default function CardPractise({ lesson }) {
           title={t("cp.startKind", { kind: k.label })}
           onClick={() => (k === recommended ? start() : choose(k))}
         >
-          {k.label}
+          <HoverAlt main={k.label} alt={translate(otherLang(lang), k.labelKey)} />
         </button>
       ))}
       {open && (

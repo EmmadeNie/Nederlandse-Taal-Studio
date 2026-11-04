@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "../auth/context";
-import { useI18n } from "../i18n/context";
+import { translate, useI18n } from "../i18n/context";
+import { HoverAlt, otherLang } from "./HoverAlt";
 import Markdown from "../components/Markdown";
 import { InternalLinkContext } from "../components/internalLinks";
 import { navigate, useRoute } from "../hooks/useRoute";
@@ -253,7 +254,7 @@ export default function LesprogrammaPage() {
           isCardVisible={(l) => matchesFilter({ ...l, labelIds: l.label_ids }, search, level, label)}
           renderCard={(l) => (
             <>
-            {isStudent && plannedIds?.has(l.id) && <span className="planned-badge">✓ {t("lp.onYourPath")}</span>}
+            {isStudent && plannedIds?.has(l.id) && <span className="planned-badge">✓ <HoverAlt main={t("lp.onYourPath")} alt={translate(otherLang(lang), "lp.onYourPath")} /></span>}
             <CardBody
               title={(lang === "en" && l.title_en) || l.title}
               altTitle={lang === "en" ? l.title_en && l.title : l.title_en}

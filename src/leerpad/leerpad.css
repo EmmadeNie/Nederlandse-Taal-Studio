@@ -1513,20 +1513,20 @@ span.step-important {
   margin-bottom: 0.5rem;
 }
 
-/* Experiment: on hover a card's title switches to the other language (Dutch ↔ English) */
-.board-card-title.has-alt .title-alt {
-  display: none;
-  font-style: italic;
-}
-
-.board-card:hover .board-card-title.has-alt .title-main,
-.board-card:focus-visible .board-card-title.has-alt .title-main {
+/* Experiment: on a hovered card everything switches to the other language (Dutch ↔ English) */
+.hover-alt {
   display: none;
 }
 
-.board-card:hover .board-card-title.has-alt .title-alt,
-.board-card:focus-visible .board-card-title.has-alt .title-alt {
+.board-card:hover .hover-main,
+.board-card:focus-visible .hover-main {
+  display: none;
+}
+
+.board-card:hover .hover-alt,
+.board-card:focus-visible .hover-alt {
   display: inline;
+  font-style: italic;
 }
 
 /* Leerpad: "Lesprogramma bekijken" next to the title (students); the way back on the curriculum */
