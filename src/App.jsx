@@ -37,7 +37,8 @@ const PAGES = [
   { id: "leerpad", roles: ["leerling"] },
   { id: "flashcards" },
   { id: "dashboard", roles: ["docent", "reviewer"] },
-  { id: "lesprogramma" },
+  // Students can open the curriculum (Browse curriculum on their leerpad), but it is not in their menu.
+  { id: "lesprogramma", menuRoles: ["docent", "reviewer"] },
   { id: "leerpaden", roles: ["docent", "reviewer"] },
   { id: "library" },
   { id: "feedback" },
@@ -196,7 +197,7 @@ function Studio() {
       <aside className={`sidebar ${menuOpen ? "is-open" : ""}`}>
         <Brand tagline />
         <nav>
-          {pages.map((p) => (
+          {pages.filter((p) => !p.menuRoles || p.menuRoles.includes(role)).map((p) => (
             <div key={p.id} className="nav-item">
               <button
                 data-tour={`nav-${p.id}`}

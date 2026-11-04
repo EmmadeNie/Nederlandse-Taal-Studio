@@ -1512,3 +1512,16 @@ span.step-important {
   font-size: 0.85rem;
   margin-bottom: 0.5rem;
 }
+
+/* Leerpad: "Lesprogramma bekijken" next to the title (students); the way back on the curriculum */
+.lp-browse {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.lp-back {
+  flex-basis: 100%;
+  font-size: 0.85rem;
+}

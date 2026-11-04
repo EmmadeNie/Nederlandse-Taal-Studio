@@ -7,6 +7,7 @@ import { supabase } from "../lib/supabase";
 import * as api from "../leerpad/api";
 import LanguageToggle from "../i18n/LanguageToggle";
 import { STEPS, TOUR_STEP_KEY } from "./tourSteps";
+import { LEVELS } from "../leerpad/util";
 import { ICONS } from "../icons";
 import "./tour.css";
 
@@ -53,6 +54,8 @@ export default function Tour({ page, onClose }) {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState(null);
   const step = STEPS[Math.min(index, STEPS.length - 1)];
+  const [levels, setLevels] = useState(() => STEPS.find((s) => s.levelChoice)?.levelChoice || []);
+  const toggleLevel = (lv) => setLevels((ls) => (ls.includes(lv) ? ls.filter((x) => x !== lv) : [...ls, lv]));
 
   // Each step lives on its page: go there.
   useEffect(() => {
@@ -92,7 +95,7 @@ export default function Tour({ page, onClose }) {
     }
   };
 
-  // "Zet A0 en A1 op mijn leerpad": every lesson of those levels, in board order, each in its level lane.
+  // "Zet op mijn leerpad": every lesson of the chosen levels, in board order, each in its level lane.
   const addCurriculum = async () => {
     setBusy(true);
     setMessage(null);
@@ -100,7 +103,7 @@ export default function Tour({ page, onClose }) {
       const { lanes, lessons } = await api.loadProgram();
       const laneOrder = new Map(lanes.map((l, i) => [l.id, i]));
       const chosen = lessons
-        .filter((l) => step.curriculum.includes(l.level))
+        .filter((l) => levels.includes(l.level))
         .sort((a, b) => laneOrder.get(a.lane_id) - laneOrder.get(b.lane_id) || a.position - b.position);
       const levelOf = (id) => lessons.find((l) => l.id === id)?.level || null;
       const { added } = await api.planLessons(
@@ -110,7 +113,7 @@ export default function Tour({ page, onClose }) {
         { levelOf }
       );
       setMessage({ text: added ? t("tour.added", { n: added }) : t("lp.levelAlready") });
-      setTimeout(() => go(STEPS.findIndex((s) => s.id === "practise")), 1200);
+      setTimeout(() => go(index + 1), 1200);
     } catch (e) {
       setMessage({ error: true, text: t(e.message) });
     } finally {
@@ -159,6 +162,15 @@ export default function Tour({ page, onClose }) {
         <h3 id="tour-title">{t(`tour.${step.id}.title`)}</h3>
         <p>{t(`tour.${step.id}.text`)}</p>
         {step.demo && <step.demo key={step.id} />}
+        {step.levelChoice && (
+          <div className="tour-levels" role="group" aria-label={t("tour.levels.title")}>
+            {LEVELS.map((lv) => (
+              <button key={lv} type="button" aria-pressed={levels.includes(lv)} onClick={() => toggleLevel(lv)}>
+                {lv}
+              </button>
+            ))}
+          </div>
+        )}
         {index === 0 && (
           // The tour (and the whole app) also in English: switch right here.
           <div className="tour-lang">
@@ -179,13 +191,13 @@ export default function Tour({ page, onClose }) {
               {t("tour.back")}
             </button>
           )}
-          {step.curriculum ? (
+          {step.levelChoice ? (
             <>
               <button type="button" className="fb-btn-secondary" onClick={() => go(index + 1)} disabled={busy}>
                 {t("tour.levels.self")}
               </button>
-              <button type="button" className="fb-btn-primary" onClick={addCurriculum} disabled={busy}>
-                {busy ? t("common.loading") : t("tour.levels.add")}
+              <button type="button" className="fb-btn-primary" onClick={addCurriculum} disabled={busy || !levels.length}>
+                {busy ? t("common.loading") : t("tour.levels.add", { levels: levels.join(", ") || "…" })}
               </button>
             </>
           ) : (

@@ -435,3 +435,29 @@ body:has(.tour) .tour-tip {
 .fb-link svg {
   vertical-align: -0.15em;
 }
+
+/* Choosing levels for the board: A0 … B2 as toggles */
+.tour-levels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.25rem 0 0.75rem;
+}
+
+.tour-levels button {
+  min-width: 3rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tour-levels button[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}

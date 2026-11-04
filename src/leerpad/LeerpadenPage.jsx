@@ -7,7 +7,7 @@ import { pathFor, slugify } from "../routes";
 import LeerpadBoard from "./LeerpadBoard";
 import { AddStudentDialog, PendingStudentPanel } from "./StudentPanels";
 import { listStudents } from "./api";
-import { EnvelopeSimple } from "../icons";
+import { EnvelopeSimple, ICONS } from "../icons";
 import { Dialog } from "./shared";
 
 /** Many students → a search field above the dropdown. */
@@ -178,6 +178,10 @@ export function MijnLeerpadPage() {
     <>
       <div className="lp-page-head">
         <h2>{t("nav.leerpad")}</h2>
+        {/* The curriculum is not in a student's menu: from here they browse it to add lessons. */}
+        <button type="button" className="fb-btn-secondary lp-browse" data-tour="browse" onClick={() => navigate(pathFor("lesprogramma"))}>
+          <ICONS.lesprogramma aria-hidden="true" /> {t("lp.browse")}
+        </button>
       </div>
       <LeerpadBoard studentId={profile.id} />
     </>
