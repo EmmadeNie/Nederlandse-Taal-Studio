@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContentLang } from "../components/useContentLang";
 import { useI18n } from "../i18n/context";
 import TopicLangToggle from "../components/TopicLangToggle";
 import CategoryBadge from "../components/CategoryBadge";
@@ -32,7 +32,7 @@ export function GrammarView({ ids }) {
 /** One topic in a lesson; NL/EN switch per topic, always starting in Dutch. */
 function GrammarItem({ topic }) {
   const { t } = useI18n();
-  const [lang, setLang] = useState("nl");
+  const [lang, setLang] = useContentLang();
   const text = topicText(topic, lang);
   return (
     <li>

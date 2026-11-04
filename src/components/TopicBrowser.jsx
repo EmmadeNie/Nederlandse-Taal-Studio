@@ -1,6 +1,7 @@
 import { useContentVersion } from "../data/useContent";
+import { useContentLang } from "./useContentLang";
 import { EditItemButton, NewItemButton } from "../library/ItemEditing";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { LEVELS, topics } from "../data";
 import { LevelBadge, ReviewBadge } from "./Badges";
 import FeedbackButton from "../feedback/FeedbackButton";
@@ -99,7 +100,7 @@ export default function TopicBrowser() {
  */
 function TopicCard({ topic, isOpen, cardRef, onToggle }) {
   const { t } = useI18n();
-  const [lang, setLang] = useState("nl");
+  const [lang, setLang] = useContentLang();
   const isStaff = useAuth().role !== "leerling";
   const text = topicText(topic, lang);
   return (

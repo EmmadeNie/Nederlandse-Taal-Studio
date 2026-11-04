@@ -29,7 +29,8 @@ import * as api from "./api";
 import { BoardFilters, CardBody, Chips, Dialog, MetaItem } from "./shared";
 import { CheckSquare, Eye, ICONS } from "../icons";
 import { LEVELS, matchesFilter } from "./util";
-import LessonExplanation from "./LessonExplanation";
+import LessonExplanation, { hasEnglishLesson } from "./LessonExplanation";
+import { useContentLang } from "../components/useContentLang";
 
 /**
  * Lesprogramma: the master board. Lanes are free (like Trello); the CEFR
@@ -37,7 +38,7 @@ import LessonExplanation from "./LessonExplanation";
  */
 export default function LesprogrammaPage() {
   const { role, profile } = useAuth();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const canEdit = role === "docent";
   const isStudent = role === "leerling";
   const [lanes, setLanes] = useState([]);
@@ -247,7 +248,7 @@ export default function LesprogrammaPage() {
             <>
             {isStudent && plannedIds?.has(l.id) && <span className="planned-badge">✓ {t("lp.onYourPath")}</span>}
             <CardBody
-              title={l.title}
+              title={(lang === "en" && l.title_en) || l.title}
               level={l.level}
               labelIds={l.label_ids}
               meta={
@@ -380,6 +381,7 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
     verb_ids: lesson.verb_ids || [],
   });
   const [preview, setPreview] = useState(!canEdit);
+  const [lang, setLang] = useContentLang(); // NL | EN for the student's view: title and explanation together
   // Docent: see the lesson exactly as a student does (no editors, no staff info).
   const [asStudent, setAsStudent] = useState(false);
   const editing = canEdit && !asStudent;
@@ -470,9 +472,11 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
   };
 
   const planned = new Set((students || []).map((s) => s.id));
+  const hasEn = hasEnglishLesson({ titleEn: form.title_en, explanationEn: form.explanation_en });
+  const shownTitle = hasEn && lang === "en" && form.title_en.trim() ? form.title_en : lesson.title;
 
   return (
-    <Dialog title={editing ? t("lp.editLesson") : lesson.title} onClose={close} wide>
+    <Dialog title={editing ? t("lp.editLesson") : shownTitle} onClose={close} wide>
       {canEdit && (
         <div className="lp-preview-bar">
           <button type="button" className={asStudent ? "fb-btn-primary" : "fb-btn-secondary"} onClick={() => setAsStudent((v) => !v)}>
@@ -537,7 +541,9 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
           <LessonExplanation
             explanation={form.explanation}
             explanationEn={form.explanation_en}
-            titleEn={form.title_en}
+            hasEn={hasEn}
+            lang={lang}
+            onLang={setLang}
             empty={<p className="dim lp-empty">{t("lp.noExplanation")}</p>}
           />
         </InternalLinkContext.Provider>
