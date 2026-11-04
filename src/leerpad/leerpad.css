@@ -1527,4 +1527,16 @@ span.step-important {
 .board-card:hover .board-card-title.has-alt .title-alt,
 .board-card:focus-visible .board-card-title.has-alt .title-alt {
   display: inline;
+
+/* Leerpad: "Lesprogramma bekijken" next to the title (students); the way back on the curriculum */
+.lp-browse {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.lp-back {
+  flex-basis: 100%;
+  font-size: 0.85rem;
 }

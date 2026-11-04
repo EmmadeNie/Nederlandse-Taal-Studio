@@ -9,9 +9,9 @@ export const TOUR_STEP_KEY = "tour-step";
 
 export const STEPS = [
   { id: "welcome", page: "leerpad", anchor: ".board" },
-  { id: "program", page: "leerpad", anchor: '[data-tour="nav-lesprogramma"]' },
-  { id: "levels", page: "lesprogramma", anchor: '[data-tour="add-levels"]', curriculum: ["A0", "A1"] },
-  { id: "select", page: "lesprogramma", anchor: '[data-tour="select"]' },
+  // Which levels of the curriculum go on the board: the student ticks them (A0 and A1 to start with).
+  { id: "levels", page: "leerpad", levelChoice: ["A0", "A1"] },
+  { id: "browse", page: "leerpad", anchor: '[data-tour="browse"]' },
   { id: "practise", page: "leerpad", anchor: ".cp-button, .board" },
   // Mijn flashcards: the three kinds of exercise, each with a tiny example to try.
   { id: "flashcards", page: "flashcards", anchor: '[data-tour="nav-flashcards"]' },

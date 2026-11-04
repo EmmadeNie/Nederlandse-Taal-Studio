@@ -30,7 +30,6 @@ import { BoardFilters, CardBody, Chips, Dialog, MetaItem } from "./shared";
 import { CheckSquare, Eye, ICONS } from "../icons";
 import { LEVELS, matchesFilter } from "./util";
 import LessonExplanation, { hasEnglishLesson } from "./LessonExplanation";
-import { useContentLang } from "../components/useContentLang";
 
 /**
  * Lesprogramma: the master board. Lanes are free (like Trello); the CEFR
@@ -182,6 +181,12 @@ export default function LesprogrammaPage() {
   return (
     <>
       <div className="lp-page-head">
+        {isStudent && (
+          // Not in a student's menu: the way back to their own board.
+          <button type="button" className="fb-link lp-back" onClick={() => navigate(pathFor("leerpad"))}>
+            ← {t("lp.backToPath")}
+          </button>
+        )}
         <h2>{t("nav.lesprogramma")}</h2>
         <span className="result-count">{t("lp.lessons", { n: lessons.length })}</span>
         {(canEdit || isStudent) && (
@@ -382,7 +387,7 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
     verb_ids: lesson.verb_ids || [],
   });
   const [preview, setPreview] = useState(!canEdit);
-  const [lang, setLang] = useContentLang(); // NL | EN for the student's view: title and explanation together
+  const { lang } = useI18n(); // English (switch top right): title and explanation together
   // Docent: see the lesson exactly as a student does (no editors, no staff info).
   const [asStudent, setAsStudent] = useState(false);
   const editing = canEdit && !asStudent;
@@ -544,7 +549,6 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
             explanationEn={form.explanation_en}
             hasEn={hasEn}
             lang={lang}
-            onLang={setLang}
             empty={<p className="dim lp-empty">{t("lp.noExplanation")}</p>}
           />
         </InternalLinkContext.Provider>

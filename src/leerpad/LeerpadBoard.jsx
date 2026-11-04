@@ -28,7 +28,6 @@ import { BoardFilters, CardBody, Chips, Dialog, LinkList, LinksEditor, MetaItem 
 import { ICONS, Star } from "../icons";
 import { LEVELS, linkCount, matchesFilter, stepContent } from "./util";
 import LessonExplanation, { hasEnglishLesson } from "./LessonExplanation";
-import { useContentLang } from "../components/useContentLang";
 
 /**
  * One student's leerpad. The student and the docent can create, rename and
@@ -370,8 +369,8 @@ function LessonPicker({ lane, plannedIds, onClose, onPick }) {
 function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose, onLessonLink, onChanged, onRemoved }) {
   const { t } = useI18n();
   const content = stepContent(step);
-  // NL | EN: the title at the top and the explanation switch together.
-  const [lang, setLang] = useContentLang();
+  // English (switch top right) when the lesson has it: the title at the top and the explanation together.
+  const { lang } = useI18n();
   const hasEn = hasEnglishLesson(content);
   const shownTitle = hasEn && lang === "en" && content.titleEn ? content.titleEn : content.title;
   const isZijpad = !step.lesson_id;
@@ -527,7 +526,7 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
           </div>
         </>
       ) : (
-        <LessonExplanation explanation={content.explanation} explanationEn={content.explanationEn} hasEn={hasEn} lang={lang} onLang={setLang} />
+        <LessonExplanation explanation={content.explanation} explanationEn={content.explanationEn} hasEn={hasEn} lang={lang} />
       )}
 
       {grammarCount(content.topicIds) > 0 && (
