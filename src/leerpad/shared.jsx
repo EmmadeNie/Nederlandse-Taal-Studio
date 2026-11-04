@@ -36,10 +36,18 @@ export function Chips({ level, labelIds = [], categories = [], kind }) {
 }
 
 /** Title + labels, shared by lesson and step cards. */
-export function CardBody({ title, level, labelIds, categories, kind, meta }) {
+export function CardBody({ title, altTitle, level, labelIds, categories, kind, meta }) {
   return (
     <>
-      <div className="board-card-title">{title}</div>
+      {altTitle && altTitle !== title ? (
+        // Experiment: hovering a card shows its title in the other language.
+        <div className="board-card-title has-alt">
+          <span className="title-main">{title}</span>
+          <span className="title-alt" aria-hidden="true">{altTitle}</span>
+        </div>
+      ) : (
+        <div className="board-card-title">{title}</div>
+      )}
       <Chips level={level} labelIds={labelIds} categories={categories} kind={kind} />
       {meta && <div className="board-card-meta">{meta}</div>}
     </>

@@ -185,6 +185,7 @@ export default function LeerpadBoard({ studentId }) {
               <StepImportant important={s.important} onChange={canArrange ? (v) => changeImportant(s, v) : undefined} />
               <CardBody
                 title={(lang === "en" && c.titleEn) || c.title}
+                altTitle={lang === "en" ? c.titleEn && c.title : c.titleEn}
                 level={c.level}
                 labelIds={c.labelIds}
                 categories={c.categories}
