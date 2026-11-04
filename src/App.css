@@ -611,6 +611,52 @@
   border-color: var(--accent);
 }
 
+/* Feedback mode switch at the bottom of the menu, above "Feedback over de app" */
+.app-feedback-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: 100%;
+  margin-bottom: 0.4rem;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 0.6rem;
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.app-feedback-toggle > span:first-of-type {
+  flex: 1;
+}
+
+.app-feedback-toggle:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.app-feedback-state {
+  font-size: 0.72rem;
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+
+.app-feedback-toggle.is-on {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.app-feedback-toggle.is-on .app-feedback-state {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
 /* Card footer (holds the feedback + copy-link buttons) */
 .card-footer {
   margin-top: 0.75rem;

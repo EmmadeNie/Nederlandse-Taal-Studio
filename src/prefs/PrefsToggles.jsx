@@ -15,7 +15,7 @@ export function ThemeToggle() {
   );
 }
 
-/** Feedback mode on/off: shows or hides the feedback buttons. */
+/** Feedback mode on/off (bottom of the menu): shows or hides the feedback buttons. */
 export function FeedbackModeToggle() {
   const { t } = useI18n();
   const { feedbackMode, setFeedbackMode } = usePrefs();
@@ -23,13 +23,14 @@ export function FeedbackModeToggle() {
   return (
     <button
       type="button"
-      className="corner-btn"
+      className={`app-feedback-toggle ${feedbackMode ? "is-on" : ""}`}
       title={label}
-      aria-label={t("prefs.feedbackMode")}
       aria-pressed={feedbackMode}
       onClick={() => setFeedbackMode(!feedbackMode)}
     >
-      <ChatCircleDots />
+      <ChatCircleDots aria-hidden="true" />
+      <span>{t("prefs.feedbackMode")}</span>
+      <span className="app-feedback-state">{feedbackMode ? t("prefs.on") : t("prefs.off")}</span>
     </button>
   );
 }
