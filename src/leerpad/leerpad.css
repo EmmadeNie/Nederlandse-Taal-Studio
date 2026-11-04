@@ -1499,12 +1499,7 @@ span.step-important {
   background: color-mix(in srgb, #f5c542 15%, var(--surface));
 }
 
-/* A lesson in English: the English title above the text, and the editor's fold-out */
-.lp-title-en {
-  margin: 0 0 0.4rem;
-  font-weight: 600;
-}
-
+/* A lesson in English: the editor's fold-out */
 .lp-english {
   margin-top: 0.75rem;
   border-top: 1px solid var(--border);

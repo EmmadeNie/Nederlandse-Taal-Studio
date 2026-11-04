@@ -27,7 +27,8 @@ import StepStatus, { StatusLegend, StepImportant } from "./StepStatus";
 import { BoardFilters, CardBody, Chips, Dialog, LinkList, LinksEditor, MetaItem } from "./shared";
 import { ICONS, Star } from "../icons";
 import { LEVELS, linkCount, matchesFilter, stepContent } from "./util";
-import LessonExplanation from "./LessonExplanation";
+import LessonExplanation, { hasEnglishLesson } from "./LessonExplanation";
+import { useContentLang } from "../components/useContentLang";
 
 /**
  * One student's leerpad. The student and the docent can create, rename and
@@ -36,7 +37,7 @@ import LessonExplanation from "./LessonExplanation";
  */
 export default function LeerpadBoard({ studentId }) {
   const { role, profile } = useAuth();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const isDocent = role === "docent";
   const isOwner = profile.id === studentId;
   const canArrange = isDocent || isOwner;
@@ -184,7 +185,7 @@ export default function LeerpadBoard({ studentId }) {
               <StepStatus status={s.status} onChange={canArrange ? (status) => changeStatus(s, status) : undefined} />
               <StepImportant important={s.important} onChange={canArrange ? (v) => changeImportant(s, v) : undefined} />
               <CardBody
-                title={c.title}
+                title={(lang === "en" && c.titleEn) || c.title}
                 level={c.level}
                 labelIds={c.labelIds}
                 categories={c.categories}
@@ -380,6 +381,10 @@ function LessonPicker({ lane, plannedIds, onClose, onPick }) {
 function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose, onLessonLink, onChanged, onRemoved }) {
   const { t } = useI18n();
   const content = stepContent(step);
+  // NL | EN: the title at the top and the explanation switch together.
+  const [lang, setLang] = useContentLang();
+  const hasEn = hasEnglishLesson(content);
+  const shownTitle = hasEn && lang === "en" && content.titleEn ? content.titleEn : content.title;
   const isZijpad = !step.lesson_id;
   const [laneId, setLaneId] = useState(step.lane_id);
   const [extras, setExtras] = useState(step.extras);
@@ -475,7 +480,7 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
 
   return (
     <InternalLinkContext.Provider value={followLink}>
-    <Dialog title={content.title} onClose={close} wide>
+    <Dialog title={shownTitle} onClose={close} wide>
       <div className="lp-feedback">
         <Chips level={content.level} labelIds={content.labelIds} categories={content.categories} kind={isZijpad ? t("kind.zijpad") : t("kind.stap")} />
         <StepFeedback step={step} title={content.title} />
@@ -533,7 +538,7 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
           </div>
         </>
       ) : (
-        <LessonExplanation explanation={content.explanation} explanationEn={content.explanationEn} titleEn={content.titleEn} />
+        <LessonExplanation explanation={content.explanation} explanationEn={content.explanationEn} hasEn={hasEn} lang={lang} onLang={setLang} />
       )}
 
       {grammarCount(content.topicIds) > 0 && (
