@@ -1,16 +1,16 @@
-import { useState } from "react";
+import { useContentLang } from "../components/useContentLang";
 import { useI18n } from "../i18n/context";
 import Markdown from "../components/Markdown";
 import TopicLangToggle from "../components/TopicLangToggle";
 
 /**
  * The explanation of a lesson as a student reads it, with NL | EN when the
- * lesson has an English version. Like grammar topics it starts in Dutch; in
- * English the English title stands above the text.
+ * lesson has an English version. Like grammar topics it starts in the app
+ * language; in English the English title stands above the text.
  */
 export default function LessonExplanation({ explanation, explanationEn, titleEn, empty }) {
   const { t } = useI18n();
-  const [lang, setLang] = useState("nl");
+  const [lang, setLang] = useContentLang();
   const hasEn = Boolean(explanationEn?.trim() || titleEn?.trim());
   const en = hasEn && lang === "en";
   const text = en ? explanationEn || "" : explanation || "";

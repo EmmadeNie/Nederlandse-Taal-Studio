@@ -1,9 +1,9 @@
 import { useI18n } from "../i18n/context";
 
 /**
- * NL | EN switch on one grammar box. Always starts in Dutch (state lives in the
- * box, not remembered), so students read the Dutch first. Clicks stay inside:
- * they must not fold or open the box.
+ * NL | EN switch on one grammar box or lesson. Starts in the app language
+ * (see useContentLang); switching here is for this box only. Clicks stay
+ * inside: they must not fold or open the box.
  */
 export default function TopicLangToggle({ lang, onChange }) {
   const { t } = useI18n();
