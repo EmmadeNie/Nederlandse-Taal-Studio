@@ -16,9 +16,9 @@ import { lessonVerbs } from "./verbIds";
 import { grammarCount } from "./grammarTopics";
 import SaveStatus from "./SaveStatus";
 import { useAutosave } from "./useAutosave";
-import { hasWordList, toLists, wordsForLists } from "./wordLists";
+import { hasWordList, toLists } from "./wordLists";
 import { SentenceListEditor, SentenceListsView } from "./SentenceList";
-import { hasSentenceList, sentencesForLists } from "./sentenceLists";
+import { hasSentenceList } from "./sentenceLists";
 import SelectionBar from "./SelectionBar";
 import DeleteLessonDialog from "./DeleteLessonDialog";
 import ListHeading from "../flashcards/ListHeading";
@@ -252,18 +252,6 @@ export default function LesprogrammaPage() {
               labelIds={l.label_ids}
               meta={
                 <>
-                  <MetaItem icon={ICONS.topics}>
-                    {grammarCount(l.topic_ids) > 0 && t("lg.count", { n: grammarCount(l.topic_ids) })}
-                  </MetaItem>
-                  <MetaItem icon={ICONS.verbs}>
-                    {lessonVerbs(l.verb_ids).length > 0 && t("lv.count", { n: lessonVerbs(l.verb_ids).length })}
-                  </MetaItem>
-                  <MetaItem icon={ICONS.words}>
-                    {toLists(l.word_list).some(hasWordList) && t("wl.count", { n: wordsForLists(l.word_list).length })}
-                  </MetaItem>
-                  <MetaItem icon={ICONS.sentences}>
-                    {toLists(l.sentence_list).some(hasSentenceList) && t("sl.count", { n: sentencesForLists(l.sentence_list).length })}
-                  </MetaItem>
                   <MetaItem icon={ICONS.bestand}>
                     {l.attachments?.length > 0 && t("files.count", { n: l.attachments.length })}
                   </MetaItem>

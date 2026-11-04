@@ -8,7 +8,7 @@ import { pathFor } from "../routes";
 import RichEditor from "../editor/RichEditor";
 import LessonFiles from "./LessonFiles";
 import { WordListsView } from "./WordList";
-import { hasWordList, toLists, wordsForLists } from "./wordLists";
+import { hasWordList, toLists } from "./wordLists";
 import { SentenceListsView } from "./SentenceList";
 import { GrammarView } from "./LessonGrammar";
 import { VerbsView } from "./LessonVerbs";
@@ -16,7 +16,7 @@ import { lessonVerbs } from "./verbIds";
 import { grammarCount } from "./grammarTopics";
 import SaveStatus from "./SaveStatus";
 import { useAutosave } from "./useAutosave";
-import { hasSentenceList, sentencesForLists } from "./sentenceLists";
+import { hasSentenceList } from "./sentenceLists";
 import Board, { AddCardForm } from "./Board";
 import FeedbackButton from "../feedback/FeedbackButton";
 import CardPractise from "../flashcards/CardPractise";
@@ -192,18 +192,6 @@ export default function LeerpadBoard({ studentId }) {
                 meta={
                   <>
                     <MetaItem icon={ICONS.link}>{linkCount(t, s.extras.length)}</MetaItem>
-                    <MetaItem icon={ICONS.topics}>
-                      {grammarCount(c.topicIds) > 0 && t("lg.count", { n: grammarCount(c.topicIds) })}
-                    </MetaItem>
-                    <MetaItem icon={ICONS.verbs}>
-                      {lessonVerbs(c.verbIds).length > 0 && t("lv.count", { n: lessonVerbs(c.verbIds).length })}
-                    </MetaItem>
-                    <MetaItem icon={ICONS.words}>
-                      {toLists(c.wordList).some(hasWordList) && t("wl.count", { n: wordsForLists(c.wordList).length })}
-                    </MetaItem>
-                    <MetaItem icon={ICONS.sentences}>
-                      {toLists(c.sentenceList).some(hasSentenceList) && t("sl.count", { n: sentencesForLists(c.sentenceList).length })}
-                    </MetaItem>
                     <MetaItem icon={ICONS.bestand}>
                       {c.attachments.length > 0 && t("files.count", { n: c.attachments.length })}
                     </MetaItem>
