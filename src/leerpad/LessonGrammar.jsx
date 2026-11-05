@@ -7,8 +7,7 @@ import TopicExplanation from "../components/TopicExplanation";
 import RelatedWords from "../components/RelatedWords";
 import ExampleSentences from "../components/ExampleSentences";
 import { LevelBadge } from "../components/Badges";
-import { pathFor, topicSlug } from "../routes";
-import { ArrowSquareOut, X } from "../icons";
+import { X } from "../icons";
 import { LEVELS } from "./util";
 import { knownTopics as known } from "./grammarTopics";
 import { ItemPicker } from "../library/FieldInput";
@@ -29,7 +28,7 @@ export function GrammarView({ ids, lang }) {
 
 /** One topic in a lesson, in the lesson's language. */
 function GrammarItem({ topic, lang: lessonLang }) {
-  const { t, lang: appLang } = useI18n();
+  const { lang: appLang } = useI18n();
   const lang = lessonLang || appLang; // the lesson's NL | EN, else the switch top right
   const text = topicText(topic, lang);
   return (
@@ -45,9 +44,6 @@ function GrammarItem({ topic, lang: lessonLang }) {
         <TopicExplanation text={text} lang={lang} className="lp-explanation" />
         <RelatedWords ids={topic.relatedWordIds} />
         <ExampleSentences ids={topic.exampleSentenceIds} />
-        <a href={pathFor("topics", topicSlug(topic.id))} target="_blank" rel="noopener noreferrer">
-          <ArrowSquareOut aria-hidden="true" /> {t("lg.openInLibrary")}
-        </a>
       </details>
     </li>
   );
