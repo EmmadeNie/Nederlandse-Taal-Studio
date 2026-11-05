@@ -12,7 +12,7 @@ const randomDir = () => (Math.random() < 0.5 ? "nl-en" : "en-nl");
 const levelOf = (card) => card.item.introducedAtLevel || null;
 
 // Settings per list (level, round size, direction), kept on this device.
-const DEFAULTS = { level: "all", size: 10, direction: "nl-en" };
+const DEFAULTS = { level: "all", size: 10, direction: "en-nl" }; // English → Dutch: produce the Dutch
 function loadSettings(key) {
   try {
     return { ...DEFAULTS, ...JSON.parse(localStorage.getItem(`fc:${key}`) || "{}") };
