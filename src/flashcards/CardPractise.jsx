@@ -14,7 +14,7 @@ import { lessonPronounKind, withPronounsOf } from "./pronouns";
 const verbsIn = (items) => drillable(items.filter((i) => i.partOfSpeech === "verb"));
 
 /**
- * What can be practised from a lesson, per kind: flashcards (every list),
+ * What can be practised from a lesson, per kind: flashcards (word and sentence lists),
  * Invullen (lists with words that are marked in sentences) and Vervoegen
  * (lists with verbs that have a conjugation table). Each kind lists its
  * lists with a path; Invullen and Vervoegen also offer all lists together.
@@ -27,7 +27,10 @@ function practiseKinds(lesson, t) {
       icon: Cards,
       label: t("cp.flashcards"),
       labelKey: "cp.flashcards",
-      lists: lists.map((l) => ({ ...l, count: l.items.length, path: `oefen-${l.key}-${lesson.id}` })),
+      // Not the linked verbs: those are for Vervoegen.
+      lists: lists
+        .filter((l) => l.part !== "verbs")
+        .map((l) => ({ ...l, count: l.items.length, path: `oefen-${l.key}-${lesson.id}` })),
     },
     {
       key: "fill",
