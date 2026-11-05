@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { LevelBadge, Tag } from "../components/Badges";
 
 import { LEVELS } from "./util";
-import { useI18n } from "../i18n/context";
+import { translate, useI18n } from "../i18n/context";
 import { ArrowSquareOut, ICONS, X } from "../icons";
 import { LabelChips, LabelFilter } from "./Labels";
+import { HoverAlt, otherLang } from "./HoverAlt";
 
 /** Icon + text in a card's meta row (links, files, note). Renders nothing without text. */
 export function MetaItem({ icon: Icon, children }) {
@@ -18,17 +19,24 @@ export function MetaItem({ icon: Icon, children }) {
 
 /** Level + labels (+ optional kind, e.g. "Zijpad"). Zijpaden may still carry free-text categories. */
 export function Chips({ level, labelIds = [], categories = [], kind }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   return (
     <div className="board-card-chips">
-      {level ? <LevelBadge level={level} /> : <span className="tag dim">{t("level.noneTag")}</span>}
+      {level ? (
+        <LevelBadge level={level} />
+      ) : (
+        <span className="tag dim">
+          <HoverAlt main={t("level.noneTag")} alt={translate(otherLang(lang), "level.noneTag")} />
+        </span>
+      )}
       <LabelChips ids={labelIds} />
       {categories.map((c) => (
         <Tag key={c}>{c}</Tag>
       ))}
       {kind && (
         <span className="board-kind">
-          {kind === t("kind.zijpad") && <ICONS.zijpad aria-hidden="true" />} {kind}
+          {kind === t("kind.zijpad") && <ICONS.zijpad aria-hidden="true" />}{" "}
+          <HoverAlt main={kind} alt={translate(otherLang(lang), kind === t("kind.zijpad") ? "kind.zijpad" : "kind.stap")} />
         </span>
       )}
     </div>
@@ -39,15 +47,9 @@ export function Chips({ level, labelIds = [], categories = [], kind }) {
 export function CardBody({ title, altTitle, level, labelIds, categories, kind, meta }) {
   return (
     <>
-      {altTitle && altTitle !== title ? (
-        // Experiment: hovering a card shows its title in the other language.
-        <div className="board-card-title has-alt">
-          <span className="title-main">{title}</span>
-          <span className="title-alt" aria-hidden="true">{altTitle}</span>
-        </div>
-      ) : (
-        <div className="board-card-title">{title}</div>
-      )}
+      <div className="board-card-title">
+        <HoverAlt main={title} alt={altTitle} />
+      </div>
       <Chips level={level} labelIds={labelIds} categories={categories} kind={kind} />
       {meta && <div className="board-card-meta">{meta}</div>}
     </>

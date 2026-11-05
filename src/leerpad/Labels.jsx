@@ -2,11 +2,17 @@ import { useState } from "react";
 import { useI18n } from "../i18n/context";
 import { LABEL_COLORS, createLabel, deleteLabel, labelName, updateLabel, useLabels } from "./labelStore";
 import { Plus, X } from "../icons";
+import { HoverAlt } from "./HoverAlt";
 
 /** One label: a small tinted pill with a colour dot. */
 export function LabelChip({ label }) {
   const { lang } = useI18n();
-  return <span className={`label-chip label-${label.color}`}>{labelName(label, lang)}</span>;
+  return (
+    <span className={`label-chip label-${label.color}`}>
+      {/* On a hovered board card: the name in the other language. */}
+      <HoverAlt main={labelName(label, lang)} alt={labelName(label, lang === "en" ? "nl" : "en")} />
+    </span>
+  );
 }
 
 /** The labels of a card, in the order they were added. Unknown ids are skipped. */
