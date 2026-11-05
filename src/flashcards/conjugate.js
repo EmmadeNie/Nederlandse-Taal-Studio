@@ -372,3 +372,21 @@ export function markQuestions(words, all) {
   });
   return out;
 }
+
+/**
+ * Invullen from a lesson about one kind of word (positiewerkwoorden, voorzetsels,
+ * lidwoorden, …): which of the marked kinds that is. From the lesson's grammar
+ * topics; else the kind nearly every sentence has while the others are rare
+ * (15 sentences with zitten/staan/liggen, 2 also with a voorzetsel). Null: ask all.
+ */
+export function lessonMarkKind(lesson, questions) {
+  const kinds = [...new Set(questions.map((q) => q.kind))];
+  if (kinds.length < 2) return null;
+  const tags = (lesson?.topic_ids || []).flatMap((id) => getItem(id)?.grammarTags || []);
+  const byTopic = kinds.find((k) => tags.some((tag) => tag.startsWith(k) || (k === "lidwoord" && tag === "de-het")));
+  if (byTopic || !lesson) return byTopic || null;
+  const sentencesWith = (k) => new Set(questions.filter((q) => q.kind === k).map((q) => q.sentence?.id)).size;
+  const total = new Set(questions.map((q) => q.sentence?.id)).size;
+  const [top, next] = kinds.map((k) => [k, sentencesWith(k)]).sort((a, b) => b[1] - a[1]);
+  return top[1] >= 0.8 * total && next[1] <= total / 3 ? top[0] : null;
+}

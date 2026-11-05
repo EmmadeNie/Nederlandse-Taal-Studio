@@ -162,6 +162,7 @@ export default function FlashcardsPage() {
           verbs={verbs}
           words={words}
           markSentences={markSentences}
+          lesson={fill && drillLesson ? lessonMap.get(drillLesson) : null}
           {...finishProps(decks.find((d) => d.id === drill) || null, fill ? "invullen" : "vervoegen")}
           level={level}
           tense={tenseForLesson(lessonMap.get(sources[0]?.lesson))}
