@@ -28,8 +28,6 @@ import { BoardFilters, CardBody, Chips, Dialog, LinkList, LinksEditor, MetaItem 
 import { ICONS, Star } from "../icons";
 import { LEVELS, linkCount, matchesFilter, stepContent } from "./util";
 import LessonExplanation, { hasEnglishLesson } from "./LessonExplanation";
-import TopicLangToggle from "../components/TopicLangToggle";
-import { useContentLang } from "../components/useContentLang";
 
 /**
  * One student's leerpad. The student and the docent can create, rename and
@@ -369,11 +367,9 @@ function LessonPicker({ lane, plannedIds, onClose, onPick }) {
 }
 
 function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose, onLessonLink, onChanged, onRemoved }) {
-  const { t } = useI18n();
+  // English (switch top right, visible above the open lesson) when the lesson has it.
+  const { t, lang } = useI18n();
   const content = stepContent(step);
-  // English (switch top right) when the lesson has it: the title at the top and the explanation together.
-  // The switch top right sets the start; NL | EN in the lesson switches this lesson only.
-  const [lang, setLang] = useContentLang();
   const hasEn = hasEnglishLesson(content);
   const shownTitle = hasEn && lang === "en" && content.titleEn ? content.titleEn : content.title;
   const isZijpad = !step.lesson_id;
@@ -475,7 +471,6 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
       <div className="lp-feedback">
         <Chips level={content.level} labelIds={content.labelIds} categories={content.categories} kind={isZijpad ? t("kind.zijpad") : t("kind.stap")} />
         <StepFeedback step={step} title={content.title} />
-        {hasEn && <TopicLangToggle lang={lang} onChange={setLang} />}
       </div>
       {isDocent && (
         <div className="lp-source">
