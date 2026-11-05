@@ -483,6 +483,9 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
 
   const planned = new Set((students || []).map((s) => s.id));
   const hasEn = hasEnglishLesson({ titleEn: form.title_en, explanationEn: form.explanation_en, topicIds: form.topic_ids });
+  // Editing in EN: the title and explanation fields are the English ones.
+  const editEn = editing && lang === "en";
+  const explanationKey = editEn ? "explanation_en" : "explanation";
   const shownTitle = hasEn && lang === "en" && form.title_en.trim() ? form.title_en : lesson.title;
 
   return (
@@ -498,7 +501,8 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
       <div className="lp-feedback">
         {!editing && <Chips level={lesson.level} labelIds={lesson.label_ids} />}
         <FeedbackButton itemType="lesson" itemId={lesson.id} itemLabel={lesson.title} />
-        {!editing && hasEn && <TopicLangToggle lang={lang} onChange={setLang} />}
+        {/* Editing: NL | EN picks which language's title and explanation you edit. */}
+        {(editing || hasEn) && <TopicLangToggle lang={lang} onChange={setLang} />}
       </div>
       {!isStudent && !asStudent && (
         <div className="lp-source">
@@ -513,10 +517,17 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
 
       {editing && (
         <>
-          <label className="fb-field">
-            <span>{t("lp.title")}</span>
-            <input value={form.title} onChange={(e) => set("title")(e.target.value)} onBlur={saveText} />
-          </label>
+          {editEn ? (
+            <label className="fb-field">
+              <span>{t("lp.titleEn")}</span>
+              <input value={form.title_en} onChange={(e) => set("title_en")(e.target.value)} onBlur={saveText} lang="en" />
+            </label>
+          ) : (
+            <label className="fb-field">
+              <span>{t("lp.title")}</span>
+              <input value={form.title} onChange={(e) => set("title")(e.target.value)} onBlur={saveText} />
+            </label>
+          )}
           <div className="lp-row">
             <label className="fb-field" style={{ flex: "1 1 120px" }}>
               <span>{t("lp.level")}</span>
@@ -560,58 +571,30 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
       ) : (
       <div className="lp-section">
         <h4>
-          {t("lp.explanation")}{" "}
-          {editing && (
-            <button type="button" className="fb-link" onClick={() => setPreview((p) => !p)}>
-              {preview ? t("lp.edit") : t("lp.preview")}
-            </button>
-          )}
+          {t(editEn ? "lp.explanationEn" : "lp.explanation")}{" "}
+          <button type="button" className="fb-link" onClick={() => setPreview((p) => !p)}>
+            {preview ? t("lp.edit") : t("lp.preview")}
+          </button>
         </h4>
-        {preview || !editing ? (
-          form.explanation.trim() ? (
+        {preview ? (
+          form[explanationKey].trim() ? (
             <InternalLinkContext.Provider value={followLink}>
-              <Markdown className="lp-explanation">{form.explanation}</Markdown>
+              <Markdown className="lp-explanation">{form[explanationKey]}</Markdown>
             </InternalLinkContext.Provider>
           ) : (
             <p className="dim lp-empty">{t("lp.noExplanation")}</p>
           )
         ) : (
           <RichEditor
-            value={form.explanation}
-            onChange={set("explanation")}
+            key={explanationKey}
+            value={form[explanationKey]}
+            onChange={set(explanationKey)}
             onBlur={saveText}
             lessons={lessons}
             excludeLessonId={lesson.id}
-            label={t("lp.explanation")}
+            label={t(editEn ? "lp.explanationEn" : "lp.explanation")}
           />
         )}
-        {/* The same lesson in English (optional): students can switch to it. */}
-        <details className="lp-english" open={Boolean(form.title_en || form.explanation_en) || undefined}>
-          <summary>{t("lp.english")}</summary>
-          <label className="fb-field">
-            <span>{t("lp.titleEn")}</span>
-            <input value={form.title_en} onChange={(e) => set("title_en")(e.target.value)} onBlur={saveText} lang="en" />
-          </label>
-          <div className="fb-field">
-            <span>{t("lp.explanationEn")}</span>
-            {preview ? (
-              form.explanation_en.trim() ? (
-                <Markdown className="lp-explanation">{form.explanation_en}</Markdown>
-              ) : (
-                <p className="dim lp-empty">{t("lp.noExplanation")}</p>
-              )
-            ) : (
-              <RichEditor
-                value={form.explanation_en}
-                onChange={set("explanation_en")}
-                onBlur={saveText}
-                lessons={lessons}
-                excludeLessonId={lesson.id}
-                label={t("lp.explanationEn")}
-              />
-            )}
-          </div>
-        </details>
       </div>
       )}
 
