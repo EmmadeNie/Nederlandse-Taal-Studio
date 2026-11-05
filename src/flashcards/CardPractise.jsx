@@ -71,23 +71,9 @@ function practiseKinds(lesson, t) {
   return kinds.filter((k) => k.lists.length > 0);
 }
 
-// What a lesson is about, from its grammar topics and title → the exercise that fits it.
-const VERB_TAGS = [
-  "vervoegen", "tegenwoordige-tijd", "verleden-tijd", "perfectum", "plusquamperfectum", "futurum",
-  "modale-werkwoorden", "scheidbare-werkwoorden", "reflexieve-werkwoorden", "hoeven", "positiewerkwoorden",
-];
-const VERB_TITLE = /werkwoord|vervoeg|perfectum|imperfectum|verleden tijd/i;
-
-/** The kind of practice the lesson is about (conjugate / pronouns / fill), or null. */
-function recommendedKind(lesson, kinds) {
-  const tags = (lesson.topic_ids || []).flatMap((id) => getItem(id)?.grammarTags || []);
-  const has = (key) => kinds.some((k) => k.key === key);
-  // Verbs first: a lesson about reflexive verbs also has a pronoun topic, but its linked verbs are the point.
-  if ((tags.some((x) => VERB_TAGS.includes(x)) || VERB_TITLE.test(lesson.title || "")) && has("conjugate")) return "conjugate";
-  if (tags.includes("voornaamwoorden") && has("pronouns")) return "pronouns";
-  if (["voorzetsels", "lidwoorden", "de-het", "voegwoorden"].some((x) => tags.includes(x)) && has("fill")) return "fill";
-  return null;
-}
+// Fixed order on the card: Invullen, Flashcards (vertalen), Voornaamwoorden, Vervoegen last.
+// The first one there is gets the filled (solid blue) style.
+const ORDER = ["fill", "flashcards", "pronouns", "conjugate"];
 
 /**
  * "Oefenen" on a lesson card on the board: first what (flashcards, Invullen,
@@ -111,11 +97,8 @@ export default function CardPractise({ lesson }) {
       setOpen(true);
     }
   };
-  // A lesson about verbs (pronouns, prepositions) starts that exercise straight away, all its lists
-  // together; ▾ next to the button opens the menu with every kind.
-  // Without a clear topic the button is Flashcards: it always names what it starts.
-  const recommended =
-    kinds.find((k) => k.key === recommendedKind(lesson, kinds)) || kinds.find((k) => k.key === "flashcards") || kinds[0];
+  const ordered = [...kinds].sort((a, b) => ORDER.indexOf(a.key) - ORDER.indexOf(b.key));
+  const recommended = ordered[0];
   const start = () => {
     if (recommended.lists.length > 1 && recommended.all) go(recommended.all);
     else choose(recommended); // one list: straight there; several (flashcards): pick the list
@@ -129,8 +112,8 @@ export default function CardPractise({ lesson }) {
   return (
     // Keep clicks and keys inside: the card around this opens the lesson.
     <span className="cp-wrap" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
-      {/* Every exercise as a small label; the one the lesson is about is filled and comes first. */}
-      {[recommended, ...kinds.filter((k) => k !== recommended)].map((k) => (
+      {/* Every exercise as a small label, in a fixed order; the first is filled. */}
+      {ordered.map((k) => (
         <button
           key={k.key}
           type="button"
