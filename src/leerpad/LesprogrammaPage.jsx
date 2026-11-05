@@ -31,8 +31,6 @@ import { BoardFilters, CardBody, Chips, Dialog, MetaItem } from "./shared";
 import { CheckSquare, Eye, ICONS } from "../icons";
 import { LEVELS, matchesFilter } from "./util";
 import LessonExplanation, { hasEnglishLesson } from "./LessonExplanation";
-import TopicLangToggle from "../components/TopicLangToggle";
-import { useContentLang } from "../components/useContentLang";
 
 /**
  * Lesprogramma: the master board. Lanes are free (like Trello); the CEFR
@@ -390,8 +388,8 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
     verb_ids: lesson.verb_ids || [],
   });
   const [preview, setPreview] = useState(!canEdit);
-  // The switch top right sets the start; NL | EN in the lesson switches this lesson only.
-  const [lang, setLang] = useContentLang();
+  // The switch top right (visible above the open lesson) sets the language; editing in EN edits the English fields.
+  const { lang } = useI18n();
   // Docent: see the lesson exactly as a student does (no editors, no staff info).
   const [asStudent, setAsStudent] = useState(false);
   const editing = canEdit && !asStudent;
@@ -501,8 +499,6 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
       <div className="lp-feedback">
         {!editing && <Chips level={lesson.level} labelIds={lesson.label_ids} />}
         <FeedbackButton itemType="lesson" itemId={lesson.id} itemLabel={lesson.title} />
-        {/* Editing: NL | EN picks which language's title and explanation you edit. */}
-        {(editing || hasEn) && <TopicLangToggle lang={lang} onChange={setLang} />}
       </div>
       {!isStudent && !asStudent && (
         <div className="lp-source">
