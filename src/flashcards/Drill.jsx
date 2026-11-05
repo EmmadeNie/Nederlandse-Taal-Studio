@@ -3,7 +3,7 @@ import { useI18n } from "../i18n/context";
 import { VerbTile } from "../components/RelatedWords";
 import { CaretLeft, Lightbulb } from "../icons";
 import { requeue, shuffle } from "./cards";
-import { TENSES, drillable, gapIsRight, gapQuestions, gapRound, isRight, isRightGaps, makeRound, markQuestions, sentenceMarkQuestions } from "./conjugate";
+import { TENSES, drillable, gapIsRight, gapQuestions, gapRound, isRight, isRightGaps, lessonMarkKind, makeRound, markQuestions, sentenceMarkQuestions } from "./conjugate";
 import { LEVELS, sentences } from "../data";
 import { pronounKindsIn, pronounQuestions } from "./pronouns";
 import FlagButton from "../review/FlagButton";
@@ -51,6 +51,7 @@ export default function Drill({
   markSentences = [],
   pronounSentences = [],
   pronounKind = null,
+  lesson = null,
   tense: startTense,
   title,
   level,
@@ -90,8 +91,10 @@ export default function Drill({
       : gaps.length
         ? ["forms", "sentences"]
         : [];
-  // A lesson about one kind of pronoun (reflexive verbs → wederkerend) starts with that kind.
-  const [mode, setMode] = useState(fill ? "all" : pron ? (pronounKinds.includes(pronounKind) ? pronounKind : "all") : "forms");
+  // A lesson about one kind of pronoun (reflexive verbs → wederkerend) starts with that kind;
+  // Invullen from a lesson about one kind of word (positiewerkwoorden) only asks that kind (switch to Alles above).
+  const lessonKind = fill ? lessonMarkKind(lesson, marked) : null;
+  const [mode, setMode] = useState(fill ? lessonKind || "all" : pron ? (pronounKinds.includes(pronounKind) ? pronounKind : "all") : "forms");
   // verbs: nl | en (verb hint); fill: en | none (sentence hint); pronouns: kind | person (what each gap says)
   const [hint, setHint] = useState(fill ? "none" : pron ? "kind" : "nl");
   // Invullen without hint: one sentence's English can be peeked at; a short nudge says so at the start.
