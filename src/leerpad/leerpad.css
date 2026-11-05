@@ -943,6 +943,15 @@
   font-size: 0.9rem;
 }
 
+/* Docent: the edit pencil top right; the fold link and title make room for it. */
+.lg-list li.lg-item {
+  position: relative;
+}
+
+.lg-list li.lg-item:has(.ie-edit) > details > summary {
+  padding-right: 2.25rem;
+}
+
 .lg-list summary {
   cursor: pointer;
 }

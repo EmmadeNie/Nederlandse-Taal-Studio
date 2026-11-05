@@ -12,6 +12,7 @@ import { X } from "../icons";
 import { LEVELS } from "./util";
 import { knownTopics as known } from "./grammarTopics";
 import { ItemPicker } from "../library/FieldInput";
+import { EditItemButton } from "../library/ItemEditing";
 
 
 /** The grammar of a lesson: each topic open (its explanation); folded, its title, level and summary. */
@@ -35,7 +36,9 @@ function GrammarItem({ topic, lang: lessonLang }) {
   // Open by default: just the explanation. Folded: title, level and summary.
   const [open, setOpen] = useState(true);
   return (
-    <li>
+    <li className="lg-item">
+      {/* Docent: edit this topic (Dutch, or English with the switch top right) right here. */}
+      <EditItemButton item={topic} />
       <details open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
         {open ? (
           <summary className="lg-fold">{t("lg.fold")}</summary>
