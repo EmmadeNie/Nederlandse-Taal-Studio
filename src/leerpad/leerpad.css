@@ -1499,20 +1499,6 @@ span.step-important {
   background: color-mix(in srgb, #f5c542 15%, var(--surface));
 }
 
-/* A lesson in English: the editor's fold-out */
-.lp-english {
-  margin-top: 0.75rem;
-  border-top: 1px solid var(--border);
-  padding-top: 0.5rem;
-}
-
-.lp-english > summary {
-  cursor: pointer;
-  color: var(--text-dim);
-  font-size: 0.85rem;
-  margin-bottom: 0.5rem;
-}
-
 /* Experiment: on a hovered card everything switches to the other language (Dutch ↔ English) */
 .hover-alt {
   display: none;
