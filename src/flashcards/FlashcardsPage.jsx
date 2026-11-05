@@ -141,7 +141,7 @@ export default function FlashcardsPage() {
       ? [{ lesson: drillLesson, ...drillList }]
       : drillLesson
       ? fill
-        ? [{ lesson: drillLesson, part: "words" }, { lesson: drillLesson, part: "verbs" }, { lesson: drillLesson, part: "sentences" }]
+        ? [{ lesson: drillLesson, part: "words" }, { lesson: drillLesson, part: "sentences" }] // Invullen: not the linked verbs (those are for Vervoegen)
         : [{ lesson: drillLesson, part: "verbs" }] // Vervoegen: only the lesson's linked verbs
       : (drill === "alles" ? decks.filter((d) => !d.done_at) : decks.filter((d) => d.id === drill)).map((d) => d.source);
     // Vervoegen only from verb lists (a lesson's linked verbs); In zinnen uses the whole library.

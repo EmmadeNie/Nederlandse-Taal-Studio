@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useI18n } from "../i18n/context";
 import { VerbTile } from "../components/RelatedWords";
-import { CaretLeft } from "../icons";
+import { CaretLeft, Lightbulb } from "../icons";
 import { requeue, shuffle } from "./cards";
 import { TENSES, drillable, gapIsRight, gapQuestions, gapRound, isRight, isRightGaps, makeRound, markQuestions, sentenceMarkQuestions } from "./conjugate";
 import { LEVELS, sentences } from "../data";
@@ -93,7 +93,10 @@ export default function Drill({
   // A lesson about one kind of pronoun (reflexive verbs → wederkerend) starts with that kind.
   const [mode, setMode] = useState(fill ? "all" : pron ? (pronounKinds.includes(pronounKind) ? pronounKind : "all") : "forms");
   // verbs: nl | en (verb hint); fill: en | none (sentence hint); pronouns: kind | person (what each gap says)
-  const [hint, setHint] = useState(fill ? "en" : pron ? "kind" : "nl");
+  const [hint, setHint] = useState(fill ? "none" : pron ? "kind" : "nl");
+  // Invullen without hint: one sentence's English can be peeked at; a short nudge says so at the start.
+  const [peek, setPeek] = useState(false);
+  const [nudge, setNudge] = useState(fill);
   const [size, setSize] = useState(10);
   const sentenceLevels = LEVELS.filter((l) => [...gaps, ...marked, ...pronouns].some((q) => q.sentence.introducedAtLevel === l));
   const [upTo, setUpTo] = useState(() => {
@@ -134,6 +137,12 @@ export default function Drill({
   const current = queue[0];
   useEffect(() => input.current?.focus(), [current, result]);
   useEffect(() => () => clearTimeout(timer.current), []);
+  useEffect(() => setPeek(false), [current]);
+  useEffect(() => {
+    if (!nudge) return;
+    const id = setTimeout(() => setNudge(false), 3500);
+    return () => clearTimeout(id);
+  }, [nudge]);
 
   const start = (list) => {
     clearTimeout(timer.current);
@@ -399,7 +408,8 @@ export default function Drill({
   // In English-hint mode the Dutch verb only shows once answered.
   const showNl = !sentence || hint === "nl" || result;
   // Invullen: the English sentence is the hint (before answering), unless switched off.
-  const showEn = sentence?.en && (fill ? hint === "en" || result : result);
+  const showEn = sentence?.en && (fill ? hint === "en" || peek || result : result);
+  const canPeek = fill && sentence?.en && !showEn;
   return (
     <div className="fc-practice">
       {header}
@@ -450,6 +460,26 @@ export default function Drill({
         {showEn && (
           <span className="dim vd-hint" lang="en">
             {sentence.en}
+          </span>
+        )}
+        {canPeek && (
+          <span className="vd-peek-wrap">
+            <button
+              type="button"
+              className="vd-peek"
+              onClick={() => {
+                setPeek(true);
+                setNudge(false);
+                input.current?.focus();
+              }}
+            >
+              <Lightbulb aria-hidden="true" /> {t("vd.peek")}
+            </button>
+            {nudge && (
+              <span className="vd-nudge" role="status">
+                {t("vd.peekNudge")}
+              </span>
+            )}
           </span>
         )}
         {subject?.question && <span className="dim vd-hint">{t("vd.questionHint")}</span>}

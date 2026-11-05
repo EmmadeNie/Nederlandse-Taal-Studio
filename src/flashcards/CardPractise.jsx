@@ -36,7 +36,9 @@ function practiseKinds(lesson, t) {
       labelKey: "fd.title",
       all: `invullen-les-${lesson.id}`,
       // Word lists whose words are marked in sentences, and sentence lists with marks of their own.
+      // Not the linked verbs: those are for Vervoegen.
       lists: lists
+        .filter((l) => l.part !== "verbs")
         .map((l) => ({ ...l, count: fillCount(l.items), path: `invullen-les.${l.key}-${lesson.id}` }))
         .filter((l) => l.count > 0),
     },
@@ -103,6 +105,7 @@ export default function CardPractise({ lesson }) {
   const go = (path) => navigate(pathFor("flashcards", path));
   const choose = (kind) => {
     if (kind.lists.length === 1) go(kind.lists[0].path);
+    else if (kind.key === "fill") go(kind.all); // Invullen: all its lists together, no picking
     else {
       setKindKey(kind.key);
       setOpen(true);

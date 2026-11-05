@@ -813,3 +813,66 @@
   border-radius: 8px;
   padding: 0.35rem 0.6rem;
 }
+
+/* Invullen without hint: a small hint button, with a brief nudge when the round starts. */
+.vd-peek-wrap {
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+}
+
+.vd-peek {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--border, currentColor);
+  border-radius: 999px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.85rem;
+  opacity: 0.75;
+  cursor: pointer;
+}
+
+.vd-peek:hover,
+.vd-peek:focus-visible {
+  opacity: 1;
+}
+
+.vd-nudge {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  left: 50%;
+  padding: 0.35rem 0.7rem;
+  border-radius: 0.5rem;
+  background: var(--accent, #2f6fdf);
+  color: #fff;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: vd-nudge 3.5s ease forwards;
+}
+
+.vd-nudge::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -6px;
+  border: 6px solid transparent;
+  border-top-color: var(--accent, #2f6fdf);
+}
+
+@keyframes vd-nudge {
+  0% { opacity: 0; transform: translate(-50%, 6px) scale(0.9); }
+  10% { opacity: 1; transform: translate(-50%, 0) scale(1.04); }
+  16% { transform: translate(-50%, 0) scale(1); }
+  85% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vd-nudge { animation: none; }
+}
