@@ -561,7 +561,6 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
             explanationEn={form.explanation_en}
             hasEn={hasEn}
             lang={lang}
-            empty={<p className="dim lp-empty">{t("lp.noExplanation")}</p>}
           />
         </InternalLinkContext.Provider>
       ) : (
