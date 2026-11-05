@@ -15,18 +15,18 @@ export const hasEnglishLesson = ({ titleEn, explanationEn, topicIds = [] }) =>
  * lesson is shown in English (NL | EN in the lesson, starting from the switch
  * top right) and it has an English explanation.
  */
-export default function LessonExplanation({ explanation, explanationEn, hasEn, lang, empty }) {
+export default function LessonExplanation({ explanation, explanationEn, hasEn, lang }) {
   const { t } = useI18n();
   // English when chosen and there is an English text; otherwise the Dutch one.
   const en = hasEn && lang === "en" && Boolean(explanationEn?.trim());
   const text = en ? explanationEn : explanation || "";
-  if (!text.trim() && !hasEn && !empty) return null;
+  if (!text.trim()) return null; // no explanation: no heading either
   return (
     <div className="lp-section">
       <h4>
         {t("lp.explanation")}
       </h4>
-      <div lang={en ? "en" : "nl"}>{text.trim() ? <Markdown className="lp-explanation">{text}</Markdown> : empty}</div>
+      <div lang={en ? "en" : "nl"}><Markdown className="lp-explanation">{text}</Markdown></div>
     </div>
   );
 }

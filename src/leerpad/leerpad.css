@@ -961,6 +961,24 @@
   margin-bottom: 0.5rem;
 }
 
+/* An open topic: only a small "Inklappen" at the top right, then the explanation. */
+.lg-list summary.lg-fold {
+  display: block;
+  text-align: right;
+  margin: -0.15rem 0 0.35rem;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  list-style: none;
+}
+
+.lg-list summary.lg-fold::-webkit-details-marker {
+  display: none;
+}
+
+.lg-list summary.lg-fold::after {
+  content: " ▴";
+}
+
 .lg-list a {
   display: inline-flex;
   align-items: center;

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useI18n } from "../i18n/context";
 import CategoryBadge from "../components/CategoryBadge";
 import { TOPIC_CATEGORIES, categoryOf } from "../data/topicCategory";
@@ -13,7 +14,7 @@ import { knownTopics as known } from "./grammarTopics";
 import { ItemPicker } from "../library/FieldInput";
 
 
-/** The grammar of a lesson: title, level, summary; the explanation opens in place. */
+/** The grammar of a lesson: each topic open (its explanation); folded, its title, level and summary. */
 export function GrammarView({ ids, lang }) {
   const list = known(ids);
   if (!list.length) return null;
@@ -28,19 +29,25 @@ export function GrammarView({ ids, lang }) {
 
 /** One topic in a lesson, in the lesson's language. */
 function GrammarItem({ topic, lang: lessonLang }) {
-  const { lang: appLang } = useI18n();
-  const lang = lessonLang || appLang; // the lesson's NL | EN, else the switch top right
+  const { t, lang: appLang } = useI18n();
+  const lang = lessonLang || appLang; // the lesson's language, else the switch top right
   const text = topicText(topic, lang);
+  // Open by default: just the explanation. Folded: title, level and summary.
+  const [open, setOpen] = useState(true);
   return (
     <li>
-      <details>
-        <summary>
-          <strong lang={lang}>{text.title}</strong> <LevelBadge level={topic.introducedAtLevel} />{" "}
-          <CategoryBadge topic={topic} />
-          <div className="dim lg-summary" lang={lang}>
-            {text.summary}
-          </div>
-        </summary>
+      <details open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
+        {open ? (
+          <summary className="lg-fold">{t("lg.fold")}</summary>
+        ) : (
+          <summary>
+            <strong lang={lang}>{text.title}</strong> <LevelBadge level={topic.introducedAtLevel} />{" "}
+            <CategoryBadge topic={topic} />
+            <div className="dim lg-summary" lang={lang}>
+              {text.summary}
+            </div>
+          </summary>
+        )}
         <TopicExplanation text={text} lang={lang} className="lp-explanation" />
         <RelatedWords ids={topic.relatedWordIds} />
         <ExampleSentences ids={topic.exampleSentenceIds} />
