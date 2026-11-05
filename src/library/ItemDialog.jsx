@@ -12,6 +12,8 @@ import FieldInput from "./FieldInput";
 import { FIELDS, getPath, itemLabel, setPath, suggestId } from "./fields";
 
 const ctx = { has: (id) => Boolean(getItem(id)) };
+// A topic's Dutch text fields and their English counterparts.
+const EN_TEXT = { title: "titleEn", summary: "summaryEn", short: "shortEn", explanation: "explanationEn" };
 
 /**
  * Edit a word, sentence, grammar topic or exercise (docent). An existing item
@@ -19,7 +21,7 @@ const ctx = { has: (id) => Boolean(getItem(id)) };
  * "Aanmaken" once it is valid and then saves as you go too.
  */
 export default function ItemDialog({ item: initial, type: newType, onClose }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const type = initial.id ? typeOfId(initial.id) : newType;
   const [isNew, setIsNew] = useState(!initial.id);
   const [draft, setDraft] = useState(initial);
@@ -111,11 +113,18 @@ export default function ItemDialog({ item: initial, type: newType, onClose }) {
     }
   };
 
-  const fields = FIELDS[type].filter((f) => !f.when || f.when(draft));
+  // A grammar topic follows the switch top right: NL edits the Dutch texts, EN the English ones in their place.
+  const bilingual = type === "topic";
+  const enOf = (f) => FIELDS[type].find((e) => e.path === EN_TEXT[f.path]);
+  const fields = FIELDS[type]
+    .filter((f) => !f.when || f.when(draft))
+    .filter((f) => !bilingual || !Object.values(EN_TEXT).includes(f.path))
+    .map((f) => (bilingual && lang === "en" && EN_TEXT[f.path] ? { ...enOf(f), group: f.group } : f));
   const title = isNew ? t(`ie.new.${type}`) : itemLabel(draft) || draft.id;
 
   return (
     <Dialog title={title} onClose={close} wide>
+      {bilingual && <p className="dim ie-lang">{t(lang === "en" ? "ie.editingEn" : "ie.editingNl")}</p>}
       <div className="ie-form">
         {isNew && (
           <label className="fb-field ie-field">
