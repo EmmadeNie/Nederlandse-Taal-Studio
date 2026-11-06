@@ -1,13 +1,12 @@
-// The "trial ended" e-mail, in Dutch and English (one below the other), in Taal Studio styling.
+// The "trial ended" e-mail, in English (for now), in Taal Studio styling.
 export const APP_URL = "https://mijntaalstudio.nl";
 
 export const escape = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 
-export const SUBJECT = "Je proefperiode is afgelopen · Your trial has ended";
+export const SUBJECT = "Your Taal Studio trial has ended";
 
 type Texts = {
-  label: string;
   title: string;
   hello: (name: string) => string;
   ended: string;
@@ -18,17 +17,6 @@ type Texts = {
 
 const TEXTS: Texts[] = [
   {
-    label: "Nederlands",
-    title: "Je proefperiode van Taal Studio is afgelopen",
-    hello: (name) => (name ? `Hoi ${name},` : "Hoi,"),
-    ended: "Je proefperiode van Taal Studio is afgelopen. Met Taal Studio Gratis kun je nog steeds rondkijken in de app.",
-    more: "Wil je verder met alle lessen en oefeningen? Dan kun je overstappen op Taal Studio Compleet.",
-    contact: (docent, email) =>
-      `Neem contact op met ${docent || "je docent"} via ${email} voor Taal Studio Compleet, of als je vragen hebt of geïnteresseerd bent in de app.`,
-    bye: "Groetjes,",
-  },
-  {
-    label: "English",
     title: "Your Taal Studio trial has ended",
     hello: (name) => (name ? `Hi ${name},` : "Hi,"),
     ended: "Your Taal Studio trial has ended. With Taal Studio Free you can still look around the app.",
@@ -43,8 +31,8 @@ const TEXTS: Texts[] = [
 export const firstName = (name: string) => (name || "").trim().split(/\s+/)[0] || "";
 
 /**
- * The e-mail: logo and name on top, a white card with the Dutch text, then the
- * English, and a blue "Open Taal Studio" button. Answers go to the docent (Reply-To).
+ * The e-mail: logo and name on top, a white card with the text and a blue
+ * "Open Taal Studio" button. Answers go to the docent (Reply-To).
  */
 export function mailHtml(student: string, docent: string, docentEmail: string) {
   const p = (html: string) => `<p style="margin:0 0 14px;font-size:15px;line-height:1.55;color:#171a21;">${html}</p>`;
@@ -52,7 +40,6 @@ export function mailHtml(student: string, docent: string, docentEmail: string) {
   const name = escape(firstName(student));
   const section = (tx: Texts, i: number) => `
           ${i > 0 ? '<hr style="border:0;border-top:1px solid #d6dbe3;margin:22px 0;">' : ""}
-          <div style="font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:#5b6372;font-weight:600;margin:0 0 8px;">${tx.label}</div>
           <h1 style="margin:0 0 16px;font-size:20px;line-height:1.3;color:#171a21;">${escape(tx.title)}</h1>
           ${p(escape(tx.hello(name)))}
           ${p(escape(tx.ended))}
