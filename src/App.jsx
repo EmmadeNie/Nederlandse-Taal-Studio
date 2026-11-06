@@ -20,6 +20,7 @@ import { useAuth } from "./auth/context";
 import { useI18n } from "./i18n/context";
 import LanguageToggle from "./i18n/LanguageToggle";
 import { FeedbackModeToggle, ThemeToggle } from "./prefs/PrefsToggles";
+import { PlanBadge, PlanNotice } from "./auth/plan";
 import { usePrefs } from "./prefs/context";
 import LoginPage from "./auth/LoginPage";
 import NameSetup from "./auth/NameSetup";
@@ -222,6 +223,7 @@ function Studio() {
         <div className="sidebar-footer">
           <div className="sidebar-user">
             <div className="sidebar-user-name">{profile.display_name}</div>
+            <PlanBadge />
             <div className="sidebar-user-meta">
               {t(`role.${role}`)} ·{" "}
               <button className="fb-link" onClick={signOut}>
@@ -263,6 +265,7 @@ function Studio() {
         </div>
       </aside>
       <main className={BOARD_PAGES.has(page) ? "main main-board" : "main"}>
+        <PlanNotice />
         {page === "dashboard" && <Dashboard />}
         {LIBRARY_TAB_IDS.has(page) && (
           <Library tab={page} onTab={setPage} counts={libraryCounts} />

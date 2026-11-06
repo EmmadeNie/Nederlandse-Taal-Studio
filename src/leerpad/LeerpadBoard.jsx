@@ -28,6 +28,7 @@ import { BoardFilters, CardBody, Chips, Dialog, LinkList, LinksEditor, MetaItem 
 import { ICONS, Star } from "../icons";
 import { LEVELS, linkCount, matchesFilter, stepContent } from "./util";
 import LessonExplanation, { hasEnglishLesson } from "./LessonExplanation";
+import { PlanLocked, usePlan } from "../auth/plan";
 
 /**
  * One student's leerpad. The student and the docent can create, rename and
@@ -36,6 +37,7 @@ import LessonExplanation, { hasEnglishLesson } from "./LessonExplanation";
  */
 export default function LeerpadBoard({ studentId }) {
   const { role, profile } = useAuth();
+  const { canOpenLessons } = usePlan(); // Gratis / Onderweg: a card doesn't open
   const { t, lang } = useI18n();
   const isDocent = role === "docent";
   const isOwner = profile.id === studentId;
@@ -283,7 +285,8 @@ export default function LeerpadBoard({ studentId }) {
         />
       )}
 
-      {openStep && (
+      {openStep && !canOpenLessons && <PlanLocked onClose={() => setOpenId(null)} />}
+      {openStep && canOpenLessons && (
         <StepDialog
           key={openStep.id}
           step={openStep}

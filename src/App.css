@@ -2127,3 +2127,45 @@ svg[class^="ph"], button svg, h4 svg, .board-meta-item svg {
 body:has(.lp-dialog) .lang-corner {
   z-index: 1001;
 }
+
+/* Subscriptions: the student's plan under their name, the locked page, the docent's e-mail prompt. */
+.plan-badge {
+  display: inline-block;
+  margin: 0.15rem 0 0.2rem;
+  padding: 0.05rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.plan-badge.is-gratis {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+
+.plan-locked-page {
+  max-width: 32rem;
+  margin: 2rem auto;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.plan-mail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.5rem 0 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  background: var(--accent-soft);
+}
+
+.plan-mail a.fb-btn-primary {
+  text-decoration: none;
+}

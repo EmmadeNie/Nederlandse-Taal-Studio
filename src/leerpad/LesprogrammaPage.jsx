@@ -31,6 +31,7 @@ import { BoardFilters, CardBody, Chips, Dialog, MetaItem } from "./shared";
 import { CheckSquare, Eye, ICONS } from "../icons";
 import { LEVELS, matchesFilter } from "./util";
 import LessonExplanation, { hasEnglishLesson } from "./LessonExplanation";
+import { PlanLocked, usePlan } from "../auth/plan";
 
 /**
  * Lesprogramma: the master board. Lanes are free (like Trello); the CEFR
@@ -38,6 +39,7 @@ import LessonExplanation, { hasEnglishLesson } from "./LessonExplanation";
  */
 export default function LesprogrammaPage() {
   const { role, profile } = useAuth();
+  const { canOpenLessons } = usePlan(); // Gratis / Onderweg: look around, a lesson doesn't open
   const { t, lang } = useI18n();
   const canEdit = role === "docent";
   const isStudent = role === "leerling";
@@ -352,7 +354,8 @@ export default function LesprogrammaPage() {
           </button>
         </div>
       )}
-      {openLesson && (
+      {openLesson && !canOpenLessons && <PlanLocked onClose={() => setOpenId(null)} />}
+      {openLesson && canOpenLessons && (
         <LessonDialog
           key={openLesson.id}
           lesson={openLesson}

@@ -16,6 +16,7 @@ import { drillable, fillCount, fillWordsOf, markSentencesOf, tenseForLesson } fr
 import { lessonPronounKind, withPronounsOf } from "./pronouns";
 import { cardOf, deckTitle, itemsOf, lessonLists, parseListKey, partsOf } from "./cards";
 import { loadDecks, removeDeck, setDeckDone, setDeckKindDone, useDecks } from "./store";
+import { PlanLockedPage, usePlan } from "../auth/plan";
 import "./flashcards.css";
 
 const LESSON = "id, title, level, word_list, sentence_list, verb_ids";
@@ -45,6 +46,7 @@ async function loadMyLessons(profileId, isStudent) {
 export default function FlashcardsPage() {
   const { t } = useI18n();
   const { profile, role } = useAuth();
+  const { canPractise } = usePlan(); // Gratis: the lists can be seen, not practised
   const route = useRoute();
   useContentVersion();
   const decks = useDecks(profile.id);
@@ -121,6 +123,7 @@ export default function FlashcardsPage() {
     const own = lesson ? withPronounsOf(sentencesForLists(lesson.sentence_list), pronounKind) : [];
     const list = own.length ? own : withPronounsOf(sentences, pronounKind);
     if (!list.length) return <p className="dim">{t("pd.none")}</p>;
+    if (!canPractise) return <PlanLockedPage onBack={() => navigate(pathFor("flashcards"))} />;
     return (
       <Drill
         key={route.param}
@@ -155,6 +158,7 @@ export default function FlashcardsPage() {
     const levelOf = (src) => (src.lesson ? lessonMap.get(src.lesson)?.level : src.set ? getSet(src.set)?.level : null);
     const level = drill === "alles" ? null : levelOf(sources[0] || {});
     if (verbs.length || words.length || markSentences.length) {
+      if (!canPractise) return <PlanLockedPage onBack={() => navigate(pathFor("flashcards"))} />;
       return (
         <Drill
           key={route.param}
@@ -181,6 +185,7 @@ export default function FlashcardsPage() {
     if (!lesson) return <p className="dim">{t("common.loading")}</p>;
     const cards = itemsOf(directSource, lessonMap).map(cardOf);
     if (!cards.length) return <p className="dim">{t("fc.noCards")}</p>;
+    if (!canPractise) return <PlanLockedPage onBack={() => navigate(pathFor("flashcards"))} />;
     return (
       <Practice
         key={route.param}
@@ -198,6 +203,7 @@ export default function FlashcardsPage() {
     const unique = new Map(chosen.flatMap(cardsOf).map((c) => [c.id, c]));
     const title = route.param === "alles" ? t("fc.all") : chosen[0]?.title;
     if (unique.size) {
+      if (!canPractise) return <PlanLockedPage onBack={() => navigate(pathFor("flashcards"))} />;
       return (
         <Practice
           key={route.param}
