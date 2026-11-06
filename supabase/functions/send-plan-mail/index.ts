@@ -1,4 +1,4 @@
-// Sends a student the "your trial has ended" e-mail, in Taal Studio styling.
+// Sends a student the "your trial has ended" e-mail (Dutch and English), in Taal Studio styling.
 // Called by a docent from Gebruikers after moving a student from Trial to Gratis.
 //
 // From:     Taal Studio <MAIL_FROM>   (an address on a domain verified in Resend)
@@ -9,7 +9,7 @@
 //   MAIL_FROM        e.g. noreply@mijntaalstudio.nl
 // Locally, MAIL_DRY_RUN=1 returns the e-mail instead of sending it.
 import { createClient } from "jsr:@supabase/supabase-js@2";
-import { TEXTS, mailHtml } from "./mail.ts";
+import { SUBJECT, mailHtml } from "./mail.ts";
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -41,17 +41,16 @@ Deno.serve(async (req) => {
   const { student } = await req.json().catch(() => ({}));
   const { data: target } = await admin
     .from("profiles")
-    .select("email, display_name, language, plan, role")
+    .select("email, display_name, plan, role")
     .eq("id", student)
     .maybeSingle();
   if (!target?.email || target.role !== "leerling") return json({ error: "Leerling niet gevonden of zonder e-mailadres" }, 404);
   if (target.plan !== "gratis") return json({ error: "Deze leerling staat niet op Taal Studio Gratis" }, 409);
 
-  const tx = TEXTS[target.language === "en" ? "en" : "nl"];
   const docentEmail = me.email || auth.user.email || "";
-  const html = mailHtml(tx, target.display_name || "", me.display_name || "", docentEmail);
+  const html = mailHtml(target.display_name || "", me.display_name || "", docentEmail);
 
-  if (Deno.env.get("MAIL_DRY_RUN") === "1") return json({ dryRun: true, to: target.email, replyTo: docentEmail, subject: tx.subject, html });
+  if (Deno.env.get("MAIL_DRY_RUN") === "1") return json({ dryRun: true, to: target.email, replyTo: docentEmail, subject: SUBJECT, html });
 
   const key = Deno.env.get("RESEND_API_KEY");
   const from = Deno.env.get("MAIL_FROM");
@@ -64,7 +63,7 @@ Deno.serve(async (req) => {
       from: `Taal Studio <${from}>`,
       to: [target.email],
       reply_to: docentEmail,
-      subject: tx.subject,
+      subject: SUBJECT,
       html,
     }),
   });
