@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { useAuth, ROLES } from "../auth/context";
-import { translate, useI18n } from "../i18n/context";
+import { useI18n } from "../i18n/context";
 import { PLANS } from "../auth/plan";
 import { Trash } from "../icons";
 
@@ -27,6 +27,7 @@ export default function UserManagement() {
   const [profiles, setProfiles] = useState([]);
   const [error, setError] = useState(null);
   const [trialEnded, setTrialEnded] = useState(null); // student just moved Trial → Gratis: offer the e-mail
+  const [mail, setMail] = useState(null); // null | "sending" | "sent" | error text
 
   const load = useCallback(async () => {
     const { data, error } = await supabase
@@ -55,17 +56,27 @@ export default function UserManagement() {
     setError(null);
     const { error } = await supabase.rpc("set_user_plan", { target_user: p.id, new_plan: newPlan });
     if (error) setError(error.message);
-    else setTrialEnded(p.plan === "trial" && newPlan === "gratis" ? p : null);
+    else {
+      setTrialEnded(p.plan === "trial" && newPlan === "gratis" ? p : null);
+      setMail(null);
+    }
     await load();
   };
 
-  // The e-mail to a student whose trial ended, in their language, opened in the docent's mail app.
-  const trialEndedMail = (p) => {
-    const lang = p.language === "en" ? "en" : "nl";
-    const vars = { name: p.display_name || "", docent: me.display_name || "" };
-    const subject = translate(lang, "plan.mail.subject", vars);
-    const body = translate(lang, "plan.mail.body", vars);
-    return `mailto:${encodeURIComponent(p.email || "")}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  // The e-mail to a student whose trial ended: sent by the app (Taal Studio styling, in the
+  // student's language), with the docent's own address to reply to.
+  const sendTrialEndedMail = async (p) => {
+    setMail("sending");
+    const { data, error } = await supabase.functions.invoke("send-plan-mail", { body: { student: p.id } });
+    if (error) {
+      let text = error.message;
+      try {
+        text = (await error.context.json()).error || text;
+      } catch {
+        // no JSON body: keep the message
+      }
+      setMail(text);
+    } else setMail(data?.sent || data?.dryRun ? "sent" : t("plan.mail.failed"));
   };
 
   const changeCanReview = async (targetId, allowed) => {
@@ -102,12 +113,22 @@ export default function UserManagement() {
       {trialEnded && (
         <div className="plan-mail">
           <span>{t("plan.mail.done", { name: trialEnded.display_name || trialEnded.email })}</span>
-          {trialEnded.email && (
-            <a className="fb-btn-primary" href={trialEndedMail(trialEnded)} onClick={() => setTrialEnded(null)}>
+          {trialEnded.email && mail === null && (
+            <button type="button" className="fb-btn-primary" onClick={() => sendTrialEndedMail(trialEnded)}>
               {t("plan.mail.send")}
-            </a>
+            </button>
           )}
-          <button type="button" className="fb-link" onClick={() => setTrialEnded(null)}>
+          {mail === "sending" && <span className="dim">{t("plan.mail.sending")}</span>}
+          {mail === "sent" && <strong>✓ {t("plan.mail.sent", { email: trialEnded.email })}</strong>}
+          {mail && mail !== "sending" && mail !== "sent" && <span className="ie-error">{mail}</span>}
+          <button
+            type="button"
+            className="fb-link"
+            onClick={() => {
+              setTrialEnded(null);
+              setMail(null);
+            }}
+          >
             {t("common.close")}
           </button>
         </div>

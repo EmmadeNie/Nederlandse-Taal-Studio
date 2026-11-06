@@ -1,7 +1,8 @@
 name: Deploy production
 
 # Every push to main deploys in a fixed order:
-#   1. migrations  apply new database migrations (skipped when none changed)
+#   1. migrations  apply new database migrations (skipped when none changed),
+#                  then deploy the edge functions in supabase/functions (when changed)
 #   2. frontend    build and deploy the app to Vercel, only if step 1 succeeded
 # so the live app never runs ahead of the live database. Vercel's own
 # automatic deploys for main are switched off in vercel.json; PR previews
@@ -60,6 +61,26 @@ jobs:
       - name: Push migrations
         if: steps.changed.outputs.run == 'true'
         run: supabase db push
+      # Edge functions (e.g. send-plan-mail). Their secrets (RESEND_API_KEY, MAIL_FROM) are set
+      # once in the Supabase dashboard (Edge Functions → Secrets), not here.
+      - name: Check for changed functions
+        id: functions
+        run: |
+          before="${{ github.event.before }}"
+          if [ "${{ github.event_name }}" != "push" ] || [ -z "$before" ] || [ "$before" = "0000000000000000000000000000000000000000" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          elif git diff --name-only "$before" "${{ github.sha }}" -- supabase/functions | grep -q .; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: supabase/setup-cli@v1
+        if: steps.functions.outputs.run == 'true' && steps.changed.outputs.run != 'true'
+        with:
+          version: 2.75.0
+      - name: Deploy edge functions
+        if: steps.functions.outputs.run == 'true'
+        run: supabase functions deploy --project-ref ${{ secrets.SUPABASE_PROJECT_ID }} --use-api
 
   frontend:
     needs: migrations

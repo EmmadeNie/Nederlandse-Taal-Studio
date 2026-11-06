@@ -2166,6 +2166,3 @@ body:has(.lp-dialog) .lang-corner {
   background: var(--accent-soft);
 }
 
-.plan-mail a.fb-btn-primary {
-  text-decoration: none;
-}
