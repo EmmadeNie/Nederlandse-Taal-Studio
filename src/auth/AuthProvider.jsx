@@ -19,7 +19,7 @@ export function AuthProvider({ children }) {
   const loadProfile = useCallback(async (userId) => {
     const { data, error } = await supabase
       .from("profiles")
-      .select("id, user_id, email, display_name, role, language, can_review, onboarded_at")
+      .select("id, user_id, email, display_name, role, language, can_review, onboarded_at, plan, plan_notice")
       .eq("user_id", userId)
       .maybeSingle();
     if (error) console.error("Profiel laden mislukt:", error.message);
@@ -47,6 +47,15 @@ export function AuthProvider({ children }) {
     });
     return () => sub.subscription.unsubscribe();
   }, [loadProfile]);
+
+  // The docent may change the subscription meanwhile: look again when the app comes back into view.
+  useEffect(() => {
+    const userId = session?.user?.id;
+    if (!userId) return;
+    const onShow = () => document.visibilityState === "visible" && loadProfile(userId);
+    document.addEventListener("visibilitychange", onShow);
+    return () => document.removeEventListener("visibilitychange", onShow);
+  }, [session?.user?.id, loadProfile]);
 
   const updateDisplayName = async (name) => {
     const { error } = await supabase

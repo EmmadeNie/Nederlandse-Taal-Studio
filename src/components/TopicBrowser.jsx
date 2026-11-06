@@ -1,6 +1,6 @@
 import { useContentVersion } from "../data/useContent";
 import { EditItemButton, NewItemButton } from "../library/ItemEditing";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LEVELS, topics } from "../data";
 import { LevelBadge, ReviewBadge } from "./Badges";
 import FeedbackButton from "../feedback/FeedbackButton";
@@ -16,9 +16,12 @@ import { useAuth } from "../auth/context";
 import { topicText } from "./topicLang";
 import CategoryBadge from "./CategoryBadge";
 import { TOPIC_CATEGORIES, categoryOf } from "../data/topicCategory";
+import { PlanLocked, usePlan } from "../auth/plan";
 
 export default function TopicBrowser() {
   const { t } = useI18n();
+  const { canOpenLessons } = usePlan(); // Gratis / Onderweg: titles and summaries only
+  const [locked, setLocked] = useState(false);
   useContentVersion();
   const urlParams = useUrlParams();
   const route = useRoute();
@@ -73,20 +76,21 @@ export default function TopicBrowser() {
           <section key={level ?? "none"} className="topic-group">
             <h3 className="topic-group-title">{level ?? t("level.none")}</h3>
             {group.map((topic) => {
-              const isOpen = expandedId === topic.id;
+              const isOpen = canOpenLessons && expandedId === topic.id;
               return (
                 <TopicCard
                   key={topic.id}
                   topic={topic}
                   isOpen={isOpen}
                   cardRef={isOpen ? openRef : null}
-                  onToggle={() => setExpanded(isOpen ? null : topic.id)}
+                  onToggle={() => (canOpenLessons ? setExpanded(isOpen ? null : topic.id) : setLocked(true))}
                 />
               );
             })}
           </section>
         );
       })}
+      {locked && <PlanLocked onClose={() => setLocked(false)} />}
     </div>
   );
 }
