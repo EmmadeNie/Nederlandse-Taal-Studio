@@ -1,0 +1,22 @@
+// Opens one page (read-only, renamed) and screenshots it once the given selector shows.
+import { chromium } from "playwright";
+import { APP_URL, AUTH_FILE, VIEWPORT, ALIASES } from "../config.mjs";
+import { readOnly, docentClient, buildRename, assertNoRealNames, saveLogin } from "../guard.mjs";
+const [p, sel = "body", out = "out/probe.png", lang = "nl", theme = "dark"] = process.argv.slice(2);
+const rename = await buildRename(await docentClient(), ALIASES);
+const browser = await chromium.launch();
+const context = await browser.newContext({ storageState: AUTH_FILE, viewport: VIEWPORT });
+await context.addInitScript(([l, t]) => { localStorage.setItem("nts-lang", l); localStorage.setItem("nts-theme", t); }, [lang, theme]);
+const blocked = await readOnly(context, { rename });
+const page = await context.newPage();
+const t0 = Date.now();
+await page.goto(APP_URL + p);
+await page.locator(sel).first().waitFor({ timeout: 30000 });
+console.log(`ready after ${Date.now() - t0} ms`);
+await page.waitForTimeout(600);
+await assertNoRealNames(page, rename, p);
+await page.screenshot({ path: out });
+await saveLogin(context);
+await context.unrouteAll({ behavior: "ignoreErrors" });
+await browser.close();
+console.log("blocked:", blocked.map((b) => b.path));

@@ -1,0 +1,7 @@
+node_modules
+.auth
+snapshots
+raw
+out
+remotion/manifests.js
+students.local.json

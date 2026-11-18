@@ -1,0 +1,7 @@
+{
+  "board": { "name": "Firstname", "slug": "made-up-name" },
+  "aliases": {
+    "Firstname": "Made-up Name",
+    "Other": "Another Made-up Name"
+  }
+}
