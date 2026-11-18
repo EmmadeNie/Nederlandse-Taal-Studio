@@ -86,14 +86,14 @@ body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 -apple-syste
 a{color:var(--accent)}
 .wrap{max-width:760px;margin:0 auto;padding:1.25rem 1rem 3rem}
 header.site{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.25rem 0 1.5rem}
-.brand{display:flex;align-items:center;gap:.6rem;color:var(--text);text-decoration:none;font-weight:800;font-size:1.15rem}
+.brand{display:flex;align-items:center;gap:.6rem;color:var(--text);text-decoration:none;font-weight:800;font-size:1.15rem;white-space:nowrap}
 .brand img{width:34px;height:34px}
 .btn{display:inline-block;padding:.6rem 1rem;border-radius:10px;background:var(--accent);color:#0b0d11;font-weight:700;text-decoration:none}
 .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
 nav.menu{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;justify-content:flex-end}
 nav.menu a:not(.btn){color:var(--text);text-decoration:none;font-weight:600;font-size:.95rem}
 nav.menu a:not(.btn):hover{color:var(--accent)}
-@media (max-width:560px){header.site{flex-direction:column;align-items:flex-start}nav.menu{justify-content:flex-start;gap:.8rem}}
+@media (max-width:700px){header.site{flex-direction:column;align-items:flex-start}nav.menu{justify-content:flex-start;gap:.8rem}}
 .hero{padding:1rem 0 .5rem}
 .hero .lead{font-size:1.2rem}
 .actions{display:flex;gap:.7rem;flex-wrap:wrap;margin:1.2rem 0 1.5rem}
@@ -107,6 +107,9 @@ blockquote{margin:0;padding:1rem 1.1rem;border-radius:12px;background:var(--surf
 blockquote p{margin:0 0 .5rem}
 blockquote cite{color:var(--dim);font-style:normal;font-size:.9rem}
 .stars{color:#f5b301;letter-spacing:.1em}
+.reviews{display:grid;gap:.9rem;margin:1rem 0}
+.reviews .who{display:flex;align-items:center;gap:.75rem;margin-bottom:.6rem;line-height:1.3}
+.reviews .avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#0b0d11;font-weight:800;flex:none}
 .faq h3{margin-top:1.2rem}
 form.contact{display:grid;gap:.9rem;margin:1rem 0}
 form.contact label{display:grid;gap:.35rem;font-weight:600;font-size:.95rem}
@@ -178,12 +181,12 @@ ${jsonLd.map((j) => `<script type="application/ld+json">${JSON.stringify(j).repl
 <body>
 <div class="wrap">
 <header class="site">
-  <a class="brand" href="/nederlandse-les/"><img src="/logo-icon.svg?v=4" alt="" width="34" height="34" />Taal Studio</a>
-  <nav class="menu"><a href="/nederlandse-les/">Lessen</a><a href="/grammatica/">Grammatica</a><a href="/contact/">Contact</a><a class="btn ghost" href="/">Inloggen</a></nav>
+  <a class="brand" href="/"><img src="/logo-icon.svg?v=4" alt="" width="34" height="34" />Taal Studio</a>
+  <nav class="menu"><a href="/nederlandse-les/">Lessen</a><a href="/reviews/">Reviews</a><a href="/grammatica/">Grammatica</a><a href="/contact/">Contact</a><a class="btn ghost" href="/">Inloggen</a></nav>
 </header>
 ${body}
 <footer class="site">
-  <p><a href="/">Taal Studio</a> · Nederlands taalplatform en taalapp · Online Nederlandse les en bijles NT2, van A0 tot B2, in Rotterdam en online · <a href="/nederlandse-les/">Lessen</a> · <a href="/grammatica/">Grammatica</a> · <a href="/contact/">Contact</a></p>
+  <p><a href="/">Taal Studio</a> · Nederlands taalplatform en taalapp · Online Nederlandse les en bijles NT2, van A0 tot B2, in Rotterdam en online · <a href="/nederlandse-les/">Lessen</a> · <a href="/reviews/">Reviews</a> · <a href="/grammatica/">Grammatica</a> · <a href="/contact/">Contact</a></p>
 </footer>
 </div>
 </body>
@@ -287,8 +290,47 @@ const REVIEWS = [
   { name: "Lara", text: "Met Emma is het altijd gezellig en ze is super geduldig." },
 ];
 
+/** All recommendations from Superprof, word for word (public there). */
+const ALL_REVIEWS = [
+  { name: "Bence", text: "Perfect! Emma offers fun and personalized lessons. She’s attentive to my needs and improves her methods using my feedback." },
+  { name: "Ana Catalina", text: "Together with Emma I was able to take my dutch from A0 to A2 in one month as preparation for my Inburgeringsexamen. She’s an amazing teacher, very structured, patient and kind. Great in both online and in-person lessons. She has many kinds of interactive materials for learning which makes it very easy to follow and don’t get overwhelmed with a new language." },
+  { name: "Leerling", lang: "nl", text: "Ik heb veel van Emma geleerd. Mijn gesprek vaardigheden zijn enorm verbeterd." },
+  { name: "Mason", text: "With Emma’s help, I have been able to quickly progress my Dutch learning and begin passing my NT2 exams. We throughly covered all the necessary grammer topics at my own pace, slowing down when I needed more time. She is able to give good explanations of these topics. Emma provides good feedback on which areas need improvement. I definitely recommend Emma for your Dutch lessons!" },
+  { name: "Isaac", text: "Emma has a very patient and structured teaching style. She takes time to understand your level, explains concepts in simple terms, and uses practical examples that make the lessons easy to follow. I especially appreciated how she adapted her approach to fit my pace and made sure I was confident before moving on." },
+  { name: "Lara", lang: "nl", text: "Met Emma wandel ik altijd in het park. Over het afgelopen jaar heeft zij mij enorm geholpen met Nederlands praten. Inmiddels geniet ik van onze Nederlandse gesprekken en verheug ik me buiten het park steeds meer Nederlands te praten. Met Emma is het altijd gezellig en ze is super geduldig." },
+  { name: "Marija", text: "With Emma learning Dutch is a lot of fun. She is very patient and explains concepts in an easy manner. From time to time she sends me fun songs and video’s that help out with the homework I have. On whatsapp she also sends me voice fragments of things I am having difficulty pronouncing. Her approach is just great and her online board is very clear and gives a great overview." },
+];
+
+function reviewsPage() {
+  const url = `${SITE}/reviews/`;
+  const colours = ["#4f9cf9", "#2fd27a", "#f08c3c"];
+  const body = `
+<nav class="crumbs"><a href="/">Taal Studio</a> › Reviews</nav>
+<h1>Reviews van leerlingen</h1>
+<p class="lead"><span class="stars">★★★★★</span> 5,0 uit ${ALL_REVIEWS.length} reviews. Wat leerlingen zeggen over de Nederlandse lessen en bijles bij Taal Studio, zoals ze het schreven op <a href="${SUPERPROF}" rel="noopener">Superprof</a>.</p>
+<div class="reviews">
+${ALL_REVIEWS.map((r, i) => `  <blockquote${r.lang ? ` lang="${r.lang}"` : ' lang="en"'}>
+    <div class="who"><span class="avatar" style="background:${colours[i % 3]}">${esc(r.name[0])}</span><span><strong>${esc(r.name)}</strong><br /><span class="stars">★★★★★</span></span></div>
+    <p>${esc(r.text)}</p>
+  </blockquote>`).join("\n")}
+</div>
+<p class="note">Alle reviews staan op <a href="${SUPERPROF}" rel="noopener">Emma’s profiel op Superprof</a>.</p>
+<div class="cta">
+  <p><strong>Zelf ervaren?</strong> Boek een proefles: de 2e les krijg je gratis.</p>
+  <a class="btn" href="/contact/">Plan een proefles</a>
+</div>
+`;
+  return page({
+    title: "Reviews van leerlingen: Nederlandse les en bijles NT2 | Taal Studio",
+    description: `5,0 uit ${ALL_REVIEWS.length} reviews. Leerlingen over de Nederlandse lessen en bijles NT2 bij Taal Studio: geduldig, gestructureerd en persoonlijk.`,
+    canonical: url,
+    body,
+    jsonLd: [breadcrumbs([["Taal Studio", `${SITE}/`], ["Reviews", url]])],
+  });
+}
+
 const FAQ = [
-  ["Is de eerste les gratis?", "Ja. De eerste les is gratis, zodat je kunt kennismaken en we samen kijken waar je staat en wat je wilt bereiken."],
+  ["Kan ik een proefles doen?", "Ja. In de proefles maken we kennis en kijken we samen waar je staat en wat je wilt bereiken. Ga je daarna verder, dan krijg je de 2e les gratis."],
   ["Kan ik online Nederlandse les krijgen?", "Ja. Lessen zijn online of op locatie in Rotterdam. Tussen de lessen door oefen je in de Taal Studio-app."],
   ["Voor welke niveaus is Taal Studio?", "Van A0 (beginner) tot B2. Je leerpad past zich aan je niveau aan: je begint waar je staat."],
   ["Helpt Taal Studio bij de inburgering en het Staatsexamen NT2?", "Ja. Je oefent gericht met de onderwerpen die je voor het inburgeringsexamen of het Staatsexamen NT2 nodig hebt, en je docent stemt je leerpad daarop af."],
@@ -300,8 +342,8 @@ function landingPage(topicCount) {
   const body = `
 <section class="hero">
   <h1>Nederlandse les en bijles NT2, online en in Rotterdam</h1>
-  <p class="lead">Taal Studio is een Nederlands taalplatform met persoonlijke lessen. Je krijgt een eigen leerpad, heldere uitleg en oefeningen op jouw niveau, van A0 tot B2. De eerste les is gratis.</p>
-  <div class="actions"><a class="btn" href="/contact/">Plan een gratis proefles</a><a class="btn ghost" href="/">Inloggen</a></div>
+  <p class="lead">Taal Studio is een Nederlands taalplatform met persoonlijke lessen. Je krijgt een eigen leerpad, heldere uitleg en oefeningen op jouw niveau, van A0 tot B2. Boek een proefles, dan krijg je de 2e les gratis.</p>
+  <div class="actions"><a class="btn" href="/contact/">Plan een proefles</a><a class="btn ghost" href="/">Inloggen</a></div>
 </section>
 <div class="video"><video src="/demo/demo-nl.mp4" poster="/demo/demo-nl.jpg" controls muted playsinline preload="metadata" aria-label="Korte demo van Taal Studio"></video></div>
 
@@ -323,7 +365,7 @@ function landingPage(topicCount) {
 <p>Lees ook de <a href="/grammatica/">gratis uitleg van ${topicCount || "56"} onderwerpen Nederlandse grammatica</a>, per niveau.</p>
 
 <h2>Wat leerlingen zeggen</h2>
-<p><span class="stars">★★★★★</span> 5,0 uit 7 reviews op <a href="${SUPERPROF}" rel="noopener">Superprof</a></p>
+<p><span class="stars">★★★★★</span> 5,0 uit 7 reviews op <a href="${SUPERPROF}" rel="noopener">Superprof</a> · <a href="/reviews/">Lees alle reviews</a></p>
 <div class="grid">
 ${REVIEWS.map((r) => `  <blockquote><p>“${esc(r.text)}”</p><cite>${esc(r.name)}, via Superprof</cite></blockquote>`).join("\n")}
 </div>
@@ -334,7 +376,7 @@ ${FAQ.map(([q, a]) => `<h3>${esc(q)}</h3><p>${esc(a)}</p>`).join("\n")}
 </div>
 
 <div class="cta">
-  <p><strong>Zin om te beginnen?</strong> Plan een gratis proefles, dan kijken we samen naar je niveau en je doel.</p>
+  <p><strong>Zin om te beginnen?</strong> Plan een proefles, dan kijken we samen naar je niveau en je doel. De 2e les is gratis.</p>
   <a class="btn" href="/contact/">Neem contact op</a>
 </div>
 `;
@@ -348,7 +390,7 @@ ${FAQ.map(([q, a]) => `<h3>${esc(q)}</h3><p>${esc(a)}</p>`).join("\n")}
       url,
       areaServed: [{ "@type": "City", name: "Rotterdam" }, { "@type": "Country", name: "Nederland" }],
       provider: { "@type": "EducationalOrganization", "@id": `${SITE}/#org`, name: "Taal Studio", url: `${SITE}/` },
-      offers: { "@type": "Offer", description: "Eerste les gratis" },
+      offers: { "@type": "Offer", description: "Proefles; de 2e les is gratis" },
     },
     {
       "@context": "https://schema.org",
@@ -359,7 +401,7 @@ ${FAQ.map(([q, a]) => `<h3>${esc(q)}</h3><p>${esc(a)}</p>`).join("\n")}
   ];
   return page({
     title: "Nederlandse les en bijles NT2, online en in Rotterdam | Taal Studio",
-    description: "Persoonlijke Nederlandse les en bijles NT2, online of in Rotterdam, met het Taal Studio-taalplatform: eigen leerpad, uitleg en oefeningen van A0 tot B2. Eerste les gratis.",
+    description: "Persoonlijke Nederlandse les en bijles NT2, online of in Rotterdam, met het Taal Studio-taalplatform: eigen leerpad, uitleg en oefeningen van A0 tot B2. Proefles mogelijk, 2e les gratis.",
     canonical: url,
     body,
     jsonLd,
@@ -370,9 +412,9 @@ function contactPage() {
   const url = `${SITE}/contact/`;
   const endpoint = hosted ? `${SUPABASE_URL}/functions/v1/contact` : "";
   const body = `
-<nav class="crumbs"><a href="/nederlandse-les/">Taal Studio</a> › Contact</nav>
+<nav class="crumbs"><a href="/">Taal Studio</a> › Contact</nav>
 <h1>Contact</h1>
-<p class="lead">Wil je een gratis proefles, of heb je een vraag over Nederlandse les, bijles NT2 of de Taal Studio-app? Stuur een bericht, dan hoor je snel van me.</p>
+<p class="lead">Wil je een proefles (de 2e les is gratis), of heb je een vraag over Nederlandse les, bijles NT2 of de Taal Studio-app? Stuur een bericht, dan hoor je snel van me.</p>
 <form class="contact" id="contact" novalidate>
   <label>Naam<input name="name" autocomplete="name" required maxlength="100" /></label>
   <label>E-mailadres<input name="email" type="email" autocomplete="email" required maxlength="200" /></label>
@@ -423,8 +465,8 @@ function contactPage() {
     breadcrumbs([["Taal Studio", `${SITE}/`], ["Contact", url]]),
   ];
   return page({
-    title: "Contact: gratis proefles Nederlandse les | Taal Studio",
-    description: "Neem contact op voor een gratis proefles Nederlandse les of bijles NT2, online of in Rotterdam.",
+    title: "Contact: proefles Nederlandse les en bijles NT2 | Taal Studio",
+    description: "Neem contact op voor een proefles Nederlandse les of bijles NT2, online of in Rotterdam. De 2e les is gratis.",
     canonical: url,
     body,
     jsonLd,
@@ -445,6 +487,8 @@ const urls = [{ loc: `${SITE}/`, lastmod: today, priority: "1.0" }];
 write("nederlandse-les/index.html", landingPage(topics.length));
 urls.push({ loc: `${SITE}/nederlandse-les/`, lastmod: today, priority: "0.9" });
 write("contact/index.html", contactPage());
+write("reviews/index.html", reviewsPage());
+urls.push({ loc: `${SITE}/reviews/`, lastmod: today, priority: "0.6" });
 urls.push({ loc: `${SITE}/contact/`, lastmod: today, priority: "0.6" });
 if (topics.length) {
   write("grammatica/index.html", indexPage(topics));
@@ -475,4 +519,4 @@ Sitemap: ${SITE}/sitemap.xml
 `,
 );
 
-console.log(`build-seo: landing, contact, ${topics.length} grammar pages, sitemap with ${urls.length} URLs, robots.txt${hosted ? "" : " (contact form without endpoint: no hosted Supabase in env)"}`);
+console.log(`build-seo: landing, contact, reviews, ${topics.length} grammar pages, sitemap with ${urls.length} URLs, robots.txt${hosted ? "" : " (contact form without endpoint: no hosted Supabase in env)"}`);
