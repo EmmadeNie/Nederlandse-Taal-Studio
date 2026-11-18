@@ -92,23 +92,24 @@ const SEGMENTS = [
     // The short explanation, "Lees meer", then the full one.
     kind: "clip", scene: "theory", from: 1.0, to: 12.6, speed: 1.6, caption: "theory",
     camera: [
-      { t: 1.0, zoom: 1.0 },
-      { t: 2.2, zoom: 1.12, x: 720, y: 450 },
-      { t: 4.4, zoom: 1.3, x: 720, y: 470 },
-      { t: 7.6, zoom: 1.38, x: 700, y: 520 },
-      { t: 8.6, zoom: 1.3, x: 720, y: 430 },
-      { t: 12.6, zoom: 1.3, x: 720, y: 450 },
+      // On a phone: as wide as the text in the dialog, a bit closer on "Lees meer".
+      { t: 1.0, zoom: 1.0, p: { w: 680 } },
+      { t: 2.2, zoom: 1.12, x: 720, y: 450, p: { w: 600 } },
+      { t: 4.4, zoom: 1.3, x: 720, y: 470, p: { w: 600 } },
+      { t: 7.6, zoom: 1.38, x: 700, y: 520, p: { w: 540 } },
+      { t: 8.6, zoom: 1.3, x: 720, y: 430, p: { w: 600 } },
+      { t: 12.6, zoom: 1.3, x: 720, y: 450, p: { w: 600 } },
     ],
   },
   {
     // The verbs and the word list that come with the lesson.
     kind: "clip", scene: "theory", from: 12.8, to: 19.6, speed: 1.5, caption: "linked",
     camera: [
-      { t: 12.8, zoom: 1.2, x: 720, y: 450 },
-      { t: 14.0, zoom: 1.32, x: 720, y: 420 },
-      { t: 16.0, zoom: 1.32, x: 720, y: 440 },
-      { t: 17.0, zoom: 1.5, x: 720, y: 420 },
-      { t: 19.6, zoom: 1.5, x: 720, y: 420 },
+      { t: 12.8, zoom: 1.2, x: 720, y: 450, p: { w: 600 } },
+      { t: 14.0, zoom: 1.32, x: 720, y: 420, p: { w: 600 } },
+      { t: 16.0, zoom: 1.32, x: 720, y: 440, p: { w: 600 } },
+      { t: 17.0, zoom: 1.5, x: 720, y: 420, p: { w: 560 } },
+      { t: 19.6, zoom: 1.5, x: 720, y: 420, p: { w: 560 } },
     ],
   },
   {
@@ -131,8 +132,9 @@ const SEGMENTS = [
     kind: "clip", scene: "levels", from: 4.6, to: 12.6, speed: 1.5, caption: "levels",
     camera: [
       { t: 4.6, zoom: 1.2, x: 640, y: 300 },
-      { t: 5.6, zoom: 1.55, x: 600, y: 260 },
-      { t: 12.6, zoom: 1.55, x: 600, y: 270 },
+      // On a phone: the A0/A1 filter at the top, the word card above the caption.
+      { t: 5.6, zoom: 1.55, x: 600, y: 260, p: { w: 520, y: 300 } },
+      { t: 12.6, zoom: 1.55, x: 600, y: 270, p: { w: 520, y: 305 } },
     ],
   },
   {
@@ -141,8 +143,9 @@ const SEGMENTS = [
     camera: [
       { t: 0, zoom: 1.0, x: 0.5, y: 0.5 },
       { t: 1.0, zoom: 1.0, x: 0.5, y: 0.5 },
-      { t: 2.2, zoom: 1.7, x: 0.5, y: 0.63 },
-      { t: 4.0, zoom: 1.75, x: 0.5, y: 0.63 },
+      // The whole card, clear of the caption (in the reel that means not filling the height).
+      { t: 2.2, zoom: 1.7, x: 0.5, y: 0.63, l: { zoom: 1.8, y: 0.645 }, p: { w: 540, y: 0.64, fill: false } },
+      { t: 4.0, zoom: 1.75, x: 0.5, y: 0.63, l: { zoom: 1.85, y: 0.645 }, p: { w: 520, y: 0.64, fill: false } },
     ],
     highlight: { x: 0.379, y: 0.37, w: 0.242, h: 0.513, at: 1.9, label: "#2" },
     // Other teachers out of focus; the old rate covered.
@@ -159,8 +162,9 @@ const SEGMENTS = [
     camera: [
       { t: 0, zoom: 1.0, x: 0.5, y: 0.5 },
       { t: 1.3, zoom: 1.0, x: 0.5, y: 0.5 },
-      { t: 2.6, zoom: 1.85, x: 0.36, y: 0.585 },
-      { t: 5.4, zoom: 1.95, x: 0.36, y: 0.59 },
+      // On a phone: from the start of the lines, so the review reads.
+      { t: 2.6, zoom: 1.85, x: 0.36, y: 0.585, p: { w: 600, x: 0.31 } },
+      { t: 5.4, zoom: 1.95, x: 0.36, y: 0.59, p: { w: 580, x: 0.305 } },
     ],
     highlight: { x: 0.086, y: 0.441, w: 0.548, h: 0.288, at: 2.3 },
   },
@@ -298,9 +302,33 @@ const SCREEN_H = 900;
 function useLayout() {
   const { width: W, height: H } = useVideoConfig();
   const portrait = H > W;
+  // A reel (9:16): bigger screen, caption kept clear of the app's buttons at the bottom.
+  const reel = H / W > 1.5;
+  // The camera goes closer than the zooms in SEGMENTS say, most on a phone
+  // (every zoom × boost), but never narrower than minView screen px across (see cameraKey).
   return portrait
-    ? { W, H, portrait, base: 1.05, cx: W / 2, cy: H * 0.43 }
-    : { W, H, portrait, base: 1.12, cx: W / 2, cy: H / 2 };
+    ? { W, H, portrait, reel, base: reel ? 1.3 : 1.05, boost: reel ? 1.3 : 1.5, minView: 440, cx: W / 2, cy: H * (reel ? 0.4 : 0.43), captionBottom: reel ? 360 : 70 }
+    : { W, H, portrait, reel, base: Math.min((W * 0.84) / 1440, (H * 0.84) / 900), minView: 800, cx: W / 2, cy: H / 2, captionBottom: H < 1150 ? 70 : 90 };
+}
+
+/**
+ * A camera key as this format shows it. On a computer: a bit closer (×1.1 on the
+ * whole screen, so it still floats; ×1.2 once zoomed in); `l` on a key overrides
+ * that (zoom as shown, x, y). On a phone: closer still;
+ * `p` on a key overrides it there: p.w = how many screen px to show across the
+ * frame, p.fill = false keeps a zoom just short of the frame's height as it is.
+ */
+function cameraKey(k, L) {
+  if (!L.portrait) {
+    const boost = 1.1 + 0.1 * Math.min(Math.max((k.zoom - 1) / 0.3, 0), 1);
+    return { ...k, zoom: Math.min(k.zoom * boost, L.W / (L.base * L.minView)), ...k.l };
+  }
+  const { w, fill: canFill = true, ...p } = k.p ?? {};
+  const zoom = w ? L.W / (L.base * w) : Math.min(k.zoom * L.boost, L.W / (L.base * L.minView));
+  // Just short of filling the frame's height: fill it, rather than show a thin band below the screen.
+  // (A hair over, so focus() keeps the screen's edges outside the frame.)
+  const fill = (L.H / (L.base * SCREEN_H)) * 1.002;
+  return { ...k, ...p, zoom: canFill && zoom < fill && zoom > fill * 0.9 ? fill : zoom };
 }
 
 /** The point of the screen at the frame's centre, so the screen never shows an edge inside the frame where it is bigger than the frame. */
@@ -312,15 +340,17 @@ function focus(look, size, s, center, frame) {
 function Clip({ lang, seg, index }) {
   const { f, fps } = useInOut(lengthOf(seg));
   const m = MANIFESTS[lang][seg.scene];
+  const L = useLayout();
   const t = seg.from + (f / fps) * seg.speed;
-  const cam = cameraAt(seg.camera, m.marks, t);
+  const cam = cameraAt(seg.camera.map((k) => cameraKey(k, L)), m.marks, t);
   return <Screen lang={lang} seg={seg} index={index} cam={cam} src={staticFile(`${lang}/${seg.scene}/${frameAt(m.frames, t)}`)} />;
 }
 
 /** A screenshot (Superprof), with the same camera and a highlight that draws itself. */
 function Shot({ lang, seg, index }) {
   const { f, fps } = useInOut(lengthOf(seg));
-  const keys = seg.camera.map((k) => ({ ...k, x: k.x * SCREEN_W, y: k.y * SCREEN_H }));
+  const L = useLayout();
+  const keys = seg.camera.map((k) => cameraKey(k, L)).map((k) => ({ ...k, x: k.x * SCREEN_W, y: k.y * SCREEN_H }));
   const cam = cameraAt(keys, [], f / fps);
   const hl = seg.highlight;
   const k = hl ? spring({ frame: f - hl.at * fps, fps, config: { damping: 14 } }) : 0;
@@ -432,14 +462,14 @@ function Caption({ lines, len }) {
   const start = 6;
   const out = interpolate(f, [len - OVERLAP - 6, len - OVERLAP + 2], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const box = spring({ frame: f - start + 2, fps, config: { damping: 16 } });
-  const { portrait } = useLayout();
+  const { portrait, captionBottom } = useLayout();
   let n = 0;
   return (
     <div
       style={{
         position: "absolute",
         left: portrait ? 56 : 90,
-        bottom: portrait ? 70 : 90,
+        bottom: captionBottom,
         padding: "28px 40px 32px",
         borderRadius: 26,
         background: "rgba(11,13,17,0.72)",
@@ -597,9 +627,9 @@ function Talk({ lang, seg }) {
   const len = lengthOf(seg);
   const { f, fps, enter, leave } = useInOut(len);
   const L = useLayout();
-  const w = L.portrait ? 960 : 1500;
-  const h = L.portrait ? 1180 : 1000;
-  const top = L.portrait ? 50 : (L.H - h) / 2;
+  const h = L.reel ? 1300 : L.portrait ? 1180 : Math.min(1000, L.H * 0.86);
+  const w = L.portrait ? 960 : h * 1.5;
+  const top = L.reel ? 220 : L.portrait ? 50 : (L.H - h) / 2;
   const zoom = interpolate(f, [0, len], [1.0, 1.06]);
   const pop = interpolate(enter, [0, 1], [0.85, 1]) * interpolate(leave, [0, 1], [1.06, 1]);
   return (
