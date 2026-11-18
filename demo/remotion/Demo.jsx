@@ -212,9 +212,15 @@ export function Demo({ lang }) {
 /** Slow-moving glow in the logo colours. */
 export function Backdrop() {
   const f = useCurrentFrame();
+  const { durationInFrames } = useVideoConfig();
+  // Each glow makes a whole number of rounds over the video, so the last frame
+  // flows into the first one when the video loops.
+  const turn = (rounds) => (2 * Math.PI * rounds * f) / durationInFrames;
   const blob = (color, x, y, r, speed, phase) => {
-    const dx = Math.sin(f / speed + phase) * 120;
-    const dy = Math.cos(f / (speed * 1.3) + phase) * 90;
+    const rx = Math.max(1, Math.round(durationInFrames / (2 * Math.PI * speed)));
+    const ry = Math.max(1, Math.round(durationInFrames / (2 * Math.PI * speed * 1.3)));
+    const dx = Math.sin(turn(rx) + phase) * 120;
+    const dy = Math.cos(turn(ry) + phase) * 90;
     return (
       <div
         style={{
@@ -588,12 +594,25 @@ function Intro({ lang }) {
 }
 
 function Outro({ lang }) {
-  const { f, fps, enter } = useInOut(Math.round(2.8 * FPS));
+  const len = Math.round(2.8 * FPS);
+  const { f, fps, enter } = useInOut(len);
   const url = spring({ frame: f - 16, fps, config: { damping: 15 } });
   const line = spring({ frame: f - 24, fps, config: { damping: 16 } });
   const { portrait } = useLayout();
+  // The last frames empty the screen to the plain backdrop the intro starts
+  // from, so the video loops without a jump.
+  const away = interpolate(f, [len - 18, len - 1], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.in(Easing.cubic) });
   return (
-    <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 40, opacity: enter }}>
+    <AbsoluteFill
+      style={{
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "column",
+        gap: 40,
+        opacity: enter * (1 - away),
+        transform: `translateY(${away * -40}px) scale(${1 - away * 0.06})`,
+      }}
+    >
       <div style={{ display: "flex", alignItems: "center", gap: 36, flexDirection: portrait ? "column" : "row" }}>
         <LogoMark size={150} />
         <Title delay={6} size={96} />
