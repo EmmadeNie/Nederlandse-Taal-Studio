@@ -114,6 +114,9 @@ export default function LoginPage({ invited = false }) {
           </form>
         )}
       </div>
+      <p className="auth-more">
+        {t("login.more")} <a href="/grammatica/">{t("login.grammarLink")}</a>
+      </p>
     </div>
   );
 }
