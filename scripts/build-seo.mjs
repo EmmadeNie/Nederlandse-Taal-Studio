@@ -119,6 +119,10 @@ form.contact .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hi
 form.contact button{justify-self:start;border:0;cursor:pointer;font:inherit}
 .note{color:var(--dim);font-size:.9rem}
 .msg{padding:.8rem 1rem;border-radius:10px}
+a.yt{position:relative;display:block;max-width:480px;border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+a.yt img{display:block;width:100%;height:auto}
+a.yt .play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.6rem;color:#fff;background:rgba(0,0,0,.25);text-shadow:0 4px 20px rgba(0,0,0,.6)}
+a.yt:hover .play{background:rgba(0,0,0,.1)}
 .msg.ok{background:rgba(47,210,122,.12);border:1px solid rgba(47,210,122,.4)}
 .msg.err{background:rgba(240,90,90,.12);border:1px solid rgba(240,90,90,.4)}
 nav.crumbs{font-size:.85rem;color:var(--dim);margin-bottom:.5rem}
@@ -280,9 +284,10 @@ ${byLevel.map(([lv, ts]) => `<h2>Niveau ${lv}</h2><ul class="topics">${ts.map((t
   });
 }
 
-const SUPERPROF = "https://www.super-prof.nl/sessions-combined-with-full-access-online-program-including-agent-practice-conversation-prepare-for-exams.html";
+const YOUTUBE = "https://www.youtube.com/watch?v=RPqN1txdEV4";
+const YOUTUBE_THUMB = "https://i.ytimg.com/vi/RPqN1txdEV4/hqdefault.jpg";
 
-/** Short quotes from the recommendations on Superprof (public), first names as shown there. */
+/** Short quotes from students' recommendations, first names only. */
 const REVIEWS = [
   { name: "Ana Catalina", text: "Together with Emma I was able to take my Dutch from A0 to A2 in one month as preparation for my Inburgeringsexamen." },
   { name: "Marija", text: "With Emma learning Dutch is a lot of fun. Her online board is very clear and gives a great overview." },
@@ -290,7 +295,7 @@ const REVIEWS = [
   { name: "Lara", text: "Met Emma is het altijd gezellig en ze is super geduldig." },
 ];
 
-/** All recommendations from Superprof, word for word (public there). */
+/** All students' recommendations, word for word, first names only. */
 const ALL_REVIEWS = [
   { name: "Bence", text: "Perfect! Emma offers fun and personalized lessons. She’s attentive to my needs and improves her methods using my feedback." },
   { name: "Ana Catalina", text: "Together with Emma I was able to take my dutch from A0 to A2 in one month as preparation for my Inburgeringsexamen. She’s an amazing teacher, very structured, patient and kind. Great in both online and in-person lessons. She has many kinds of interactive materials for learning which makes it very easy to follow and don’t get overwhelmed with a new language." },
@@ -307,14 +312,13 @@ function reviewsPage() {
   const body = `
 <nav class="crumbs"><a href="/">Taal Studio</a> › Reviews</nav>
 <h1>Reviews van leerlingen</h1>
-<p class="lead"><span class="stars">★★★★★</span> 5,0 uit ${ALL_REVIEWS.length} reviews. Wat leerlingen zeggen over de Nederlandse lessen en bijles bij Taal Studio, zoals ze het schreven op <a href="${SUPERPROF}" rel="noopener">Superprof</a>.</p>
+<p class="lead"><span class="stars">★★★★★</span> 5,0 uit ${ALL_REVIEWS.length} reviews. Wat leerlingen zeggen over de Nederlandse lessen en bijles bij Taal Studio, in hun eigen woorden.</p>
 <div class="reviews">
 ${ALL_REVIEWS.map((r, i) => `  <blockquote${r.lang ? ` lang="${r.lang}"` : ' lang="en"'}>
     <div class="who"><span class="avatar" style="background:${colours[i % 3]}">${esc(r.name[0])}</span><span><strong>${esc(r.name)}</strong><br /><span class="stars">★★★★★</span></span></div>
     <p>${esc(r.text)}</p>
   </blockquote>`).join("\n")}
 </div>
-<p class="note">Alle reviews staan op <a href="${SUPERPROF}" rel="noopener">Emma’s profiel op Superprof</a>.</p>
 <div class="cta">
   <p><strong>Zelf ervaren?</strong> Boek een proefles: de 2e les krijg je gratis.</p>
   <a class="btn" href="/contact/">Plan een proefles</a>
@@ -365,9 +369,9 @@ function landingPage(topicCount) {
 <p>Lees ook de <a href="/grammatica/">gratis uitleg van ${topicCount || "56"} onderwerpen Nederlandse grammatica</a>, per niveau.</p>
 
 <h2>Wat leerlingen zeggen</h2>
-<p><span class="stars">★★★★★</span> 5,0 uit 7 reviews op <a href="${SUPERPROF}" rel="noopener">Superprof</a> · <a href="/reviews/">Lees alle reviews</a></p>
+<p><span class="stars">★★★★★</span> 5,0 uit 7 reviews · <a href="/reviews/">Lees alle reviews</a></p>
 <div class="grid">
-${REVIEWS.map((r) => `  <blockquote><p>“${esc(r.text)}”</p><cite>${esc(r.name)}, via Superprof</cite></blockquote>`).join("\n")}
+${REVIEWS.map((r) => `  <blockquote><p>“${esc(r.text)}”</p><cite>${esc(r.name)}</cite></blockquote>`).join("\n")}
 </div>
 
 <h2>Veelgestelde vragen</h2>
@@ -430,7 +434,14 @@ function contactPage() {
   <button class="btn" type="submit">Versturen</button>
   <div id="status" role="status" aria-live="polite"></div>
 </form>
-<p class="note">Je kunt ook een les boeken via <a href="${SUPERPROF}" rel="noopener">mijn profiel op Superprof</a>. Je gegevens gebruik ik alleen om je bericht te beantwoorden.</p>
+<p class="note">Je gegevens gebruik ik alleen om je bericht te beantwoorden.</p>
+
+<h2>Maak alvast kennis</h2>
+<a class="yt" href="${YOUTUBE}" rel="noopener" target="_blank">
+  <img src="${YOUTUBE_THUMB}" alt="Video: Do you want to learn Dutch?" width="480" height="360" loading="lazy" />
+  <span class="play" aria-hidden="true">▶</span>
+</a>
+<p>Bekijk <a href="${YOUTUBE}" rel="noopener" target="_blank">mijn video op YouTube</a>: wie ik ben en hoe ik les geef.</p>
 <script>
 (() => {
   const form = document.getElementById("contact");
@@ -452,7 +463,7 @@ function contactPage() {
       form.reset();
       show("ok", "Dank je wel! Je bericht is verstuurd. Je hoort snel van me.");
     } catch (err) {
-      show("err", err.message + " Je kunt me ook bereiken via Superprof.");
+      show("err", err.message);
     } finally {
       button.disabled = false;
     }
