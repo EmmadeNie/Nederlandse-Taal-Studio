@@ -1,13 +1,13 @@
 // Collects the recorded scenes (raw/<lang>/<scene>/manifest.json) into one module
 // for the Remotion edit, and notes whether there is music (raw/music.mp3).
-import { readdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
+import { readdirSync, readFileSync, writeFileSync, existsSync, statSync } from "node:fs";
 import path from "node:path";
 import { RAW_DIR, DEMO_DIR } from "./config.mjs";
 
 const out = {};
 for (const lang of existsSync(RAW_DIR) ? readdirSync(RAW_DIR) : []) {
   const dir = path.join(RAW_DIR, lang);
-  if (!existsSync(dir) || !readdirSync(dir).length || lang.includes(".")) continue;
+  if (!statSync(dir).isDirectory()) continue;
   for (const scene of readdirSync(dir)) {
     const file = path.join(dir, scene, "manifest.json");
     if (!existsSync(file)) continue;

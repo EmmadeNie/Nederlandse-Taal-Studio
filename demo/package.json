@@ -9,7 +9,7 @@
     "record": "node record.mjs nl && node record.mjs en",
     "manifests": "node prepare.mjs",
     "studio": "node prepare.mjs && remotion studio remotion/index.jsx --public-dir=raw",
-    "render": "node prepare.mjs && remotion render remotion/index.jsx demo-nl out/demo-nl.mp4 --public-dir=raw --crf=18 && remotion render remotion/index.jsx demo-en out/demo-en.mp4 --public-dir=raw --crf=18",
+    "render": "node prepare.mjs && remotion render remotion/index.jsx demo-nl out/demo-nl.mp4 --public-dir=raw --crf=18 && remotion render remotion/index.jsx demo-nl-portrait out/demo-nl-portrait.mp4 --public-dir=raw --crf=18 && remotion render remotion/index.jsx demo-en out/demo-en.mp4 --public-dir=raw --crf=18 && remotion render remotion/index.jsx demo-en-portrait out/demo-en-portrait.mp4 --public-dir=raw --crf=18",
     "publish": "node publish.mjs"
   },
   "devDependencies": {
