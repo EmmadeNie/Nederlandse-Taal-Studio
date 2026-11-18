@@ -1,0 +1,26 @@
+{
+  "name": "taal-studio-demo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "login": "node login.mjs",
+    "check-board": "node check-board.mjs",
+    "explore": "node explore.mjs",
+    "record": "node record.mjs nl && node record.mjs en",
+    "manifests": "node prepare.mjs",
+    "studio": "node prepare.mjs && remotion studio remotion/index.jsx --public-dir=raw",
+    "render": "node prepare.mjs && remotion render remotion/index.jsx demo-nl out/demo-nl.mp4 --public-dir=raw --crf=18 && remotion render remotion/index.jsx demo-en out/demo-en.mp4 --public-dir=raw --crf=18",
+    "publish": "node publish.mjs"
+  },
+  "devDependencies": {
+    "@remotion/cli": "^4.0.545",
+    "@remotion/google-fonts": "^4.0.545",
+    "@remotion/media-utils": "^4.0.545",
+    "@supabase/supabase-js": "^2.109.0",
+    "playwright": "^1.65.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "remotion": "^4.0.545",
+    "ws": "^8.23.0"
+  }
+}

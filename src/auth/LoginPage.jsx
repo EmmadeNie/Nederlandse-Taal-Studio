@@ -3,6 +3,7 @@ import Brand from "../components/Brand";
 import { supabase } from "../lib/supabase";
 import { useI18n } from "../i18n/context";
 import { EnvelopeSimple } from "../icons";
+import DemoVideo from "./DemoVideo";
 
 /**
  * Magic-link login: enter an email, receive a link, click it, done.
@@ -48,7 +49,8 @@ export default function LoginPage({ invited = false }) {
   };
 
   return (
-    <div className="auth-screen">
+    <div className="auth-screen has-demo">
+      <DemoVideo />
       <div className="auth-card">
         <Brand tagline />
         {invited && <p className="auth-invited">{t("invite.loginHint")}</p>}
