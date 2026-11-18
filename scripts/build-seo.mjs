@@ -151,7 +151,7 @@ ${jsonLd.map((j) => `<script type="application/ld+json">${JSON.stringify(j).repl
 </header>
 ${body}
 <footer class="site">
-  <p><a href="/">Taal Studio</a> · Nederlands leren op jouw niveau, van A0 tot B2 · NT2-lessen in Rotterdam en online · <a href="/grammatica/">Alle grammatica-uitleg</a></p>
+  <p><a href="/">Taal Studio</a> · Nederlands taalplatform en taalapp · Online Nederlandse les en bijles NT2, van A0 tot B2, in Rotterdam en online · <a href="/grammatica/">Alle grammatica-uitleg</a></p>
 </footer>
 </div>
 </body>
