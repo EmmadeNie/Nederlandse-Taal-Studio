@@ -115,7 +115,8 @@ export default function LoginPage({ invited = false }) {
         )}
       </div>
       <p className="auth-more">
-        {t("login.more")} <a href="/grammatica/">{t("login.grammarLink")}</a>
+        {t("login.more")} <a href="/nederlandse-les/">{t("login.lessonsLink")}</a> ·{" "}
+        <a href="/grammatica/">{t("login.grammarLink")}</a> · <a href="/contact/">{t("login.contactLink")}</a>
       </p>
     </div>
   );

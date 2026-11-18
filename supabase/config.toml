@@ -392,3 +392,8 @@ s3_region = "env(S3_REGION)"
 s3_access_key = "env(S3_ACCESS_KEY)"
 # Configures AWS_SECRET_ACCESS_KEY for S3 bucket
 s3_secret_key = "env(S3_SECRET_KEY)"
+
+# The public contact form (mijntaalstudio.nl/contact/) is called without a login, with
+# the publishable key, which is not a JWT. The function checks its input itself.
+[functions.contact]
+verify_jwt = false
