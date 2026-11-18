@@ -4,6 +4,8 @@
  * IconContext in main.jsx (1.15em, regular); active nav items use weight="fill".
  */
 import {
+  SpeakerHigh,
+  SpeakerSlash,
   Star,
   Scissors,
   Flag,
@@ -161,6 +163,8 @@ export {
   UploadSimple,
   Warning,
   X,
+  SpeakerHigh,
+  SpeakerSlash,
 };
 
 /** The rich-text editor's toolbar. */

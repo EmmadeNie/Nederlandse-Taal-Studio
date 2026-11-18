@@ -973,8 +973,9 @@
 }
 
 .auth-demo {
+  position: relative;
   margin: 0;
-  flex: 0 1 760px;
+  flex: 0 1 min(1100px, 64vw);
   min-width: 0;
   aspect-ratio: 16 / 10;
   border-radius: 16px;
@@ -990,6 +991,32 @@
   object-fit: cover;
 }
 
+.auth-demo.is-portrait {
+  aspect-ratio: 4 / 5;
+}
+
+.auth-demo-sound {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(11, 13, 17, 0.7);
+  color: #e6e8ec;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+
+.auth-demo-sound:hover {
+  background: rgba(11, 13, 17, 0.9);
+}
+
 @media (max-width: 900px) {
   .auth-screen.has-demo {
     flex-direction: column;
@@ -1002,7 +1029,7 @@
   .auth-demo {
     flex: none;
     width: 100%;
-    max-width: 380px;
+    max-width: 420px;
   }
 }
 

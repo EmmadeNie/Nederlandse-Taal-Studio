@@ -35,18 +35,26 @@ const TEXT = {
     tagline: "Nederlands leren, op jouw niveau.",
     board: ["Jouw eigen", "leerpad"],
     plan: ["Je docent plant", "de volgende stap"],
-    lesson: ["Heldere uitleg", "bij elke les"],
+    theory: ["Eerst kort uitgelegd,", "of juist uitgebreid"],
+    linked: ["Met gekoppelde werkwoorden", "en woordenlijsten"],
     conjugate: ["Oefen direct,", "met feedback"],
-    flashcards: ["Flashcards die", "blijven hangen"],
+    fill: ["Invullen in", "hele zinnen"],
+    levels: ["Woorden per niveau:", "A0 en A1"],
+    rank: ["Nr. 2 van 939 NT2-docenten", "in Rotterdam op Superprof"],
+    reviews: ["★★★★★ 5,0", "7 reviews van leerlingen"],
     outro: "Log in en ga verder waar je was.",
   },
   en: {
     tagline: "Learn Dutch, at your level.",
     board: ["Your own", "learning path"],
     plan: ["Your teacher plans", "the next step"],
-    lesson: ["Clear explanations", "for every lesson"],
+    theory: ["A short explanation,", "or the full story"],
+    linked: ["With linked verbs", "and word lists"],
     conjugate: ["Practise right away,", "with feedback"],
-    flashcards: ["Flashcards that", "stick"],
+    fill: ["Fill in the gaps", "in whole sentences"],
+    levels: ["Words by level:", "A0 and A1"],
+    rank: ["No. 2 of 939 Dutch teachers", "in Rotterdam on Superprof"],
+    reviews: ["★★★★★ 5.0", "7 reviews from students"],
     outro: "Log in and carry on where you left off.",
   },
 };
@@ -59,7 +67,7 @@ const TEXT = {
 const SEGMENTS = [
   { kind: "intro", seconds: 2.4 },
   {
-    kind: "clip", scene: "board", from: 0.9, to: 7.6, speed: 1.35, caption: "board",
+    kind: "clip", scene: "board", from: 0.9, to: 7.6, speed: 1.5, caption: "board",
     camera: [
       { t: 0.9, zoom: 1.0 },
       { t: 1.6, zoom: 1.3, look: "drag-done", dx: 120 },
@@ -69,7 +77,7 @@ const SEGMENTS = [
     ],
   },
   {
-    kind: "clip", scene: "board", from: 8.0, to: 15.2, speed: 1.5, caption: "plan",
+    kind: "clip", scene: "board", from: 8.0, to: 15.2, speed: 1.6, caption: "plan",
     camera: [
       { t: 8.0, zoom: 1.05 },
       { t: 10.6, zoom: 1.05 },
@@ -78,27 +86,80 @@ const SEGMENTS = [
     ],
   },
   {
-    kind: "clip", scene: "lesson", from: 0.2, to: 7.0, speed: 1.35, caption: "lesson",
+    // The short explanation, "Lees meer", then the full one.
+    kind: "clip", scene: "theory", from: 1.0, to: 12.6, speed: 1.6, caption: "theory",
     camera: [
-      { t: 0.2, zoom: 1.0 },
-      { t: 1.4, zoom: 1.22, look: "open" },
-      { t: 7.0, zoom: 1.3, look: "open", dy: 40 },
+      { t: 1.0, zoom: 1.0 },
+      { t: 2.2, zoom: 1.12, x: 720, y: 450 },
+      { t: 4.4, zoom: 1.3, x: 720, y: 470 },
+      { t: 7.6, zoom: 1.38, x: 700, y: 520 },
+      { t: 8.6, zoom: 1.3, x: 720, y: 430 },
+      { t: 12.6, zoom: 1.3, x: 720, y: 450 },
     ],
   },
   {
-    kind: "clip", scene: "conjugate", from: 1.8, to: 14.4, speed: 2.0, caption: "conjugate",
+    // The verbs and the word list that come with the lesson.
+    kind: "clip", scene: "theory", from: 12.8, to: 19.6, speed: 1.5, caption: "linked",
+    camera: [
+      { t: 12.8, zoom: 1.2, x: 720, y: 450 },
+      { t: 14.0, zoom: 1.32, x: 720, y: 420 },
+      { t: 16.0, zoom: 1.32, x: 720, y: 440 },
+      { t: 17.0, zoom: 1.5, x: 720, y: 420 },
+      { t: 19.6, zoom: 1.5, x: 720, y: 420 },
+    ],
+  },
+  {
+    kind: "clip", scene: "conjugate", from: 1.8, to: 10.6, speed: 2.0, caption: "conjugate",
     camera: [
       { t: 1.8, zoom: 1.2, look: "answer-0", dy: 60 },
       { t: 2.6, zoom: 1.9, look: "answer-0", dy: 70 },
-      { t: 14.4, zoom: 1.9, look: "answer-0", dy: 70 },
+      { t: 10.6, zoom: 1.9, look: "answer-0", dy: 70 },
     ],
   },
   {
-    kind: "clip", scene: "flashcards", from: 4.6, to: 10.6, speed: 1.4, caption: "flashcards",
+    kind: "clip", scene: "fill", from: 1.8, to: 10.6, speed: 1.6, caption: "fill",
     camera: [
-      { t: 4.6, zoom: 1.15, x: 720, y: 430 },
-      { t: 10.6, zoom: 1.4, x: 720, y: 440 },
+      { t: 1.8, zoom: 1.2, look: "answer-0", dy: 60 },
+      { t: 2.6, zoom: 1.9, look: "answer-0", dy: 70 },
+      { t: 10.6, zoom: 1.9, look: "answer-0", dy: 70 },
     ],
+  },
+  {
+    kind: "clip", scene: "levels", from: 4.6, to: 12.6, speed: 1.5, caption: "levels",
+    camera: [
+      { t: 4.6, zoom: 1.2, x: 640, y: 300 },
+      { t: 5.6, zoom: 1.55, x: 600, y: 260 },
+      { t: 12.6, zoom: 1.55, x: 600, y: 270 },
+    ],
+  },
+  {
+    // Superprof search (Dutch, Rotterdam): Emma at place 2. Points are 0–1 of the screenshot.
+    kind: "shot", image: "superprof/search.jpg", seconds: 4.0, caption: "rank",
+    camera: [
+      { t: 0, zoom: 1.0, x: 0.5, y: 0.5 },
+      { t: 1.0, zoom: 1.0, x: 0.5, y: 0.5 },
+      { t: 2.2, zoom: 1.7, x: 0.5, y: 0.63 },
+      { t: 4.0, zoom: 1.75, x: 0.5, y: 0.63 },
+    ],
+    highlight: { x: 0.379, y: 0.37, w: 0.242, h: 0.513, at: 1.9, label: "#2" },
+    // Other teachers out of focus; the old rate covered.
+    masks: [
+      { kind: "blur", x: 0.122, y: 0.365, w: 0.25, h: 0.523 },
+      { kind: "blur", x: 0.627, y: 0.365, w: 0.25, h: 0.523 },
+      { kind: "blur", x: 0.118, y: 0.92, w: 0.764, h: 0.08 },
+      { kind: "cover", x: 0.375, y: 0.85, w: 0.045, h: 0.03 },
+    ],
+  },
+  {
+    // The recommendations, then in on the first one.
+    kind: "shot", image: "superprof/recommendations.jpg", seconds: 5.4, caption: "reviews",
+    camera: [
+      { t: 0, zoom: 1.0, x: 0.5, y: 0.5 },
+      { t: 1.3, zoom: 1.0, x: 0.5, y: 0.5 },
+      { t: 2.6, zoom: 1.85, x: 0.36, y: 0.585 },
+      { t: 5.4, zoom: 1.95, x: 0.36, y: 0.59 },
+    ],
+    highlight: { x: 0.086, y: 0.441, w: 0.548, h: 0.288, at: 2.3 },
   },
   { kind: "outro", seconds: 2.8 },
 ];
@@ -120,6 +181,7 @@ export function Demo({ lang }) {
           <Sequence key={i} from={from} durationInFrames={len}>
             {s.kind === "intro" && <Intro lang={lang} />}
             {s.kind === "outro" && <Outro lang={lang} />}
+            {s.kind === "shot" && <Shot lang={lang} seg={s} index={i} />}
             {s.kind === "clip" && <Clip lang={lang} seg={s} index={i} />}
           </Sequence>
         );
@@ -210,23 +272,101 @@ function cameraAt(keys, marks, t) {
 
 const SCREEN_W = 1440;
 const SCREEN_H = 900;
-const BASE = 1.12; // screen size at zoom 1, against the 1920×1200 frame
+/**
+ * Landscape (1920×1200, desktop) shows the whole screen floating in the frame.
+ * Portrait (1080×1350, phones) shows it bigger, cut off at the sides, with the
+ * camera following the action and room for the caption below.
+ */
+function useLayout() {
+  const { width: W, height: H } = useVideoConfig();
+  const portrait = H > W;
+  return portrait
+    ? { W, H, portrait, base: 1.05, cx: W / 2, cy: H * 0.43 }
+    : { W, H, portrait, base: 1.12, cx: W / 2, cy: H / 2 };
+}
+
+/** The point of the screen at the frame's centre, so the screen never shows an edge inside the frame where it is bigger than the frame. */
+function focus(look, size, s, center, frame) {
+  if (size * s <= frame) return size / 2;
+  return Math.min(Math.max(look, center / s), size - (frame - center) / s);
+}
 
 function Clip({ lang, seg, index }) {
-  const len = lengthOf(seg);
-  const { f, fps, enter, leave } = useInOut(len);
+  const { f, fps } = useInOut(lengthOf(seg));
   const m = MANIFESTS[lang][seg.scene];
   const t = seg.from + (f / fps) * seg.speed;
-  const file = frameAt(m.frames, t);
   const cam = cameraAt(seg.camera, m.marks, t);
+  return <Screen lang={lang} seg={seg} index={index} cam={cam} src={staticFile(`${lang}/${seg.scene}/${frameAt(m.frames, t)}`)} />;
+}
 
-  // Keep the screen inside the frame: the look-at point may not pull an edge in.
-  const s = BASE * cam.zoom;
-  const half = { w: 960, h: 600 };
-  const clampX = Math.min(Math.max(cam.x, half.w / s), SCREEN_W - half.w / s);
-  const clampY = Math.min(Math.max(cam.y, half.h / s), SCREEN_H - half.h / s);
-  const fx = cam.zoom * BASE * SCREEN_W > 1920 ? clampX : SCREEN_W / 2;
-  const fy = cam.zoom * BASE * SCREEN_H > 1200 ? clampY : SCREEN_H / 2;
+/** A screenshot (Superprof), with the same camera and a highlight that draws itself. */
+function Shot({ lang, seg, index }) {
+  const { f, fps } = useInOut(lengthOf(seg));
+  const keys = seg.camera.map((k) => ({ ...k, x: k.x * SCREEN_W, y: k.y * SCREEN_H }));
+  const cam = cameraAt(keys, [], f / fps);
+  const hl = seg.highlight;
+  const k = hl ? spring({ frame: f - hl.at * fps, fps, config: { damping: 14 } }) : 0;
+  const overlay = hl && (
+    <div
+      style={{
+        position: "absolute",
+        left: hl.x * SCREEN_W - 8,
+        top: hl.y * SCREEN_H - 8,
+        width: hl.w * SCREEN_W + 16,
+        height: hl.h * SCREEN_H + 16,
+        borderRadius: 22,
+        border: `5px solid ${C.orange}`,
+        boxShadow: `0 0 0 ${(1 - k) * 30}px rgba(240,140,60,${0.35 * k}), 0 0 40px rgba(240,140,60,0.5)`,
+        opacity: k,
+        transform: `scale(${1.08 - 0.08 * k})`,
+      }}
+    >
+      {hl.label && (
+        <div
+          style={{
+            position: "absolute",
+            left: -22,
+            top: -22,
+            padding: "6px 14px",
+            borderRadius: 14,
+            background: C.orange,
+            color: "#0b0d11",
+            fontSize: 30,
+            fontWeight: 800,
+            transform: `scale(${k})`,
+          }}
+        >
+          {hl.label}
+        </div>
+      )}
+    </div>
+  );
+  // A blurred copy of the screenshot, cut out where others should be unrecognisable
+  // (clip-path moves with the camera; backdrop-filter does not under a transform).
+  const masks = (seg.masks ?? []).map((m, i) => {
+    const inset = `inset(${m.y * 100}% ${(1 - m.x - m.w) * 100}% ${(1 - m.y - m.h) * 100}% ${m.x * 100}% round 18px)`;
+    return m.kind === "blur" ? (
+      <Img
+        key={i}
+        src={staticFile(seg.image)}
+        style={{ position: "absolute", inset: 0, width: SCREEN_W, height: SCREEN_H, objectFit: "cover", objectPosition: "top", filter: "blur(16px) saturate(0.7)", clipPath: inset }}
+      />
+    ) : (
+      <div key={i} style={{ position: "absolute", left: m.x * SCREEN_W, top: m.y * SCREEN_H, width: m.w * SCREEN_W, height: m.h * SCREEN_H, background: "#ffffff" }} />
+    );
+  });
+  return <Screen lang={lang} seg={seg} index={index} cam={cam} src={staticFile(seg.image)} overlay={<>{masks}{overlay}</>} />;
+}
+
+/** The screen floating in the frame: camera, 3D swing in/out, caption. */
+function Screen({ lang, seg, index, cam, src, overlay }) {
+  const len = lengthOf(seg);
+  const { enter, leave } = useInOut(len);
+  const L = useLayout();
+
+  const s = L.base * cam.zoom;
+  const fx = focus(cam.x, SCREEN_W, s, L.cx, L.W);
+  const fy = focus(cam.y, SCREEN_H, s, L.cy, L.H);
 
   // Each clip swings in from a different side.
   const side = index % 2 ? 1 : -1;
@@ -252,13 +392,14 @@ function Clip({ lang, seg, index }) {
             width: SCREEN_W,
             height: SCREEN_H,
             transformOrigin: "0 0",
-            transform: `translate(${960 - fx * s}px, ${600 - fy * s}px) scale(${s})`,
+            transform: `translate(${L.cx - fx * s}px, ${L.cy - fy * s}px) scale(${s})`,
             borderRadius: 14,
             overflow: "hidden",
             boxShadow: "0 40px 120px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.08)",
           }}
         >
-          <Img src={staticFile(`${lang}/${seg.scene}/${file}`)} style={{ width: SCREEN_W, height: SCREEN_H, display: "block" }} />
+          <Img src={src} style={{ width: SCREEN_W, height: SCREEN_H, display: "block", objectFit: "cover", objectPosition: "top" }} />
+          {overlay}
         </div>
       </AbsoluteFill>
       <Caption lines={TEXT[lang][seg.caption]} len={len} />
@@ -273,13 +414,14 @@ function Caption({ lines, len }) {
   const start = 6;
   const out = interpolate(f, [len - OVERLAP - 6, len - OVERLAP + 2], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const box = spring({ frame: f - start + 2, fps, config: { damping: 16 } });
+  const { portrait } = useLayout();
   let n = 0;
   return (
     <div
       style={{
         position: "absolute",
-        left: 90,
-        bottom: 90,
+        left: portrait ? 56 : 90,
+        bottom: portrait ? 70 : 90,
         padding: "28px 40px 32px",
         borderRadius: 26,
         background: "rgba(11,13,17,0.72)",
@@ -302,7 +444,7 @@ function Caption({ lines, len }) {
                   fontWeight: 800,
                   letterSpacing: -1.5,
                   lineHeight: 1.08,
-                  color: li === 1 ? "transparent" : C.text,
+                  color: li === 1 ? "transparent" : /^★+$/.test(w) ? "#f5b301" : C.text,
                   backgroundImage: li === 1 ? `linear-gradient(90deg, ${C.blue}, ${C.green})` : undefined,
                   WebkitBackgroundClip: li === 1 ? "text" : undefined,
                   transform: `translateY(${(1 - s) * 80}px)`,
@@ -385,9 +527,10 @@ function Intro({ lang }) {
   const len = Math.round(2.4 * FPS);
   const { f, fps, leave } = useInOut(len);
   const tag = spring({ frame: f - 22, fps, config: { damping: 16 } });
+  const { portrait } = useLayout();
   return (
     <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", opacity: leave, transform: `scale(${interpolate(leave, [0, 1], [1.15, 1])})` }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 48 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 48, flexDirection: portrait ? "column" : "row", textAlign: portrait ? "center" : "left" }}>
         <LogoMark size={220} />
         <div>
           <Title delay={10} />
@@ -404,9 +547,10 @@ function Outro({ lang }) {
   const { f, fps, enter } = useInOut(Math.round(2.8 * FPS));
   const url = spring({ frame: f - 16, fps, config: { damping: 15 } });
   const line = spring({ frame: f - 24, fps, config: { damping: 16 } });
+  const { portrait } = useLayout();
   return (
     <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 40, opacity: enter }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 36 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 36, flexDirection: portrait ? "column" : "row" }}>
         <LogoMark size={150} />
         <Title delay={6} size={96} />
       </div>
@@ -424,7 +568,8 @@ function Outro({ lang }) {
       >
         mijntaalstudio.nl
       </div>
-      <div style={{ fontSize: 38, fontWeight: 500, color: C.dim, opacity: line }}>{TEXT[lang].outro}</div>
+      <div style={{ fontSize: 38, fontWeight: 500, color: C.dim, opacity: line, textAlign: "center", maxWidth: portrait ? 860 : undefined }}>{TEXT[lang].outro}</div>
     </AbsoluteFill>
   );
 }
+
