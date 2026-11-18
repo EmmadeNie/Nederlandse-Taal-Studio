@@ -5,6 +5,7 @@ import {
   Audio,
   Easing,
   Img,
+  OffthreadVideo,
   Sequence,
   interpolate,
   spring,
@@ -41,6 +42,7 @@ const TEXT = {
     fill: ["Invullen in", "hele zinnen"],
     levels: ["Woorden per niveau:", "A0 en A1"],
     rank: ["Nr. 2 van 939 NT2-docenten", "in Rotterdam op Superprof"],
+    talk: ["Maak kennis", "met Emma"],
     reviews: ["★★★★★ 5,0", "7 reviews van leerlingen"],
     outro: "Log in en ga verder waar je was.",
   },
@@ -54,6 +56,7 @@ const TEXT = {
     fill: ["Fill in the gaps", "in whole sentences"],
     levels: ["Words by level:", "A0 and A1"],
     rank: ["No. 2 of 939 Dutch teachers", "in Rotterdam on Superprof"],
+    talk: ["Meet", "Emma"],
     reviews: ["★★★★★ 5.0", "7 reviews from students"],
     outro: "Log in and carry on where you left off.",
   },
@@ -161,6 +164,8 @@ const SEGMENTS = [
     ],
     highlight: { x: 0.086, y: 0.441, w: 0.548, h: 0.288, at: 2.3 },
   },
+  // The first seconds of Emma's YouTube video (raw/youtube.mp4), with her own sound.
+  { kind: "talk", video: "youtube.mp4", seconds: 7.0, caption: "talk" },
   { kind: "outro", seconds: 2.8 },
 ];
 
@@ -169,6 +174,18 @@ export const durationOf = () => SEGMENTS.reduce((n, s) => n + lengthOf(s), 0) - 
 
 // Where each segment starts: right after the previous one, minus the overlap.
 const STARTS = SEGMENTS.reduce((acc, s, i) => [...acc, i ? acc[i - 1] + lengthOf(SEGMENTS[i - 1]) - OVERLAP : 0], []);
+
+/** Music: fades in and out, and goes quiet while Emma talks. */
+function musicVolume(f) {
+  const end = durationOf();
+  const i = SEGMENTS.findIndex((s) => s.kind === "talk");
+  const fade = interpolate(f, [0, 15, end - 30, end], [0, 0.8, 0.8, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  if (i < 0) return fade;
+  const a = STARTS[i];
+  const b = a + lengthOf(SEGMENTS[i]);
+  const duck = interpolate(f, [a - 8, a + 6, b - 14, b], [1, 0.08, 0.08, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  return fade * duck;
+}
 
 export function Demo({ lang }) {
   return (
@@ -182,11 +199,12 @@ export function Demo({ lang }) {
             {s.kind === "intro" && <Intro lang={lang} />}
             {s.kind === "outro" && <Outro lang={lang} />}
             {s.kind === "shot" && <Shot lang={lang} seg={s} index={i} />}
+            {s.kind === "talk" && <Talk lang={lang} seg={s} />}
             {s.kind === "clip" && <Clip lang={lang} seg={s} index={i} />}
           </Sequence>
         );
       })}
-      {MUSIC && <Audio src={staticFile("music.mp3")} volume={(f) => interpolate(f, [0, 15, durationOf() - 30, durationOf()], [0, 0.8, 0.8, 0], { extrapolateRight: "clamp" })} />}
+      {MUSIC && <Audio src={staticFile("music.mp3")} volume={musicVolume} />}
     </AbsoluteFill>
   );
 }
@@ -573,3 +591,39 @@ function Outro({ lang }) {
   );
 }
 
+
+/** A piece of video with sound, in a floating frame (wide on a computer, cut taller on a phone). */
+function Talk({ lang, seg }) {
+  const len = lengthOf(seg);
+  const { f, fps, enter, leave } = useInOut(len);
+  const L = useLayout();
+  const w = L.portrait ? 960 : 1500;
+  const h = L.portrait ? 1180 : 1000;
+  const top = L.portrait ? 50 : (L.H - h) / 2;
+  const zoom = interpolate(f, [0, len], [1.0, 1.06]);
+  const pop = interpolate(enter, [0, 1], [0.85, 1]) * interpolate(leave, [0, 1], [1.06, 1]);
+  return (
+    <AbsoluteFill style={{ perspective: 2400, opacity: Math.min(enter * 1.4, 1) * leave }}>
+      <div
+        style={{
+          position: "absolute",
+          left: (L.W - w) / 2,
+          top,
+          width: w,
+          height: h,
+          borderRadius: 26,
+          overflow: "hidden",
+          boxShadow: "0 40px 120px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.08)",
+          transform: `scale(${pop}) rotateY(${interpolate(enter, [0, 1], [-18, 0])}deg)`,
+        }}
+      >
+        <OffthreadVideo
+          src={staticFile(seg.video)}
+          volume={(vf) => interpolate(vf, [0, 6, len - 14, len - 2], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })}
+          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: L.portrait ? "36% 30%" : "50% 30%", transform: `scale(${zoom})` }}
+        />
+      </div>
+      <Caption lines={TEXT[lang][seg.caption]} len={len} />
+    </AbsoluteFill>
+  );
+}
