@@ -16,12 +16,12 @@ import {
 import { loadFont } from "@remotion/google-fonts/Inter";
 import { MANIFESTS, MUSIC } from "./manifests";
 
-const { fontFamily } = loadFont("normal", { weights: ["500", "700", "800"], subsets: ["latin"] });
+export const { fontFamily } = loadFont("normal", { weights: ["500", "700", "800"], subsets: ["latin"] });
 
 export const FPS = 30;
 const OVERLAP = 10; // frames two segments share, for the transition
 
-const C = {
+export const C = {
   bg: "#0b0d11",
   blue: "#4f9cf9",
   green: "#2fd27a",
@@ -210,7 +210,7 @@ export function Demo({ lang }) {
 }
 
 /** Slow-moving glow in the logo colours. */
-function Backdrop() {
+export function Backdrop() {
   const f = useCurrentFrame();
   const blob = (color, x, y, r, speed, phase) => {
     const dx = Math.sin(f / speed + phase) * 120;
@@ -256,7 +256,7 @@ function useInOut(len) {
   return { f, fps, enter, leave };
 }
 
-const frameAt = (frames, t) => {
+export const frameAt = (frames, t) => {
   let lo = 0;
   let hi = frames.length - 1;
   while (lo < hi) {
@@ -481,7 +481,7 @@ function Caption({ lines, len }) {
 }
 
 /** The logo's cards, each dropping into place. size = width of the mark in px. */
-function LogoMark({ size, delay = 0 }) {
+export function LogoMark({ size, delay = 0 }) {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const k = size / 40;
