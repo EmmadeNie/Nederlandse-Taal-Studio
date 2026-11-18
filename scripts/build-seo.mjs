@@ -168,6 +168,7 @@ footer.site a{color:var(--dim)}
 `;
 
 const YOUTUBE = "https://www.youtube.com/watch?v=RPqN1txdEV4";
+const SUPERPROF = "https://www.super-prof.nl/sessions-combined-with-full-access-online-program-including-agent-practice-conversation-prepare-for-exams.html";
 const YOUTUBE_THUMB = "https://i.ytimg.com/vi/RPqN1txdEV4/hqdefault.jpg";
 
 /** Paths per language. */
@@ -186,6 +187,7 @@ const T = {
     login: "Inloggen",
     footer: "Nederlands taalplatform en taalapp · Online Nederlandse les en bijles NT2, van A0 tot B2, in Rotterdam en online",
     switchTo: "Switch to English",
+    superprof: "Vind me op Superprof",
     // lessons
     lessonsTitle: "Nederlandse les en bijles NT2, online en in Rotterdam: lessen en contact | Taal Studio",
     lessonsDescription: "Persoonlijke Nederlandse les en bijles NT2, online of in Rotterdam, met het Taal Studio-taalplatform: eigen leerpad, uitleg en oefeningen van A0 tot B2. Proefles mogelijk, 2e les gratis.",
@@ -265,6 +267,7 @@ const T = {
     login: "Log in",
     footer: "Dutch language platform and app · Online Dutch lessons and NT2 tutoring, A0 to B2, in Rotterdam and online",
     switchTo: "Naar het Nederlands",
+    superprof: "Find me on Superprof",
     lessonsTitle: "Dutch lessons and NT2 tutoring, online and in Rotterdam: lessons and contact | Taal Studio",
     lessonsDescription: "Personal Dutch lessons and NT2 tutoring, online or in Rotterdam, with the Taal Studio language platform: your own learning path, explanations and exercises from A0 to B2. Book a trial lesson, the 2nd lesson is free.",
     h1: "Dutch lessons and NT2 tutoring, online and in Rotterdam",
@@ -381,7 +384,7 @@ ${jsonLd.map((j) => `<script type="application/ld+json">${JSON.stringify(j).repl
 </header>
 ${body}
 <footer class="site">
-  <p><a href="/">Taal Studio</a> · ${L.footer} · <a href="${PATHS[lang].lessons}">${L.menuLessons}</a> · <a href="${PATHS[lang].reviews}">${L.menuReviews}</a></p>
+  <p><a href="/">Taal Studio</a> · ${L.footer} · <a href="${PATHS[lang].lessons}">${L.menuLessons}</a> · <a href="${PATHS[lang].reviews}">${L.menuReviews}</a> · <a href="${SUPERPROF}" rel="noopener" target="_blank">${L.superprof}</a></p>
 </footer>
 </div>
 ${LANG_SCRIPT}
@@ -508,6 +511,7 @@ function reviewsPage(lang) {
 <nav class="crumbs"><a href="/">Taal Studio</a> › Reviews</nav>
 <h1>${L.reviewsH1}</h1>
 <p class="lead"><span class="stars">★★★★★</span> ${L.reviewsLead(ALL_REVIEWS.length)}</p>
+<p><a href="${SUPERPROF}" rel="noopener" target="_blank">${L.superprof}</a></p>
 <div class="reviews">
 ${ALL_REVIEWS.map((r, i) => {
     const name = r.name ?? L.student;
@@ -620,7 +624,7 @@ ${L.who.map((w) => `  <li>${w}</li>`).join("\n")}
 </ul>
 
 <h2>${L.saysH2}</h2>
-<p><span class="stars">★★★★★</span> ${L.rating(ALL_REVIEWS.length)} · <a href="${PATHS[lang].reviews}">${L.allReviews}</a></p>
+<p><span class="stars">★★★★★</span> ${L.rating(ALL_REVIEWS.length)} · <a href="${PATHS[lang].reviews}">${L.allReviews}</a> · <a href="${SUPERPROF}" rel="noopener" target="_blank">${L.superprof}</a></p>
 <div class="grid">
 ${REVIEWS.map((r) => `  <blockquote lang="${r.lang}"><p>“${esc(r.text)}”</p><cite>${esc(r.name)}</cite></blockquote>`).join("\n")}
 </div>
