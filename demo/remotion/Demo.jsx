@@ -129,13 +129,9 @@ const SEGMENTS = [
     ],
   },
   {
-    kind: "clip", scene: "levels", from: 4.6, to: 12.6, speed: 1.5, caption: "levels",
-    camera: [
-      { t: 4.6, zoom: 1.2, x: 640, y: 300 },
-      // On a phone: the A0/A1 filter at the top, the word card above the caption.
-      { t: 5.6, zoom: 1.55, x: 600, y: 260, p: { w: 520, y: 300 } },
-      { t: 12.6, zoom: 1.55, x: 600, y: 270, p: { w: 520, y: 305 } },
-    ],
+    // The flashcards: the whole screen, no close-up, in every format (exact: no extra zoom for the format).
+    kind: "clip", scene: "levels", from: 4.6, to: 12.6, speed: 1.5, caption: "levels", exact: true,
+    camera: [{ t: 4.6, zoom: 1.0 }],
   },
   {
     // Superprof search (Dutch, Rotterdam): Emma at place 2. Points are 0–1 of the screenshot.
@@ -342,7 +338,7 @@ function Clip({ lang, seg, index }) {
   const m = MANIFESTS[lang][seg.scene];
   const L = useLayout();
   const t = seg.from + (f / fps) * seg.speed;
-  const cam = cameraAt(seg.camera.map((k) => cameraKey(k, L)), m.marks, t);
+  const cam = cameraAt(seg.exact ? seg.camera : seg.camera.map((k) => cameraKey(k, L)), m.marks, t);
   return <Screen lang={lang} seg={seg} index={index} cam={cam} src={staticFile(`${lang}/${seg.scene}/${frameAt(m.frames, t)}`)} />;
 }
 
