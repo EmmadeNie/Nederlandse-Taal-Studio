@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Brand from "../components/Brand";
 import { supabase } from "../lib/supabase";
 import { useI18n } from "../i18n/context";
@@ -18,6 +18,18 @@ export default function LoginPage({ invited = false }) {
   const [error, setError] = useState(null);
   const [code, setCode] = useState("");
   const [checking, setChecking] = useState(false);
+  // On a phone the form starts folded behind a button, so the video and the
+  // footer fit on the screen; opened, it moves above the video.
+  const [open, setOpen] = useState(invited);
+  const card = useRef(null);
+  const openForm = () => {
+    setOpen(true);
+    requestAnimationFrame(() => {
+      // The form now sits at the top of the page (above the video).
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      card.current?.querySelector("input")?.focus({ preventScroll: true });
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,9 +61,12 @@ export default function LoginPage({ invited = false }) {
   };
 
   return (
-    <div className="auth-screen has-demo">
+    <div className={`auth-screen has-demo ${open || status !== "idle" ? "is-open" : ""}`}>
       <DemoVideo />
-      <div className="auth-card">
+      <button type="button" className="fb-btn-primary auth-open" onClick={openForm}>
+        {t("login.open")}
+      </button>
+      <div className="auth-card" ref={card}>
         <Brand tagline />
         {invited && <p className="auth-invited">{t("invite.loginHint")}</p>}
 

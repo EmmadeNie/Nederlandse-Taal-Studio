@@ -1064,6 +1064,29 @@
     width: 100%;
     max-width: 420px;
   }
+
+  /* Folded: video, a button, the footer. Open: the form first. */
+  .auth-screen.has-demo:not(.is-open) .auth-card {
+    display: none;
+  }
+
+  .auth-screen.has-demo:not(.is-open) .auth-open {
+    display: block;
+  }
+
+  .auth-screen.has-demo.is-open .auth-card {
+    order: -1;
+  }
+}
+
+.auth-open {
+  display: none;
+  width: 100%;
+  max-width: 420px;
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .auth-card {
