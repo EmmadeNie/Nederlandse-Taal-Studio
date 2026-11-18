@@ -186,11 +186,11 @@ ${jsonLd.map((j) => `<script type="application/ld+json">${JSON.stringify(j).repl
 <div class="wrap">
 <header class="site">
   <a class="brand" href="/"><img src="/logo-icon.svg?v=4" alt="" width="34" height="34" />Taal Studio</a>
-  <nav class="menu"><a href="/nederlandse-les/">Lessen</a><a href="/reviews/">Reviews</a><a href="/grammatica/">Grammatica</a><a href="/contact/">Contact</a><a class="btn ghost" href="/">Inloggen</a></nav>
+  <nav class="menu"><a href="/nederlandse-les/">Lessen &amp; contact</a><a href="/reviews/">Reviews</a><a class="btn ghost" href="/">Inloggen</a></nav>
 </header>
 ${body}
 <footer class="site">
-  <p><a href="/">Taal Studio</a> · Nederlands taalplatform en taalapp · Online Nederlandse les en bijles NT2, van A0 tot B2, in Rotterdam en online · <a href="/nederlandse-les/">Lessen</a> · <a href="/reviews/">Reviews</a> · <a href="/grammatica/">Grammatica</a> · <a href="/contact/">Contact</a></p>
+  <p><a href="/">Taal Studio</a> · Nederlands taalplatform en taalapp · Online Nederlandse les en bijles NT2, van A0 tot B2, in Rotterdam en online · <a href="/nederlandse-les/">Lessen &amp; contact</a> · <a href="/reviews/">Reviews</a></p>
 </footer>
 </div>
 </body>
@@ -321,7 +321,7 @@ ${ALL_REVIEWS.map((r, i) => `  <blockquote${r.lang ? ` lang="${r.lang}"` : ' lan
 </div>
 <div class="cta">
   <p><strong>Zelf ervaren?</strong> Boek een proefles: de 2e les krijg je gratis.</p>
-  <a class="btn" href="/contact/">Plan een proefles</a>
+  <a class="btn" href="/nederlandse-les/#contact">Plan een proefles</a>
 </div>
 `;
   return page({
@@ -341,15 +341,27 @@ const FAQ = [
   ["Wat is het verschil met een gewone taalapp?", "In Taal Studio werk je met een eigen leerpad dat je docent voor je samenstelt, met uitleg, oefeningen en flashcards per onderwerp. Je combineert persoonlijke (bij)les met zelf oefenen."],
 ];
 
-function landingPage(topicCount) {
+function landingPage() {
   const url = `${SITE}/nederlandse-les/`;
   const body = `
 <section class="hero">
   <h1>Nederlandse les en bijles NT2, online en in Rotterdam</h1>
   <p class="lead">Taal Studio is een Nederlands taalplatform met persoonlijke lessen. Je krijgt een eigen leerpad, heldere uitleg en oefeningen op jouw niveau, van A0 tot B2. Boek een proefles, dan krijg je de 2e les gratis.</p>
-  <div class="actions"><a class="btn" href="/contact/">Plan een proefles</a><a class="btn ghost" href="/">Inloggen</a></div>
+  <div class="actions"><a class="btn" href="/">Maak gratis een account aan</a><a class="btn ghost" href="/">Inloggen</a></div>
 </section>
-<div class="video"><video src="/demo/demo-nl.mp4" poster="/demo/demo-nl.jpg" controls muted playsinline preload="metadata" aria-label="Korte demo van Taal Studio"></video></div>
+
+<section id="contact">
+  <h2>Plan een proefles of stel je vraag</h2>
+  <p>Stuur een bericht, dan hoor je snel van me. Boek je een proefles, dan krijg je de 2e les gratis.</p>
+  ${contactForm()}
+</section>
+
+<h2>Maak alvast kennis</h2>
+<a class="yt" href="${YOUTUBE}" rel="noopener" target="_blank">
+  <img src="${YOUTUBE_THUMB}" alt="Video: Do you want to learn Dutch?" width="480" height="360" loading="lazy" />
+  <span class="play" aria-hidden="true">▶</span>
+</a>
+<p>Bekijk <a href="${YOUTUBE}" rel="noopener" target="_blank">mijn video op YouTube</a>: wie ik ben en hoe ik les geef.</p>
 
 <h2>Zo werkt Taal Studio</h2>
 <div class="grid">
@@ -366,7 +378,6 @@ function landingPage(topicCount) {
   <li>Expats en professionals die snel en gestructureerd Nederlands willen leren.</li>
   <li>Wie naast een cursus <strong>bijles Nederlands</strong> zoekt om gericht te oefenen.</li>
 </ul>
-<p>Lees ook de <a href="/grammatica/">gratis uitleg van ${topicCount || "56"} onderwerpen Nederlandse grammatica</a>, per niveau.</p>
 
 <h2>Wat leerlingen zeggen</h2>
 <p><span class="stars">★★★★★</span> 5,0 uit 7 reviews · <a href="/reviews/">Lees alle reviews</a></p>
@@ -381,7 +392,7 @@ ${FAQ.map(([q, a]) => `<h3>${esc(q)}</h3><p>${esc(a)}</p>`).join("\n")}
 
 <div class="cta">
   <p><strong>Zin om te beginnen?</strong> Plan een proefles, dan kijken we samen naar je niveau en je doel. De 2e les is gratis.</p>
-  <a class="btn" href="/contact/">Neem contact op</a>
+  <a class="btn" href="#contact">Neem contact op</a>
 </div>
 `;
   const jsonLd = [
@@ -396,6 +407,7 @@ ${FAQ.map(([q, a]) => `<h3>${esc(q)}</h3><p>${esc(a)}</p>`).join("\n")}
       provider: { "@type": "EducationalOrganization", "@id": `${SITE}/#org`, name: "Taal Studio", url: `${SITE}/` },
       offers: { "@type": "Offer", description: "Proefles; de 2e les is gratis" },
     },
+    { "@context": "https://schema.org", "@type": "ContactPage", name: "Lessen en contact | Taal Studio", url, about: { "@id": `${SITE}/#org` } },
     {
       "@context": "https://schema.org",
       "@type": "FAQPage",
@@ -404,7 +416,7 @@ ${FAQ.map(([q, a]) => `<h3>${esc(q)}</h3><p>${esc(a)}</p>`).join("\n")}
     breadcrumbs([["Taal Studio", `${SITE}/`], ["Nederlandse les", url]]),
   ];
   return page({
-    title: "Nederlandse les en bijles NT2, online en in Rotterdam | Taal Studio",
+    title: "Nederlandse les en bijles NT2, online en in Rotterdam: lessen en contact | Taal Studio",
     description: "Persoonlijke Nederlandse les en bijles NT2, online of in Rotterdam, met het Taal Studio-taalplatform: eigen leerpad, uitleg en oefeningen van A0 tot B2. Proefles mogelijk, 2e les gratis.",
     canonical: url,
     body,
@@ -412,14 +424,11 @@ ${FAQ.map(([q, a]) => `<h3>${esc(q)}</h3><p>${esc(a)}</p>`).join("\n")}
   });
 }
 
-function contactPage() {
-  const url = `${SITE}/contact/`;
+/** The contact form (mails the docent through the `contact` edge function). */
+function contactForm() {
   const endpoint = hosted ? `${SUPABASE_URL}/functions/v1/contact` : "";
-  const body = `
-<nav class="crumbs"><a href="/">Taal Studio</a> › Contact</nav>
-<h1>Contact</h1>
-<p class="lead">Wil je een proefles (de 2e les is gratis), of heb je een vraag over Nederlandse les, bijles NT2 of de Taal Studio-app? Stuur een bericht, dan hoor je snel van me.</p>
-<form class="contact" id="contact" novalidate>
+  return `
+<form class="contact" id="contact-form" novalidate>
   <label>Naam<input name="name" autocomplete="name" required maxlength="100" /></label>
   <label>E-mailadres<input name="email" type="email" autocomplete="email" required maxlength="200" /></label>
   <label>Je niveau
@@ -429,22 +438,15 @@ function contactPage() {
       <option value="weet ik niet">Weet ik niet</option>
     </select>
   </label>
-  <label>Bericht<textarea name="message" required maxlength="3000" placeholder="Bijvoorbeeld: ik wil me voorbereiden op het inburgeringsexamen."></textarea></label>
+  <label>Bericht<textarea name="message" required maxlength="3000" placeholder="Bijvoorbeeld: ik wil een proefles, ik bereid me voor op het inburgeringsexamen."></textarea></label>
   <label class="hp" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off" /></label>
   <button class="btn" type="submit">Versturen</button>
   <div id="status" role="status" aria-live="polite"></div>
 </form>
 <p class="note">Je gegevens gebruik ik alleen om je bericht te beantwoorden.</p>
-
-<h2>Maak alvast kennis</h2>
-<a class="yt" href="${YOUTUBE}" rel="noopener" target="_blank">
-  <img src="${YOUTUBE_THUMB}" alt="Video: Do you want to learn Dutch?" width="480" height="360" loading="lazy" />
-  <span class="play" aria-hidden="true">▶</span>
-</a>
-<p>Bekijk <a href="${YOUTUBE}" rel="noopener" target="_blank">mijn video op YouTube</a>: wie ik ben en hoe ik les geef.</p>
 <script>
 (() => {
-  const form = document.getElementById("contact");
+  const form = document.getElementById("contact-form");
   const status = document.getElementById("status");
   const endpoint = ${JSON.stringify(endpoint)};
   const key = ${JSON.stringify(hosted ? SUPABASE_KEY : "")};
@@ -469,19 +471,7 @@ function contactPage() {
     }
   });
 })();
-</script>
-`;
-  const jsonLd = [
-    { "@context": "https://schema.org", "@type": "ContactPage", name: "Contact | Taal Studio", url, about: { "@id": `${SITE}/#org` } },
-    breadcrumbs([["Taal Studio", `${SITE}/`], ["Contact", url]]),
-  ];
-  return page({
-    title: "Contact: proefles Nederlandse les en bijles NT2 | Taal Studio",
-    description: "Neem contact op voor een proefles Nederlandse les of bijles NT2, online of in Rotterdam. De 2e les is gratis.",
-    canonical: url,
-    body,
-    jsonLd,
-  });
+</script>`;
 }
 
 const write = (rel, content) => {
@@ -495,12 +485,10 @@ const topics = (await loadTopics()).filter((t) => t.slug && /^[a-z0-9-]+$/.test(
 
 const today = new Date().toISOString().slice(0, 10);
 const urls = [{ loc: `${SITE}/`, lastmod: today, priority: "1.0" }];
-write("nederlandse-les/index.html", landingPage(topics.length));
+write("nederlandse-les/index.html", landingPage());
 urls.push({ loc: `${SITE}/nederlandse-les/`, lastmod: today, priority: "0.9" });
-write("contact/index.html", contactPage());
 write("reviews/index.html", reviewsPage());
 urls.push({ loc: `${SITE}/reviews/`, lastmod: today, priority: "0.6" });
-urls.push({ loc: `${SITE}/contact/`, lastmod: today, priority: "0.6" });
 if (topics.length) {
   write("grammatica/index.html", indexPage(topics));
   urls.push({ loc: `${SITE}/grammatica/`, lastmod: today, priority: "0.9" });
@@ -530,4 +518,4 @@ Sitemap: ${SITE}/sitemap.xml
 `,
 );
 
-console.log(`build-seo: landing, contact, reviews, ${topics.length} grammar pages, sitemap with ${urls.length} URLs, robots.txt${hosted ? "" : " (contact form without endpoint: no hosted Supabase in env)"}`);
+console.log(`build-seo: lessons & contact, reviews, ${topics.length} grammar pages, sitemap with ${urls.length} URLs, robots.txt${hosted ? "" : " (contact form without endpoint: no hosted Supabase in env)"}`);
