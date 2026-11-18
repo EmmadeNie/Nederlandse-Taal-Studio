@@ -114,10 +114,15 @@ export default function LoginPage({ invited = false }) {
           </form>
         )}
       </div>
-      <p className="auth-more">
-        {t("login.more")} <a href="/nederlandse-les/">{t("login.lessonsLink")}</a> ·{" "}
-        <a href="/grammatica/">{t("login.grammarLink")}</a> · <a href="/contact/">{t("login.contactLink")}</a>
-      </p>
+      <footer className="auth-footer">
+        <nav aria-label={t("login.footerNav")}>
+          <a href="/nederlandse-les/">{t("login.lessonsLink")}</a>
+          <a href="/reviews/">{t("login.reviewsLink")}</a>
+          <a href="/grammatica/">{t("login.grammarLink")}</a>
+          <a href="/contact/">{t("login.contactLink")}</a>
+        </nav>
+        <p>{t("login.more")}</p>
+      </footer>
     </div>
   );
 }

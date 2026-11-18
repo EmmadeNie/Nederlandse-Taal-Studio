@@ -997,13 +997,35 @@
   aspect-ratio: 4 / 5;
 }
 
-/* A line under the login (and a link to the public grammar pages, also for search engines). */
-.auth-more {
+/* Footer under the login: links to the public pages (also for search engines). */
+.auth-footer {
   flex-basis: 100%;
-  margin: 0;
+  margin: 0.5rem 0 0;
   text-align: center;
   color: var(--text-dim);
-  font-size: 0.88rem;
+  font-size: 0.85rem;
+}
+
+.auth-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem 1.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.auth-footer nav a {
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-footer nav a:hover {
+  color: var(--accent);
+}
+
+.auth-footer p {
+  margin: 0;
 }
 
 .auth-demo-sound {
