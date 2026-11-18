@@ -12,7 +12,9 @@ import DemoVideo from "./DemoVideo";
  * New email addresses get an account automatically (role: leerling).
  */
 export default function LoginPage({ invited = false }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  // The public pages in the page's language.
+  const pages = lang === "en" ? { lessons: "/en/dutch-lessons/", reviews: "/en/reviews/" } : { lessons: "/nederlandse-les/", reviews: "/reviews/" };
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState("idle"); // idle | sending | sent | error
   const [error, setError] = useState(null);
@@ -131,8 +133,8 @@ export default function LoginPage({ invited = false }) {
       </div>
       <footer className="auth-footer">
         <nav aria-label={t("login.footerNav")}>
-          <a href="/nederlandse-les/">{t("login.lessonsLink")}</a>
-          <a href="/reviews/">{t("login.reviewsLink")}</a>
+          <a href={pages.lessons}>{t("login.lessonsLink")}</a>
+          <a href={pages.reviews}>{t("login.reviewsLink")}</a>
         </nav>
         <p>{t("login.more")}</p>
       </footer>
