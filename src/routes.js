@@ -8,6 +8,7 @@
  *   /leerpaden, /leerpaden/<leerling>
  *   /bibliotheek/<tab>, /bibliotheek/grammatica/<onderwerp>
  *   /feedback, /voorstellen, /voorstellen/<id>, /gebruikers
+ *   /abonnement                      the plans (Gratis, Onderweg, Compleet)
  *
  * Filters stay in the query string, e.g. /bibliotheek/zinnen?level=A2.
  */
@@ -28,6 +29,7 @@ export const PATHS = {
   nakijken: "/nakijken",
   proposals: "/voorstellen",
   users: "/gebruikers",
+  plans: "/abonnement",
 };
 
 const PAGE_BY_PATH = Object.fromEntries(Object.entries(PATHS).map(([page, path]) => [path, page]));
