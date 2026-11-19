@@ -15,6 +15,8 @@ const LESSON_FIELDS =
   "id, lane_id, position, title, title_en, level, label_ids, explanation, explanation_en, links, word_list, sentence_list, topic_ids, verb_ids, " +
   "attachments:lesson_attachments(id, file_name, mime_type, size_bytes, storage_path, created_at)";
 
+import { levelLanePosition } from "./positions";
+
 export { positionBetween } from "./positions";
 
 const nextPosition = (items) =>
@@ -151,10 +153,10 @@ export async function loadLeerpad(studentId, { withNotes = false } = {}) {
   return { lanes, steps, notes };
 }
 
-export const createLeerpadLane = (studentId, name, lanes) =>
+export const createLeerpadLane = (studentId, name, lanes, position = nextPosition(lanes)) =>
   supabase
     .from("leerpad_lanes")
-    .insert({ student_id: studentId, name, position: nextPosition(lanes) })
+    .insert({ student_id: studentId, name, position })
     .select("id, name, position, is_focus")
     .single()
     .then(check);
@@ -259,12 +261,13 @@ export async function planLessons(lessonIds, studentId, laneId, { levelOf } = {}
   const planned = new Set(steps.map((s) => s.lesson_id).filter(Boolean));
   const todo = lessonIds.filter((id) => !planned.has(id));
 
-  // Missing level lanes are made first, A0 → B2, so they stand in level order.
+  // Missing level lanes are made first, on the left of the board in level order (A1 | A0 | To do …).
   const allLanes = [...lanes];
   const named = (level) => allLanes.find((l) => l.name.trim().toUpperCase() === level);
   const needed = LEVELS.filter((lv) => todo.some((id) => levelOf?.(id) === lv));
   for (const level of needed) {
-    if (!named(level)) allLanes.push(await createLeerpadLane(studentId, level, allLanes));
+    if (!named(level))
+      allLanes.push(await createLeerpadLane(studentId, level, allLanes, levelLanePosition(level, allLanes, LEVELS)));
   }
   const laneFor = (lessonId) => named(levelOf?.(lessonId)) || fallback;
 
@@ -281,4 +284,29 @@ export async function planLessons(lessonIds, studentId, laneId, { levelOf } = {}
   }
   const used = [...new Set(rows.map((r) => allLanes.find((l) => l.id === r.lane_id)?.name))];
   return { added: rows.length, skipped: lessonIds.length - todo.length, lanes: used };
+}
+
+/**
+ * A new student's first board, after the tour put whole levels on it: the empty
+ * Backlog goes (the level lanes are the backlog now), the first lesson of the
+ * lowest chosen level (that has lessons) goes to Doing and the next three to To do, and the board opens on
+ * To do, so the levels, what's next and what's now are all in view.
+ * Only on a board that is still the untouched default (empty To do and Doing).
+ */
+export async function arrangeNewLeerpad(studentId, levels) {
+  const { lanes, steps } = await loadLeerpad(studentId);
+  const byName = (name) => lanes.find((l) => l.name.trim().toLowerCase() === name);
+  const stepsIn = (lane) => steps.filter((s) => s.lane_id === lane.id).sort((a, b) => a.position - b.position);
+  const [backlog, todo, doing] = [byName("backlog"), byName("to do"), byName("doing")];
+  const levelLane = LEVELS.filter((lv) => levels.includes(lv))
+    .map((lv) => byName(lv.toLowerCase()))
+    .find((lane) => lane && stepsIn(lane).length);
+  if (!todo || !doing || !levelLane || stepsIn(todo).length || stepsIn(doing).length) return;
+
+  const [first, ...next] = stepsIn(levelLane);
+  if (first) await moveStep(first.id, doing.id, 1);
+  for (const [i, s] of next.slice(0, 3).entries()) await moveStep(s.id, todo.id, i + 1);
+  if (backlog && !stepsIn(backlog).length) await deleteLeerpadLane(backlog.id);
+  await setFocusLeerpadLane(studentId, todo.id);
+  window.dispatchEvent(new CustomEvent(LEERPAD_CHANGED, { detail: { studentId } }));
 }

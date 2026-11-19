@@ -12,7 +12,14 @@ export const STEPS = [
   // Which levels of the curriculum go on the board: the student ticks them (A0 and A1 to start with).
   { id: "levels", page: "leerpad", levelChoice: ["A0", "A1"] },
   { id: "browse", page: "leerpad", anchor: '[data-tour="browse"]' },
-  { id: "practise", page: "leerpad", anchor: ".cp-button, .board" },
+  // Practising starts on the board: a lesson card's own buttons (the one in Doing when the tour
+  // just filled the board), then all flashcards together in Mijn flashcards.
+  // An anchor can be a list: the first one that is on the page is used.
+  {
+    id: "practise",
+    page: "leerpad",
+    anchor: [".board-lane.is-focus + .board-lane .board-card:has(.cp-wrap)", ".board-card:has(.cp-wrap)", ".board"],
+  },
   // Mijn flashcards: the three kinds of exercise, each with a tiny example to try.
   { id: "flashcards", page: "flashcards", anchor: '[data-tour="nav-flashcards"]' },
   { id: "demoFlip", page: "flashcards", demo: FlipDemo },
