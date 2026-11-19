@@ -10,6 +10,7 @@
     "manifests": "node prepare.mjs",
     "studio": "node prepare.mjs && remotion studio remotion/index.jsx --public-dir=raw",
     "render": "node prepare.mjs && remotion render remotion/index.jsx demo-nl out/demo-nl.mp4 --public-dir=raw --crf=18 && remotion render remotion/index.jsx demo-nl-portrait out/demo-nl-portrait.mp4 --public-dir=raw --crf=18 && remotion render remotion/index.jsx demo-en out/demo-en.mp4 --public-dir=raw --crf=18 && remotion render remotion/index.jsx demo-en-portrait out/demo-en-portrait.mp4 --public-dir=raw --crf=18",
+    "render:promo": "node prepare.mjs && mkdir -p out/marketing && for v in promo promo-quiz; do for l in en nl; do remotion render remotion/index.jsx $v-$l out/marketing/taalstudio-$v-$l.mp4 --public-dir=raw --crf=18 || exit 1; done; done",
     "publish": "node publish.mjs"
   },
   "devDependencies": {

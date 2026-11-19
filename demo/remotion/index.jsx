@@ -13,6 +13,9 @@ function Root() {
         // For YouTube: a normal 16:9 video and a 9:16 Short / reel.
         <Composition key={`${lang}-yt`} id={`youtube-${lang}`} component={Demo} defaultProps={{ lang }} durationInFrames={durationOf()} fps={FPS} width={1920} height={1080} />,
         <Composition key={`${lang}-reel`} id={`reel-${lang}`} component={Demo} defaultProps={{ lang }} durationInFrames={durationOf()} fps={FPS} width={1080} height={1920} />,
+        // Marketing reels for socials (9:16), short: Emma, the app, proof, call to action.
+        <Composition key={`${lang}-promo`} id={`promo-${lang}`} component={Demo} defaultProps={{ lang, cut: "promo" }} durationInFrames={durationOf("promo")} fps={FPS} width={1080} height={1920} />,
+        <Composition key={`${lang}-quiz`} id={`promo-quiz-${lang}`} component={Demo} defaultProps={{ lang, cut: "quiz" }} durationInFrames={durationOf("quiz")} fps={FPS} width={1080} height={1920} />,
       ])}
       {/* The link preview for WhatsApp, LinkedIn & co. */}
       <Still id="og" component={Og} defaultProps={{ lang: "nl" }} width={1200} height={630} />
