@@ -8,9 +8,12 @@ import { I18nProvider } from './i18n/I18nProvider.jsx'
 import { PrefsProvider } from './prefs/PrefsProvider.jsx'
 import { migrateLegacyUrl } from './routes'
 import { IconContext } from '@phosphor-icons/react'
+import { watchForNewVersion } from './lib/freshness'
 
 // Old ?page=… links (e.g. on Trello cards) become paths before anything renders.
 migrateLegacyUrl()
+// A tab left open across a deploy picks up the new version on the next page change.
+watchForNewVersion()
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
