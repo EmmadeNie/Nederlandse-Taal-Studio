@@ -499,14 +499,6 @@ ${byLevel.map(([lv, ts]) => `<h2>${L.level} ${lv}</h2><ul class="topics">${ts.ma
   return page({ lang, title: L.grammarIndexTitle, description: L.grammarIndexDescription(list.length), path: here, alt: PATHS[other(lang)].grammar, body, jsonLd });
 }
 
-/** Short quotes from students' recommendations, in their own language, first names only. */
-const REVIEWS = [
-  { name: "Ana Catalina", lang: "en", text: "Together with Emma I was able to take my Dutch from A0 to A2 in one month as preparation for my Inburgeringsexamen." },
-  { name: "Marija", lang: "en", text: "With Emma learning Dutch is a lot of fun. Her online board is very clear and gives a great overview." },
-  { name: "Mason", lang: "en", text: "With Emma’s help, I have been able to quickly progress my Dutch learning and begin passing my NT2 exams." },
-  { name: "Lara", lang: "nl", text: "Met Emma is het altijd gezellig en ze is super geduldig." },
-];
-
 /** All students' recommendations, word for word, in their own language, first names only. */
 const ALL_REVIEWS = [
   { name: "Bence", lang: "en", text: "Perfect! Emma offers fun and personalized lessons. She’s attentive to my needs and improves her methods using my feedback." },
@@ -660,9 +652,6 @@ ${L.who.map((w) => `  <li>${w}</li>`).join("\n")}
 
 <h2>${L.saysH2}</h2>
 <p><span class="stars">★★★★★</span> ${L.rating(ALL_REVIEWS.length)} · <a href="${PATHS[lang].reviews}">${L.allReviews}</a> · <a href="${SUPERPROF}" rel="noopener" target="_blank">${L.superprof}</a></p>
-<div class="grid">
-${REVIEWS.map((r) => `  <blockquote lang="${r.lang}"><p>“${esc(r.text)}”</p><cite>${esc(r.name)}</cite></blockquote>`).join("\n")}
-</div>
 
 <h2>${L.faqH2}</h2>
 <div class="faq">
