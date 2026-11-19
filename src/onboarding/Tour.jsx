@@ -57,7 +57,10 @@ export default function Tour({ page, onClose }) {
   const [navRect, setNavRect] = useState(null); // the menu item of the page this step is on
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState(null);
+  const [planned, setPlanned] = useState(false); // the levels step: lessons were just put on the board
   const step = STEPS[Math.min(index, STEPS.length - 1)];
+  // After "Zet … op mijn bord" the student gets to look at the filled board before going on.
+  const anchor = step.levelChoice && planned ? ".board" : step.anchor;
   const [levels, setLevels] = useState(() => STEPS.find((s) => s.levelChoice)?.levelChoice || []);
   const toggleLevel = (lv) => setLevels((ls) => (ls.includes(lv) ? ls.filter((x) => x !== lv) : [...ls, lv]));
 
@@ -71,12 +74,12 @@ export default function Tour({ page, onClose }) {
     // Scroll the target into view once it is there (a board that is still loading comes later).
     let scrolledTo = null;
     const update = () => {
-      const el = anchorEl(step.anchor);
+      const el = anchorEl(anchor);
       if (el && el !== scrolledTo) {
         scrolledTo = el;
         el.scrollIntoView?.({ block: "nearest", inline: "nearest" });
       }
-      setRect(rectOf(step.anchor));
+      setRect(rectOf(anchor));
       setNavRect(rectOf(`[data-tour="nav-${step.page}"]`));
     };
     update();
@@ -88,10 +91,11 @@ export default function Tour({ page, onClose }) {
       window.removeEventListener("resize", update);
       window.removeEventListener("scroll", update, true);
     };
-  }, [step.anchor, step.page, page]);
+  }, [anchor, step.page, page]);
 
   const go = (i) => {
     setMessage(null);
+    setPlanned(false);
     setIndex(i);
     writeStep(i);
   };
@@ -124,7 +128,7 @@ export default function Tour({ page, onClose }) {
       // A brand-new board: the first lessons straight into To do and Doing.
       if (added) await api.arrangeNewLeerpad(profile.id, levels);
       setMessage({ text: added ? t("tour.added", { n: added }) : t("lp.levelAlready") });
-      setTimeout(() => go(index + 1), 1200);
+      setPlanned(true);
     } catch (e) {
       setMessage({ error: true, text: t(e.message) });
     } finally {
@@ -170,10 +174,10 @@ export default function Tour({ page, onClose }) {
             ))}
           </span>
         </div>
-        <h3 id="tour-title">{t(`tour.${step.id}.title`)}</h3>
-        <p>{t(`tour.${step.id}.text`)}</p>
+        <h3 id="tour-title">{t(step.levelChoice && planned ? "tour.planned.title" : `tour.${step.id}.title`)}</h3>
+        <p>{t(step.levelChoice && planned ? "tour.planned.text" : `tour.${step.id}.text`)}</p>
         {step.demo && <step.demo key={step.id} />}
-        {step.levelChoice && (
+        {step.levelChoice && !planned && (
           <div className="tour-levels" role="group" aria-label={t("tour.levels.title")}>
             {LEVELS.map((lv) => (
               <button key={lv} type="button" aria-pressed={levels.includes(lv)} onClick={() => toggleLevel(lv)}>
@@ -202,7 +206,7 @@ export default function Tour({ page, onClose }) {
               {t("tour.back")}
             </button>
           )}
-          {step.levelChoice ? (
+          {step.levelChoice && !planned ? (
             <>
               <button type="button" className="fb-btn-secondary" onClick={() => go(index + 1)} disabled={busy}>
                 {t("tour.levels.self")}
