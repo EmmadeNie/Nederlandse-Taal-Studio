@@ -45,6 +45,13 @@ const TEXT = {
     talk: ["Maak kennis", "met Emma"],
     reviews: ["★★★★★ 5,0", "7 reviews van leerlingen"],
     outro: "Log in en ga verder waar je was.",
+    // Marketing reels (socials)
+    hook: ["Woon je in Nederland?", "Tijd voor je Nederlands"],
+    promoTheory: ["Grammatica,", "helder uitgelegd"],
+    promoPerfect: ["Perfectum?", "Dat leer je hier"],
+    promoCards: ["Nieuwe woorden,", "kaart voor kaart"],
+    quiz: ["Snelle quiz:", "wat vul jij in?"],
+    promoOutro: "Plan je eerste les · link in bio",
   },
   en: {
     tagline: "Learn Dutch, at your level.",
@@ -59,6 +66,13 @@ const TEXT = {
     talk: ["Meet", "Emma"],
     reviews: ["★★★★★ 5.0", "7 reviews from students"],
     outro: "Log in and carry on where you left off.",
+    // Marketing reels (socials)
+    hook: ["Living in the Netherlands?", "Let's get your Dutch going"],
+    promoTheory: ["Grammar,", "explained simply"],
+    promoPerfect: ["The perfect tense?", "You'll nail it"],
+    promoCards: ["New words,", "card by card"],
+    quiz: ["Quick quiz:", "can you fill it in?"],
+    promoOutro: "Plan your first lesson · link in bio",
   },
 };
 
@@ -169,42 +183,89 @@ const SEGMENTS = [
   { kind: "outro", seconds: 2.8 },
 ];
 
-const lengthOf = (s) => Math.round((s.kind === "clip" ? (s.to - s.from) / s.speed : s.seconds) * FPS);
-export const durationOf = () => SEGMENTS.reduce((n, s) => n + lengthOf(s), 0) - OVERLAP * (SEGMENTS.length - 1);
+/**
+ * The marketing reel for socials (max ~40 s): Emma first (people stop for a face),
+ * then the app in quick cuts, the proof, and a call to action. No Emma at the end.
+ */
+const byCaption = (caption) => SEGMENTS.find((s) => s.caption === caption);
+const PROMO = [
+  { kind: "talk", video: "youtube.mp4", seconds: 7.0, caption: "hook", captionTop: true, instant: true },
+  { ...byCaption("board"), from: 0.9, to: 6.3, speed: 1.6 },
+  {
+    kind: "clip", scene: "theory", from: 1.0, to: 6.6, speed: 1.7, caption: "promoTheory",
+    camera: byCaption("theory").camera.slice(0, 3).concat([{ t: 6.6, zoom: 1.3, x: 720, y: 470, p: { w: 600 } }]),
+  },
+  // Two perfect-tense answers (the third starts at 11.5 s).
+  { ...byCaption("conjugate"), to: 9.4, speed: 1.8, caption: "promoPerfect" },
+  // Two words, each turned over: an A0 one, then an A1 one.
+  { ...byCaption("levels"), from: 5.8, to: 10.9, speed: 1.4, caption: "promoCards", camera: [{ t: 5.8, zoom: 1.0 }] },
+  { ...byCaption("rank"), seconds: 3.6 },
+  // The first review in full (the login video reads it closer, cut at the sides).
+  {
+    ...byCaption("reviews"), seconds: 4.4,
+    camera: byCaption("reviews").camera.map((k) => (k.p ? { ...k, p: { w: 860, x: 0.36, y: 0.6, fill: false } } : k)),
+  },
+  { kind: "outro", seconds: 3.0, text: "promoOutro" },
+];
+// The same reel with a quiz: the perfect-tense card waits, empty, with a countdown.
+const PROMO_QUIZ = PROMO.map((s) =>
+  s.caption === "promoPerfect" ? { ...s, caption: "quiz", freeze: { at: 2.1, seconds: 2.4 } } : s
+);
+
+export const CUTS = { demo: SEGMENTS, promo: PROMO, quiz: PROMO_QUIZ };
+
+const lengthOf = (s) =>
+  Math.round((s.kind === "clip" ? (s.to - s.from) / s.speed + (s.freeze?.seconds ?? 0) : s.seconds) * FPS);
+export const durationOf = (cut = "demo") => {
+  const segs = CUTS[cut];
+  return segs.reduce((n, s) => n + lengthOf(s), 0) - OVERLAP * (segs.length - 1);
+};
 
 // Where each segment starts: right after the previous one, minus the overlap.
-const STARTS = SEGMENTS.reduce((acc, s, i) => [...acc, i ? acc[i - 1] + lengthOf(SEGMENTS[i - 1]) - OVERLAP : 0], []);
+const startsOf = (segs) => segs.reduce((acc, s, i) => [...acc, i ? acc[i - 1] + lengthOf(segs[i - 1]) - OVERLAP : 0], []);
+
+/** Recording time `sec` seconds into a clip; a freeze holds one moment for a while (the quiz). */
+function recordingTime(seg, sec) {
+  const z = seg.freeze;
+  const before = z ? (z.at - seg.from) / seg.speed : Infinity;
+  if (sec < before) return seg.from + sec * seg.speed;
+  if (sec < before + z.seconds) return z.at;
+  return z.at + (sec - before - z.seconds) * seg.speed;
+}
 
 /** Music: fades in and out, and goes quiet while Emma talks. */
-function musicVolume(f) {
-  const end = durationOf();
-  const i = SEGMENTS.findIndex((s) => s.kind === "talk");
+function musicVolume(cut, f) {
+  const segs = CUTS[cut];
+  const end = durationOf(cut);
+  const i = segs.findIndex((s) => s.kind === "talk");
   const fade = interpolate(f, [0, 15, end - 30, end], [0, 0.8, 0.8, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   if (i < 0) return fade;
-  const a = STARTS[i];
-  const b = a + lengthOf(SEGMENTS[i]);
+  const a = startsOf(segs)[i];
+  const b = a + lengthOf(segs[i]);
   const duck = interpolate(f, [a - 8, a + 6, b - 14, b], [1, 0.08, 0.08, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   return fade * duck;
 }
 
-export function Demo({ lang }) {
+export function Demo({ lang, cut = "demo" }) {
+  const segs = CUTS[cut];
+  const starts = startsOf(segs);
   return (
     <AbsoluteFill style={{ background: C.bg, fontFamily }}>
       <Backdrop />
-      {SEGMENTS.map((s, i) => {
+      {segs.map((s, i) => {
         const len = lengthOf(s);
-        const from = STARTS[i];
+        const from = starts[i];
         return (
           <Sequence key={i} from={from} durationInFrames={len}>
             {s.kind === "intro" && <Intro lang={lang} />}
-            {s.kind === "outro" && <Outro lang={lang} />}
+            {s.kind === "outro" && <Outro lang={lang} seg={s} />}
             {s.kind === "shot" && <Shot lang={lang} seg={s} index={i} />}
             {s.kind === "talk" && <Talk lang={lang} seg={s} />}
             {s.kind === "clip" && <Clip lang={lang} seg={s} index={i} />}
           </Sequence>
         );
       })}
-      {MUSIC && <Audio src={staticFile("music.mp3")} volume={musicVolume} />}
+      {MUSIC && <Audio src={staticFile("music.mp3")} volume={(f) => musicVolume(cut, f)} />}
     </AbsoluteFill>
   );
 }
@@ -343,9 +404,14 @@ function Clip({ lang, seg, index }) {
   const { f, fps } = useInOut(lengthOf(seg));
   const m = MANIFESTS[lang][seg.scene];
   const L = useLayout();
-  const t = seg.from + (f / fps) * seg.speed;
+  const t = recordingTime(seg, f / fps);
   const cam = cameraAt(seg.exact ? seg.camera : seg.camera.map((k) => cameraKey(k, L)), m.marks, t);
-  return <Screen lang={lang} seg={seg} index={index} cam={cam} src={staticFile(`${lang}/${seg.scene}/${frameAt(m.frames, t)}`)} />;
+  return (
+    <>
+      <Screen lang={lang} seg={seg} index={index} cam={cam} src={staticFile(`${lang}/${seg.scene}/${frameAt(m.frames, t)}`)} />
+      {seg.freeze && <Countdown start={((seg.freeze.at - seg.from) / seg.speed) * fps} len={seg.freeze.seconds * fps} />}
+    </>
+  );
 }
 
 /** A screenshot (Superprof), with the same camera and a highlight that draws itself. */
@@ -458,10 +524,10 @@ function Screen({ lang, seg, index, cam, src, overlay }) {
 }
 
 /** Two lines, word by word, bottom left, on a dark glass card. */
-function Caption({ lines, len }) {
+function Caption({ lines, len, top = false }) {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const start = 6;
+  const start = top ? 0 : 6; // the hook is there from the first frame
   const out = interpolate(f, [len - OVERLAP - 6, len - OVERLAP + 2], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const box = spring({ frame: f - start + 2, fps, config: { damping: 16 } });
   const { portrait, captionBottom } = useLayout();
@@ -471,14 +537,14 @@ function Caption({ lines, len }) {
       style={{
         position: "absolute",
         left: portrait ? 56 : 90,
-        bottom: captionBottom,
+        ...(top ? { top: portrait ? 70 : 60 } : { bottom: captionBottom }),
         padding: "28px 40px 32px",
         borderRadius: 26,
         background: "rgba(11,13,17,0.72)",
         backdropFilter: "blur(18px)",
         boxShadow: "0 20px 60px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.08)",
         transform: `translateY(${(1 - box) * 40}px) scale(${0.9 + 0.1 * box})`,
-        transformOrigin: "left bottom",
+        transformOrigin: top ? "left top" : "left bottom",
         opacity: box * out,
       }}
     >
@@ -593,8 +659,8 @@ function Intro({ lang }) {
   );
 }
 
-function Outro({ lang }) {
-  const len = Math.round(2.8 * FPS);
+function Outro({ lang, seg }) {
+  const len = lengthOf(seg);
   const { f, fps, enter } = useInOut(len);
   const url = spring({ frame: f - 16, fps, config: { damping: 15 } });
   const line = spring({ frame: f - 24, fps, config: { damping: 16 } });
@@ -631,7 +697,27 @@ function Outro({ lang }) {
       >
         mijntaalstudio.nl
       </div>
-      <div style={{ fontSize: 38, fontWeight: 500, color: C.dim, opacity: line, textAlign: "center", maxWidth: portrait ? 860 : undefined }}>{TEXT[lang].outro}</div>
+      {seg.text ? (
+        // The marketing reels: the call to action as a button.
+        <div
+          style={{
+            fontSize: 46,
+            fontWeight: 800,
+            color: "#0b0d11",
+            background: `linear-gradient(90deg, ${C.blue}, ${C.green})`,
+            padding: "22px 44px",
+            borderRadius: 999,
+            boxShadow: `0 16px 50px rgba(79,156,249,0.35)`,
+            opacity: line,
+            transform: `scale(${0.85 + 0.15 * line})`,
+            textAlign: "center",
+          }}
+        >
+          {TEXT[lang][seg.text]}
+        </div>
+      ) : (
+        <div style={{ fontSize: 38, fontWeight: 500, color: C.dim, opacity: line, textAlign: "center", maxWidth: portrait ? 860 : undefined }}>{TEXT[lang].outro}</div>
+      )}
     </AbsoluteFill>
   );
 }
@@ -640,7 +726,8 @@ function Outro({ lang }) {
 /** A piece of video with sound, in a floating frame (wide on a computer, cut taller on a phone). */
 function Talk({ lang, seg }) {
   const len = lengthOf(seg);
-  const { f, fps, enter, leave } = useInOut(len);
+  const { f, enter: swing, leave } = useInOut(len);
+  const enter = seg.instant ? 1 : swing; // the reel's first frame already shows Emma
   const L = useLayout();
   const h = L.reel ? 1300 : L.portrait ? 1180 : Math.min(1000, L.H * 0.86);
   const w = L.portrait ? 960 : h * 1.5;
@@ -668,7 +755,67 @@ function Talk({ lang, seg }) {
           style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: L.portrait ? "36% 30%" : "50% 30%", transform: `scale(${zoom})` }}
         />
       </div>
-      <Caption lines={TEXT[lang][seg.caption]} len={len} />
+      <Caption lines={TEXT[lang][seg.caption]} len={len} top={seg.captionTop} />
     </AbsoluteFill>
+  );
+}
+
+/** The quiz: a ring that runs down 3, 2, 1 while the card waits for an answer. */
+function Countdown({ start, len }) {
+  const f = useCurrentFrame() - start;
+  const { fps } = useVideoConfig();
+  const L = useLayout();
+  if (f < 0 || f > len + 8) return null;
+  const left = Math.max(0, len - f);
+  const n = Math.ceil((left / len) * 3);
+  const pop = spring({ frame: f, fps, config: { damping: 12 } });
+  const out = interpolate(f, [len, len + 8], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const tick = spring({ frame: f % Math.round(len / 3), fps, config: { damping: 10, mass: 0.5 } });
+  const r = 92;
+  const arc = 2 * Math.PI * r;
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: L.cx - 120,
+        top: L.cy + (L.portrait ? 280 : 250),
+        width: 240,
+        height: 240,
+        opacity: pop * out,
+        transform: `scale(${0.6 + 0.4 * pop})`,
+      }}
+    >
+      <svg width={240} height={240} style={{ position: "absolute", inset: 0 }}>
+        <circle cx={120} cy={120} r={r + 18} fill="rgba(11,13,17,0.78)" />
+        <circle cx={120} cy={120} r={r} fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth={12} />
+        <circle
+          cx={120}
+          cy={120}
+          r={r}
+          fill="none"
+          stroke={C.orange}
+          strokeWidth={12}
+          strokeLinecap="round"
+          strokeDasharray={arc}
+          strokeDashoffset={arc * (1 - left / len)}
+          transform="rotate(-90 120 120)"
+        />
+      </svg>
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: 110,
+          fontWeight: 800,
+          color: C.text,
+          transform: `scale(${1.25 - 0.25 * tick})`,
+        }}
+      >
+        {n || "✓"}
+      </div>
+    </div>
   );
 }
