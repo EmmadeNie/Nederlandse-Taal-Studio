@@ -194,6 +194,8 @@ const T = {
   nl: {
     locale: "nl_NL",
     menuLessons: "Lessen &amp; contact",
+    menuPlans: "Abonnementen",
+    plansAnchor: "abonnementen",
     menuReviews: "Reviews",
     login: "Inloggen",
     footer: "Nederlands taalplatform en taalapp · Online Nederlandse les en bijles NT2, van A0 tot B2, in Rotterdam en online",
@@ -274,6 +276,8 @@ const T = {
   en: {
     locale: "en_GB",
     menuLessons: "Lessons &amp; contact",
+    menuPlans: "Plans",
+    plansAnchor: "plans",
     menuReviews: "Reviews",
     login: "Log in",
     footer: "Dutch language platform and app · Online Dutch lessons and NT2 tutoring, A0 to B2, in Rotterdam and online",
@@ -391,11 +395,11 @@ ${jsonLd.map((j) => `<script type="application/ld+json">${JSON.stringify(j).repl
 <div class="wrap">
 <header class="site">
   <a class="brand" href="/"><img src="/logo-icon.svg?v=4" alt="" width="34" height="34" />Taal Studio</a>
-  <nav class="menu"><a href="${PATHS[lang].lessons}">${L.menuLessons}</a><a href="${PATHS[lang].reviews}">${L.menuReviews}</a>${switcher}<a class="btn ghost" href="/">${L.login}</a></nav>
+  <nav class="menu"><a href="${PATHS[lang].lessons}">${L.menuLessons}</a><a href="${PATHS[lang].lessons}#${L.plansAnchor}">${L.menuPlans}</a><a href="${PATHS[lang].reviews}">${L.menuReviews}</a>${switcher}<a class="btn ghost" href="/">${L.login}</a></nav>
 </header>
 ${body}
 <footer class="site">
-  <p><a href="/">Taal Studio</a> · ${L.footer} · <a href="${PATHS[lang].lessons}">${L.menuLessons}</a> · <a href="${PATHS[lang].reviews}">${L.menuReviews}</a> · <a href="${SUPERPROF}" rel="noopener" target="_blank">${L.superprof}</a></p>
+  <p><a href="/">Taal Studio</a> · ${L.footer} · <a href="${PATHS[lang].lessons}">${L.menuLessons}</a> · <a href="${PATHS[lang].lessons}#${L.plansAnchor}">${L.menuPlans}</a> · <a href="${PATHS[lang].reviews}">${L.menuReviews}</a> · <a href="${SUPERPROF}" rel="noopener" target="_blank">${L.superprof}</a></p>
 </footer>
 </div>
 ${LANG_SCRIPT}
@@ -559,7 +563,7 @@ ${o.freeWithLessons ? `    <p class="deal">${esc(P.freeWith(o.freeWithLessons))}
 ${PLAN_FEATURES.map((f) => `      <li${o.features.includes(f) ? "" : ' class="off"'}>${esc(P.feature[f])}</li>`).join("\n")}
     </ul>
   </div>`;
-  return `<h2 id="${lang === "nl" ? "abonnementen" : "plans"}">${esc(P.title)}</h2>
+  return `<h2 id="${T[lang].plansAnchor}">${esc(P.title)}</h2>
 <p>${esc(P.intro)}</p>
 <div class="grid plans">
 ${PLAN_OFFERS.map(card).join("\n")}
