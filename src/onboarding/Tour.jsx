@@ -35,9 +35,13 @@ const writeStep = (i) => {
   }
 };
 
+/** The element a step points at: its anchor, or the first of a list of anchors that is on the page. */
+const anchorEl = (anchor) =>
+  [].concat(anchor || []).reduce((found, selector) => found || document.querySelector(selector), null);
+
 /** Where an element is on screen (null when it isn't there or not visible). */
-function rectOf(selector) {
-  const el = selector && document.querySelector(selector);
+function rectOf(anchor) {
+  const el = anchorEl(anchor);
   if (!el) return null;
   const r = el.getBoundingClientRect();
   const off = r.bottom < 0 || r.top > window.innerHeight || r.right < 0 || r.left > window.innerWidth;
@@ -64,9 +68,14 @@ export default function Tour({ page, onClose }) {
 
   // Follow the anchor (it may render late, move with scrolling, or be off screen on a phone).
   useLayoutEffect(() => {
-    const el = step.anchor && document.querySelector(step.anchor);
-    el?.scrollIntoView?.({ block: "nearest", inline: "nearest" });
+    // Scroll the target into view once it is there (a board that is still loading comes later).
+    let scrolledTo = null;
     const update = () => {
+      const el = anchorEl(step.anchor);
+      if (el && el !== scrolledTo) {
+        scrolledTo = el;
+        el.scrollIntoView?.({ block: "nearest", inline: "nearest" });
+      }
       setRect(rectOf(step.anchor));
       setNavRect(rectOf(`[data-tour="nav-${step.page}"]`));
     };
@@ -112,6 +121,8 @@ export default function Tour({ page, onClose }) {
         null,
         { levelOf }
       );
+      // A brand-new board: the first lessons straight into To do and Doing.
+      if (added) await api.arrangeNewLeerpad(profile.id, levels);
       setMessage({ text: added ? t("tour.added", { n: added }) : t("lp.levelAlready") });
       setTimeout(() => go(index + 1), 1200);
     } catch (e) {

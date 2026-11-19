@@ -35,3 +35,17 @@ export function laneShiftPosition(lanes, movingId, delta) {
   const from = lanes.findIndex((l) => l.id === movingId);
   return from < 0 ? null : lanePositionAt(lanes, movingId, from + delta);
 }
+
+/**
+ * Position for a new level lane (A0 … B2) on a leerpad: level lanes stand on the
+ * left, highest level first, then the rest (A2 | A1 | A0 | To do | Doing | Done),
+ * the way the docent lays out boards. `levels` is the level order, low to high.
+ */
+export function levelLanePosition(level, lanes, levels) {
+  const sorted = [...lanes].sort((a, b) => a.position - b.position);
+  const rank = (l) => levels.indexOf(l.name.trim().toUpperCase());
+  const higher = sorted.filter((l) => rank(l) > levels.indexOf(level));
+  const left = higher[higher.length - 1];
+  const right = left ? sorted[sorted.indexOf(left) + 1] : sorted[0];
+  return positionBetween(left?.position, right?.position);
+}
