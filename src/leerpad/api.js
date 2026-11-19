@@ -249,6 +249,9 @@ export const plannedLessonIds = (studentId) =>
  * (lessonId → "A1" | null), each lesson goes to the lane named after its level
  * (made when missing); lessons without a level go to laneId.
  */
+/** Fired on window when lessons were put on a leerpad outside the board (detail: { studentId }). */
+export const LEERPAD_CHANGED = "nts-leerpad-changed";
+
 export async function planLessons(lessonIds, studentId, laneId, { levelOf } = {}) {
   await ensureLeerpad(studentId);
   const { lanes, steps } = await loadLeerpad(studentId);
@@ -272,7 +275,10 @@ export async function planLessons(lessonIds, studentId, laneId, { levelOf } = {}
     next[lane.id] ??= nextPosition(steps.filter((s) => s.lane_id === lane.id));
     rows.push({ student_id: studentId, lane_id: lane.id, lesson_id: id, position: next[lane.id]++ });
   }
-  if (rows.length) await supabase.from("steps").insert(rows).then(check);
+  if (rows.length) {
+    await supabase.from("steps").insert(rows).then(check);
+    window.dispatchEvent(new CustomEvent(LEERPAD_CHANGED, { detail: { studentId } }));
+  }
   const used = [...new Set(rows.map((r) => allLanes.find((l) => l.id === r.lane_id)?.name))];
   return { added: rows.length, skipped: lessonIds.length - todo.length, lanes: used };
 }

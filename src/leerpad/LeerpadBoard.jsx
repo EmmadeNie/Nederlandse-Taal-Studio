@@ -74,6 +74,15 @@ export default function LeerpadBoard({ studentId }) {
     load();
   }, [load]);
 
+  // Lessons put on this leerpad from elsewhere (the tour's "Zet op mijn leerpad"): show them.
+  useEffect(() => {
+    const onChange = (e) => {
+      if (!e.detail?.studentId || e.detail.studentId === studentId) load();
+    };
+    window.addEventListener(api.LEERPAD_CHANGED, onChange);
+    return () => window.removeEventListener(api.LEERPAD_CHANGED, onChange);
+  }, [load, studentId]);
+
   const run = async (fn) => {
     setError(null);
     try {
