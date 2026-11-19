@@ -32,6 +32,7 @@ import ProposalsPage from "./proposals/ProposalsPage";
 import { countOpenProposals } from "./proposals/api";
 import LesprogrammaPage from "./leerpad/LesprogrammaPage";
 import LeerpadenPage, { MijnLeerpadPage } from "./leerpad/LeerpadenPage";
+import PlansPage from "./auth/PlansPage";
 import { isSupabaseConfigured } from "./lib/supabase";
 
 const PAGES = [
@@ -46,6 +47,8 @@ const PAGES = [
   { id: "proposals", roles: ["docent"] },
   { id: "nakijken", roles: ["nakijker", "docent", "reviewer"] },
   { id: "users", roles: ["docent"] },
+  // Not in the menu: opened from the plan under your name and from "locked" messages.
+  { id: "plans", roles: ["leerling", "docent", "reviewer"], menuRoles: [] },
 ];
 
 // Pages that show a full-width board instead of a reading column.
@@ -115,7 +118,11 @@ function Studio() {
   useContentVersion(); // counts follow edits
   const route = useRoute();
   const [appFeedbackOpen, setAppFeedbackOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false); // phone: the menu slides in
+  // Phone: the menu slides in. It is open on the page it was opened on, so any page
+  // change (also from a link inside the menu, like the plan) closes it.
+  const [menuOpenOn, setMenuOpenOn] = useState(null);
+  const menuOpen = menuOpenOn === route.pathname;
+  const setMenuOpen = (open) => setMenuOpenOn(open ? route.pathname : null);
   // The tour: by itself once for a new student, or again from the sidebar.
   const [tourOpen, setTourOpen] = useState(false);
   const [tourDone, setTourDone] = useState(false);
@@ -278,6 +285,7 @@ function Studio() {
         {page === "lesprogramma" && <LesprogrammaPage />}
         {page === "leerpaden" && <LeerpadenPage />}
         {page === "leerpad" && <MijnLeerpadPage />}
+        {page === "plans" && <PlansPage />}
       </main>
 
       {(tourOpen || (role === "leerling" && !profile.onboarded_at && !tourDone)) && (

@@ -20,13 +20,14 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import path from "node:path";
 import { marked } from "marked";
+import { PLAN_FEATURES, PLAN_OFFERS, PLAN_TEXT } from "../src/data/plans.js";
 
 const SITE = "https://mijntaalstudio.nl";
 const DIST = path.resolve("dist");
 const LEVELS = ["A0", "A1", "A2", "B1", "B2"];
 
 /** The app's paths behind the login: not for search engines. */
-const PRIVATE = ["/leerpad", "/dashboard", "/lesprogramma", "/leerpaden", "/bibliotheek", "/feedback", "/flashcards", "/nakijken", "/voorstellen", "/gebruikers"];
+const PRIVATE = ["/leerpad", "/dashboard", "/lesprogramma", "/leerpaden", "/bibliotheek", "/feedback", "/flashcards", "/nakijken", "/voorstellen", "/gebruikers", "/abonnement"];
 
 function readEnvFile(file) {
   if (!existsSync(file)) return {};
@@ -118,6 +119,16 @@ blockquote cite{color:var(--dim);font-style:normal;font-size:.9rem}
 .reviews .who{display:flex;align-items:center;gap:.75rem;margin-bottom:.6rem;line-height:1.3}
 .reviews .avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#0b0d11;font-weight:800;flex:none}
 .faq h3{margin-top:1.2rem}
+.plans{align-items:start}
+.plan{position:relative}
+.plan.featured{border-color:var(--accent);box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.plan .price{margin:.5rem 0 0;color:var(--text)}
+.plan .price strong{font-size:1.8rem;letter-spacing:-.02em}
+.plan .deal{margin:.3rem 0 0;color:#2fd27a;font-weight:600;font-size:.9rem}
+.plan ul{list-style:none;padding:0;margin:.9rem 0 0;display:grid;gap:.4rem;font-size:.92rem}
+.plan li::before{content:"✓";color:#2fd27a;font-weight:800;margin-right:.45rem}
+.plan li.off{color:var(--dim)}
+.plan li.off::before{content:"–";color:var(--dim)}
 form.contact{display:grid;gap:.9rem;margin:1rem 0}
 form.contact label{display:grid;gap:.35rem;font-weight:600;font-size:.95rem}
 form.contact input,form.contact select,form.contact textarea{font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.65rem .75rem}
@@ -537,6 +548,24 @@ ${ALL_REVIEWS.map((r, i) => {
   });
 }
 
+/** The plans of the app, from the same list as the app's Mijn abonnement page. */
+function plansSection(lang) {
+  const P = PLAN_TEXT[lang];
+  const card = (o) => `  <div class="card plan${o.featured ? " featured" : ""}">
+    <h3>Taal Studio ${esc(P.name[o.id])}</h3>
+    <p>${esc(P.tagline[o.id])}</p>
+    <p class="price"><strong>${P.price(o.price)}</strong> ${esc(P.perMonth)}</p>
+${o.freeWithLessons ? `    <p class="deal">${esc(P.freeWith(o.freeWithLessons))} · ${esc(P.viaDocent)}</p>\n` : ""}    <ul>
+${PLAN_FEATURES.map((f) => `      <li${o.features.includes(f) ? "" : ' class="off"'}>${esc(P.feature[f])}</li>`).join("\n")}
+    </ul>
+  </div>`;
+  return `<h2 id="${lang === "nl" ? "abonnementen" : "plans"}">${esc(P.title)}</h2>
+<p>${esc(P.intro)}</p>
+<div class="grid plans">
+${PLAN_OFFERS.map(card).join("\n")}
+</div>`;
+}
+
 /** The contact form (mails the docent through the `contact` edge function). */
 function contactForm(lang) {
   const F = T[lang].form;
@@ -617,6 +646,8 @@ function lessonsPage(lang) {
 <div class="grid">
 ${L.how.map(([h, p]) => `  <div class="card"><h3>${h}</h3><p>${p}</p></div>`).join("\n")}
 </div>
+
+${plansSection(lang)}
 
 <h2>${L.whoH2}</h2>
 <ul>
