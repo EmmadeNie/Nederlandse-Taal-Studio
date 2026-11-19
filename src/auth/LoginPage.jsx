@@ -14,7 +14,10 @@ import DemoVideo from "./DemoVideo";
 export default function LoginPage({ invited = false }) {
   const { t, lang } = useI18n();
   // The public pages in the page's language.
-  const pages = lang === "en" ? { lessons: "/en/dutch-lessons/", reviews: "/en/reviews/" } : { lessons: "/nederlandse-les/", reviews: "/reviews/" };
+  const pages =
+    lang === "en"
+      ? { lessons: "/en/dutch-lessons/", plans: "/en/dutch-lessons/#plans", reviews: "/en/reviews/" }
+      : { lessons: "/nederlandse-les/", plans: "/nederlandse-les/#abonnementen", reviews: "/reviews/" };
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState("idle"); // idle | sending | sent | error
   const [error, setError] = useState(null);
@@ -134,6 +137,7 @@ export default function LoginPage({ invited = false }) {
       <footer className="auth-footer">
         <nav aria-label={t("login.footerNav")}>
           <a href={pages.lessons}>{t("login.lessonsLink")}</a>
+          <a href={pages.plans}>{t("login.plansLink")}</a>
           <a href={pages.reviews}>{t("login.reviewsLink")}</a>
         </nav>
         <p>{t("login.more")}</p>
