@@ -91,7 +91,9 @@ function AuthGate() {
   const { pathname } = useRoute();
   const inviteCode = pathname.match(/^\/uitnodiging\/([a-z0-9]+)\/?$/i)?.[1];
   if (loading) return <div className="auth-screen dim">{t("common.loading")}</div>;
-  if (!session) return <LoginPage invited={Boolean(inviteCode)} />;
+  // Opened from a public grammar page (/grammatica/…): the sign-in screen says why, and the magic link comes back here.
+  const fromTopic = /^\/bibliotheek\/grammatica\/[^/]+\/?$/.test(pathname);
+  if (!session) return <LoginPage invited={Boolean(inviteCode)} fromTopic={fromTopic} />;
   // Before the name screen: a claimed invite already brings the name the docent entered.
   if (inviteCode) return <InviteClaim code={inviteCode} />;
   if (!profile) {
