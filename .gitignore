@@ -28,3 +28,6 @@ dist-ssr
 
 # Claude Code: personal settings
 .claude/settings.local.json
+
+# Design files (stickers, flyers, videos, music): kept locally, not in the public repo
+/ontwerpen/
