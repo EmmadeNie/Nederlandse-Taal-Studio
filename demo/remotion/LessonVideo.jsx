@@ -4,8 +4,9 @@
 // screen, at a pace you can read. Content: LESSON_VIDEOS in lessons.js;
 // timeline: lessonVideoScenes.js; building blocks: LessonReel.jsx.
 import { AbsoluteFill, Audio, Sequence, interpolate, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
+import { useAudioData } from "@remotion/media-utils";
 import { Backdrop, C, LogoMark, fontFamily } from "./Demo";
-import { LESSON_MUSIC } from "./manifests";
+import { MUSIC, MUSIC_FILES } from "./manifests";
 import { LESSON_VIDEOS, verb } from "./lessons";
 import { FallingT, Ring, card, gradientText, pop } from "./LessonReel";
 import { ANSWER_AT, HEADER_CHAPTERS, S, STEM_T_STEP, stemStep, stemTNoteAt, stemsWhyAt, videoDuration, videoScenes } from "./lessonVideoScenes";
@@ -17,6 +18,8 @@ export function LessonVideo({ lesson: id, lang }) {
   const L = LESSON_VIDEOS[id];
   const T = L.text[lang];
   const total = videoDuration(id);
+  // The lesson's own track from raw/music/ (MUSIC.md), else the usual music.mp3.
+  const music = MUSIC_FILES.includes(L.music) ? L.music : MUSIC ? "music.mp3" : null;
   return (
     <AbsoluteFill style={{ background: C.bg, fontFamily, color: C.text }}>
       <Backdrop />
@@ -40,18 +43,35 @@ export function LessonVideo({ lesson: id, lang }) {
           </Scene>
         </Sequence>
       ))}
-      {LESSON_MUSIC && (
-        <Audio
-          src={staticFile("lesson-music.mp3")}
-          loop
-          volume={(f) => interpolate(f, [0, 30, total - 60, total], [0, 0.35, 0.35, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })}
-        />
-      )}
+      {music && <MusicLoop src={staticFile(music)} total={total} />}
     </AbsoluteFill>
   );
 }
 
 /* ---------- frame ---------- */
+
+/** The track as often as the video needs it, each repeat crossfading into the next. */
+function MusicLoop({ src, total, volume = 0.3 }) {
+  const data = useAudioData(src);
+  if (!data) return null;
+  const len = Math.floor(data.durationInSeconds * S(1));
+  const xf = S(3);
+  const step = len - xf;
+  return Array.from({ length: Math.ceil(total / step) }, (_, k) => {
+    const from = k * step;
+    const vol = (f) => {
+      const master = interpolate(from + f, [0, 30, total - 90, total], [0, volume, volume, 0], clamp);
+      const fadeIn = k ? interpolate(f, [0, xf], [0, 1], clamp) : 1;
+      const fadeOut = interpolate(f, [len - xf, len], [1, 0], clamp);
+      return master * Math.min(fadeIn, fadeOut);
+    };
+    return (
+      <Sequence key={k} from={from} durationInFrames={Math.min(len, total - from)}>
+        <Audio src={src} volume={vol} />
+      </Sequence>
+    );
+  });
+}
 
 function Scene({ len, header, ch, L, T, children }) {
   const f = useCurrentFrame();

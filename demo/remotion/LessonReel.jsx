@@ -1,11 +1,9 @@
 // A lesson reel (9:16): the grammar of one lesson in a few animated steps,
 // then a quiz with a countdown, then the call to action. The content comes
 // from lessons.js; the look (backdrop, logo, colours) from Demo.jsx.
-// The music is raw/lesson-music.mp3 if it is there (a track that is safe on
-// YouTube); the demo's music.mp3 gets a Content ID claim, so it is not used here.
 import { AbsoluteFill, Audio, Sequence, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { Backdrop, C, FPS, LogoMark, fontFamily } from "./Demo";
-import { LESSON_MUSIC } from "./manifests";
+import { MUSIC } from "./manifests";
 import { LESSONS, verb } from "./lessons";
 
 const S = (sec) => Math.round(sec * FPS);
@@ -56,9 +54,9 @@ export function LessonReel({ lesson: id, lang }) {
           </Sequence>
         );
       })}
-      {LESSON_MUSIC && (
+      {MUSIC && (
         <Audio
-          src={staticFile("lesson-music.mp3")}
+          src={staticFile("music.mp3")}
           volume={(f) => interpolate(f, [0, 15, total - 30, total], [0, 0.7, 0.7, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })}
         />
       )}

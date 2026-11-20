@@ -12,7 +12,7 @@ track's licence in the Audio Library before using it on other platforms.
 | --- | --- | --- | --- |
 | `tomorrows-light.mp3` | Tomorrow's Light | Telecasted | Current `music.mp3`: all videos |
 | `a-stroll.mp3` | A Stroll | The Grey Room / Density & Time | Spare, calm lo-fi |
-| `after-sunset.mp3` | After Sunset | Alex Jones / Xander Jones | For longer videos |
+| `after-sunset.mp3` | After Sunset | Alex Jones / Xander Jones | The long lesson videos (`music` in `LESSON_VIDEOS`, `remotion/lessons.js`) |
 | `old-unknown-source.mp3` | (the first music) | unknown | Do not use: source and licence unknown |
 
 Don't use music from other "free" sites (Pixabay and the like): those tracks

@@ -97,6 +97,7 @@ export const LESSON_VIDEOS = {
   "present-regular": {
     level: "A1",
     slug: "werkwoorden-vervoegen", // the grammar page
+    music: "music/after-sunset.mp3", // in raw/, see MUSIC.md
     intro: "word.werken",
     // Step 1, the stem: -en off; when that is not the stem yet, the spelling rule fixes it.
     stems: [
