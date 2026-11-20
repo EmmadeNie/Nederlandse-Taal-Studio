@@ -800,16 +800,17 @@ ${L.faq.map(([q, a]) => `<h3>${esc(q)}</h3><p>${esc(a)}</p>`).join("\n")}
  * a switch. Not indexed: it only repeats links to the real pages.
  */
 const LINKS = [
-  { nl: ["Plan je eerste les", "Proefles, 2e les gratis"], en: ["Book your first lesson", "Trial lesson, 2nd lesson free"], href: { nl: `${PATHS.nl.lessons}#contact`, en: `${PATHS.en.lessons}#contact` }, main: true },
-  { nl: ["Probeer de app", "Je leerpad, flashcards en oefeningen"], en: ["Try the app", "Your learning path, flashcards and exercises"], href: { nl: "/", en: "/" } },
+  // Free content first; lessons with Emma further down.
+  { nl: ["Gratis grammatica", "Alle uitleg, van A0 tot B2"], en: ["Free grammar guides", "Every explanation, A0 to B2"], href: { nl: PATHS.nl.grammar, en: PATHS.en.grammar }, main: true },
+  { nl: ["Lesvideo's op YouTube", "Uitleg, voorbeelden en quizzen"], en: ["Lesson videos on YouTube", "Explanations, examples and quizzes"], href: { nl: CHANNEL, en: CHANNEL }, external: true },
+  { nl: ["Oefen in de app", "Je leerpad, flashcards en oefeningen"], en: ["Practise in the app", "Your learning path, flashcards and exercises"], href: { nl: "/", en: "/" } },
   { nl: ["Abonnementen", "Gratis, Onderweg of Compleet"], en: ["Plans", "Free, On the go or Compleet"], href: { nl: `${PATHS.nl.lessons}#${T.nl.plansAnchor}`, en: `${PATHS.en.lessons}#${T.en.plansAnchor}` } },
-  { nl: ["Video's op YouTube", "Uitleg en lesvideo's"], en: ["Videos on YouTube", "Explanations and lesson videos"], href: { nl: CHANNEL, en: CHANNEL }, external: true },
-  { nl: ["Gratis grammatica", "Alle uitleg, van A0 tot B2"], en: ["Free grammar guides", "Every explanation, A0 to B2"], href: { nl: PATHS.nl.grammar, en: PATHS.en.grammar } },
+  { nl: ["Les met een docent", "Online of in Rotterdam"], en: ["Lessons with a teacher", "Online or in Rotterdam"], href: { nl: PATHS.nl.lessons, en: PATHS.en.lessons } },
   { nl: ["Reviews ★ 5,0", "Wat leerlingen zeggen"], en: ["Reviews ★ 5.0", "What students say"], href: { nl: PATHS.nl.reviews, en: PATHS.en.reviews } },
 ];
 const LINKS_TEXT = {
-  nl: { tagline: "Nederlands leren met je eigen docent, online en in Rotterdam", other: "English" },
-  en: { tagline: "Learn Dutch with your own teacher, online and in Rotterdam", other: "Nederlands" },
+  nl: { tagline: "Nederlands leren, stap voor stap: uitleg, quizzen en oefeningen", other: "English" },
+  en: { tagline: "Learn Dutch, step by step: explanations, quizzes and practice", other: "Nederlands" },
 };
 
 function linksPage() {
