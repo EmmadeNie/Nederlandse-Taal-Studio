@@ -7,7 +7,9 @@
  *
  *   /nederlandse-les/  · /en/dutch-lessons/   lessons and the contact form
  *   /reviews/          · /en/reviews/          students' reviews (in their own language)
- *   /video/…           · /en/video/…           Emma's YouTube video, one watch page each
+ *   /video/…           · /en/video/…           one watch page per YouTube video: Emma's intro
+ *                                              video and Taal Studio's lesson videos (LESSON_VIDEOS),
+ *                                              which are also embedded on their grammar page
  *   /grammatica/…      · /en/grammar/…         grammar topics: title, summary and the
  *                                              short explanation (the full one and the
  *                                              exercises stay in the app, behind the login)
@@ -144,6 +146,10 @@ form.contact button{justify-self:start;border:0;cursor:pointer;font:inherit}
 .yt .play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.6rem;color:#fff;background:rgba(0,0,0,.25);text-shadow:0 4px 20px rgba(0,0,0,.6)}
 a.yt:hover .play{background:rgba(0,0,0,.1)}
 .yt-meta{color:var(--dim);font-size:.9rem;margin:.6rem 0 0}
+.chapters{list-style:none;padding:0;margin:.6rem 0 1.2rem;display:grid;gap:.15rem}
+.chapters a{display:flex;gap:.8rem;padding:.35rem .5rem;border-radius:8px;text-decoration:none;color:var(--text)}
+.chapters a:hover{background:var(--surface)}
+.chapters time{color:var(--accent);font-variant-numeric:tabular-nums;min-width:2.6rem}
 .msg.ok{background:rgba(47,210,122,.12);border:1px solid rgba(47,210,122,.4)}
 .msg.err{background:rgba(240,90,90,.12);border:1px solid rgba(240,90,90,.4)}
 nav.crumbs{font-size:.85rem;color:var(--dim);margin-bottom:.5rem}
@@ -184,6 +190,8 @@ footer.site a{color:var(--dim)}
 const SUPERPROF = "https://www.super-prof.nl/sessions-combined-with-full-access-online-program-including-agent-practice-conversation-prepare-for-exams.html";
 /** Emma's YouTube channel (also in sameAs in index.html). */
 const CHANNEL = "https://www.youtube.com/@emmadenie2981";
+/** Taal Studio's own channel, with the lesson videos (also in sameAs in index.html). */
+const STUDIO_CHANNEL = "https://www.youtube.com/@mijntaalstudio";
 const EMMA = `${SITE}/#emma`;
 
 /**
@@ -199,7 +207,6 @@ const VIDEOS = {
     name: "Maak kennis met Emma, docent Nederlands in Rotterdam",
     description: "Hoi, ik ben Emma en ik geef les aan wie snel Nederlands wil leren. In deze video vertel ik wie ik ben en hoe ik les geef: Nederlandse les en bijles NT2, online en in Rotterdam.",
     uploadDate: "2025-01-14T06:04:57-08:00",
-    duration: "PT2M32S",
     seconds: 152,
   },
   en: {
@@ -208,13 +215,53 @@ const VIDEOS = {
     name: "Meet Emma, Dutch tutor in Rotterdam",
     description: "Hi, I am Emma and I tutor those who want to learn Dutch quickly. In this video I tell you who I am and how I teach: Dutch lessons and NT2 tutoring, online and in Rotterdam.",
     uploadDate: "2025-01-06T06:09:05-08:00",
-    duration: "PT2M59S",
     seconds: 179,
   },
 };
+
+/**
+ * Taal Studio's lesson videos on its own channel, per grammar topic (slug) and
+ * language. Each gets a watch page (/video/<slug>/, /en/video/<slug>/) and is
+ * embedded on the topic's grammar page. A new video is one entry here: the id,
+ * a name and description of its own (unique per video), YouTube's upload date
+ * and length, and the chapters as they are in the YouTube description.
+ */
+const LESSON_VIDEOS = {
+  "werkwoorden-vervoegen": {
+    nl: {
+      id: "LM6VWwwWMN8",
+      name: "Werkwoorden vervoegen in de tegenwoordige tijd: regelmatige werkwoorden (A1)",
+      description: "Regelmatige werkwoorden in de tegenwoordige tijd (A1), in 4 stappen: de stam, de uitgang, een stam op -t en jij achter het werkwoord. Daarna een quiz met 8 vragen.",
+      uploadDate: "2026-11-20T06:21:16-08:00",
+      seconds: 236,
+      chapters: ["0:00 Intro", "0:24 De stam", "1:12 De uitgang", "1:39 Stam op -t", "1:54 Jij achter het werkwoord", "2:17 Samenvatting", "2:29 Quiz"],
+    },
+    en: {
+      id: "MMWpaC7vw_4",
+      name: "Dutch verbs in the present tense: regular verbs (A1)",
+      description: "Dutch regular verbs in the present tense (A1), in 4 steps: the stem, the ending, a stem ending in -t, and jij after the verb. Then a quiz with 8 questions.",
+      uploadDate: "2026-11-20T06:23:56-08:00",
+      seconds: 236,
+      chapters: ["0:00 Intro", "0:24 The stem", "1:12 The ending", "1:39 Stem ending in -t", "1:54 Jij after the verb", "2:17 Summary", "2:29 Quiz"],
+    },
+  },
+};
+for (const [slug, langs] of Object.entries(LESSON_VIDEOS)) {
+  for (const [lang, v] of Object.entries(langs)) {
+    v.slug = slug;
+    v.path ??= `${lang === "en" ? "/en" : ""}/video/${slug}/`;
+    v.chapters = (v.chapters || []).map((c) => {
+      const [, time, name] = c.match(/^(\d+(?::\d+)+)\s+(.+)$/);
+      return { start: time.split(":").reduce((s, n) => s * 60 + Number(n), 0), time, name };
+    });
+  }
+}
+
 const watchUrl = (v) => `https://www.youtube.com/watch?v=${v.id}`;
 const embedUrl = (v) => `https://www.youtube.com/embed/${v.id}`;
 const thumb = (v, q = "maxresdefault") => `https://i.ytimg.com/vi/${v.id}/${q}.jpg`;
+const isoDuration = (s) => `PT${Math.floor(s / 60)}M${s % 60}S`;
+const ORG = { "@type": "EducationalOrganization", "@id": `${SITE}/#org`, name: "Taal Studio", url: `${SITE}/`, logo: { "@type": "ImageObject", url: `${SITE}/logo-icon-180.png` }, sameAs: [STUDIO_CHANNEL] };
 
 function videoObject(v, lang) {
   return {
@@ -225,14 +272,18 @@ function videoObject(v, lang) {
     description: v.description,
     thumbnailUrl: [thumb(v), thumb(v, "hqdefault")],
     uploadDate: v.uploadDate,
-    duration: v.duration,
+    duration: isoDuration(v.seconds),
     embedUrl: embedUrl(v),
     url: SITE + v.path,
     inLanguage: lang,
     isFamilyFriendly: true,
     creator: { "@type": "Person", "@id": EMMA, name: "Emma de Nie", url: SITE + PATHS.nl.lessons, sameAs: [CHANNEL] },
-    publisher: { "@type": "EducationalOrganization", "@id": `${SITE}/#org`, name: "Taal Studio", url: `${SITE}/`, logo: { "@type": "ImageObject", url: `${SITE}/logo-icon-180.png` } },
+    publisher: ORG,
     sameAs: [watchUrl(v)],
+    // Key moments: each chapter links to the watch page at its start (?t=).
+    ...(v.chapters?.length
+      ? { hasPart: v.chapters.map((c, i, all) => ({ "@type": "Clip", name: c.name, startOffset: c.start, endOffset: all[i + 1]?.start ?? v.seconds, url: `${SITE}${v.path}?t=${c.start}` })) }
+      : {}),
   };
 }
 
@@ -272,6 +323,12 @@ const T = {
     videoMeta: (v) => `Video · ${Math.floor(v.seconds / 60)}:${String(v.seconds % 60).padStart(2, "0")} min · in het Nederlands`,
     videoLinks: (v) => `<a href="${watchUrl(v)}" rel="noopener" target="_blank">Bekijk op YouTube</a> · <a href="${CHANNEL}" rel="noopener" target="_blank">Mijn YouTube-kanaal</a>`,
     videoCta: "<strong>Zin om met me te beginnen?</strong> Plan een proefles, dan kijken we samen naar je niveau en je doel. De 2e les is gratis.",
+    // lesson videos
+    lessonVideoLinks: (v) => `<a href="${watchUrl(v)}" rel="noopener" target="_blank">Bekijk op YouTube</a> · <a href="${STUDIO_CHANNEL}" rel="noopener" target="_blank">Taal Studio op YouTube</a>`,
+    chaptersH2: "Hoofdstukken",
+    readTopic: (title, href) => `De uitleg om na te lezen: <a href="${href}">${esc(title)}</a>.`,
+    topicVideoH2: "Uitleg in een video",
+    topicVideoMeta: (v) => `Video · ${Math.floor(v.seconds / 60)}:${String(v.seconds % 60).padStart(2, "0")} min · <a href="${v.path}">Met hoofdstukken</a> · <a href="${STUDIO_CHANNEL}" rel="noopener" target="_blank">Meer lesvideo's op YouTube</a>`,
     howH2: "Zo werkt Taal Studio",
     how: [
       ["Je eigen leerpad", "Je docent zet de lessen die bij jou passen op je bord: wat je nu doet, je huiswerk en wat je al beheerst."],
@@ -360,6 +417,12 @@ const T = {
     videoMeta: (v) => `Video · ${Math.floor(v.seconds / 60)}:${String(v.seconds % 60).padStart(2, "0")} min · in English`,
     videoLinks: (v) => `<a href="${watchUrl(v)}" rel="noopener" target="_blank">Watch on YouTube</a> · <a href="${CHANNEL}" rel="noopener" target="_blank">My YouTube channel</a>`,
     videoCta: "<strong>Want to start with me?</strong> Book a trial lesson and we will look at your level and your goal together. Your 2nd lesson is free.",
+    // lesson videos
+    lessonVideoLinks: (v) => `<a href="${watchUrl(v)}" rel="noopener" target="_blank">Watch on YouTube</a> · <a href="${STUDIO_CHANNEL}" rel="noopener" target="_blank">Taal Studio on YouTube</a>`,
+    chaptersH2: "Chapters",
+    readTopic: (title, href) => `The written explanation: <a href="${href}">${esc(title)}</a>.`,
+    topicVideoH2: "Video explanation",
+    topicVideoMeta: (v) => `Video · ${Math.floor(v.seconds / 60)}:${String(v.seconds % 60).padStart(2, "0")} min · <a href="${v.path}">With chapters</a> · <a href="${STUDIO_CHANNEL}" rel="noopener" target="_blank">More lesson videos on YouTube</a>`,
     howH2: "How Taal Studio works",
     how: [
       ["Your own learning path", "Your teacher puts the lessons that suit you on your board: what you are working on, your homework and what you already master."],
@@ -467,7 +530,7 @@ ${jsonLd.map((j) => `<script type="application/ld+json">${JSON.stringify(j).repl
 </header>
 ${body}
 <footer class="site">
-  <p><a href="/">Taal Studio</a> · ${L.footer} · <a href="${PATHS[lang].lessons}">${L.menuLessons}</a> · <a href="${PATHS[lang].lessons}#${L.plansAnchor}">${L.menuPlans}</a> · <a href="${PATHS[lang].reviews}">${L.menuReviews}</a> · <a href="${SUPERPROF}" rel="noopener" target="_blank">${L.superprof}</a> · <a href="${CHANNEL}" rel="noopener" target="_blank">YouTube</a></p>
+  <p><a href="/">Taal Studio</a> · ${L.footer} · <a href="${PATHS[lang].lessons}">${L.menuLessons}</a> · <a href="${PATHS[lang].lessons}#${L.plansAnchor}">${L.menuPlans}</a> · <a href="${PATHS[lang].reviews}">${L.menuReviews}</a> · <a href="${SUPERPROF}" rel="noopener" target="_blank">${L.superprof}</a> · <a href="${STUDIO_CHANNEL}" rel="noopener" target="_blank">YouTube</a></p>
 </footer>
 </div>
 ${LANG_SCRIPT}
@@ -497,6 +560,8 @@ function topicPage(t, all, lang) {
   const alt = inLang(t, other(lang)) ? `${PATHS[other(lang)].grammar}${t.slug}/` : null;
   const description = (c.summary || plain(c.short)).slice(0, 155);
   const related = all.filter((o) => o.slug !== t.slug && levelOf(o) === level && inLang(o, lang)).slice(0, 6);
+  // The lesson video for users; its VideoObject is on its own watch page.
+  const video = LESSON_VIDEOS[t.slug]?.[lang];
   const body = `
 <nav class="crumbs"><a href="/">Taal Studio</a> › <a href="${PATHS[lang].grammar}">${L.grammar}</a> › ${esc(c.title)}</nav>
 <article>
@@ -504,6 +569,7 @@ function topicPage(t, all, lang) {
   <p><span class="badge">${level}</span>${c.otherTitle ? `<span lang="${other(lang)}" style="color:var(--dim)">${esc(c.otherTitle)}</span>` : ""}</p>
   ${c.summary ? `<p class="lead">${esc(c.summary)}</p>` : ""}
   <div class="rich">${richHtml(c.short)}</div>
+  ${video ? `<h2>${L.topicVideoH2}</h2>\n${liteEmbed(video, lang)}\n<p class="yt-meta">${L.topicVideoMeta(video)}</p>` : ""}
   <div class="cta">
     <p>${L.topicCta}</p>
     <a class="btn" href="/bibliotheek/grammatica/${encodeURIComponent(t.slug)}">${L.topicButton}</a>
@@ -722,6 +788,43 @@ function videoPage(lang) {
   return page({ lang, title: L.videoTitle(v), description: v.description, path: here, alt: VIDEOS[other(lang)].path, body, jsonLd, og: { type: "video.other", image: thumb(v) } });
 }
 
+/**
+ * The watch page of a Taal Studio lesson video, like videoPage: the player is
+ * the main content. The chapters link to ?t=<seconds>, which starts the player
+ * there (also what the Clip markup points to, for Google's key moments).
+ */
+function lessonVideoPage(v, topics, lang) {
+  const L = T[lang];
+  const here = v.path;
+  const topic = topics.find((t) => t.slug === v.slug);
+  const c = topic && inLang(topic, lang);
+  // Without the topic list (no Supabase in the env) the topic page is assumed to exist.
+  const topicHref = c || !topics.length ? `${PATHS[lang].grammar}${v.slug}/` : PATHS[lang].grammar;
+  const topicTitle = c?.title || v.name;
+  const alt = LESSON_VIDEOS[v.slug][other(lang)]?.path || null;
+  const body = `
+<nav class="crumbs"><a href="/">Taal Studio</a> › <a href="${PATHS[lang].grammar}">${L.grammar}</a> › <a href="${topicHref}">${esc(topicTitle)}</a> › ${L.videoCrumb}</nav>
+<h1>${esc(v.name)}</h1>
+<div class="yt"><iframe src="${embedUrl(v)}?rel=0" title="${esc(v.name)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+<p class="yt-meta">${L.videoMeta(v)} · ${L.lessonVideoLinks(v)}</p>
+<p class="lead">${esc(v.description)}</p>
+${v.chapters.length ? `<h2>${L.chaptersH2}</h2>\n<ol class="chapters">${v.chapters.map((ch) => `<li><a href="?t=${ch.start}" data-t="${ch.start}"><time>${ch.time}</time>${esc(ch.name)}</a></li>`).join("")}</ol>` : ""}
+<p>${L.readTopic(topicTitle, topicHref)}</p>
+<div class="cta">
+  <p>${L.topicCta}</p>
+  <a class="btn" href="/bibliotheek/grammatica/${encodeURIComponent(v.slug)}">${L.topicButton}</a>
+</div>
+<script>(function(){var f=document.querySelector(".yt iframe"),base=f.src.split("?")[0];function go(t){f.src=base+"?rel=0&autoplay=1&start="+t}var t=parseInt(new URLSearchParams(location.search).get("t"),10);if(t>0)go(t);document.querySelectorAll("a[data-t]").forEach(function(a){a.addEventListener("click",function(e){e.preventDefault();go(a.dataset.t);history.replaceState(null,"","?t="+a.dataset.t);f.scrollIntoView({behavior:"smooth",block:"center"})})})})()</script>
+`;
+  const level = topic ? levelOf(topic) : undefined;
+  const jsonLd = [
+    { ...videoObject(v, lang), creator: ORG, educationalLevel: level, about: { "@type": "LearningResource", name: topicTitle, url: SITE + topicHref } },
+    { "@context": "https://schema.org", "@type": "WebPage", "@id": `${SITE}${here}`, url: SITE + here, name: v.name, inLanguage: lang, primaryImageOfPage: thumb(v), mainEntity: { "@id": `${SITE}${here}#video` }, isPartOf: { "@id": `${SITE}/#website` } },
+    breadcrumbs([["Taal Studio", `${SITE}/`], [L.grammar, SITE + PATHS[lang].grammar], [topicTitle, SITE + topicHref], [v.name, SITE + here]]),
+  ];
+  return page({ lang, title: L.videoTitle(v), description: v.description, path: here, alt, body, jsonLd, og: { type: "video.other", image: thumb(v) } });
+}
+
 function lessonsPage(lang) {
   const L = T[lang];
   const here = PATHS[lang].lessons;
@@ -802,7 +905,7 @@ ${L.faq.map(([q, a]) => `<h3>${esc(q)}</h3><p>${esc(a)}</p>`).join("\n")}
 const LINKS = [
   // Free content first; lessons with Emma further down.
   { nl: ["Gratis grammatica", "Alle uitleg, van A0 tot B2"], en: ["Free grammar guides", "Every explanation, A0 to B2"], href: { nl: PATHS.nl.grammar, en: PATHS.en.grammar }, main: true },
-  { nl: ["Lesvideo's op YouTube", "Uitleg, voorbeelden en quizzen"], en: ["Lesson videos on YouTube", "Explanations, examples and quizzes"], href: { nl: CHANNEL, en: CHANNEL }, external: true },
+  { nl: ["Lesvideo's op YouTube", "Uitleg, voorbeelden en quizzen"], en: ["Lesson videos on YouTube", "Explanations, examples and quizzes"], href: { nl: STUDIO_CHANNEL, en: STUDIO_CHANNEL }, external: true },
   { nl: ["Oefen in de app", "Je leerpad, flashcards en oefeningen"], en: ["Practise in the app", "Your learning path, flashcards and exercises"], href: { nl: "/", en: "/" } },
   { nl: ["Abonnementen", "Gratis, Onderweg of Compleet"], en: ["Plans", "Free, On the go or Compleet"], href: { nl: `${PATHS.nl.lessons}#${T.nl.plansAnchor}`, en: `${PATHS.en.lessons}#${T.en.plansAnchor}` } },
   { nl: ["Les met een docent", "Online of in Rotterdam"], en: ["Lessons with a teacher", "Online or in Rotterdam"], href: { nl: PATHS.nl.lessons, en: PATHS.en.lessons } },
@@ -907,6 +1010,10 @@ for (const lang of ["nl", "en"]) {
   add(PATHS[lang].reviews, "0.6");
   write(`${VIDEOS[lang].path}index.html`, videoPage(lang));
   add(VIDEOS[lang].path, "0.6", today, VIDEOS[lang]);
+  for (const v of Object.values(LESSON_VIDEOS).map((l) => l[lang]).filter(Boolean)) {
+    write(`${v.path}index.html`, lessonVideoPage(v, topics, lang));
+    add(v.path, "0.6", v.uploadDate.slice(0, 10), v);
+  }
   if (topics.length) {
     write(`${PATHS[lang].grammar}index.html`, indexPage(topics, lang));
     add(PATHS[lang].grammar, "0.7");
@@ -943,4 +1050,4 @@ Sitemap: ${SITE}/sitemap.xml
 `,
 );
 
-console.log(`build-seo: lessons & contact, reviews and video in NL and EN, ${grammarPages} grammar pages, sitemap with ${urls.length} URLs, robots.txt`);
+console.log(`build-seo: lessons & contact, reviews and video in NL and EN, ${Object.keys(LESSON_VIDEOS).length} lesson video topic(s), ${grammarPages} grammar pages, sitemap with ${urls.length} URLs, robots.txt`);
