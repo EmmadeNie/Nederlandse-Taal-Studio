@@ -1,9 +1,11 @@
 // A lesson reel (9:16): the grammar of one lesson in a few animated steps,
 // then a quiz with a countdown, then the call to action. The content comes
 // from lessons.js; the look (backdrop, logo, colours) from Demo.jsx.
+// The music is raw/lesson-music.mp3 if it is there (a track that is safe on
+// YouTube); the demo's music.mp3 gets a Content ID claim, so it is not used here.
 import { AbsoluteFill, Audio, Sequence, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { Backdrop, C, FPS, LogoMark, fontFamily } from "./Demo";
-import { MUSIC } from "./manifests";
+import { LESSON_MUSIC } from "./manifests";
 import { LESSONS, verb } from "./lessons";
 
 const S = (sec) => Math.round(sec * FPS);
@@ -54,9 +56,9 @@ export function LessonReel({ lesson: id, lang }) {
           </Sequence>
         );
       })}
-      {MUSIC && (
+      {LESSON_MUSIC && (
         <Audio
-          src={staticFile("music.mp3")}
+          src={staticFile("lesson-music.mp3")}
           volume={(f) => interpolate(f, [0, 15, total - 30, total], [0, 0.7, 0.7, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })}
         />
       )}
@@ -66,7 +68,7 @@ export function LessonReel({ lesson: id, lang }) {
 
 /* ---------- building blocks ---------- */
 
-const pop = (f, fps, delay = 0, damping = 15) => spring({ frame: f - delay, fps, config: { damping } });
+export const pop = (f, fps, delay = 0, damping = 15) => spring({ frame: f - delay, fps, config: { damping } });
 
 /** Every scene fades and lifts in, and fades out at its end. */
 function Scene({ len, children }) {
@@ -93,17 +95,27 @@ function Heading({ title, sub, center = false }) {
   );
 }
 
-const gradientText = {
+export const gradientText = {
   color: "transparent",
   backgroundImage: `linear-gradient(90deg, ${C.blue}, ${C.green})`,
   WebkitBackgroundClip: "text",
 };
 
-const card = {
+export const card = {
   background: "rgba(255,255,255,0.05)",
   border: "1px solid rgba(255,255,255,0.09)",
   borderRadius: 32,
 };
+
+/** A letter that drops off the word (fall: 0 → 1); the word closes up behind it. */
+export function FallingT({ fall, show = 1, color = C.orange }) {
+  if (fall >= 1) return null;
+  return (
+    <span style={{ display: "inline-block", width: `${0.34 * (1 - fall)}em`, overflow: "visible", whiteSpace: "nowrap" }}>
+      <span style={{ display: "inline-block", color, opacity: show * (1 - fall), transform: `scale(${show}) translateY(${fall * 2}em) rotate(${fall * 70}deg)` }}>t</span>
+    </span>
+  );
+}
 
 /* ---------- scenes ---------- */
 
@@ -242,34 +254,33 @@ function Table({ lesson, T }) {
   );
 }
 
-/** Jij werkt. → Werk jij? : the t falls off. */
+/** Jij werkt. → Werk(t) jij? : in the question the t falls off. */
 function Trap({ T }) {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const fall = interpolate(f, [S(1.1), S(1.7)], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const second = pop(f, fps, S(1.8), 12);
-  const sub = pop(f, fps, S(2.4));
+  const second = pop(f, fps, S(1.0), 12);
+  const fall = interpolate(f, [S(1.9), S(2.5)], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const sub = pop(f, fps, S(2.7));
   const from = T.trapFrom; // "Jij werkt."
   const t = from.lastIndexOf("t");
+  const to = T.trapTo; // "Werk jij?"
+  const sp = to.indexOf(" ");
   return (
     <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center" }}>
       <div style={{ fontSize: 96, fontWeight: 800, color: C.orange, marginBottom: 70 }}>{T.trapTitle}</div>
       <div style={{ fontSize: 100, fontWeight: 800 }}>
         {from.slice(0, t)}
-        <span
-          style={{
-            display: "inline-block",
-            color: C.orange,
-            transform: `translateY(${fall * 260}px) rotate(${fall * 70}deg)`,
-            opacity: 1 - fall,
-          }}
-        >
-          t
-        </span>
+        <span style={{ color: C.green }}>t</span>
         {from.slice(t + 1)}
       </div>
       <div style={{ fontSize: 70, color: C.dim, margin: "26px 0", opacity: second }}>↓</div>
-      <div style={{ fontSize: 110, fontWeight: 800, ...gradientText, opacity: second, transform: `scale(${0.8 + 0.2 * second})` }}>{T.trapTo}</div>
+      <div style={{ fontSize: 110, fontWeight: 800, opacity: second, transform: `scale(${0.8 + 0.2 * second})` }}>
+        <span style={fall >= 1 ? gradientText : undefined}>
+          {to.slice(0, sp)}
+          <FallingT fall={fall} />
+          {to.slice(sp)}
+        </span>
+      </div>
       <div style={{ fontSize: 46, color: C.dim, marginTop: 60, opacity: sub }}>{T.trapSub}</div>
     </div>
   );
@@ -340,7 +351,7 @@ function Question({ q, i, n, T, lang }) {
 }
 
 /** The 3-2-1 countdown ring. */
-function Ring({ start, len }) {
+export function Ring({ start, len }) {
   const f = useCurrentFrame() - start;
   const { fps } = useVideoConfig();
   if (f < 0) return null;

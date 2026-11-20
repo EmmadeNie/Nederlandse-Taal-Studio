@@ -1,0 +1,625 @@
+// A full lesson video (16:9, a few minutes): the grammar page's explanation in
+// chapters, a summary, a quiz with a countdown, and an outro that leaves room
+// on the right for YouTube's end-screen elements. No voice: everything is on
+// screen, at a pace you can read. Content: LESSON_VIDEOS in lessons.js;
+// timeline: lessonVideoScenes.js; building blocks: LessonReel.jsx.
+import { AbsoluteFill, Audio, Sequence, interpolate, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
+import { Backdrop, C, LogoMark, fontFamily } from "./Demo";
+import { LESSON_MUSIC } from "./manifests";
+import { LESSON_VIDEOS, verb } from "./lessons";
+import { FallingT, Ring, card, gradientText, pop } from "./LessonReel";
+import { ANSWER_AT, HEADER_CHAPTERS, S, videoDuration, videoScenes } from "./lessonVideoScenes";
+
+const FADE = 10;
+const cap = (s) => s[0].toUpperCase() + s.slice(1);
+
+export function LessonVideo({ lesson: id, lang }) {
+  const L = LESSON_VIDEOS[id];
+  const T = L.text[lang];
+  const total = videoDuration(id);
+  return (
+    <AbsoluteFill style={{ background: C.bg, fontFamily, color: C.text }}>
+      <Backdrop />
+      {videoScenes(id).map((s, i) => (
+        <Sequence key={i} from={s.from} durationInFrames={s.len}>
+          <Scene len={s.len} header={s.kind !== "hook" && s.kind !== "outro"} ch={s.ch} L={L} T={T}>
+            {s.kind === "hook" && <Hook L={L} T={T} />}
+            {s.kind === "agenda" && <Agenda T={T} />}
+            {s.kind === "intro" && <Intro L={L} T={T} />}
+            {s.kind === "chapter" && <Chapter k={s.key} T={T} />}
+            {s.kind === "stems" && <Stems g={s.g} T={T} />}
+            {s.kind === "table" && <Table L={L} T={T} />}
+            {s.kind === "examples" && <Examples L={L} T={T} />}
+            {s.kind === "stemT" && <StemT L={L} T={T} />}
+            {s.kind === "inversion" && <Inversion L={L} T={T} lang={lang} />}
+            {s.kind === "inversionNote" && <InversionNote T={T} />}
+            {s.kind === "summary" && <Summary T={T} />}
+            {s.kind === "quizIntro" && <QuizIntro T={T} />}
+            {s.kind === "question" && <Question q={s.q} i={s.i} n={L.quiz.length} T={T} lang={lang} />}
+            {s.kind === "outro" && <Outro T={T} />}
+          </Scene>
+        </Sequence>
+      ))}
+      {LESSON_MUSIC && (
+        <Audio
+          src={staticFile("lesson-music.mp3")}
+          loop
+          volume={(f) => interpolate(f, [0, 30, total - 60, total], [0, 0.35, 0.35, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })}
+        />
+      )}
+    </AbsoluteFill>
+  );
+}
+
+/* ---------- frame ---------- */
+
+function Scene({ len, header, ch, L, T, children }) {
+  const f = useCurrentFrame();
+  const enter = interpolate(f, [0, FADE], [0, 1], { extrapolateRight: "clamp" });
+  const leave = interpolate(f, [len - FADE, len], [1, 0], { extrapolateLeft: "clamp" });
+  return (
+    <AbsoluteFill>
+      {header && <Header ch={ch} L={L} T={T} />}
+      <AbsoluteFill style={{ opacity: Math.min(enter, leave), transform: `translateY(${(1 - enter) * 24}px)` }}>
+        <div style={{ position: "absolute", left: 150, right: 150, top: 150, bottom: 90, display: "flex", flexDirection: "column", justifyContent: "center" }}>{children}</div>
+      </AbsoluteFill>
+    </AbsoluteFill>
+  );
+}
+
+/** Logo and topic on the left, the chapters on the right (the current one lit). */
+function Header({ ch, L, T }) {
+  return (
+    <div style={{ position: "absolute", left: 80, right: 80, top: 44, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 18, fontSize: 28 }}>
+        <LogoMark size={54} />
+        <span style={{ fontWeight: 800 }}>Taal Studio</span>
+        <span style={{ color: C.dim, fontWeight: 500 }}>
+          · {L.level} · {T.topic}
+        </span>
+      </div>
+      <div style={{ display: "flex", gap: 10 }}>
+        {HEADER_CHAPTERS.map((k, i) => {
+          const on = k === ch;
+          const num = k === "quiz" ? "" : `${i + 1}  `;
+          return (
+            <span
+              key={k}
+              style={{
+                fontSize: 22,
+                fontWeight: 700,
+                padding: "8px 18px",
+                borderRadius: 999,
+                whiteSpace: "pre",
+                color: on ? C.bg : C.dim,
+                background: on ? C.green : "rgba(255,255,255,0.05)",
+                border: `1px solid ${on ? C.green : "rgba(255,255,255,0.09)"}`,
+              }}
+            >
+              {num}
+              {T.chapters[k]}
+            </span>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function Heading({ title, sub, center = false }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const a = pop(f, fps, 2);
+  const b = pop(f, fps, 10);
+  return (
+    <div style={{ textAlign: center ? "center" : "left", marginBottom: 54 }}>
+      <div style={{ fontSize: 72, fontWeight: 800, letterSpacing: -1.5, lineHeight: 1.08, opacity: a, transform: `translateY(${(1 - a) * 24}px)` }}>{title}</div>
+      {sub && <div style={{ fontSize: 38, fontWeight: 500, color: C.dim, marginTop: 14, opacity: b }}>{sub}</div>}
+    </div>
+  );
+}
+
+/** A verb form with its ending in green: werk|t. */
+function Form({ form, stem, color = C.green }) {
+  const end = form.startsWith(stem) ? form.slice(stem.length) : "";
+  return (
+    <>
+      {end ? stem : form}
+      <span style={{ color }}>{end}</span>
+    </>
+  );
+}
+
+/** A thick line drawn across a word, left to right (p: 0 → 1). */
+function Strike({ p, color = C.orange }) {
+  return <span style={{ position: "absolute", left: -4, top: "52%", height: 7, borderRadius: 4, width: `calc(${p * 100}% + 8px)`, background: color }} />;
+}
+
+const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" };
+
+
+/* ---------- intro ---------- */
+
+function Hook({ L, T }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const chip = pop(f, fps, 6, 12);
+  const l1 = pop(f, fps, 10);
+  const l2 = pop(f, fps, 16);
+  const sub = pop(f, fps, 28);
+  return (
+    <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", height: "100%" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 28, marginBottom: 50 }}>
+        <LogoMark size={120} />
+        <span style={{ fontSize: 40, fontWeight: 800, padding: "10px 26px", borderRadius: 999, background: C.orange, color: C.bg, transform: `scale(${chip})` }}>{L.level}</span>
+      </div>
+      <div style={{ fontSize: 124, fontWeight: 800, letterSpacing: -3, lineHeight: 1.04 }}>
+        <div style={{ opacity: l1, transform: `translateY(${(1 - l1) * 40}px)` }}>{T.title[0]}</div>
+        <div style={{ ...gradientText, opacity: l2, transform: `translateY(${(1 - l2) * 40}px)` }}>{T.title[1]}</div>
+      </div>
+      <div style={{ fontSize: 48, fontWeight: 500, color: C.dim, marginTop: 40, opacity: sub }}>{T.sub}</div>
+    </div>
+  );
+}
+
+function Agenda({ T }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  return (
+    <>
+      <Heading title={T.agendaTitle} />
+      <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+        {HEADER_CHAPTERS.map((k, i) => {
+          const s = pop(f, fps, 14 + i * 12);
+          return (
+            <div key={k} style={{ display: "flex", alignItems: "center", gap: 30, fontSize: 52, fontWeight: 700, opacity: s, transform: `translateX(${(1 - s) * -50}px)` }}>
+              <span style={{ width: 76, height: 76, borderRadius: 22, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 40, fontWeight: 800, background: k === "quiz" ? C.orange : "rgba(79,156,249,0.16)", color: k === "quiz" ? C.bg : C.blue }}>
+                {k === "quiz" ? "?" : i + 1}
+              </span>
+              {T.chapters[k]}
+              {k !== "quiz" && <span style={{ fontSize: 36, color: C.dim, fontWeight: 500 }}>{T.chapterSub[k]}</span>}
+            </div>
+          );
+        })}
+      </div>
+    </>
+  );
+}
+
+/** ik werk · hij werkt · wij werken, then what each ending is, then the rule. */
+function Intro({ L, T }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const v = verb(L.intro);
+  const rows = [
+    ["ik", v.present.ik],
+    ["hij", v.present.hij],
+    ["wij", v.present.wij],
+  ];
+  const rule = pop(f, fps, S(6.5));
+  return (
+    <>
+      <Heading title={T.introTitle} sub={`${v.nl} · ${v.en}`} />
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 36 }}>
+        {rows.map(([p, form], i) => {
+          const s = pop(f, fps, 16 + i * 14);
+          const lab = pop(f, fps, S(3) + i * 12);
+          return (
+            <div key={p} style={{ ...card, padding: "40px 40px 34px", textAlign: "center", opacity: s, transform: `translateY(${(1 - s) * 40}px)` }}>
+              <div style={{ fontSize: 76, fontWeight: 800, whiteSpace: "nowrap" }}>
+                <span style={{ color: C.dim, fontWeight: 600 }}>{p} </span>
+                <Form form={form} stem={v.stem} />
+              </div>
+              <div style={{ marginTop: 22, display: "inline-block", fontSize: 32, fontWeight: 700, color: C.green, border: `2px solid ${C.green}`, borderRadius: 999, padding: "6px 22px", opacity: lab, transform: `scale(${0.8 + 0.2 * lab})` }}>
+                {T.introLabels[i]}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ marginTop: 50, fontSize: 38, fontWeight: 700, textAlign: "center", padding: "24px 30px", borderRadius: 24, background: "rgba(79,156,249,0.12)", border: `1px solid rgba(79,156,249,0.35)`, whiteSpace: "pre", opacity: rule, transform: `translateY(${(1 - rule) * 20}px)` }}>
+        {T.rule}
+      </div>
+    </>
+  );
+}
+
+/** A chapter's title card: a big number, the title and what it's about. */
+function Chapter({ k, T }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const n = pop(f, fps, 0, 11);
+  const t = pop(f, fps, 8);
+  const sub = pop(f, fps, 16);
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 70, height: "100%" }}>
+      <div style={{ fontSize: 340, fontWeight: 800, lineHeight: 1, ...gradientText, transform: `scale(${0.6 + 0.4 * n})`, opacity: n }}>{HEADER_CHAPTERS.indexOf(k) + 1}</div>
+      <div>
+        <div style={{ fontSize: 104, fontWeight: 800, letterSpacing: -2.5, opacity: t, transform: `translateX(${(1 - t) * 40}px)` }}>{T.chapters[k]}</div>
+        <div style={{ fontSize: 48, color: C.dim, marginTop: 16, opacity: sub }}>{T.chapterSub[k]}</div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- 1. the stem ---------- */
+
+/** werken → werk. When "-en off" isn't the stem yet (mak), it's struck and fixed (maak). */
+function Stems({ g, T }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const t = T.stems[g.key];
+  const step = g.key === "basic" ? S(1.4) : S(2.3);
+  const why = pop(f, fps, 20 + g.verbs.length * step + S(0.6));
+  return (
+    <>
+      <Heading title={t.title} sub={t.sub} />
+      <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+        {g.verbs.map((id, i) => {
+          const v = verb(id);
+          const raw = v.nl.slice(0, -2);
+          const fix = raw !== v.stem;
+          const d = 20 + i * step;
+          const inn = pop(f, fps, d);
+          const en = interpolate(f, [d + 10, d + 18], [0, 1], clamp);
+          const rawIn = pop(f, fps, d + 20);
+          const rawStrike = interpolate(f, [d + 36, d + 44], [0, 1], clamp);
+          const stemIn = pop(f, fps, fix ? d + 46 : d + 20);
+          return (
+            <div key={id} style={{ ...card, display: "grid", gridTemplateColumns: "430px 110px 330px 110px 1fr", alignItems: "center", padding: "20px 40px", fontSize: 72, fontWeight: 800, opacity: inn, transform: `translateX(${(1 - inn) * -50}px)` }}>
+              <span>
+                {raw}
+                <span style={{ position: "relative", color: C.orange, opacity: 1 - en * 0.6 }}>
+                  en
+                  <Strike p={en} />
+                </span>
+              </span>
+              <span style={{ color: C.dim, fontWeight: 500, opacity: rawIn, justifySelf: "center" }}>→</span>
+              {fix ? (
+                <>
+                  <span style={{ position: "relative", justifySelf: "start", color: C.orange, opacity: rawIn * (1 - rawStrike * 0.5) }}>
+                    {raw}
+                    <Strike p={rawStrike} />
+                  </span>
+                  <span style={{ color: C.dim, fontWeight: 500, opacity: stemIn, justifySelf: "center" }}>→</span>
+                  <span style={{ color: C.green, opacity: stemIn, transform: `scale(${0.7 + 0.3 * stemIn})`, transformOrigin: "left center", display: "inline-block" }}>{v.stem} ✓</span>
+                </>
+              ) : (
+                <span style={{ color: C.green, opacity: stemIn, transform: `scale(${0.7 + 0.3 * stemIn})`, transformOrigin: "left center", display: "inline-block", gridColumn: "3 / 6" }}>{v.stem} ✓</span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      {t.why && <div style={{ marginTop: 36, fontSize: 36, color: C.dim, lineHeight: 1.4, opacity: why, transform: `translateY(${(1 - why) * 16}px)` }}>💡 {t.why}</div>}
+    </>
+  );
+}
+
+/* ---------- 2. the ending ---------- */
+
+const PERSONS = [
+  { p: "ik", form: "ik", end: 0 },
+  { p: "jij", form: "jij", end: 1 },
+  { p: "u", form: "jij", end: 1 },
+  { p: "hij", form: "hij", end: 1 },
+  { p: "wij", form: "wij", end: 2 },
+  { p: "jullie", form: "wij", end: 2 },
+  { p: "zij", form: "wij", end: 2 },
+];
+
+function Table({ L, T }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const v = verb(L.table);
+  const col = (title, rows, offset) => (
+    <div style={{ ...card, padding: "22px 40px 10px" }}>
+      <div style={{ fontSize: 28, fontWeight: 700, color: C.dim, letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 6 }}>{title}</div>
+      {rows.map((r, i) => {
+        const s = pop(f, fps, 18 + (offset + i) * S(0.9));
+        const end = r.end > 0;
+        return (
+          <div key={r.p} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 0", borderTop: i ? "1px solid rgba(255,255,255,0.08)" : "none", opacity: s, transform: `translateY(${(1 - s) * 20}px)` }}>
+            <div>
+              <div style={{ fontSize: 26, color: C.dim, fontWeight: 500 }}>{T.persons[r.p]}</div>
+              <div style={{ fontSize: 58, fontWeight: 800 }}>
+                <Form form={v.present[r.form]} stem={v.stem} />
+              </div>
+            </div>
+            <span style={{ fontSize: 26, fontWeight: 700, color: end ? C.green : C.text, border: `2px solid ${end ? C.green : "rgba(255,255,255,0.25)"}`, borderRadius: 999, padding: "6px 18px" }}>{T.endings[r.end]}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+  return (
+    <>
+      <Heading title={`${v.nl} · ${v.en}`} />
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 36, alignItems: "start", marginTop: -20 }}>
+        {col(T.tableSingular, PERSONS.slice(0, 4), 0)}
+        {col(T.tablePlural, PERSONS.slice(4), 4)}
+      </div>
+    </>
+  );
+}
+
+function Examples({ L, T }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  return (
+    <>
+      <Heading title={T.examplesTitle} sub={T.examplesSub} />
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 32 }}>
+        {L.examples.map((id, c) => {
+          const v = verb(id);
+          const s = pop(f, fps, 16 + c * S(1.6));
+          return (
+            <div key={id} style={{ ...card, padding: "30px 36px", opacity: s, transform: `translateY(${(1 - s) * 30}px)` }}>
+              <div style={{ fontSize: 44, fontWeight: 800, color: C.orange }}>{v.nl}</div>
+              <div style={{ fontSize: 28, color: C.dim, marginBottom: 14 }}>
+                {v.en} · {T.endings[0]}: <b style={{ color: C.text }}>{v.stem}</b>
+              </div>
+              {["ik", "jij", "wij"].map((p, r) => {
+                const row = pop(f, fps, 16 + c * S(1.6) + 10 + r * 8);
+                return (
+                  <div key={p} style={{ fontSize: 54, fontWeight: 800, padding: "8px 0", opacity: row }}>
+                    <span style={{ color: C.dim, fontWeight: 600 }}>{p} </span>
+                    <Form form={v.present[p]} stem={v.stem} />
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })}
+      </div>
+    </>
+  );
+}
+
+/* ---------- 3. stem ending in t ---------- */
+
+/** jij praat + t: the extra t comes, and drops off again. */
+function StemT({ L, T }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const step = S(2.2);
+  const note = pop(f, fps, 20 + L.stemT.length * step + S(0.4));
+  return (
+    <>
+      <Heading title={T.stemTTitle} sub={T.stemTSub} />
+      <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+        {L.stemT.map((r, i) => {
+          const v = verb(r.verb);
+          const d = 20 + i * step;
+          const inn = pop(f, fps, d);
+          const t = pop(f, fps, d + 14, 12);
+          const fall = interpolate(f, [d + 36, d + 54], [0, 1], clamp);
+          const ok = pop(f, fps, d + 54);
+          return (
+            <div key={i} style={{ ...card, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "22px 44px", opacity: inn, transform: `translateX(${(1 - inn) * -50}px)` }}>
+              <div style={{ fontSize: 76, fontWeight: 800 }}>
+                <span style={{ color: C.dim, fontWeight: 600 }}>{r.subject} </span>
+                {v.present[r.person]}
+                <FallingT fall={fall} show={t} color={fall > 0 ? C.orange : C.green} />
+                <span style={{ fontSize: 56, color: C.green, marginLeft: 26, opacity: ok }}>✓</span>
+              </div>
+              <div style={{ fontSize: 36, color: C.dim }}>
+                {v.nl} → {T.endings[0]} <b style={{ color: C.text }}>{v.stem}</b>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ marginTop: 36, fontSize: 38, color: C.dim, opacity: note }}>💡 {T.stemTNote}</div>
+    </>
+  );
+}
+
+/* ---------- 4. jij after the verb ---------- */
+
+/** Jij speelt tennis. → Speel jij tennis? → Vandaag speel jij tennis. */
+function Inversion({ L, T, lang }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const { verb: id, rest, first } = L.inversion;
+  const v = verb(id);
+  const form = v.present.jij; // speelt
+  const bare = v.present.ik; // speel
+  const a = pop(f, fps, 14);
+  const b = pop(f, fps, S(2), 12);
+  const fall = interpolate(f, [S(3.2), S(3.9)], [0, 1], clamp);
+  const ok = pop(f, fps, S(4));
+  const c = pop(f, fps, S(5.4), 12);
+  const gloss = (i, o) => lang === "en" && T.inversionGloss[i] && <div style={{ fontSize: 30, color: C.dim, fontWeight: 500, marginTop: 4, opacity: o }}>{T.inversionGloss[i]}</div>;
+  const line = { ...card, padding: "22px 44px", fontSize: 72, fontWeight: 800 };
+  return (
+    <>
+      <Heading title={T.inversionTitle} sub={T.inversionSub} />
+      <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+        <div style={{ ...line, opacity: a }}>
+          Jij {bare}
+          <span style={{ color: C.green }}>{form.slice(bare.length)}</span> {rest}.{gloss(0, a)}
+        </div>
+        <div style={{ ...line, opacity: b, transform: `translateX(${(1 - b) * -40}px)`, borderColor: `rgba(47,210,122,${0.4 * fall})` }}>
+          <span style={{ color: fall > 0.5 ? C.green : C.text }}>
+            {cap(bare)}
+            <FallingT fall={fall} /> jij
+          </span>{" "}
+          {rest}? <span style={{ color: C.green, fontSize: 56, opacity: ok }}>✓</span>
+          {gloss(1, b)}
+        </div>
+        <div style={{ ...line, opacity: c, transform: `translateX(${(1 - c) * -40}px)`, borderColor: "rgba(47,210,122,0.4)" }}>
+          {first} <span style={{ color: C.green }}>{bare} jij</span> {rest}. <span style={{ color: C.green, fontSize: 56 }}>✓</span>
+          {gloss(2, c)}
+        </div>
+      </div>
+    </>
+  );
+}
+
+/** Two things to watch: the stem's own t stays, and only jij/je lose the t. */
+function InversionNote({ T }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const praten = verb("word.praten");
+  const werken = verb("word.werken");
+  const cards = [
+    { title: T.noteStemT, lines: [[`Jij ${praten.present.jij}.`, `${cap(praten.present.ik)} jij?`]] },
+    {
+      title: T.noteOthers,
+      lines: [
+        [`Hij ${werken.present.hij}.`, `${cap(werken.present.hij)} hij?`],
+        [`U ${werken.present.jij}.`, `${cap(werken.present.jij)} u?`],
+      ],
+    },
+  ];
+  return (
+    <>
+      <Heading title={T.noteTitle} />
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 36 }}>
+        {cards.map((c, i) => {
+          const s = pop(f, fps, 14 + i * S(2.2));
+          return (
+            <div key={i} style={{ ...card, padding: "34px 44px", opacity: s, transform: `translateY(${(1 - s) * 30}px)` }}>
+              <div style={{ fontSize: 40, fontWeight: 800, color: C.orange, marginBottom: 20 }}>{c.title}</div>
+              {c.lines.map(([from, to], j) => (
+                <div key={j} style={{ fontSize: 60, fontWeight: 800, padding: "8px 0" }}>
+                  <span style={{ color: C.dim }}>{from}</span> → <span style={{ color: C.green }}>{to}</span>
+                </div>
+              ))}
+            </div>
+          );
+        })}
+      </div>
+    </>
+  );
+}
+
+/* ---------- summary, quiz, outro ---------- */
+
+function Summary({ T }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  return (
+    <>
+      <Heading title={T.summaryTitle} />
+      <div style={{ ...card, padding: "14px 48px", marginTop: -10 }}>
+        {T.summary.map(([k, v], i) => {
+          const s = pop(f, fps, 16 + i * S(1.1));
+          return (
+            <div key={i} style={{ display: "grid", gridTemplateColumns: "520px 1fr", alignItems: "baseline", padding: "16px 0", borderTop: i ? "1px solid rgba(255,255,255,0.08)" : "none", opacity: s, transform: `translateX(${(1 - s) * -30}px)` }}>
+              <div style={{ fontSize: 40, fontWeight: 800, color: C.green }}>{k}</div>
+              <div style={{ fontSize: 42, fontWeight: 600 }}>{v}</div>
+            </div>
+          );
+        })}
+      </div>
+    </>
+  );
+}
+
+function QuizIntro({ T }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const a = pop(f, fps, 0, 10);
+  const b = pop(f, fps, 10);
+  return (
+    <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", height: "100%" }}>
+      <div style={{ fontSize: 180, fontWeight: 800, letterSpacing: -4, ...gradientText, transform: `scale(${0.6 + 0.4 * a})` }}>{T.quizTitle}</div>
+      <div style={{ fontSize: 46, color: C.dim, marginTop: 20, opacity: b }}>{T.quizSub}</div>
+    </div>
+  );
+}
+
+function Question({ q, i, n, T, lang }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const v = verb(q.verb);
+  let answer = v.present[q.person];
+  if (q.capital) answer = cap(answer);
+  const [before, after] = q.sentence.split("___");
+  const reveal = pop(f, fps, S(ANSWER_AT), 11);
+  const note = pop(f, fps, S(ANSWER_AT) + 10);
+  const cardIn = pop(f, fps, 0);
+  const gloss = T.gloss[q.sentence];
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+      <div style={{ fontSize: 34, fontWeight: 700, color: C.dim, letterSpacing: 2, marginBottom: 26 }}>
+        QUIZ {i + 1}/{n}
+      </div>
+      <div style={{ ...card, width: 1300, padding: "54px 40px", transform: `scale(${0.94 + 0.06 * cardIn})` }}>
+        <div style={{ fontSize: 96, fontWeight: 800, lineHeight: 1.25 }}>
+          {before}
+          <span style={{ display: "inline-block", minWidth: 220, padding: "0 18px", margin: "0 6px", borderRadius: 18, borderBottom: reveal > 0.05 ? "none" : `7px solid ${C.orange}`, background: reveal > 0.05 ? "rgba(47,210,122,0.16)" : "transparent", color: C.green }}>
+            <span style={{ display: "inline-block", transform: `scale(${reveal})`, opacity: reveal }}>{answer || " "}</span>
+          </span>
+          {after}
+        </div>
+        <div style={{ fontSize: 44, fontWeight: 700, color: C.orange, marginTop: 24 }}>({v.nl})</div>
+        {lang === "en" && gloss && <div style={{ fontSize: 36, color: C.dim, marginTop: 14 }}>{gloss}</div>}
+      </div>
+      <div style={{ height: 240, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        {f < S(ANSWER_AT) + 6 ? (
+          <Ring start={S(0.8)} len={S(ANSWER_AT - 0.8)} />
+        ) : (
+          <div style={{ fontSize: 52, fontWeight: 800, color: C.green, opacity: note, transform: `translateY(${(1 - note) * 20}px)` }}>✓ {T.quizNote[q.note]}</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/** Left half only: the right half is for YouTube's end-screen elements. */
+function Outro({ T }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const a = pop(f, fps, 8);
+  const url = pop(f, fps, 18);
+  const cta = pop(f, fps, 28, 12);
+  return (
+    <div style={{ width: 1040, display: "flex", flexDirection: "column", gap: 34 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 30 }}>
+        <LogoMark size={130} />
+        <div style={{ fontSize: 92, fontWeight: 800, letterSpacing: -3 }}>Taal Studio</div>
+      </div>
+      <div style={{ fontSize: 54, fontWeight: 800, lineHeight: 1.15, opacity: a, transform: `translateY(${(1 - a) * 20}px)` }}>{T.outroTitle}</div>
+      <div style={{ fontSize: 32, fontWeight: 700, whiteSpace: "nowrap", ...gradientText, backgroundImage: `linear-gradient(90deg, ${C.blue}, ${C.green} 60%, ${C.orange})`, opacity: url }}>{T.outroUrl}</div>
+      <div style={{ alignSelf: "flex-start", fontSize: 38, fontWeight: 800, color: C.bg, background: `linear-gradient(90deg, ${C.blue}, ${C.green})`, padding: "18px 40px", borderRadius: 999, opacity: cta, transform: `scale(${0.85 + 0.15 * cta})` }}>{T.outroCta}</div>
+    </div>
+  );
+}
+
+/** The YouTube thumbnail (1280×720): the topic big, and the three forms. */
+export function LessonThumb({ lesson: id, lang }) {
+  const L = LESSON_VIDEOS[id];
+  const T = L.text[lang];
+  const v = verb(L.intro);
+  const rows = [
+    ["ik", v.present.ik],
+    ["jij", v.present.jij],
+    ["wij", v.present.wij],
+  ];
+  return (
+    <AbsoluteFill style={{ background: C.bg, fontFamily, color: C.text }}>
+      <Backdrop />
+      <AbsoluteFill style={{ padding: "64px 70px", display: "flex", flexDirection: "row", alignItems: "center", gap: 50 }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 34 }}>
+            <LogoMark size={84} delay={-60} />
+            <span style={{ fontSize: 34, fontWeight: 800, padding: "6px 20px", borderRadius: 999, background: C.orange, color: C.bg }}>{L.level}</span>
+          </div>
+          <div style={{ fontSize: 88, fontWeight: 800, letterSpacing: -2.5, lineHeight: 1.02 }}>{T.thumb[0]}</div>
+          <div style={{ fontSize: 88, fontWeight: 800, letterSpacing: -2.5, lineHeight: 1.02, ...gradientText }}>{T.thumb[1]}</div>
+        </div>
+        <div style={{ ...card, padding: "26px 44px", background: "rgba(255,255,255,0.07)" }}>
+          {rows.map(([p, form]) => (
+            <div key={p} style={{ fontSize: 84, fontWeight: 800, padding: "6px 0", whiteSpace: "nowrap" }}>
+              <span style={{ color: C.dim, fontWeight: 600 }}>{p} </span>
+              <Form form={form} stem={v.stem} />
+            </div>
+          ))}
+        </div>
+      </AbsoluteFill>
+    </AbsoluteFill>
+  );
+}
