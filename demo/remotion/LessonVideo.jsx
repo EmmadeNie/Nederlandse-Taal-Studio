@@ -51,7 +51,7 @@ export function LessonVideo({ lesson: id, lang }) {
 /* ---------- frame ---------- */
 
 /** The track as often as the video needs it, each repeat crossfading into the next. */
-function MusicLoop({ src, total, volume = 0.3 }) {
+function MusicLoop({ src, total, volume = 1 }) {
   const data = useAudioData(src);
   if (!data) return null;
   const len = Math.floor(data.durationInSeconds * S(1));
