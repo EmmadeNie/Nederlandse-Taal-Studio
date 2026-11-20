@@ -48,7 +48,8 @@ export default function DemoVideo() {
     setMuted(!muted);
   };
 
-  const base = `/demo/demo-${lang === "nl" ? "nl" : "en"}${phone ? "-portrait" : ""}`;
+  // Named goal_length_LANG, like every video (see demo/publish.mjs).
+  const base = `/demo/website_demo${phone ? "_phone" : ""}_long_${lang === "nl" ? "NL" : "EN"}`;
   return (
     <figure className={`auth-demo ${phone ? "is-portrait" : ""}`}>
       <video

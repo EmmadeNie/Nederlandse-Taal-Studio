@@ -1,6 +1,10 @@
-// Turns the rendered videos (out/demo-<lang>.mp4) into small web files for the
-// login page: public/demo/demo-<lang>.mp4 (1440 wide, no sound unless there is
-// music) and a poster image. Uses the ffmpeg that comes with Remotion.
+// Turns the rendered videos (out/website_demo_long_<LANG>.mp4) into small web
+// files for the login page: public/demo/website_demo_long_<LANG>.mp4 (1440 wide,
+// no sound unless there is music) and a poster image. Uses the ffmpeg that comes
+// with Remotion.
+//
+// Every video is named goal_length_LANG: website_demo / website_demo_phone (login
+// page), marketing / marketing_quiz (socials); long or short; NL or EN.
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, statSync, writeFileSync } from "node:fs";
 import path from "node:path";
@@ -13,14 +17,15 @@ const ffmpeg = (...args) => execFileSync("npx", ["remotion", "ffmpeg", "-y", "-l
 
 // Wide for computers, a taller 4:5 cut for phones.
 const VARIANTS = [
-  { suffix: "", width: 1440 },
-  { suffix: "-portrait", width: 864 },
+  { goal: "website_demo", width: 1440 },
+  { goal: "website_demo_phone", width: 864 },
 ];
 for (const lang of ["nl", "en"]) {
-  for (const { suffix, width } of VARIANTS) {
-    const src = path.join(DEMO_DIR, "out", `demo-${lang}${suffix}.mp4`);
+  for (const { goal, width } of VARIANTS) {
+    const name = `${goal}_long_${lang.toUpperCase()}`;
+    const src = path.join(DEMO_DIR, "out", `${name}.mp4`);
     if (!existsSync(src)) continue;
-    const mp4 = path.join(outDir, `demo-${lang}${suffix}.mp4`);
+    const mp4 = path.join(outDir, `${name}.mp4`);
     ffmpeg(
       "-i", src,
       "-vf", `scale=${width}:-2`,
@@ -30,8 +35,8 @@ for (const lang of ["nl", "en"]) {
       mp4,
     );
     // Poster: a moment on the board, so the page looks right before the video plays.
-    ffmpeg("-ss", "4", "-i", src, "-frames:v", "1", "-vf", `scale=${width}:-2`, "-q:v", "3", path.join(outDir, `demo-${lang}${suffix}.jpg`));
-    console.log(`${lang}${suffix}: ${(statSync(mp4).size / 1e6).toFixed(1)} MB`);
+    ffmpeg("-ss", "4", "-i", src, "-frames:v", "1", "-vf", `scale=${width}:-2`, "-q:v", "3", path.join(outDir, `${name}.jpg`));
+    console.log(`${name}: ${(statSync(mp4).size / 1e6).toFixed(1)} MB`);
   }
 }
 // Tells the login page whether to offer a sound button.
