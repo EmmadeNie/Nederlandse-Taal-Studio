@@ -3,7 +3,9 @@ import { Demo, durationOf, FPS } from "./Demo";
 import { MANIFESTS } from "./manifests";
 import { Og } from "./Og";
 import { LessonReel, lessonDuration } from "./LessonReel";
-import { LESSONS } from "./lessons";
+import { LESSONS, LESSON_VIDEOS } from "./lessons";
+import { LessonThumb, LessonVideo } from "./LessonVideo";
+import { videoDuration } from "./lessonVideoScenes";
 
 function Root() {
   return (
@@ -24,6 +26,15 @@ function Root() {
         ["nl", "en"].map((lang) => (
           <Composition key={`${lesson}-${lang}`} id={`lesson-${lesson}-${lang}`} component={LessonReel} defaultProps={{ lesson, lang }} durationInFrames={lessonDuration(lesson)} fps={FPS} width={1080} height={1920} />
         )),
+      )}
+      {/* Full lesson videos (16:9) for YouTube and the grammar pages. */}
+      {Object.keys(LESSON_VIDEOS).flatMap((lesson) =>
+        ["nl", "en"].map((lang) => (
+          <Composition key={`video-${lesson}-${lang}`} id={`lesson-video-${lesson}-${lang}`} component={LessonVideo} defaultProps={{ lesson, lang }} durationInFrames={videoDuration(lesson)} fps={FPS} width={1920} height={1080} />
+        )),
+      )}
+      {Object.keys(LESSON_VIDEOS).flatMap((lesson) =>
+        ["nl", "en"].map((lang) => <Still key={`thumb-${lesson}-${lang}`} id={`lesson-thumb-${lesson}-${lang}`} component={LessonThumb} defaultProps={{ lesson, lang }} width={1280} height={720} />),
       )}
       {/* The link preview for WhatsApp, LinkedIn & co. */}
       <Still id="og" component={Og} defaultProps={{ lang: "nl" }} width={1200} height={630} />
