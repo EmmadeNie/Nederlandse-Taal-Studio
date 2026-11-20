@@ -4,6 +4,7 @@ import { MANIFESTS } from "./manifests";
 import { Og } from "./Og";
 import { Avatar } from "./Avatar";
 import { StickerLogo, StickerOverview, StickerQuestion, StickerQuestionCentre, StickerQuestionLabel, StickerQuestionLight, StickerQuestionSmall, StickerLogoQr, StickerLogoQrLight, StickerIcon, StickerWordmark, StickerLogoQuestion, StickerWordmarkQuestion, StickerLogoOverview, StickerSheet, sheetSize } from "./Sticker";
+import { Flyer, FlyerOverview, flyerOverviewSize, flyerSize, FLYER_VARIANTS } from "./Flyer";
 import { LessonReel, lessonDuration } from "./LessonReel";
 import { LESSONS, LESSON_VIDEOS } from "./lessons";
 import { LessonThumb, LessonVideo } from "./LessonVideo";
@@ -57,6 +58,16 @@ function Root() {
       <Still id="sticker-overzicht-en" component={StickerOverview} defaultProps={{ lang: "en" }} width={1940} height={1940} />
       {/* All stickers on one print sheet (5×5 cm each; --scale=1.18 gives 300 dpi) */}
       <Still id="sticker-vel" component={StickerSheet} width={sheetSize().width} height={sheetSize().height} />
+      {/* A6 flyers, double-sided, with 3 mm bleed (111 × 154 mm; --scale=1.5 gives 381 dpi) */}
+      {Object.keys(FLYER_VARIANTS).flatMap((variant) =>
+        ["nl", "en"].flatMap((lang) =>
+          [["front", "voor"], ["back", "achter"]].map(([side, name]) => (
+            <Still key={`flyer-${variant}-${name}-${lang}`} id={`flyer-${variant}-${name}-${lang}`} component={Flyer} defaultProps={{ variant, side, lang, guides: false }} width={flyerSize().width} height={flyerSize().height} />
+          )),
+        ),
+      )}
+      <Still id="flyer-overzicht-nl" component={FlyerOverview} defaultProps={{ lang: "nl" }} width={flyerOverviewSize().width} height={flyerOverviewSize().height} />
+      <Still id="flyer-overzicht-en" component={FlyerOverview} defaultProps={{ lang: "en" }} width={flyerOverviewSize().width} height={flyerOverviewSize().height} />
       <Still id="sticker-icoon" component={StickerIcon} width={1000} height={1000} />
       <Still id="sticker-naam" component={StickerWordmark} width={1000} height={1000} />
       <Still id="sticker-logo-e-nl" component={StickerLogoQr} defaultProps={{ lang: "nl" }} width={1000} height={1000} />
