@@ -6,12 +6,31 @@ import { navigate, useRoute } from "../hooks/useRoute";
 import { pathFor, slugify } from "../routes";
 import LeerpadBoard from "./LeerpadBoard";
 import { AddStudentDialog, PendingStudentPanel } from "./StudentPanels";
-import { listStudents } from "./api";
-import { EnvelopeSimple, ICONS } from "../icons";
+import { listStudents, setInLes } from "./api";
+import { ChalkboardTeacher, EnvelopeSimple, ICONS } from "../icons";
 import { Dialog } from "./shared";
 
 /** Many students → a search field above the dropdown. */
 const PICKER_THRESHOLD = 8;
+
+/** The student last opened here, so /leerpaden opens on them again (this browser only). */
+const LAST_STUDENT_KEY = "leerpaden.lastStudent";
+
+const readLast = () => {
+  try {
+    return localStorage.getItem(LAST_STUDENT_KEY);
+  } catch {
+    return null;
+  }
+};
+
+const writeLast = (id) => {
+  try {
+    localStorage.setItem(LAST_STUDENT_KEY, id);
+  } catch {
+    // Blocked storage: the page just opens on the first lesleerling next time.
+  }
+};
 
 /**
  * Each student gets a readable path segment from their name
@@ -60,10 +79,20 @@ export default function LeerpadenPage() {
     load();
   }, [load]);
 
+  // Lesleerlingen: the students the docent actually teaches, one click away.
+  const taught = students?.filter((s) => s.in_les) ?? [];
+
   const current =
     students?.find((s) => s.slug === route.param) ||
     students?.find((s) => s.id === route.param || s.id === legacyStudentId) ||
+    // Plain /leerpaden: back to the one last looked at, else the first lesleerling.
+    (!route.param && students?.find((s) => s.id === readLast())) ||
+    taught[0] ||
     students?.[0];
+
+  useEffect(() => {
+    if (current) writeLast(current.id);
+  }, [current]);
 
   // Keep the address bar on the student shown (also turns old ?student=<id> links into paths).
   useEffect(() => {
@@ -74,6 +103,13 @@ export default function LeerpadenPage() {
 
   const choose = (s) => navigate(pathFor("leerpaden", s.slug));
   const shown = students?.filter((s) => s.name.toLowerCase().includes(filter.toLowerCase())) ?? [];
+  const options = shown.some((s) => s.id === current?.id) ? shown : [current, ...shown];
+  const option = (s) => (
+    <option key={s.id} value={s.id}>
+      {s.name}
+      {s.pending ? ` (${t("users.pending")})` : ""}
+    </option>
+  );
   // Accounts that could belong to a prepared leerling (they signed up with another email).
   const accounts = students?.filter((s) => !s.pending && s.id !== current?.id) ?? [];
 
@@ -83,6 +119,24 @@ export default function LeerpadenPage() {
     setStudents(rows);
     const fresh = rows.find((s) => s.id === profile.id);
     if (fresh) choose(fresh);
+  };
+
+  const [savingInLes, setSavingInLes] = useState(false);
+  const toggleInLes = async () => {
+    const next = !current.in_les;
+    const mark = (value) =>
+      setStudents((rows) => rows.map((s) => (s.id === current.id ? { ...s, in_les: value } : s)));
+    mark(next);
+    setSavingInLes(true);
+    setError(null);
+    try {
+      await setInLes(current.id, next);
+    } catch (e) {
+      mark(!next);
+      setError(e.message);
+    } finally {
+      setSavingInLes(false);
+    }
   };
 
   const addButton = isDocent && (
@@ -110,6 +164,26 @@ export default function LeerpadenPage() {
         </div>
       ) : (
         <>
+          {taught.length > 0 ? (
+            <div className="lp-taught" role="group" aria-label={t("lpd.taught")}>
+              <span className="lp-taught-label">
+                <ChalkboardTeacher aria-hidden="true" /> {t("lpd.taught")}
+              </span>
+              {taught.map((s) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  className="lp-taught-chip"
+                  aria-pressed={s.id === current.id}
+                  onClick={() => s.id !== current.id && choose(s)}
+                >
+                  {s.name}
+                </button>
+              ))}
+            </div>
+          ) : (
+            isDocent && <p className="lp-taught-hint dim">{t("lpd.taughtHint")}</p>
+          )}
           <div className="lp-students-row">
             <div className="filters lp-filters">
               {students.length > PICKER_THRESHOLD && (
@@ -127,12 +201,14 @@ export default function LeerpadenPage() {
                 onChange={(e) => choose(students.find((s) => s.id === e.target.value))}
                 aria-label={t("lp.student")}
               >
-                {(shown.some((s) => s.id === current.id) ? shown : [current, ...shown]).map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name}
-                    {s.pending ? ` (${t("users.pending")})` : ""}
-                  </option>
-                ))}
+                {taught.length > 0 ? (
+                  <>
+                    <optgroup label={t("lpd.taught")}>{options.filter((s) => s.in_les).map(option)}</optgroup>
+                    <optgroup label={t("lpd.otherStudents")}>{options.filter((s) => !s.in_les).map(option)}</optgroup>
+                  </>
+                ) : (
+                  options.map(option)
+                )}
               </select>
             </div>
             {addButton}
@@ -140,6 +216,19 @@ export default function LeerpadenPage() {
 
           <div className="lp-board-head">
             <h3 className="lp-board-title">{t("lpd.pathOf", { name: current.name })}</h3>
+            {isDocent && (
+              <button
+                type="button"
+                className="fb-btn-secondary lp-manage-btn lp-inles-btn"
+                aria-pressed={!!current.in_les}
+                disabled={savingInLes}
+                onClick={toggleInLes}
+                title={t(current.in_les ? "lpd.inLesOffTitle" : "lpd.inLesOnTitle")}
+              >
+                <ChalkboardTeacher weight={current.in_les ? "fill" : "regular"} aria-hidden="true" />{" "}
+                {t(current.in_les ? "lpd.inLesOn" : "lpd.inLesOff")}
+              </button>
+            )}
             {current.pending && (
               <button type="button" className="fb-btn-secondary lp-manage-btn" onClick={() => setManaging(true)}>
                 <EnvelopeSimple aria-hidden="true" /> {t("lpd.manage")}
