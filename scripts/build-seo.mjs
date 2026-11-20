@@ -794,6 +794,94 @@ ${L.faq.map(([q, a]) => `<h3>${esc(q)}</h3><p>${esc(a)}</p>`).join("\n")}
   return page({ lang, title: L.lessonsTitle, description: L.lessonsDescription, path: here, alt: PATHS[other(lang)].lessons, body, jsonLd });
 }
 
+/**
+ * mijntaalstudio.nl/links: the one link in the Instagram bio. Big buttons to
+ * everything else; Dutch or English after the visitor's browser language, with
+ * a switch. Not indexed: it only repeats links to the real pages.
+ */
+const LINKS = [
+  { nl: ["Plan je eerste les", "Proefles, 2e les gratis"], en: ["Book your first lesson", "Trial lesson, 2nd lesson free"], href: { nl: `${PATHS.nl.lessons}#contact`, en: `${PATHS.en.lessons}#contact` }, main: true },
+  { nl: ["Probeer de app", "Je leerpad, flashcards en oefeningen"], en: ["Try the app", "Your learning path, flashcards and exercises"], href: { nl: "/", en: "/" } },
+  { nl: ["Abonnementen", "Gratis, Onderweg of Compleet"], en: ["Plans", "Free, On the go or Compleet"], href: { nl: `${PATHS.nl.lessons}#${T.nl.plansAnchor}`, en: `${PATHS.en.lessons}#${T.en.plansAnchor}` } },
+  { nl: ["Video's op YouTube", "Uitleg en lesvideo's"], en: ["Videos on YouTube", "Explanations and lesson videos"], href: { nl: CHANNEL, en: CHANNEL }, external: true },
+  { nl: ["Gratis grammatica", "Alle uitleg, van A0 tot B2"], en: ["Free grammar guides", "Every explanation, A0 to B2"], href: { nl: PATHS.nl.grammar, en: PATHS.en.grammar } },
+  { nl: ["Reviews ★ 5,0", "Wat leerlingen zeggen"], en: ["Reviews ★ 5.0", "What students say"], href: { nl: PATHS.nl.reviews, en: PATHS.en.reviews } },
+];
+const LINKS_TEXT = {
+  nl: { tagline: "Nederlands leren met je eigen docent, online en in Rotterdam", other: "English" },
+  en: { tagline: "Learn Dutch with your own teacher, online and in Rotterdam", other: "Nederlands" },
+};
+
+function linksPage() {
+  const button = (l, lang) => {
+    const [title, sub] = l[lang];
+    const ext = l.external ? ` rel="noopener" target="_blank"` : "";
+    return `<a class="link${l.main ? " main" : ""}" href="${l.href[lang]}"${ext}><strong>${esc(title)}</strong><span>${esc(sub)}</span></a>`;
+  };
+  const block = (lang) => `<div class="links" lang="${lang}" data-links="${lang}"${lang === "en" ? " hidden" : ""}>
+  <p class="tagline">${esc(LINKS_TEXT[lang].tagline)}</p>
+  ${LINKS.map((l) => button(l, lang)).join("\n  ")}
+  <button type="button" class="switch" data-show="${other(lang)}">${LINKS_TEXT[lang].other}</button>
+</div>`;
+  return `<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Taal Studio · Links</title>
+<meta name="description" content="${esc(LINKS_TEXT.nl.tagline)}" />
+<meta name="robots" content="noindex, follow" />
+<link rel="icon" type="image/svg+xml" href="/logo-icon.svg?v=4" />
+<link rel="apple-touch-icon" href="/logo-icon-180.png?v=4" />
+<meta name="theme-color" content="#0f1115" />
+<meta property="og:title" content="Taal Studio" />
+<meta property="og:description" content="${esc(LINKS_TEXT.nl.tagline)}" />
+<meta property="og:image" content="${SITE}/og-image.jpg?v=2" />
+<style>${CSS}
+.links-page{max-width:460px;margin:0 auto;padding:2.5rem 1rem 3rem;text-align:center}
+.links-page .logo{width:84px;height:84px}
+.links-page h1{margin:.6rem 0 .2rem;font-size:1.7rem}
+.tagline{color:var(--dim);margin:0 0 1.6rem}
+.links{display:flex;flex-direction:column;gap:.75rem}
+.links[hidden]{display:none}
+.link{display:flex;flex-direction:column;gap:.1rem;padding:.95rem 1.1rem;border-radius:14px;background:var(--surface);border:1px solid var(--border);color:var(--text);text-decoration:none}
+.link strong{font-size:1.08rem}
+.link span{color:var(--dim);font-size:.9rem}
+.link:hover{border-color:var(--accent)}
+.link.main{background:linear-gradient(90deg,#4f9cf9,#2fd27a);border:none;color:#0b0d11}
+.link.main span{color:rgba(11,13,17,.75)}
+.switch{margin-top:1rem;align-self:center;background:none;border:1px solid var(--border);border-radius:8px;color:var(--dim);font:inherit;font-size:.85rem;padding:.35rem .8rem;cursor:pointer}
+</style>
+</head>
+<body>
+<main class="links-page">
+  <img class="logo" src="/logo-icon.svg?v=4" alt="" width="84" height="84" />
+  <h1>Taal Studio</h1>
+  ${block("nl")}
+  ${block("en")}
+</main>
+<script>
+(function () {
+  var show = function (lang) {
+    document.querySelectorAll("[data-links]").forEach(function (el) { el.hidden = el.dataset.links !== lang; });
+    document.documentElement.lang = lang;
+  };
+  var saved = null;
+  try { saved = localStorage.getItem("nts-lang"); } catch (e) {}
+  show(saved || ((navigator.language || "nl").toLowerCase().indexOf("nl") === 0 ? "nl" : "en"));
+  document.querySelectorAll("[data-show]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      show(b.dataset.show);
+      try { localStorage.setItem("nts-lang", b.dataset.show); } catch (e) {}
+    });
+  });
+})();
+</script>
+</body>
+</html>
+`;
+}
+
 const write = (rel, content) => {
   const file = path.join(DIST, rel.replace(/^\//, ""));
   mkdirSync(path.dirname(file), { recursive: true });
@@ -807,6 +895,9 @@ const today = new Date().toISOString().slice(0, 10);
 const urls = [{ loc: `${SITE}/`, lastmod: today, priority: "1.0" }];
 const add = (p, priority, lastmod = today, video = null) => urls.push({ loc: SITE + p, lastmod, priority, video });
 let grammarPages = 0;
+
+// The Instagram bio link (not in the sitemap: noindex).
+write("/links/index.html", linksPage());
 
 for (const lang of ["nl", "en"]) {
   write(`${PATHS[lang].lessons}index.html`, lessonsPage(lang));
