@@ -3,7 +3,7 @@ import { Demo, durationOf, FPS } from "./Demo";
 import { MANIFESTS } from "./manifests";
 import { Og } from "./Og";
 import { Avatar } from "./Avatar";
-import { StickerLogo, StickerOverview, StickerQuestion, StickerQuestionCentre, StickerQuestionLabel, StickerQuestionLight, StickerQuestionSmall } from "./Sticker";
+import { StickerLogo, StickerOverview, StickerQuestion, StickerQuestionCentre, StickerQuestionLabel, StickerQuestionLight, StickerQuestionSmall, StickerLogoQr, StickerLogoQrLight, StickerIcon, StickerWordmark, StickerLogoQuestion, StickerWordmarkQuestion, StickerLogoOverview } from "./Sticker";
 import { LessonReel, lessonDuration } from "./LessonReel";
 import { LESSONS, LESSON_VIDEOS } from "./lessons";
 import { LessonThumb, LessonVideo } from "./LessonVideo";
@@ -55,6 +55,18 @@ function Root() {
       <Still id="sticker-vraag-c-en" component={StickerQuestionLabel} defaultProps={{ lang: "en" }} width={1000} height={1000} />
       <Still id="sticker-vraag-d-en" component={StickerQuestionLight} defaultProps={{ lang: "en" }} width={1000} height={1000} />
       <Still id="sticker-overzicht-en" component={StickerOverview} defaultProps={{ lang: "en" }} width={1940} height={1940} />
+      <Still id="sticker-icoon" component={StickerIcon} width={1000} height={1000} />
+      <Still id="sticker-naam" component={StickerWordmark} width={1000} height={1000} />
+      <Still id="sticker-logo-e-nl" component={StickerLogoQr} defaultProps={{ lang: "nl" }} width={1000} height={1000} />
+      <Still id="sticker-logo-f-nl" component={StickerLogoQrLight} defaultProps={{ lang: "nl" }} width={1000} height={1000} />
+      <Still id="sticker-logo-i-nl" component={StickerLogoQuestion} defaultProps={{ lang: "nl" }} width={1000} height={1000} />
+      <Still id="sticker-logo-j-nl" component={StickerWordmarkQuestion} defaultProps={{ lang: "nl" }} width={1000} height={1000} />
+      <Still id="sticker-logo-overzicht-nl" component={StickerLogoOverview} defaultProps={{ lang: "nl" }} width={2880} height={1940} />
+      <Still id="sticker-logo-e-en" component={StickerLogoQr} defaultProps={{ lang: "en" }} width={1000} height={1000} />
+      <Still id="sticker-logo-f-en" component={StickerLogoQrLight} defaultProps={{ lang: "en" }} width={1000} height={1000} />
+      <Still id="sticker-logo-i-en" component={StickerLogoQuestion} defaultProps={{ lang: "en" }} width={1000} height={1000} />
+      <Still id="sticker-logo-j-en" component={StickerWordmarkQuestion} defaultProps={{ lang: "en" }} width={1000} height={1000} />
+      <Still id="sticker-logo-overzicht-en" component={StickerLogoOverview} defaultProps={{ lang: "en" }} width={2880} height={1940} />
     </>
   );
 }

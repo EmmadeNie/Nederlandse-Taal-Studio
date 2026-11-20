@@ -260,3 +260,126 @@ export function StickerOverview({ lang = "nl" }) {
     </AbsoluteFill>
   );
 }
+
+/* ---------- Logo stickers: with a code (E, F) and without (G-J) ---------- */
+
+/** Logo tile and "Mijn / Taal Studio", side by side. */
+function Wordmark({ scale = 1, light = false }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 26 * scale }}>
+      <div style={{ background: C.tile, borderRadius: 30 * scale, padding: 14 * scale, boxShadow: light ? "none" : "0 12px 30px rgba(0,0,0,0.4)" }}>
+        <Logo size={96 * scale} />
+      </div>
+      <div style={{ fontSize: 84 * scale, fontWeight: 800, letterSpacing: -3 * scale, color: light ? "#0b0d11" : C.text, lineHeight: 1 }}>
+        <span style={{ fontSize: 46 * scale, fontWeight: 700, color: light ? "#5b6472" : C.dim, letterSpacing: -1 * scale }}>Mijn</span>
+        <br />
+        Taal Studio
+      </div>
+    </div>
+  );
+}
+
+const ASK_LINE = (lang) => ASK[lang].join(" ");
+
+/** E / F: the wordmark on top, the code, the question below. */
+export function StickerLogoQr({ lang = "nl", light = false }) {
+  return (
+    <Shape bg={light ? "#ffffff" : DARK_BG}>
+      <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 36 }}>
+        <Wordmark scale={0.85} light={light} />
+        <div style={{ borderRadius: 44, border: light ? "6px solid #e6e8ec" : "none", boxShadow: light ? "none" : "0 30px 80px rgba(0,0,0,0.5)" }}>
+          <Qr size={560} />
+        </div>
+        <div style={{ fontSize: 50, fontWeight: 800, letterSpacing: -1.5, ...gradient(light ? ["#2f7fe0", "#1fae62"] : [C.blue, C.green]) }}>{ASK_LINE(lang)}</div>
+      </div>
+    </Shape>
+  );
+}
+export const StickerLogoQrLight = ({ lang = "nl" }) => <StickerLogoQr lang={lang} light />;
+
+/** G: just the logo, like the app icon. */
+export function StickerIcon() {
+  return (
+    <Shape bg={`radial-gradient(circle at 50% 42%, #262b36 0%, ${C.bg} 75%)`}>
+      <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <svg width={620} height={620} viewBox="5 5 30 30" style={{ transform: "translate(-30px, -30px)" }}>
+          {BLOCKS.map((b, i) => (
+            <rect key={i} x={b.x} y={b.y} width={8} height={8} rx={2} fill={b.fill} opacity={b.o} />
+          ))}
+        </svg>
+      </div>
+    </Shape>
+  );
+}
+
+/** H: the wordmark big, the address below. */
+export function StickerWordmark({ light = false }) {
+  return (
+    <Shape bg={light ? "#ffffff" : DARK_BG}>
+      <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 70 }}>
+        <Wordmark scale={1.25} light={light} />
+        <Url size={54} dark={!light} />
+      </div>
+    </Shape>
+  );
+}
+
+/** I: logo, the question big, the address. */
+export function StickerLogoQuestion({ lang = "nl" }) {
+  return (
+    <Shape bg={DARK_BG}>
+      <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "center", padding: "0 100px", gap: 48 }}>
+        <div style={{ background: C.tile, borderRadius: 44, padding: 20, boxShadow: "0 16px 40px rgba(0,0,0,0.45)" }}>
+          <Logo size={170} />
+        </div>
+        <div style={{ fontSize: 132, fontWeight: 800, letterSpacing: -5, lineHeight: 0.98, color: C.text }}>
+          {ASK[lang][0]}
+          <br />
+          <span style={gradient([C.blue, C.green])}>{ASK[lang][1]}</span>
+        </div>
+        <Url size={50} />
+      </div>
+    </Shape>
+  );
+}
+
+/** J: light, the wordmark with the question as a small line. */
+export function StickerWordmarkQuestion({ lang = "nl" }) {
+  return (
+    <Shape bg="#ffffff">
+      <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 56 }}>
+        <div style={{ fontSize: 60, fontWeight: 800, letterSpacing: -2, color: "#0b0d11" }}>
+          {ASK[lang][0]} <span style={gradient(["#2f7fe0", "#1fae62"])}>{ASK[lang][1]}</span>
+        </div>
+        <Wordmark scale={1.15} light />
+        <Url size={50} dark={false} />
+      </div>
+    </Shape>
+  );
+}
+
+/** The logo variants side by side (E-J). */
+export function StickerLogoOverview({ lang = "nl" }) {
+  const items = [
+    ["E", StickerLogoQr],
+    ["F", StickerLogoQrLight],
+    ["G", StickerIcon],
+    ["H", StickerWordmark],
+    ["I", StickerLogoQuestion],
+    ["J", StickerWordmarkQuestion],
+  ];
+  return (
+    <AbsoluteFill style={{ background: "#d9dce2", fontFamily, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gridTemplateRows: "1fr 1fr", padding: 60, gap: 60 }}>
+      {items.map(([label, Comp]) => (
+        <div key={label} style={{ position: "relative" }}>
+          <div style={{ position: "absolute", left: 0, top: 0, width: 1000, height: 1000, transform: "scale(0.88)", transformOrigin: "top left" }}>
+            <div style={{ position: "relative", width: 1000, height: 1000 }}>
+              <Comp lang={lang} />
+            </div>
+          </div>
+          <div style={{ position: "absolute", left: 0, top: 890, fontSize: 48, fontWeight: 800, color: "#0b0d11" }}>{label}</div>
+        </div>
+      ))}
+    </AbsoluteFill>
+  );
+}
