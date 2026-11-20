@@ -10,14 +10,14 @@
 export const TRIAL_DAYS = 14;
 
 export const PLAN_OFFERS = [
-  { id: "gratis", price: 0, features: ["look"] },
-  { id: "onderweg", price: 10, features: ["look", "practise"] },
+  { id: "gratis", price: 0, features: ["read", "look"] },
+  { id: "onderweg", price: 10, features: ["read", "look", "practise"] },
   // Compleet goes through the docent; with 8 lessons a month it is included.
-  { id: "compleet", price: 50, freeWithLessons: 8, featured: true, features: ["look", "practise", "lessons", "path"] },
+  { id: "compleet", price: 50, freeWithLessons: 8, featured: true, features: ["read", "look", "practise", "lessons", "path"] },
 ];
 
 /** Every feature, in the order the cards list them. */
-export const PLAN_FEATURES = ["look", "practise", "lessons", "path"];
+export const PLAN_FEATURES = ["read", "look", "practise", "lessons", "path"];
 
 export const PLAN_TEXT = {
   nl: {
@@ -34,6 +34,7 @@ export const PLAN_TEXT = {
     freeWith: (n) => `Gratis bij ${n} lessen per maand`,
     viaDocent: "Verrekend met je docent",
     feature: {
+      read: "De uitleg van alle grammatica lezen",
       look: "Je leerpad en het lesprogramma bekijken",
       practise: "Flashcards, Invullen en Vervoegen",
       lessons: "Alle lessen met uitleg, werkwoorden en woordenlijsten",
@@ -54,6 +55,7 @@ export const PLAN_TEXT = {
     freeWith: (n) => `Free with ${n} lessons a month`,
     viaDocent: "Settled with your teacher",
     feature: {
+      read: "Read the explanation of all the grammar",
       look: "View your learning path and the curriculum",
       practise: "Flashcards, Fill in and Conjugate",
       lessons: "Every lesson with explanations, verbs and word lists",

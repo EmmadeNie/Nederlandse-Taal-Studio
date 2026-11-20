@@ -11,7 +11,7 @@ import DemoVideo from "./DemoVideo";
  * when the link opens in another browser (a mail app on a phone).
  * New email addresses get an account automatically (role: leerling).
  */
-export default function LoginPage({ invited = false }) {
+export default function LoginPage({ invited = false, fromTopic = false }) {
   const { t, lang } = useI18n();
   // The public pages in the page's language.
   const pages =
@@ -25,7 +25,7 @@ export default function LoginPage({ invited = false }) {
   const [checking, setChecking] = useState(false);
   // On a phone the form starts folded behind a button, so the video and the
   // footer fit on the screen; opened, it moves above the video.
-  const [open, setOpen] = useState(invited);
+  const [open, setOpen] = useState(invited || fromTopic);
   const card = useRef(null);
   const openForm = () => {
     setOpen(true);
@@ -74,6 +74,7 @@ export default function LoginPage({ invited = false }) {
       <div className="auth-card" ref={card}>
         <Brand tagline />
         {invited && <p className="auth-invited">{t("invite.loginHint")}</p>}
+        {!invited && fromTopic && <p className="auth-invited">{t("login.topicHint")}</p>}
 
         {status === "sent" ? (
           <div className="auth-sent">

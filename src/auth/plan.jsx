@@ -11,10 +11,12 @@ const openPlans = () => navigate(PATHS.plans);
 /**
  * Subscriptions (set by hand by the docent, see *_plans.sql). Only leerlingen
  * are limited; staff always have everything.
- *   gratis    look around, open nothing
+ *   gratis    look around and read the grammar topics; no lessons, no practising
  *   trial     everything, for now (proefperiode)
  *   compleet  everything
- *   onderweg  practise only: flashcards, Invullen, Vervoegen (no lessons)
+ *   onderweg  grammar topics and practising: flashcards, Invullen, Vervoegen (no lessons)
+ * The grammar topics are open to every plan: their short version is public anyway
+ * (/grammatica/…), and the full one is what a free account adds.
  */
 export const PLANS = ["gratis", "trial", "compleet", "onderweg"];
 
