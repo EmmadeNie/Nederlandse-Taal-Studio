@@ -383,3 +383,64 @@ export function StickerLogoOverview({ lang = "nl" }) {
     </AbsoluteFill>
   );
 }
+
+/* ---------- The print sheet: every sticker once, 5×5 cm, for StickerApp ---------- */
+
+// 10 px = 1 mm. Stickers 50 mm, 3 mm apart, 4 mm from the edge: 270 × 217 mm.
+export const SHEET = { mm: 10, size: 50, gap: 3, margin: 4, cols: 5 };
+
+const SHEET_ITEMS = [
+  [StickerQuestion, {}],
+  [StickerQuestionSmall, { lang: "en" }],
+  [StickerQuestionSmall, { lang: "nl" }],
+  [StickerQuestionCentre, { lang: "en" }],
+  [StickerQuestionCentre, { lang: "nl" }],
+  [StickerLogo, {}],
+  [StickerQuestionLabel, { lang: "en" }],
+  [StickerQuestionLabel, { lang: "nl" }],
+  [StickerQuestionLight, { lang: "en" }],
+  [StickerQuestionLight, { lang: "nl" }],
+  [StickerLogoQr, { lang: "en" }],
+  [StickerLogoQr, { lang: "nl" }],
+  [StickerLogoQrLight, { lang: "en" }],
+  [StickerLogoQrLight, { lang: "nl" }],
+  [StickerIcon, {}],
+  [StickerLogoQuestion, { lang: "en" }],
+  [StickerLogoQuestion, { lang: "nl" }],
+  [StickerWordmarkQuestion, { lang: "en" }],
+  [StickerWordmarkQuestion, { lang: "nl" }],
+  [StickerWordmark, {}],
+];
+
+export const sheetSize = () => {
+  const { mm, size, gap, margin, cols } = SHEET;
+  const rows = Math.ceil(SHEET_ITEMS.length / cols);
+  return { width: (margin * 2 + cols * size + (cols - 1) * gap) * mm, height: (margin * 2 + rows * size + (rows - 1) * gap) * mm };
+};
+
+/** All stickers on one transparent sheet; the printer cuts along each sticker's edge. */
+export function StickerSheet() {
+  const { mm, size, gap, margin, cols } = SHEET;
+  const px = size * mm;
+  return (
+    <AbsoluteFill style={{ background: "transparent" }}>
+      {SHEET_ITEMS.map(([Comp, props], i) => (
+        <div
+          key={i}
+          style={{
+            position: "absolute",
+            left: (margin + (i % cols) * (size + gap)) * mm,
+            top: (margin + Math.floor(i / cols) * (size + gap)) * mm,
+            width: px,
+            height: px,
+            overflow: "hidden",
+          }}
+        >
+          <div style={{ position: "relative", width: 1000, height: 1000, transform: `scale(${px / 1000})`, transformOrigin: "top left" }}>
+            <Comp {...props} />
+          </div>
+        </div>
+      ))}
+    </AbsoluteFill>
+  );
+}

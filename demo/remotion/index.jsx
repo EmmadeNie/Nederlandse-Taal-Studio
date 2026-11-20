@@ -3,7 +3,7 @@ import { Demo, durationOf, FPS } from "./Demo";
 import { MANIFESTS } from "./manifests";
 import { Og } from "./Og";
 import { Avatar } from "./Avatar";
-import { StickerLogo, StickerOverview, StickerQuestion, StickerQuestionCentre, StickerQuestionLabel, StickerQuestionLight, StickerQuestionSmall, StickerLogoQr, StickerLogoQrLight, StickerIcon, StickerWordmark, StickerLogoQuestion, StickerWordmarkQuestion, StickerLogoOverview } from "./Sticker";
+import { StickerLogo, StickerOverview, StickerQuestion, StickerQuestionCentre, StickerQuestionLabel, StickerQuestionLight, StickerQuestionSmall, StickerLogoQr, StickerLogoQrLight, StickerIcon, StickerWordmark, StickerLogoQuestion, StickerWordmarkQuestion, StickerLogoOverview, StickerSheet, sheetSize } from "./Sticker";
 import { LessonReel, lessonDuration } from "./LessonReel";
 import { LESSONS, LESSON_VIDEOS } from "./lessons";
 import { LessonThumb, LessonVideo } from "./LessonVideo";
@@ -55,6 +55,8 @@ function Root() {
       <Still id="sticker-vraag-c-en" component={StickerQuestionLabel} defaultProps={{ lang: "en" }} width={1000} height={1000} />
       <Still id="sticker-vraag-d-en" component={StickerQuestionLight} defaultProps={{ lang: "en" }} width={1000} height={1000} />
       <Still id="sticker-overzicht-en" component={StickerOverview} defaultProps={{ lang: "en" }} width={1940} height={1940} />
+      {/* All stickers on one print sheet (5×5 cm each; --scale=1.18 gives 300 dpi) */}
+      <Still id="sticker-vel" component={StickerSheet} width={sheetSize().width} height={sheetSize().height} />
       <Still id="sticker-icoon" component={StickerIcon} width={1000} height={1000} />
       <Still id="sticker-naam" component={StickerWordmark} width={1000} height={1000} />
       <Still id="sticker-logo-e-nl" component={StickerLogoQr} defaultProps={{ lang: "nl" }} width={1000} height={1000} />
