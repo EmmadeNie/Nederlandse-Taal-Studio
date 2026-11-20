@@ -7,6 +7,7 @@
  *
  *   /nederlandse-les/  · /en/dutch-lessons/   lessons and the contact form
  *   /reviews/          · /en/reviews/          students' reviews (in their own language)
+ *   /video/…           · /en/video/…           Emma's YouTube video, one watch page each
  *   /grammatica/…      · /en/grammar/…         grammar topics: title, summary and the
  *                                              short explanation (the full one and the
  *                                              exercises stay in the app, behind the login)
@@ -137,10 +138,12 @@ form.contact .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hi
 form.contact button{justify-self:start;border:0;cursor:pointer;font:inherit}
 .note{color:var(--dim);font-size:.9rem}
 .msg{padding:.8rem 1rem;border-radius:10px}
-a.yt{position:relative;display:block;max-width:480px;border-radius:14px;overflow:hidden;border:1px solid var(--border)}
-a.yt img{display:block;width:100%;height:auto}
-a.yt .play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.6rem;color:#fff;background:rgba(0,0,0,.25);text-shadow:0 4px 20px rgba(0,0,0,.6)}
+.yt{position:relative;display:block;aspect-ratio:16/9;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:#000}
+.yt picture{display:contents}
+.yt img,.yt iframe{display:block;width:100%;height:100%;border:0;object-fit:cover}
+.yt .play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.6rem;color:#fff;background:rgba(0,0,0,.25);text-shadow:0 4px 20px rgba(0,0,0,.6)}
 a.yt:hover .play{background:rgba(0,0,0,.1)}
+.yt-meta{color:var(--dim);font-size:.9rem;margin:.6rem 0 0}
 .msg.ok{background:rgba(47,210,122,.12);border:1px solid rgba(47,210,122,.4)}
 .msg.err{background:rgba(240,90,90,.12);border:1px solid rgba(240,90,90,.4)}
 nav.crumbs{font-size:.85rem;color:var(--dim);margin-bottom:.5rem}
@@ -178,9 +181,60 @@ footer.site{margin-top:3rem;padding-top:1.25rem;border-top:1px solid var(--borde
 footer.site a{color:var(--dim)}
 `;
 
-const YOUTUBE = "https://www.youtube.com/watch?v=RPqN1txdEV4";
 const SUPERPROF = "https://www.super-prof.nl/sessions-combined-with-full-access-online-program-including-agent-practice-conversation-prepare-for-exams.html";
-const YOUTUBE_THUMB = "https://i.ytimg.com/vi/RPqN1txdEV4/hqdefault.jpg";
+/** Emma's YouTube channel (also in sameAs in index.html). */
+const CHANNEL = "https://www.youtube.com/@emmadenie2981";
+const EMMA = `${SITE}/#emma`;
+
+/**
+ * Emma's videos, one per language, each with its own watch page (Google only
+ * shows a video in its video results from a page where the video is the main
+ * content). Dates and durations are YouTube's own; the names and descriptions
+ * are the site's, so each video has a unique one.
+ */
+const VIDEOS = {
+  nl: {
+    id: "RPqN1txdEV4",
+    path: "/video/maak-kennis-met-emma/",
+    name: "Maak kennis met Emma, docent Nederlands in Rotterdam",
+    description: "Hoi, ik ben Emma en ik geef les aan wie snel Nederlands wil leren. In deze video vertel ik wie ik ben en hoe ik les geef: Nederlandse les en bijles NT2, online en in Rotterdam.",
+    uploadDate: "2025-01-14T06:04:57-08:00",
+    duration: "PT2M32S",
+    seconds: 152,
+  },
+  en: {
+    id: "MQ0Imarwjyw",
+    path: "/en/video/meet-emma/",
+    name: "Meet Emma, Dutch tutor in Rotterdam",
+    description: "Hi, I am Emma and I tutor those who want to learn Dutch quickly. In this video I tell you who I am and how I teach: Dutch lessons and NT2 tutoring, online and in Rotterdam.",
+    uploadDate: "2025-01-06T06:09:05-08:00",
+    duration: "PT2M59S",
+    seconds: 179,
+  },
+};
+const watchUrl = (v) => `https://www.youtube.com/watch?v=${v.id}`;
+const embedUrl = (v) => `https://www.youtube.com/embed/${v.id}`;
+const thumb = (v, q = "maxresdefault") => `https://i.ytimg.com/vi/${v.id}/${q}.jpg`;
+
+function videoObject(v, lang) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    "@id": `${SITE}${v.path}#video`,
+    name: v.name,
+    description: v.description,
+    thumbnailUrl: [thumb(v), thumb(v, "hqdefault")],
+    uploadDate: v.uploadDate,
+    duration: v.duration,
+    embedUrl: embedUrl(v),
+    url: SITE + v.path,
+    inLanguage: lang,
+    isFamilyFriendly: true,
+    creator: { "@type": "Person", "@id": EMMA, name: "Emma de Nie", url: SITE + PATHS.nl.lessons, sameAs: [CHANNEL] },
+    publisher: { "@type": "EducationalOrganization", "@id": `${SITE}/#org`, name: "Taal Studio", url: `${SITE}/`, logo: { "@type": "ImageObject", url: `${SITE}/logo-icon-180.png` } },
+    sameAs: [watchUrl(v)],
+  };
+}
 
 /** Paths per language. */
 const PATHS = {
@@ -210,7 +264,14 @@ const T = {
     contactH2: "Plan een proefles of stel je vraag",
     contactIntro: "Stuur een bericht, dan hoor je snel van me. Boek je een proefles, dan krijg je de 2e les gratis.",
     meetH2: "Maak alvast kennis",
-    meetText: `Bekijk <a href="${YOUTUBE}" rel="noopener" target="_blank">mijn video op YouTube</a>: wie ik ben en hoe ik les geef.`,
+    meetText: `In <a href="${VIDEOS.nl.path}">mijn video</a> vertel ik wie ik ben en hoe ik les geef. Meer op <a href="${CHANNEL}" rel="noopener" target="_blank">mijn YouTube-kanaal</a>.`,
+    play: "Speel de video af",
+    youtube: "YouTube",
+    videoTitle: (v) => `${v.name} (video) | Taal Studio`,
+    videoCrumb: "Video",
+    videoMeta: (v) => `Video · ${Math.floor(v.seconds / 60)}:${String(v.seconds % 60).padStart(2, "0")} min · in het Nederlands`,
+    videoLinks: (v) => `<a href="${watchUrl(v)}" rel="noopener" target="_blank">Bekijk op YouTube</a> · <a href="${CHANNEL}" rel="noopener" target="_blank">Mijn YouTube-kanaal</a>`,
+    videoCta: "<strong>Zin om met me te beginnen?</strong> Plan een proefles, dan kijken we samen naar je niveau en je doel. De 2e les is gratis.",
     howH2: "Zo werkt Taal Studio",
     how: [
       ["Je eigen leerpad", "Je docent zet de lessen die bij jou passen op je bord: wat je nu doet, je huiswerk en wat je al beheerst."],
@@ -291,7 +352,14 @@ const T = {
     contactH2: "Book a trial lesson or ask a question",
     contactIntro: "Send me a message and you will hear from me soon. Book a trial lesson and your 2nd lesson is free.",
     meetH2: "Get to know me",
-    meetText: `Watch <a href="${YOUTUBE}" rel="noopener" target="_blank">my video on YouTube</a>: who I am and how I teach.`,
+    meetText: `In <a href="${VIDEOS.en.path}">my video</a> I tell you who I am and how I teach. More on <a href="${CHANNEL}" rel="noopener" target="_blank">my YouTube channel</a>.`,
+    play: "Play the video",
+    youtube: "YouTube",
+    videoTitle: (v) => `${v.name} (video) | Taal Studio`,
+    videoCrumb: "Video",
+    videoMeta: (v) => `Video · ${Math.floor(v.seconds / 60)}:${String(v.seconds % 60).padStart(2, "0")} min · in English`,
+    videoLinks: (v) => `<a href="${watchUrl(v)}" rel="noopener" target="_blank">Watch on YouTube</a> · <a href="${CHANNEL}" rel="noopener" target="_blank">My YouTube channel</a>`,
+    videoCta: "<strong>Want to start with me?</strong> Book a trial lesson and we will look at your level and your goal together. Your 2nd lesson is free.",
     howH2: "How Taal Studio works",
     how: [
       ["Your own learning path", "Your teacher puts the lessons that suit you on your board: what you are working on, your homework and what you already master."],
@@ -355,7 +423,7 @@ const T = {
 
 const LANG_SCRIPT = `<script>document.querySelectorAll("[data-lang]").forEach(function(a){a.addEventListener("click",function(){try{localStorage.setItem("nts-lang",a.dataset.lang)}catch(e){}})})</script>`;
 
-function page({ lang, title, description, path: here, alt, body, jsonLd }) {
+function page({ lang, title, description, path: here, alt, body, jsonLd, og = {} }) {
   const L = T[lang];
   const canonical = SITE + here;
   const alternates = alt
@@ -378,15 +446,15 @@ ${alternates}
 <link rel="icon" type="image/svg+xml" href="/logo-icon.svg?v=4" />
 <link rel="apple-touch-icon" href="/logo-icon-180.png?v=4" />
 <meta name="theme-color" content="#0f1115" />
-<meta property="og:type" content="website" />
+<meta property="og:type" content="${og.type || "website"}" />
 <meta property="og:site_name" content="Taal Studio" />
 <meta property="og:locale" content="${L.locale}" />
 <meta property="og:url" content="${canonical}" />
 <meta property="og:title" content="${esc(title)}" />
 <meta property="og:description" content="${esc(description)}" />
-<meta property="og:image" content="${SITE}/og-image.jpg?v=2" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
+<meta property="og:image" content="${og.image || `${SITE}/og-image.jpg?v=2`}" />
+<meta property="og:image:width" content="${og.image ? 1280 : 1200}" />
+<meta property="og:image:height" content="${og.image ? 720 : 630}" />
 <meta name="twitter:card" content="summary_large_image" />
 <style>${CSS}</style>
 ${jsonLd.map((j) => `<script type="application/ld+json">${JSON.stringify(j).replace(/</g, "\\u003c")}</script>`).join("\n")}
@@ -399,7 +467,7 @@ ${jsonLd.map((j) => `<script type="application/ld+json">${JSON.stringify(j).repl
 </header>
 ${body}
 <footer class="site">
-  <p><a href="/">Taal Studio</a> · ${L.footer} · <a href="${PATHS[lang].lessons}">${L.menuLessons}</a> · <a href="${PATHS[lang].lessons}#${L.plansAnchor}">${L.menuPlans}</a> · <a href="${PATHS[lang].reviews}">${L.menuReviews}</a> · <a href="${SUPERPROF}" rel="noopener" target="_blank">${L.superprof}</a></p>
+  <p><a href="/">Taal Studio</a> · ${L.footer} · <a href="${PATHS[lang].lessons}">${L.menuLessons}</a> · <a href="${PATHS[lang].lessons}#${L.plansAnchor}">${L.menuPlans}</a> · <a href="${PATHS[lang].reviews}">${L.menuReviews}</a> · <a href="${SUPERPROF}" rel="noopener" target="_blank">${L.superprof}</a> · <a href="${CHANNEL}" rel="noopener" target="_blank">YouTube</a></p>
 </footer>
 </div>
 ${LANG_SCRIPT}
@@ -615,6 +683,45 @@ function contactForm(lang) {
 </script>`;
 }
 
+/**
+ * A thumbnail that loads YouTube's player only when clicked (keeps the page
+ * fast). Without JavaScript it is a link to the video's watch page.
+ */
+function liteEmbed(v, lang) {
+  return `<a class="yt" href="${v.path}" data-yt="${v.id}" aria-label="${esc(T[lang].play)}: ${esc(v.name)}">
+  <picture><source type="image/webp" srcset="https://i.ytimg.com/vi_webp/${v.id}/maxresdefault.webp" /><img src="${thumb(v)}" alt="${esc(v.name)}" width="1280" height="720" loading="lazy" /></picture>
+  <span class="play" aria-hidden="true">▶</span>
+</a>
+<script>document.querySelectorAll("a.yt[data-yt]").forEach(function(a){a.addEventListener("click",function(e){e.preventDefault();var f=document.createElement("iframe");f.src="https://www.youtube-nocookie.com/embed/"+a.dataset.yt+"?autoplay=1&rel=0";f.title=a.getAttribute("aria-label");f.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";f.allowFullscreen=true;var d=document.createElement("div");d.className="yt";d.appendChild(f);a.replaceWith(d)})})</script>`;
+}
+
+/**
+ * The watch page of a video: the player itself is the main content, loaded
+ * straight away (Google doesn't index a video that needs a click to load).
+ */
+function videoPage(lang) {
+  const L = T[lang];
+  const v = VIDEOS[lang];
+  const here = v.path;
+  const body = `
+<nav class="crumbs"><a href="/">Taal Studio</a> › <a href="${PATHS[lang].lessons}">${L.menuLessons}</a> › ${L.videoCrumb}</nav>
+<h1>${esc(v.name)}</h1>
+<div class="yt"><iframe src="${embedUrl(v)}?rel=0" title="${esc(v.name)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+<p class="yt-meta">${L.videoMeta(v)} · ${L.videoLinks(v)}</p>
+<p class="lead">${esc(v.description)}</p>
+<div class="cta">
+  <p>${L.videoCta}</p>
+  <a class="btn" href="${PATHS[lang].lessons}#contact">${L.ctaButton}</a>
+</div>
+`;
+  const jsonLd = [
+    videoObject(v, lang),
+    { "@context": "https://schema.org", "@type": "WebPage", "@id": `${SITE}${here}`, url: SITE + here, name: v.name, inLanguage: lang, primaryImageOfPage: thumb(v), mainEntity: { "@id": `${SITE}${here}#video` }, isPartOf: { "@id": `${SITE}/#website` } },
+    breadcrumbs([["Taal Studio", `${SITE}/`], [L.serviceName, SITE + PATHS[lang].lessons], [v.name, SITE + here]]),
+  ];
+  return page({ lang, title: L.videoTitle(v), description: v.description, path: here, alt: VIDEOS[other(lang)].path, body, jsonLd, og: { type: "video.other", image: thumb(v) } });
+}
+
 function lessonsPage(lang) {
   const L = T[lang];
   const here = PATHS[lang].lessons;
@@ -632,10 +739,7 @@ function lessonsPage(lang) {
 </section>
 
 <h2>${L.meetH2}</h2>
-<a class="yt" href="${YOUTUBE}" rel="noopener" target="_blank">
-  <img src="${YOUTUBE_THUMB}" alt="Video: Do you want to learn Dutch?" width="480" height="360" loading="lazy" />
-  <span class="play" aria-hidden="true">▶</span>
-</a>
+${liteEmbed(VIDEOS[lang], lang)}
 <p>${L.meetText}</p>
 
 <h2>${L.howH2}</h2>
@@ -676,6 +780,7 @@ ${L.faq.map(([q, a]) => `<h3>${esc(q)}</h3><p>${esc(a)}</p>`).join("\n")}
       areaServed: [{ "@type": "City", name: "Rotterdam" }, { "@type": "Country", name: "Nederland" }],
       provider: { "@type": "EducationalOrganization", "@id": `${SITE}/#org`, name: "Taal Studio", url: `${SITE}/` },
       offers: { "@type": "Offer", description: L.offer },
+      subjectOf: { "@id": `${SITE}${VIDEOS[lang].path}#video` },
     },
     { "@context": "https://schema.org", "@type": "ContactPage", name: L.lessonsTitle, url, about: { "@id": `${SITE}/#org` } },
     {
@@ -700,7 +805,7 @@ const topics = (await loadTopics()).filter((t) => t.slug && /^[a-z0-9-]+$/.test(
 
 const today = new Date().toISOString().slice(0, 10);
 const urls = [{ loc: `${SITE}/`, lastmod: today, priority: "1.0" }];
-const add = (p, priority, lastmod = today) => urls.push({ loc: SITE + p, lastmod, priority });
+const add = (p, priority, lastmod = today, video = null) => urls.push({ loc: SITE + p, lastmod, priority, video });
 let grammarPages = 0;
 
 for (const lang of ["nl", "en"]) {
@@ -708,6 +813,8 @@ for (const lang of ["nl", "en"]) {
   add(PATHS[lang].lessons, "0.9");
   write(`${PATHS[lang].reviews}index.html`, reviewsPage(lang));
   add(PATHS[lang].reviews, "0.6");
+  write(`${VIDEOS[lang].path}index.html`, videoPage(lang));
+  add(VIDEOS[lang].path, "0.6", today, VIDEOS[lang]);
   if (topics.length) {
     write(`${PATHS[lang].grammar}index.html`, indexPage(topics, lang));
     add(PATHS[lang].grammar, "0.7");
@@ -720,11 +827,15 @@ for (const lang of ["nl", "en"]) {
   }
 }
 
+/** A video's entry in the sitemap (Google's video sitemap extension). */
+const videoTag = (v) =>
+  `<video:video><video:thumbnail_loc>${thumb(v)}</video:thumbnail_loc><video:title>${esc(v.name)}</video:title><video:description>${esc(v.description)}</video:description><video:player_loc>${embedUrl(v)}</video:player_loc><video:duration>${v.seconds}</video:duration><video:publication_date>${v.uploadDate}</video:publication_date><video:family_friendly>yes</video:family_friendly></video:video>`;
+
 write(
   "sitemap.xml",
   `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map((u) => `  <url><loc>${u.loc}</loc><lastmod>${u.lastmod}</lastmod><priority>${u.priority}</priority></url>`).join("\n")}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+${urls.map((u) => `  <url><loc>${u.loc}</loc><lastmod>${u.lastmod}</lastmod><priority>${u.priority}</priority>${u.video ? videoTag(u.video) : ""}</url>`).join("\n")}
 </urlset>
 `,
 );
@@ -740,4 +851,4 @@ Sitemap: ${SITE}/sitemap.xml
 `,
 );
 
-console.log(`build-seo: lessons & contact and reviews in NL and EN, ${grammarPages} grammar pages, sitemap with ${urls.length} URLs, robots.txt`);
+console.log(`build-seo: lessons & contact, reviews and video in NL and EN, ${grammarPages} grammar pages, sitemap with ${urls.length} URLs, robots.txt`);
