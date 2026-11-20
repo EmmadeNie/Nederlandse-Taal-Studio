@@ -2,6 +2,8 @@ import { Composition, Still, registerRoot } from "remotion";
 import { Demo, durationOf, FPS } from "./Demo";
 import { MANIFESTS } from "./manifests";
 import { Og } from "./Og";
+import { LessonReel, lessonDuration } from "./LessonReel";
+import { LESSONS } from "./lessons";
 
 function Root() {
   return (
@@ -17,6 +19,12 @@ function Root() {
         <Composition key={`${lang}-promo`} id={`promo-${lang}`} component={Demo} defaultProps={{ lang, cut: "promo" }} durationInFrames={durationOf("promo")} fps={FPS} width={1080} height={1920} />,
         <Composition key={`${lang}-quiz`} id={`promo-quiz-${lang}`} component={Demo} defaultProps={{ lang, cut: "quiz" }} durationInFrames={durationOf("quiz")} fps={FPS} width={1080} height={1920} />,
       ])}
+      {/* Lesson reels (9:16): the grammar of one lesson, then a quiz. */}
+      {Object.keys(LESSONS).flatMap((lesson) =>
+        ["nl", "en"].map((lang) => (
+          <Composition key={`${lesson}-${lang}`} id={`lesson-${lesson}-${lang}`} component={LessonReel} defaultProps={{ lesson, lang }} durationInFrames={lessonDuration(lesson)} fps={FPS} width={1080} height={1920} />
+        )),
+      )}
       {/* The link preview for WhatsApp, LinkedIn & co. */}
       <Still id="og" component={Og} defaultProps={{ lang: "nl" }} width={1200} height={630} />
     </>
