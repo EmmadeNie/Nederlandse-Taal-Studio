@@ -902,10 +902,12 @@ ${L.faq.map(([q, a]) => `<h3>${esc(q)}</h3><p>${esc(a)}</p>`).join("\n")}
  * everything else; Dutch or English after the visitor's browser language, with
  * a switch. Not indexed: it only repeats links to the real pages.
  */
+const INSTAGRAM = "https://www.instagram.com/mijntaalstudio/";
+
 const LINKS = [
-  // Free content first; lessons with Emma further down.
-  { nl: ["Gratis grammatica", "Alle uitleg, van A0 tot B2"], en: ["Free grammar guides", "Every explanation, A0 to B2"], href: { nl: PATHS.nl.grammar, en: PATHS.en.grammar }, main: true },
-  { nl: ["Lesvideo's op YouTube", "Uitleg, voorbeelden en quizzen"], en: ["Lesson videos on YouTube", "Explanations, examples and quizzes"], href: { nl: STUDIO_CHANNEL, en: STUDIO_CHANNEL }, external: true },
+  // The content first (videos, Instagram, the app); lessons with Emma further down.
+  { nl: ["Lesvideo's op YouTube", "Uitleg, voorbeelden en quizzen"], en: ["Lesson videos on YouTube", "Explanations, examples and quizzes"], href: { nl: STUDIO_CHANNEL, en: STUDIO_CHANNEL }, external: true, main: true },
+  { nl: ["Instagram @mijntaalstudio", "Korte lessen en quizzen"], en: ["Instagram @mijntaalstudio", "Short lessons and quizzes"], href: { nl: INSTAGRAM, en: INSTAGRAM }, external: true },
   { nl: ["Oefen in de app", "Je leerpad, flashcards en oefeningen"], en: ["Practise in the app", "Your learning path, flashcards and exercises"], href: { nl: "/", en: "/" } },
   { nl: ["Abonnementen", "Gratis, Onderweg of Compleet"], en: ["Plans", "Free, On the go or Compleet"], href: { nl: `${PATHS.nl.lessons}#${T.nl.plansAnchor}`, en: `${PATHS.en.lessons}#${T.en.plansAnchor}` } },
   { nl: ["Les met een docent", "Online of in Rotterdam"], en: ["Lessons with a teacher", "Online or in Rotterdam"], href: { nl: PATHS.nl.lessons, en: PATHS.en.lessons } },
