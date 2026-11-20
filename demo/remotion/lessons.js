@@ -116,6 +116,16 @@ export const LESSON_VIDEOS = {
     ],
     // Step 4: jij after the verb.
     inversion: { verb: "word.spelen", rest: "tennis", first: "Vandaag" },
+    // Words on screen that aren't verbs, with their English, for the translation
+    // captions (CC) and the description. Per scene kind.
+    glossary: {
+      hook: [["werkwoord", "verb"], ["tegenwoordige tijd", "present tense"], ["regelmatig", "regular"]],
+      agenda: [["stam", "stem"], ["uitgang", "ending"], ["werkwoord", "verb"]],
+      intro: [["onderwerp", "subject"], ["hele werkwoord", "infinitive (whole verb)"]],
+      inversion: [["vandaag", "today"]],
+      inversionNote: [["Praat jij?", "Are you talking?"], ["Werkt hij?", "Does he work?"], ["Werkt u?", "Do you work?"]],
+    },
+    pronouns: [["ik", "I"], ["jij / je", "you"], ["u", "you (polite)"], ["hij / zij / het", "he / she / it"], ["wij / we", "we"], ["jullie", "you (plural)"], ["zij / ze", "they"]],
     quiz: [
       { verb: "word.wonen", person: "ik", sentence: "Ik ___ in Rotterdam.", note: "ik" },
       { verb: "word.werken", person: "hij", sentence: "Hij ___ bij een bank.", note: "plusT" },
@@ -134,6 +144,7 @@ export const LESSON_VIDEOS = {
         sub: "Uitleg in 4 stappen · daarna een quiz",
         chapters: { intro: "Intro", stem: "De stam", ending: "De uitgang", stemT: "Stam op -t", inversion: "Jij achter het werkwoord", summary: "Samenvatting", quiz: "Quiz" },
         agendaTitle: "In deze les",
+        ccHint: "Vertalingen? Zet de ondertiteling (CC) aan",
         introTitle: "Het werkwoord verandert met het onderwerp",
         introLabels: ["stam", "stam + t", "hele werkwoord"],
         rule: "ik: stam  ·  jij / hij: stam + t  ·  wij / jullie / zij: hele werkwoord",
@@ -187,6 +198,15 @@ export const LESSON_VIDEOS = {
         outroTitle: "Oefen deze werkwoorden in de app",
         outroUrl: "mijntaalstudio.nl/grammatica/werkwoorden-vervoegen",
         outroCta: "Abonneer je voor meer lessen",
+        description: {
+          lead: "Regelmatige werkwoorden in de tegenwoordige tijd (A1), in 4 stappen: de stam, de uitgang, een stam op -t en jij achter het werkwoord. Daarna een quiz met 8 vragen.",
+          page: "📖 Uitleg op de site",
+          cc: "💬 Vertalingen in het Engels: zet de ondertiteling (CC) aan.",
+          chapters: "Hoofdstukken",
+          verbs: "Werkwoorden in deze video",
+          pronouns: "Persoonlijke voornaamwoorden",
+          footer: "Taal Studio · Nederlands leren, op jouw niveau",
+        },
       },
       en: {
         topic: "Present tense",
@@ -195,6 +215,7 @@ export const LESSON_VIDEOS = {
         sub: "Explained in 4 steps · then a quiz",
         chapters: { intro: "Intro", stem: "The stem", ending: "The ending", stemT: "Stem ending in -t", inversion: "Jij after the verb", summary: "Summary", quiz: "Quiz" },
         agendaTitle: "In this lesson",
+        ccHint: "Translations? Turn on captions (CC)",
         introTitle: "The verb changes with the subject",
         introLabels: ["stem", "stem + t", "whole verb"],
         rule: "ik: stem  ·  jij / hij: stem + t  ·  wij / jullie / zij: whole verb",
@@ -257,6 +278,15 @@ export const LESSON_VIDEOS = {
         outroTitle: "Practise these verbs in the app",
         outroUrl: "mijntaalstudio.nl/en/grammar/werkwoorden-vervoegen",
         outroCta: "Subscribe for more lessons",
+        description: {
+          lead: "Dutch regular verbs in the present tense (A1), in 4 steps: the stem, the ending, a stem ending in -t, and jij after the verb. Then a quiz with 8 questions.",
+          page: "📖 Explanation on the site",
+          cc: "💬 Translations of the Dutch words: turn on captions (CC).",
+          chapters: "Chapters",
+          verbs: "Verbs in this video",
+          pronouns: "Personal pronouns",
+          footer: "Taal Studio · Learn Dutch at your level",
+        },
       },
     },
   },

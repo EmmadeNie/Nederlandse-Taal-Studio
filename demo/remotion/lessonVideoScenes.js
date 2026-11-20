@@ -49,3 +49,10 @@ export function videoChapters(id, lang) {
   }
   return lines;
 }
+
+// When a scene's explanation line appears (frames into the scene). Shared by
+// LessonVideo.jsx and the captions, so a caption changes when the screen does.
+export const stemStep = (g) => (g.key === "basic" ? S(1.4) : S(2.3));
+export const stemsWhyAt = (g) => 20 + g.verbs.length * stemStep(g) + S(0.6);
+export const STEM_T_STEP = S(2.2);
+export const stemTNoteAt = (rows) => 20 + rows.length * STEM_T_STEP + S(0.4);

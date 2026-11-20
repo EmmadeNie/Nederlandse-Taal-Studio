@@ -8,7 +8,7 @@ import { Backdrop, C, LogoMark, fontFamily } from "./Demo";
 import { LESSON_MUSIC } from "./manifests";
 import { LESSON_VIDEOS, verb } from "./lessons";
 import { FallingT, Ring, card, gradientText, pop } from "./LessonReel";
-import { ANSWER_AT, HEADER_CHAPTERS, S, videoDuration, videoScenes } from "./lessonVideoScenes";
+import { ANSWER_AT, HEADER_CHAPTERS, S, STEM_T_STEP, stemStep, stemTNoteAt, stemsWhyAt, videoDuration, videoScenes } from "./lessonVideoScenes";
 
 const FADE = 10;
 const cap = (s) => s[0].toUpperCase() + s.slice(1);
@@ -165,6 +165,7 @@ function Hook({ L, T }) {
 function Agenda({ T }) {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const hint = pop(f, fps, S(2.5));
   return (
     <>
       <Heading title={T.agendaTitle} />
@@ -181,6 +182,9 @@ function Agenda({ T }) {
             </div>
           );
         })}
+      </div>
+      <div style={{ alignSelf: "flex-start", marginTop: 44, fontSize: 32, fontWeight: 700, padding: "12px 26px", borderRadius: 999, background: "rgba(240,140,60,0.14)", border: `1px solid rgba(240,140,60,0.5)`, color: C.orange, opacity: hint, transform: `translateY(${(1 - hint) * 16}px)` }}>
+        💬 {T.ccHint}
       </div>
     </>
   );
@@ -249,8 +253,8 @@ function Stems({ g, T }) {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = T.stems[g.key];
-  const step = g.key === "basic" ? S(1.4) : S(2.3);
-  const why = pop(f, fps, 20 + g.verbs.length * step + S(0.6));
+  const step = stemStep(g);
+  const why = pop(f, fps, stemsWhyAt(g));
   return (
     <>
       <Heading title={t.title} sub={t.sub} />
@@ -382,8 +386,8 @@ function Examples({ L, T }) {
 function StemT({ L, T }) {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const step = S(2.2);
-  const note = pop(f, fps, 20 + L.stemT.length * step + S(0.4));
+  const step = STEM_T_STEP;
+  const note = pop(f, fps, stemTNoteAt(L.stemT));
   return (
     <>
       <Heading title={T.stemTTitle} sub={T.stemTSub} />
