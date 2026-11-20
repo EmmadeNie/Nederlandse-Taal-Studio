@@ -18,7 +18,7 @@ const BLOCKS = [
   { x: 26, y: 6, fill: C.orange, o: 1 },
 ];
 
-function Logo({ size }) {
+export function Logo({ size }) {
   return (
     <svg width={size} height={size} viewBox="5 5 30 30" style={{ display: "block" }}>
       {BLOCKS.map((b, i) => (
@@ -32,7 +32,7 @@ function Logo({ size }) {
  * The QR code on a white tile (with the quiet zone), the logo in the middle.
  * Error correction H, so the logo over the centre doesn't stop it scanning.
  */
-function Qr({ size, url = STICKER_URL }) {
+export function Qr({ size, url = STICKER_URL }) {
   const qr = QRCode.create(url, { errorCorrectionLevel: "H" });
   const n = qr.modules.size;
   const quiet = 3;
@@ -63,7 +63,7 @@ function Qr({ size, url = STICKER_URL }) {
   );
 }
 
-const gradient = (stops) => ({
+export const gradient = (stops) => ({
   color: "transparent",
   backgroundImage: `linear-gradient(90deg, ${stops.join(", ")})`,
   WebkitBackgroundClip: "text",
@@ -134,11 +134,11 @@ export function StickerLogo() {
 /* ---------- More "Nederlands leren?" variants: smaller text, bigger code (good down to 6×6 cm) ---------- */
 
 /** The question, in two parts: the second part gets the gradient. */
-const ASK = { nl: ["Nederlands", "leren?"], en: ["Learning", "Dutch?"] };
+export const ASK = { nl: ["Nederlands", "leren?"], en: ["Learning", "Dutch?"] };
 
-const DARK_BG = `radial-gradient(circle at 25% 15%, #22304a 0%, ${C.bg} 70%)`;
+export const DARK_BG = `radial-gradient(circle at 25% 15%, #22304a 0%, ${C.bg} 70%)`;
 
-function Url({ size = 40, dark = true }) {
+export function Url({ size = 40, dark = true }) {
   return (
     <span style={{ fontSize: size, fontWeight: 800, letterSpacing: -1, ...gradient(dark ? [C.blue, C.green, C.orange] : ["#2f7fe0", "#1fae62"]) }}>mijntaalstudio.nl</span>
   );
@@ -264,7 +264,7 @@ export function StickerOverview({ lang = "nl" }) {
 /* ---------- Logo stickers: with a code (E, F) and without (G-J) ---------- */
 
 /** Logo tile and "Mijn / Taal Studio", side by side. */
-function Wordmark({ scale = 1, light = false }) {
+export function Wordmark({ scale = 1, light = false }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 26 * scale }}>
       <div style={{ background: C.tile, borderRadius: 30 * scale, padding: 14 * scale, boxShadow: light ? "none" : "0 12px 30px rgba(0,0,0,0.4)" }}>
