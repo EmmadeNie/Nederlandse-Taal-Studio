@@ -3,6 +3,7 @@ import { Demo, durationOf, FPS } from "./Demo";
 import { MANIFESTS } from "./manifests";
 import { Og } from "./Og";
 import { Avatar } from "./Avatar";
+import { StickerLogo, StickerQuestion } from "./Sticker";
 import { LessonReel, lessonDuration } from "./LessonReel";
 import { LESSONS, LESSON_VIDEOS } from "./lessons";
 import { LessonThumb, LessonVideo } from "./LessonVideo";
@@ -41,6 +42,9 @@ function Root() {
       <Still id="og" component={Og} defaultProps={{ lang: "nl" }} width={1200} height={630} />
       {/* Profile picture for Instagram, YouTube & co. */}
       <Still id="avatar" component={Avatar} width={1080} height={1080} />
+      {/* Stickers with a QR code (8×8 cm; render with --scale=3 for print) */}
+      <Still id="sticker-vraag" component={StickerQuestion} width={1000} height={1000} />
+      <Still id="sticker-logo" component={StickerLogo} width={1000} height={1000} />
     </>
   );
 }
