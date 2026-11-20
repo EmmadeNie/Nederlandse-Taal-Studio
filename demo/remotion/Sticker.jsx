@@ -63,6 +63,9 @@ export function Qr({ size, url = STICKER_URL }) {
   );
 }
 
+/** Background of the light stickers: almost white, so it still reads as white but is not cut away as "empty". */
+const LIGHT = "#f3f4f7";
+
 export const gradient = (stops) => ({
   color: "transparent",
   backgroundImage: `linear-gradient(90deg, ${stops.join(", ")})`,
@@ -73,7 +76,8 @@ export const gradient = (stops) => ({
 function Shape({ bg, children }) {
   return (
     <AbsoluteFill style={{ background: "transparent" }}>
-      <div style={{ position: "absolute", inset: 0, borderRadius: 130, background: bg, overflow: "hidden", fontFamily }}>{children}</div>
+      {/* Light stickers get a thin grey edge: it shows where the sticker ends on white, and lets cutters trace the outline. */}
+      <div style={{ position: "absolute", inset: 0, borderRadius: 130, background: bg, overflow: "hidden", fontFamily, boxShadow: bg === LIGHT ? "inset 0 0 0 14px #c4cad3" : undefined }}>{children}</div>
     </AbsoluteFill>
   );
 }
@@ -110,7 +114,7 @@ export function StickerQuestion() {
 
 export function StickerLogo() {
   return (
-    <Shape bg="#ffffff">
+    <Shape bg={LIGHT}>
       <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 46 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 26 }}>
           <div style={{ background: C.tile, borderRadius: 30, padding: 14 }}>
@@ -178,7 +182,7 @@ export function StickerQuestionSmall({ lang = "nl" }) {
 export function StickerQuestionCentre({ light = false, lang = "nl" }) {
   const text = light ? "#0b0d11" : C.text;
   return (
-    <Shape bg={light ? "#ffffff" : DARK_BG}>
+    <Shape bg={light ? LIGHT : DARK_BG}>
       <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 28 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 18, fontSize: 66, fontWeight: 800, letterSpacing: -2, color: text }}>
           <span>
@@ -284,7 +288,7 @@ const ASK_LINE = (lang) => ASK[lang].join(" ");
 /** E / F: the wordmark on top, the code, the question below. */
 export function StickerLogoQr({ lang = "nl", light = false }) {
   return (
-    <Shape bg={light ? "#ffffff" : DARK_BG}>
+    <Shape bg={light ? LIGHT : DARK_BG}>
       <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 36 }}>
         <Wordmark scale={0.85} light={light} />
         <div style={{ borderRadius: 44, border: light ? "6px solid #e6e8ec" : "none", boxShadow: light ? "none" : "0 30px 80px rgba(0,0,0,0.5)" }}>
@@ -315,7 +319,7 @@ export function StickerIcon() {
 /** H: the wordmark big, the address below. */
 export function StickerWordmark({ light = false }) {
   return (
-    <Shape bg={light ? "#ffffff" : DARK_BG}>
+    <Shape bg={light ? LIGHT : DARK_BG}>
       <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 70 }}>
         <Wordmark scale={1.25} light={light} />
         <Url size={54} dark={!light} />
@@ -346,7 +350,7 @@ export function StickerLogoQuestion({ lang = "nl" }) {
 /** J: light, the wordmark with the question as a small line. */
 export function StickerWordmarkQuestion({ lang = "nl" }) {
   return (
-    <Shape bg="#ffffff">
+    <Shape bg={LIGHT}>
       <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 56 }}>
         <div style={{ fontSize: 60, fontWeight: 800, letterSpacing: -2, color: "#0b0d11" }}>
           {ASK[lang][0]} <span style={gradient(["#2f7fe0", "#1fae62"])}>{ASK[lang][1]}</span>
