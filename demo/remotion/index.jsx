@@ -2,6 +2,7 @@ import { Composition, Still, registerRoot } from "remotion";
 import { Demo, durationOf, FPS } from "./Demo";
 import { MANIFESTS } from "./manifests";
 import { Og } from "./Og";
+import { Avatar } from "./Avatar";
 import { LessonReel, lessonDuration } from "./LessonReel";
 import { LESSONS, LESSON_VIDEOS } from "./lessons";
 import { LessonThumb, LessonVideo } from "./LessonVideo";
@@ -38,6 +39,8 @@ function Root() {
       )}
       {/* The link preview for WhatsApp, LinkedIn & co. */}
       <Still id="og" component={Og} defaultProps={{ lang: "nl" }} width={1200} height={630} />
+      {/* Profile picture for Instagram, YouTube & co. */}
+      <Still id="avatar" component={Avatar} width={1080} height={1080} />
     </>
   );
 }
