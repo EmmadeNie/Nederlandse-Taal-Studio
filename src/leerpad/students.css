@@ -91,3 +91,54 @@
   line-height: 1.45;
   margin: -0.75rem 0 1.25rem;
 }
+
+/* Lesleerlingen: the students the docent teaches, one click away (Leerpaden page) */
+.lp-taught {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+}
+
+.lp-taught-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  margin-right: 0.25rem;
+}
+
+.lp-taught-chip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.3rem 0.8rem;
+  cursor: pointer;
+}
+
+.lp-taught-chip:hover {
+  border-color: var(--accent);
+}
+
+.lp-taught-chip[aria-pressed="true"] {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+  cursor: default;
+}
+
+.lp-taught-hint {
+  font-size: 0.8rem;
+  margin: 0 0 0.75rem 0;
+}
+
+.lp-inles-btn[aria-pressed="true"] {
+  border-color: var(--accent);
+  color: var(--accent);
+}

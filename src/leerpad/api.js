@@ -118,10 +118,14 @@ export async function lessonUsage(lessonId) {
 export const listStudents = () =>
   supabase
     .from("profiles")
-    .select("id, user_id, display_name, email, invite_code")
+    .select("id, user_id, display_name, email, invite_code, in_les")
     .eq("role", "leerling")
     .order("display_name")
     .then(check);
+
+/** Docent only: mark a student as one she actually teaches (quick switcher on Leerpaden). */
+export const setInLes = (studentId, taught) =>
+  supabase.rpc("set_in_les", { target_user: studentId, taught }).then(check);
 
 export const ensureLeerpad = (studentId) =>
   supabase.rpc("ensure_leerpad_lanes", { student: studentId }).then(check);

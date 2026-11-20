@@ -1077,6 +1077,13 @@ export const messages = {
     "lpd.manage": "Uitnodiging en beheer",
     "lpd.manageTitle": "{name}: uitnodiging en beheer",
     "lpd.searchStudent": "Zoek een leerling…",
+    "lpd.taught": "Lesleerlingen",
+    "lpd.otherStudents": "Andere leerlingen",
+    "lpd.taughtHint": "Tip: zet bij een leerling aan wie je lesgeeft 'Lesleerling' aan; die staan dan hier als knoppen om snel te wisselen.",
+    "lpd.inLesOn": "Lesleerling",
+    "lpd.inLesOff": "Markeer als lesleerling",
+    "lpd.inLesOnTitle": "Je geeft deze leerling les: zet deze leerling bovenaan bij de lesleerlingen",
+    "lpd.inLesOffTitle": "Haal deze leerling weg bij de lesleerlingen (het leerpad blijft gewoon bestaan)",
 
     // Leerlingen klaarzetten (zonder account)
     "users.pending": "nog niet ingelogd",
@@ -2188,6 +2195,13 @@ export const messages = {
     "lpd.manage": "Invitation and settings",
     "lpd.manageTitle": "{name}: invitation and settings",
     "lpd.searchStudent": "Search for a student…",
+    "lpd.taught": "My students",
+    "lpd.otherStudents": "Other students",
+    "lpd.taughtHint": "Tip: turn on 'My student' for the students you teach; they then show up here as buttons to switch quickly.",
+    "lpd.inLesOn": "My student",
+    "lpd.inLesOff": "Mark as my student",
+    "lpd.inLesOnTitle": "You teach this student: put them at the top with your students",
+    "lpd.inLesOffTitle": "Remove this student from your students (their learning path stays)",
 
     "users.pending": "not signed in yet",
     "students.addButton": "+ Student",
