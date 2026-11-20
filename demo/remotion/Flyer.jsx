@@ -21,6 +21,7 @@ const LIGHT_GRAD = ["#2f7fe0", "#1fae62"];
 const TEXT = {
   nl: {
     sub: "Gratis uitleg, video's en oefeningen",
+    subA: "Uitleg, video's en oefeningen",
     free: "Gratis",
     scan: "Scan en begin meteen",
     levels: ["Van A0 tot B2,", "stap voor stap"],
@@ -37,6 +38,7 @@ const TEXT = {
   },
   en: {
     sub: "Free explanations, videos and practice",
+    subA: "Explanations, videos and practice",
     free: "Free",
     scan: "Scan and start right away",
     levels: ["From A0 to B2,", "step by step"],
@@ -103,30 +105,30 @@ const Pill = ({ children, size = 54, rotate = -6 }) => (
 
 /* ---------- Fronts ---------- */
 
-/** A: the sticker layout on paper: question top left, arrow, big code, address. */
+/** A: the sticker layout on paper: wordmark, question top left, arrow, big code, address. */
 function FrontA({ lang, guides }) {
   const t = TEXT[lang];
   return (
     <Page bg={DARK_BG} guides={guides}>
-      <div style={{ position: "absolute", left: PAD, top: PAD + 20 }}>
+      <div style={{ position: "absolute", left: PAD, top: PAD }}>
+        <Wordmark scale={0.62} />
+      </div>
+      <div style={{ position: "absolute", left: PAD, top: PAD + 170 }}>
         <div style={{ fontSize: 138, fontWeight: 800, letterSpacing: -5, lineHeight: 0.98, color: C.text }}>
           {ASK[lang][0]}
           <br />
           <span style={gradient([C.blue, C.green])}>{ASK[lang][1]}</span>
         </div>
-        <div style={{ marginTop: 34, fontSize: 44, fontWeight: 700, letterSpacing: -1, color: C.dim }}>{t.sub}</div>
+        <div style={{ marginTop: 34, fontSize: 44, fontWeight: 700, letterSpacing: -1, color: C.dim }}>{t.subA}</div>
       </div>
-      <div style={{ position: "absolute", left: PAD + 20, top: 640 }}>
+      <div style={{ position: "absolute", left: PAD + 20, top: 720 }}>
         <Arrow id={`flyer-a-${lang}`} size={290} />
       </div>
       <div style={{ position: "absolute", right: PAD, bottom: PAD + 120, borderRadius: 48, boxShadow: "0 30px 80px rgba(0,0,0,0.5)" }}>
         <Qr size={600} />
       </div>
       <div style={{ position: "absolute", left: PAD, right: PAD, bottom: PAD, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <Logo size={58} />
-          <Url size={44} />
-        </div>
+        <Url size={44} />
         <div style={{ fontSize: 34, fontWeight: 700, color: C.dim }}>@mijntaalstudio</div>
       </div>
     </Page>
@@ -325,7 +327,7 @@ const ICONS = [
 ];
 const ICON_FILLS = [C.blue, C.orange, C.green, `linear-gradient(135deg, ${C.blue}, ${C.green}, ${C.orange})`];
 
-function Back({ lang, light = false, guides }) {
+function Back({ lang, light = false, free = true, guides }) {
   const t = TEXT[lang];
   const text = light ? INK : C.text;
   const dim = light ? GREY : C.dim;
@@ -333,10 +335,12 @@ function Back({ lang, light = false, guides }) {
   return (
     <Page bg={light ? "#ffffff" : DARK_BG} guides={guides}>
       <div style={{ position: "absolute", inset: PAD, display: "flex", flexDirection: "column" }}>
-        <div style={{ alignSelf: "flex-start", marginTop: 6 }}>
-          <Pill size={44} rotate={-4}>{t.free}</Pill>
-        </div>
-        <div style={{ marginTop: 34, fontSize: 92, fontWeight: 800, letterSpacing: -3.5, lineHeight: 1, color: text }}>
+        {free && (
+          <div style={{ alignSelf: "flex-start", marginTop: 6, marginBottom: 34 }}>
+            <Pill size={44} rotate={-4}>{t.free}</Pill>
+          </div>
+        )}
+        <div style={{ marginTop: free ? 0 : 20, fontSize: 92, fontWeight: 800, letterSpacing: -3.5, lineHeight: 1, color: text }}>
           {t.title[0]}
           <br />
           <span style={gradient(grad)}>{t.title[1]}</span>
@@ -373,7 +377,7 @@ function Back({ lang, light = false, guides }) {
 }
 
 export const FLYER_VARIANTS = {
-  a: { front: FrontA, back: (p) => <Back {...p} /> },
+  a: { front: FrontA, back: (p) => <Back {...p} free={false} /> },
   b: { front: FrontB, back: (p) => <Back {...p} light /> },
   c: { front: FrontC, back: (p) => <Back {...p} /> },
   d: { front: FrontD, back: (p) => <Back {...p} light /> },
