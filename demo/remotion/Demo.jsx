@@ -52,6 +52,11 @@ const TEXT = {
     promoCards: ["Nieuwe woorden,", "kaart voor kaart"],
     quiz: ["Snelle quiz:", "wat vul jij in?"],
     promoOutro: "Plan je eerste les · link in bio",
+    // What Emma says at the start of the reel (seconds in her clip)
+    introSubs: [
+      { from: 0.7, to: 3.7, text: "Hoi, ik ben Emma en ik geef les" },
+      { from: 3.9, to: 6.8, text: "aan wie snel Nederlands wil leren." },
+    ],
   },
   en: {
     tagline: "Learn Dutch, at your level.",
@@ -73,6 +78,10 @@ const TEXT = {
     promoCards: ["New words,", "card by card"],
     quiz: ["Quick quiz:", "can you fill it in?"],
     promoOutro: "Plan your first lesson · link in bio",
+    introSubs: [
+      { from: 0.7, to: 3.7, text: "Hi, I am Emma and I tutor" },
+      { from: 3.9, to: 6.8, text: "those who want to learn Dutch quickly." },
+    ],
   },
 };
 
@@ -189,7 +198,7 @@ const SEGMENTS = [
  */
 const byCaption = (caption) => SEGMENTS.find((s) => s.caption === caption);
 const PROMO = [
-  { kind: "talk", video: "youtube.mp4", seconds: 7.0, caption: "hook", captionTop: true, instant: true },
+  { kind: "talk", video: "youtube.mp4", seconds: 7.0, caption: "hook", captionTop: true, instant: true, subs: "introSubs" },
   { ...byCaption("board"), from: 0.9, to: 6.3, speed: 1.6 },
   {
     kind: "clip", scene: "theory", from: 1.0, to: 6.6, speed: 1.7, caption: "promoTheory",
@@ -756,7 +765,41 @@ function Talk({ lang, seg }) {
         />
       </div>
       <Caption lines={TEXT[lang][seg.caption]} len={len} top={seg.captionTop} />
+      {seg.subs && <Subtitles cues={TEXT[lang][seg.subs]} bottom={L.H - top - h + 70} />}
     </AbsoluteFill>
+  );
+}
+
+/** What is said, as subtitles: one line at a time, centred near the bottom of the video. */
+function Subtitles({ cues, bottom }) {
+  const f = useCurrentFrame();
+  const { fps, width } = useVideoConfig();
+  const t = f / fps;
+  const cue = cues.find((c) => t >= c.from && t < c.to);
+  if (!cue) return null;
+  const fade = Math.min(
+    interpolate(t, [cue.from, cue.from + 0.12], [0, 1], { extrapolateRight: "clamp" }),
+    interpolate(t, [cue.to - 0.12, cue.to], [1, 0], { extrapolateLeft: "clamp" }),
+  );
+  return (
+    <div style={{ position: "absolute", left: 0, width, bottom, display: "flex", justifyContent: "center", opacity: fade }}>
+      <span
+        style={{
+          maxWidth: width - 160,
+          padding: "14px 28px 16px",
+          borderRadius: 18,
+          background: "rgba(0,0,0,0.72)",
+          color: "#fff",
+          fontSize: 50,
+          fontWeight: 700,
+          lineHeight: 1.2,
+          textAlign: "center",
+          textWrap: "balance",
+        }}
+      >
+        {cue.text}
+      </span>
+    </div>
   );
 }
 
