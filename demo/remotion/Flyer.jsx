@@ -2,7 +2,7 @@
 // The canvas includes 3 mm bleed on every side: 111 × 154 mm at 10 px per mm.
 // Render with --scale=1.5 for print (15 px/mm, 381 dpi).
 // Three variants: A dark with the question and an arrow, B light and centred,
-// C dark with the levels A0-B2 as steps. The back lists the free content.
+// C dark with the levels A0-B2 as steps, D light with a "de of het?" quiz. The back lists the free content.
 import { AbsoluteFill } from "remotion";
 import { C, fontFamily } from "./Demo";
 import { ASK, DARK_BG, Logo, Qr, Url, Wordmark, gradient } from "./Sticker";
@@ -33,6 +33,7 @@ const TEXT = {
     ],
     all: "Alles op één plek:",
     teacher: "Liever les met een docent? Kan ook, online of in Rotterdam.",
+    quiz: { sub: "Welk lidwoord hoort erbij?", more: "Uitleg en meer quizzen", scan: "Scan de code", answers: "Antwoord" },
   },
   en: {
     sub: "Free explanations, videos and practice",
@@ -48,6 +49,7 @@ const TEXT = {
     ],
     all: "Everything in one place:",
     teacher: "Prefer a teacher? Lessons online or in Rotterdam.",
+    quiz: { sub: "Two words for \u201cthe\u201d: which one?", more: "Explanations & quizzes", scan: "Scan the code", answers: "Answers" },
   },
 };
 
@@ -237,6 +239,61 @@ function FrontC({ lang, guides }) {
   );
 }
 
+// The quiz on D: the article is the answer, the words are the same in both languages.
+const QUIZ = [
+  ["het", "huis"],
+  ["de", "fiets"],
+  ["het", "meisje"],
+];
+
+/** D: light, a small "de of het?" quiz with the answers upside down; the code leads to the explanations. */
+function FrontD({ lang, guides }) {
+  const t = TEXT[lang];
+  const q = t.quiz;
+  return (
+    <Page bg="#ffffff" guides={guides}>
+      <div style={{ position: "absolute", inset: PAD, display: "flex", flexDirection: "column" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <Wordmark scale={0.62} light />
+          <Pill size={46} rotate={6}>Quiz</Pill>
+        </div>
+        <div style={{ marginTop: 64, fontSize: 156, fontWeight: 800, letterSpacing: -6, lineHeight: 1, color: INK }}>
+          <span style={{ color: "#2f7fe0" }}>de</span> of <span style={{ color: "#1fae62" }}>het</span>?
+        </div>
+        <div style={{ marginTop: 18, fontSize: 44, fontWeight: 700, letterSpacing: -1, color: GREY }}>{q.sub}</div>
+        <div style={{ marginTop: 52, display: "flex", flexDirection: "column", gap: 26 }}>
+          {QUIZ.map(([, word]) => (
+            <div key={word} style={{ display: "flex", alignItems: "center", gap: 30 }}>
+              <div style={{ width: 170, height: 92, borderRadius: 24, border: "6px dashed #c9ced6" }} />
+              <div style={{ fontSize: 84, fontWeight: 800, letterSpacing: -2.5, color: INK }}>{word}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ marginTop: "auto", display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 16, paddingBottom: 8 }}>
+            <div style={{ fontSize: 38, fontWeight: 700, color: GREY }}>{q.more}</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 58, fontWeight: 800, letterSpacing: -2, color: INK }}>
+              {q.scan}
+              <svg width={62} height={44} viewBox="0 0 62 44">
+                <path d="M6 22 L52 22 M36 6 L54 22 L36 38" fill="none" stroke={C.orange} strokeWidth={9} strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <div style={{ marginTop: 8 }}>
+              <Url size={40} dark={false} />
+            </div>
+          </div>
+          <div style={{ border: "6px solid #e6e8ec", borderRadius: 44 }}>
+            <Qr size={400} />
+          </div>
+        </div>
+        <div style={{ marginTop: 34, alignSelf: "center", transform: "rotate(180deg)", fontSize: 28, fontWeight: 700, color: "#8a93a1" }}>
+          {q.answers}: {QUIZ.map(([a, w]) => `${a} ${w}`).join(" · ")}
+        </div>
+      </div>
+    </Page>
+  );
+}
+
 /* ---------- Back: what's free ---------- */
 
 // Simple line icons (24×24), drawn in the tile's ink colour.
@@ -319,6 +376,7 @@ export const FLYER_VARIANTS = {
   a: { front: FrontA, back: (p) => <Back {...p} /> },
   b: { front: FrontB, back: (p) => <Back {...p} light /> },
   c: { front: FrontC, back: (p) => <Back {...p} /> },
+  d: { front: FrontD, back: (p) => <Back {...p} light /> },
 };
 
 /** One side of one variant, at full size with bleed. */
