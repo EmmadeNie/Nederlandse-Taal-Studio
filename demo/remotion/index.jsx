@@ -3,7 +3,7 @@ import { Demo, durationOf, FPS } from "./Demo";
 import { MANIFESTS } from "./manifests";
 import { Og } from "./Og";
 import { Avatar } from "./Avatar";
-import { StickerLogo, StickerQuestion } from "./Sticker";
+import { StickerLogo, StickerOverview, StickerQuestion, StickerQuestionCentre, StickerQuestionLabel, StickerQuestionLight, StickerQuestionSmall } from "./Sticker";
 import { LessonReel, lessonDuration } from "./LessonReel";
 import { LESSONS, LESSON_VIDEOS } from "./lessons";
 import { LessonThumb, LessonVideo } from "./LessonVideo";
@@ -45,6 +45,16 @@ function Root() {
       {/* Stickers with a QR code (8×8 cm; render with --scale=3 for print) */}
       <Still id="sticker-vraag" component={StickerQuestion} width={1000} height={1000} />
       <Still id="sticker-logo" component={StickerLogo} width={1000} height={1000} />
+      <Still id="sticker-vraag-a-nl" component={StickerQuestionSmall} defaultProps={{ lang: "nl" }} width={1000} height={1000} />
+      <Still id="sticker-vraag-b-nl" component={StickerQuestionCentre} defaultProps={{ lang: "nl" }} width={1000} height={1000} />
+      <Still id="sticker-vraag-c-nl" component={StickerQuestionLabel} defaultProps={{ lang: "nl" }} width={1000} height={1000} />
+      <Still id="sticker-vraag-d-nl" component={StickerQuestionLight} defaultProps={{ lang: "nl" }} width={1000} height={1000} />
+      <Still id="sticker-overzicht-nl" component={StickerOverview} defaultProps={{ lang: "nl" }} width={1940} height={1940} />
+      <Still id="sticker-vraag-a-en" component={StickerQuestionSmall} defaultProps={{ lang: "en" }} width={1000} height={1000} />
+      <Still id="sticker-vraag-b-en" component={StickerQuestionCentre} defaultProps={{ lang: "en" }} width={1000} height={1000} />
+      <Still id="sticker-vraag-c-en" component={StickerQuestionLabel} defaultProps={{ lang: "en" }} width={1000} height={1000} />
+      <Still id="sticker-vraag-d-en" component={StickerQuestionLight} defaultProps={{ lang: "en" }} width={1000} height={1000} />
+      <Still id="sticker-overzicht-en" component={StickerOverview} defaultProps={{ lang: "en" }} width={1940} height={1940} />
     </>
   );
 }

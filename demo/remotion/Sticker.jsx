@@ -130,3 +130,133 @@ export function StickerLogo() {
     </Shape>
   );
 }
+
+/* ---------- More "Nederlands leren?" variants: smaller text, bigger code (good down to 6×6 cm) ---------- */
+
+/** The question, in two parts: the second part gets the gradient. */
+const ASK = { nl: ["Nederlands", "leren?"], en: ["Learning", "Dutch?"] };
+
+const DARK_BG = `radial-gradient(circle at 25% 15%, #22304a 0%, ${C.bg} 70%)`;
+
+function Url({ size = 40, dark = true }) {
+  return (
+    <span style={{ fontSize: size, fontWeight: 800, letterSpacing: -1, ...gradient(dark ? [C.blue, C.green, C.orange] : ["#2f7fe0", "#1fae62"]) }}>mijntaalstudio.nl</span>
+  );
+}
+
+/** A: the original layout, text smaller and the code bigger. */
+export function StickerQuestionSmall({ lang = "nl" }) {
+  return (
+    <Shape bg={DARK_BG}>
+      <div style={{ position: "absolute", left: 80, top: 86, fontSize: 82, fontWeight: 800, letterSpacing: -2.5, lineHeight: 1, color: C.text }}>
+        {ASK[lang][0]}
+        <br />
+        <span style={gradient([C.blue, C.green])}>{ASK[lang][1]}</span>
+      </div>
+      <svg width={220} height={220} viewBox="0 0 300 300" style={{ position: "absolute", left: 100, top: 290 }}>
+        <defs>
+          <linearGradient id="arrowA" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor={C.green} />
+            <stop offset="1" stopColor={C.orange} />
+          </linearGradient>
+        </defs>
+        <path d="M30 20 C 20 150, 110 230, 250 235" fill="none" stroke="url(#arrowA)" strokeWidth={20} strokeLinecap="round" />
+        <path d="M205 190 L 255 236 L 200 275" fill="none" stroke={C.orange} strokeWidth={20} strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      <div style={{ position: "absolute", right: 70, bottom: 120, borderRadius: 40, boxShadow: "0 30px 80px rgba(0,0,0,0.5)" }}>
+        <Qr size={560} />
+      </div>
+      <div style={{ position: "absolute", left: 80, bottom: 60, display: "flex", alignItems: "center", gap: 14 }}>
+        <Logo size={52} />
+        <Url size={38} />
+      </div>
+    </Shape>
+  );
+}
+
+/** B: centred: a small question with an arrow down, a big code, the address below. */
+export function StickerQuestionCentre({ light = false, lang = "nl" }) {
+  const text = light ? "#0b0d11" : C.text;
+  return (
+    <Shape bg={light ? "#ffffff" : DARK_BG}>
+      <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 28 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 18, fontSize: 66, fontWeight: 800, letterSpacing: -2, color: text }}>
+          <span>
+            {ASK[lang][0]} <span style={gradient(light ? ["#2f7fe0", "#1fae62"] : [C.blue, C.green])}>{ASK[lang][1]}</span>
+          </span>
+          <svg width={54} height={62} viewBox="0 0 54 62">
+            <path d="M27 6 L27 52 M10 36 L27 54 L44 36" fill="none" stroke={C.orange} strokeWidth={9} strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </div>
+        <div style={{ borderRadius: 44, border: light ? "6px solid #e6e8ec" : "none", boxShadow: light ? "none" : "0 30px 80px rgba(0,0,0,0.5)" }}>
+          <Qr size={620} />
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <div style={{ background: C.tile, borderRadius: 14, padding: 6 }}>
+            <Logo size={40} />
+          </div>
+          <Url size={40} dark={!light} />
+        </div>
+      </div>
+    </Shape>
+  );
+}
+
+export const StickerQuestionLight = ({ lang = "nl" }) => <StickerQuestionCentre light lang={lang} />;
+
+/** C: the question in an orange label over the corner of a big code. */
+export function StickerQuestionLabel({ lang = "nl" }) {
+  return (
+    <Shape bg={DARK_BG}>
+      <div style={{ position: "absolute", left: "50%", top: 175, transform: "translateX(-50%)", borderRadius: 44 }}>
+        <Qr size={620} />
+      </div>
+      <div
+        style={{
+          position: "absolute",
+          left: 60,
+          top: 52,
+          padding: "16px 30px 20px",
+          borderRadius: 999,
+          background: C.orange,
+          color: C.bg,
+          fontSize: 54,
+          fontWeight: 800,
+          letterSpacing: -1.5,
+          transform: "rotate(-6deg)",
+          boxShadow: "0 16px 40px rgba(0,0,0,0.45)",
+        }}
+      >
+        {ASK[lang].join(" ")}
+      </div>
+      <div style={{ position: "absolute", left: 0, right: 0, bottom: 74, display: "flex", justifyContent: "center", alignItems: "center", gap: 14 }}>
+        <Logo size={50} />
+        <Url size={44} />
+      </div>
+    </Shape>
+  );
+}
+
+/** The variants side by side, to choose from. */
+export function StickerOverview({ lang = "nl" }) {
+  const items = [
+    ["A", StickerQuestionSmall],
+    ["B", StickerQuestionCentre],
+    ["C", StickerQuestionLabel],
+    ["D", StickerQuestionLight],
+  ];
+  return (
+    <AbsoluteFill style={{ background: "#d9dce2", fontFamily, display: "grid", gridTemplateColumns: "1fr 1fr", padding: 60, gap: 60 }}>
+      {items.map(([label, Comp]) => (
+        <div key={label} style={{ position: "relative" }}>
+          <div style={{ position: "absolute", left: 0, top: 0, width: 1000, height: 1000, transform: "scale(0.88)", transformOrigin: "top left" }}>
+            <div style={{ position: "relative", width: 1000, height: 1000 }}>
+              <Comp lang={lang} />
+            </div>
+          </div>
+          <div style={{ position: "absolute", left: 0, top: 890, fontSize: 48, fontWeight: 800, color: "#0b0d11" }}>{label}</div>
+        </div>
+      ))}
+    </AbsoluteFill>
+  );
+}
