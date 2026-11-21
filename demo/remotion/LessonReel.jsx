@@ -4,17 +4,18 @@
 import { AbsoluteFill, Audio, Sequence, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { Backdrop, C, FPS, LogoMark, fontFamily } from "./Demo";
 import { MUSIC } from "./manifests";
+import { English } from "./LessonVideoPerfect";
 import { LESSONS, auxForm, kofschip, participleParts, perfectParts, quizAnswers, verb } from "./lessons";
 
 const S = (sec) => Math.round(sec * FPS);
 const FADE = 8; // frames each scene fades in and out
 
 // Seconds per scene; the quiz has one card per question.
-const LEN = { hook: 3.2, stems: 7.6, table: 6.6, trap: 4.8, pForm: 6.6, pKof: 8.4, pZijn: 7, quizIntro: 1.9, question: 5.6, outro: 3.6 };
+const LEN = { hook: 3.2, stems: 7.6, table: 6.6, trap: 4.8, pWhat: 5, pForm: 6.6, pKof: 8.4, pZijn: 7, quizIntro: 1.9, question: 5.6, outro: 3.6 };
 const ANSWER_AT = 3.7; // a question's countdown runs from 0.6 s to here
 
 function scenesOf(lesson) {
-  const explain = lesson.tense === "perfect" ? ["pForm", "pKof", "pZijn"] : ["stems", "table", "trap"];
+  const explain = lesson.tense === "perfect" ? ["pWhat", "pForm", "pKof", "pZijn"] : ["stems", "table", "trap"];
   return [
     { kind: "hook", sec: LEN.hook },
     ...explain.map((kind) => ({ kind, sec: LEN[kind] })),
@@ -46,6 +47,7 @@ export function LessonReel({ lesson: id, lang }) {
               {s.kind === "stems" && <Stems lesson={lesson} T={T} />}
               {s.kind === "table" && <Table lesson={lesson} T={T} />}
               {s.kind === "trap" && <Trap T={T} />}
+              {s.kind === "pWhat" && <PerfectWhat lesson={lesson} T={T} />}
               {s.kind === "pForm" && <PerfectForm lesson={lesson} T={T} lang={lang} />}
               {s.kind === "pKof" && <Kofschip lesson={lesson} T={T} />}
               {s.kind === "pZijn" && <Zijn lesson={lesson} T={T} />}
@@ -359,6 +361,42 @@ function Question({ q, i, n, tense, T, lang }) {
 /* ---------- the perfect tense ---------- */
 
 const pill = (color) => ({ display: "inline-block", fontSize: 30, fontWeight: 700, color, border: `2px solid ${color}`, borderRadius: 999, padding: "6px 20px", whiteSpace: "nowrap" });
+
+/** Ik heb taart gegeten = I have eaten cake. */
+function PerfectWhat({ lesson, T }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const s = lesson.what;
+  const nl = pop(f, fps, 12);
+  const en = pop(f, fps, S(1.5));
+  const tag = { fontSize: 30, fontWeight: 800, letterSpacing: 1.5, textTransform: "uppercase", color: C.dim };
+  return (
+    <>
+      <Heading title={T.whatTitle} sub={T.whatSub} />
+      <div style={{ ...card, padding: "34px 40px", opacity: nl, transform: `translateY(${(1 - nl) * 30}px)` }}>
+        <div style={tag}>{T.whatLabels[0]}</div>
+        <div style={{ fontSize: 76, fontWeight: 800, lineHeight: 1.15 }}>
+          {perfectParts(s).map((p, i) =>
+            p.text ? (
+              <span key={i}>{p.text}</span>
+            ) : (
+              <span key={i} style={{ color: p.aux ? C.orange : C.green }}>
+                {p.aux ?? p.part}
+              </span>
+            ),
+          )}
+        </div>
+      </div>
+      <div style={{ fontSize: 60, color: C.dim, textAlign: "center", margin: "14px 0", opacity: en }}>=</div>
+      <div style={{ ...card, padding: "34px 40px", opacity: en, transform: `scale(${0.9 + 0.1 * en})` }}>
+        <div style={tag}>{T.whatLabels[1]}</div>
+        <div style={{ fontSize: 76, fontWeight: 800, lineHeight: 1.15 }}>
+          <English text={s.en} />
+        </div>
+      </div>
+    </>
+  );
+}
 
 /** Ik werk. ↓ Ik heb gewerkt, with what heb and gewerkt are. */
 function PerfectForm({ lesson, T, lang }) {

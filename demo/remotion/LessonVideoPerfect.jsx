@@ -4,10 +4,10 @@
 // timings shared with the captions live in lessonVideoScenes.js.
 import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { C } from "./Demo";
-import { auxForm, auxOf, enShort, fill, kofschip, participleParts, perfectParts, verb } from "./lessons";
+import { auxForm, auxOf, cap, enShort, fill, kofschip, participleParts, perfectParts, verb } from "./lessons";
 import { FallingT, card, gradientText, pop } from "./LessonReel";
 import { Heading, Strike, clamp } from "./LessonVideo";
-import { IRR_STEP, KOF_STEP, S, TRAP_WHY_AT, ZIJN_STEP, kofWhyAt, zijnTipAt } from "./lessonVideoScenes";
+import { IRR_STEP, KOF_STEP, S, TRAP_WHY_AT, WHAT_NOTE_AT, WHAT_STEP, ZIJN_STEP, kofWhyAt, zijnTipAt } from "./lessonVideoScenes";
 
 const pill = (color) => ({ display: "inline-block", fontSize: 26, fontWeight: 700, color, border: `2px solid ${color}`, borderRadius: 999, padding: "4px 18px", whiteSpace: "nowrap" });
 const gloss = { fontSize: 30, color: C.dim, fontWeight: 500, marginTop: 6 };
@@ -48,6 +48,64 @@ export function KofWord({ size = 64 }) {
         </span>
       ))}
     </span>
+  );
+}
+
+/**
+ * An English sentence with its {marked} words coloured like the Dutch line:
+ * with two marks hebben/zijn (orange) and the participle (green), with one just green.
+ */
+export function English({ text }) {
+  const parts = text.split(/(\{[^}]+\})/).filter(Boolean);
+  const marks = parts.filter((p) => p.startsWith("{")).length;
+  let k = 0;
+  return parts.map((p, i) => {
+    if (!p.startsWith("{")) return <span key={i}>{p}</span>;
+    const color = marks > 1 && k++ === 0 ? C.orange : C.green;
+    return (
+      <span key={i} style={{ color }}>
+        {p.slice(1, -1)}
+      </span>
+    );
+  });
+}
+
+/* ---------- intro: what it is ---------- */
+
+/** Ik heb taart gegeten = I have eaten cake; and with gisteren, where English says "I worked". */
+export function PWhat({ L, T }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const note = pop(f, fps, WHAT_NOTE_AT);
+  const tag = { fontSize: 24, fontWeight: 800, letterSpacing: 1.5, textTransform: "uppercase", color: C.dim, width: 200, flexShrink: 0 };
+  return (
+    <>
+      <Heading title={T.whatTitle} sub={T.whatSub} />
+      <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+        {L.what.map((s, i) => {
+          const d = 16 + i * WHAT_STEP;
+          const nl = pop(f, fps, d);
+          const en = pop(f, fps, d + S(1.6));
+          return (
+            <div key={i} style={{ ...card, padding: "22px 44px", opacity: nl, transform: `translateX(${(1 - nl) * -40}px)` }}>
+              <div style={{ display: "flex", alignItems: "baseline", fontSize: 68, fontWeight: 800 }}>
+                <span style={tag}>{T.whatLabels[0]}</span>
+                <span>
+                  <Sentence s={s} />
+                </span>
+              </div>
+              <div style={{ display: "flex", alignItems: "baseline", fontSize: 50, fontWeight: 700, marginTop: 6, opacity: en, transform: `translateY(${(1 - en) * 12}px)` }}>
+                <span style={tag}>{T.whatLabels[1]}</span>
+                <span style={{ color: C.dim }}>
+                  <English text={s.en} />
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ marginTop: 32, fontSize: 34, color: C.dim, lineHeight: 1.4, opacity: note, transform: `translateY(${(1 - note) * 16}px)` }}>💡 {T.whatNote}</div>
+    </>
   );
 }
 
@@ -504,19 +562,20 @@ export function POrder2({ L, T, lang }) {
   );
 }
 
-/** The thumbnail's card: heb gewerkt · ben gegaan · heb gegeten. */
+/** The thumbnail's card: Ik heb gewerkt · Jij bent gegaan · Wij hebben gegeten. */
 export function PerfectThumbCard() {
   const rows = [
-    ["word.werken", "hebben"],
-    ["word.gaan", "zijn"],
-    ["word.eten", "hebben"],
+    { verb: "word.werken", person: "ik", aux: "hebben" },
+    { verb: "word.gaan", person: "jij", aux: "zijn" },
+    { verb: "word.eten", person: "wij", aux: "hebben" },
   ];
   return (
-    <div style={{ ...card, padding: "22px 40px", background: "rgba(255,255,255,0.07)" }}>
-      {rows.map(([id, aux]) => (
-        <div key={id} style={{ fontSize: 64, fontWeight: 800, padding: "4px 0", whiteSpace: "nowrap" }}>
-          <span style={{ color: C.orange }}>{auxForm(aux, "ik")} </span>
-          <span style={{ ...gradientText }}>{verb(id).participle}</span>
+    <div style={{ ...card, padding: "22px 36px", background: "rgba(255,255,255,0.07)" }}>
+      {rows.map((r) => (
+        <div key={r.verb} style={{ fontSize: 54, fontWeight: 800, padding: "4px 0", whiteSpace: "nowrap" }}>
+          <span>{cap(r.person)} </span>
+          <span style={{ color: C.orange }}>{auxForm(r.aux, r.person)} </span>
+          <span style={{ ...gradientText }}>{verb(r.verb).participle}</span>
         </div>
       ))}
     </div>

@@ -5,8 +5,8 @@
 //   verbs and pronouns with their English.
 // Times and words come from the same timeline and data as the video.
 import { mkdirSync, writeFileSync } from "node:fs";
-import { LESSON_VIDEOS, auxForm, auxOf, enShort, fill, verb } from "./lessons.js";
-import { ANSWER_AT, FPS, S, TRAP_WHY_AT, headerChapters, kofWhyAt, stemTNoteAt, stemsWhyAt, videoChapters, videoScenes, zijnTipAt } from "./lessonVideoScenes.js";
+import { LESSON_VIDEOS, auxForm, auxOf, enShort, fill, perfectText, verb } from "./lessons.js";
+import { ANSWER_AT, FPS, S, TRAP_WHY_AT, WHAT_NOTE_AT, WHAT_STEP, headerChapters, kofWhyAt, stemTNoteAt, stemsWhyAt, videoChapters, videoScenes, zijnTipAt } from "./lessonVideoScenes.js";
 
 const SITE = "https://mijntaalstudio.nl";
 const GRAMMAR = { nl: "/grammatica/", en: "/en/grammar/" };
@@ -82,6 +82,15 @@ function sceneCaptions(s, L, lang) {
     case "outro":
       return nl ? [[0, [`${E.outroTitle} · ${E.outroCta}`]]] : [];
     // The perfect tense.
+    case "pWhat": {
+      // The English is on screen already; the captions give the words and, in NL, the headings.
+      const plain = (en) => en.replace(/[{}]/g, "");
+      const words = list([...new Set(L.what.map((x) => x.verb))].map(verbPair).concat(G.what.map(pair)));
+      const steps = [[0, [...head(`${E.whatTitle} ${E.whatSub}`), words]]];
+      steps.push([WHAT_STEP, [words, ...head(L.what.map((x) => `${perfectText(x)} = ${plain(x.en)}`).join(" · "))]]);
+      if (nl) steps.push([WHAT_NOTE_AT, [words, E.whatNote]]);
+      return steps;
+    }
     case "pForm":
       return [[0, [...head(E.formTitle), list([verbPair(L.intro.verb), ...G.form.map(pair)]), ...head(`${E.formGloss.join(" → ")} · ${E.rule}`)]]];
     case "pAux": {

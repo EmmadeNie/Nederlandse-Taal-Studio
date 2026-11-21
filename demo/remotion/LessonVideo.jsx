@@ -8,7 +8,7 @@ import { useAudioData } from "@remotion/media-utils";
 import { Backdrop, C, LogoMark, fontFamily } from "./Demo";
 import { MUSIC, MUSIC_FILES } from "./manifests";
 import { LESSON_VIDEOS, fill, quizAnswers, verb } from "./lessons";
-import { PAux, PContrast, PForm, PFormula, PIrregular, PKofschip, PNotes, POrder, POrder2, PTrap, PZijn, PerfectThumbCard } from "./LessonVideoPerfect";
+import { PAux, PWhat, PContrast, PForm, PFormula, PIrregular, PKofschip, PNotes, POrder, POrder2, PTrap, PZijn, PerfectThumbCard } from "./LessonVideoPerfect";
 import { FallingT, Ring, card, gradientText, pop } from "./LessonReel";
 import { ANSWER_AT, S, STEM_T_STEP, stemStep, stemTNoteAt, stemsWhyAt, videoDuration, videoScenes } from "./lessonVideoScenes";
 
@@ -40,6 +40,7 @@ export function LessonVideo({ lesson: id, lang }) {
             {s.kind === "inversion" && <Inversion L={L} T={T} lang={lang} />}
             {s.kind === "inversionNote" && <InversionNote T={T} />}
             {s.kind === "summary" && <Summary T={T} />}
+            {s.kind === "pWhat" && <PWhat L={L} T={T} />}
             {s.kind === "pForm" && <PForm L={L} T={T} lang={lang} />}
             {s.kind === "pAux" && <PAux L={L} T={T} />}
             {s.kind === "pFormula" && <PFormula L={L} T={T} />}

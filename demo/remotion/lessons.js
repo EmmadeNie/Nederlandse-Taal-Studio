@@ -182,6 +182,8 @@ export const LESSONS = {
   perfectum: {
     tense: "perfect",
     level: "A2",
+    // What it is, like the English "I have eaten".
+    what: { verb: "word.eten", person: "ik", text: "Ik [aux] taart [part].", en: "I {have} {eaten} cake." },
     // 1. Ik werk. → Ik heb gewerkt.
     form: { verb: "word.werken", person: "ik", text: "Ik [aux] [part]." },
     // 2. ge- + stem + t/d: one -t, one -d, and the z that becomes s in the stem.
@@ -197,6 +199,9 @@ export const LESSONS = {
       nl: {
         title: ["Het perfectum", "in één minuut"],
         sub: "hebben/zijn + voltooid deelwoord",
+        whatTitle: "Wat is het perfectum?",
+        whatSub: "Praten over het verleden",
+        whatLabels: ["Nederlands", "Engels"],
         formTitle: "1. hebben/zijn + deelwoord",
         formSub: "Het deelwoord staat achteraan",
         now: "Nu",
@@ -221,6 +226,9 @@ export const LESSONS = {
       en: {
         title: ["The Dutch perfect", "in one minute"],
         sub: "hebben/zijn + past participle",
+        whatTitle: "What is the perfect?",
+        whatSub: "Talking about the past",
+        whatLabels: ["Dutch", "English"],
         formTitle: "1. hebben/zijn + participle",
         formSub: "The participle goes at the end",
         now: "Now",
@@ -463,6 +471,12 @@ export const LESSON_VIDEOS = {
     slug: "perfectum",
     music: "music/after-sunset.mp3",
     chapters: ["form", "regular", "irregular", "aux", "order", "quiz"],
+    // What it is: talking about the past, like the English "I have eaten".
+    // en: {…} marks hebben/zijn (orange) and the participle (green), as on the Dutch line.
+    what: [
+      { verb: "word.eten", person: "ik", text: "Ik [aux] taart [part].", en: "I {have} {eaten} cake." },
+      { verb: "word.werken", person: "ik", text: "Ik [aux] gisteren [part].", en: "I {worked} yesterday." },
+    ],
     // 1. The form: Ik werk. → Ik heb gewerkt. Then hebben and zijn in a table.
     intro: { verb: "word.werken", person: "ik", text: "Ik [aux] [part]." },
     auxTable: { hebben: "word.werken", zijn: "word.gaan" },
@@ -500,6 +514,7 @@ export const LESSON_VIDEOS = {
     glossary: {
       hook: [["perfectum", "perfect tense"], ["voltooid deelwoord", "past participle"], ["hulpwerkwoord", "auxiliary verb (hebben / zijn)"]],
       agenda: [["vorm", "form"], ["regelmatig", "regular"], ["onregelmatig", "irregular"], ["woordvolgorde", "word order"]],
+      what: [["taart", "cake"], ["gisteren", "yesterday"], ["vorige week", "last week"]],
       form: [["nu", "now"], ["gisteren", "yesterday"], ["onderwerp", "subject"]],
       contrast: [["een uur", "for an hour"], ["naar huis", "home"]],
       order: [["gisteren", "yesterday"], ["in de tuin", "in the garden"]],
@@ -526,6 +541,10 @@ export const LESSON_VIDEOS = {
         chapters: { intro: "Intro", form: "De vorm", regular: "Regelmatig", irregular: "Onregelmatig", aux: "Hebben of zijn", order: "Woordvolgorde", summary: "Samenvatting", quiz: "Quiz" },
         agendaTitle: "In deze les",
         ccHint: "Vertalingen? Zet de ondertiteling (CC) aan",
+        whatTitle: "Wat is het perfectum?",
+        whatSub: "Je praat over het verleden: wat je hebt gedaan of wat er is gebeurd",
+        whatLabels: ["Nederlands", "Engels"],
+        whatNote: "Het Nederlands gebruikt het perfectum ook bij gisteren en vorige week. In het Engels is dat vaak de past simple.",
         chapterSub: {
           form: "hebben/zijn + voltooid deelwoord",
           regular: "ge- + stam + t/d",
@@ -619,6 +638,10 @@ export const LESSON_VIDEOS = {
         chapters: { intro: "Intro", form: "The form", regular: "Regular", irregular: "Irregular", aux: "Hebben or zijn", order: "Word order", summary: "Summary", quiz: "Quiz" },
         agendaTitle: "In this lesson",
         ccHint: "Translations? Turn on captions (CC)",
+        whatTitle: "What is the perfect tense?",
+        whatSub: "You talk about the past: what you did or what has happened",
+        whatLabels: ["Dutch", "English"],
+        whatNote: "Dutch also uses the perfect with gisteren (yesterday) and vorige week (last week), where English often uses the past simple.",
         chapterSub: {
           form: "hebben/zijn + past participle",
           regular: "ge- + stem + t/d",

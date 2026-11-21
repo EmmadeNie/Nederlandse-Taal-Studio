@@ -44,6 +44,7 @@ function perfectScenes(L) {
   return [
     { kind: "hook", sec: 5.5, ch: "intro" },
     { kind: "agenda", sec: 9, ch: "intro" },
+    { kind: "pWhat", sec: 14, ch: "intro" },
     { kind: "chapter", key: "form", sec: 3.5, ch: "form" },
     { kind: "pForm", sec: 12, ch: "form" },
     { kind: "pAux", sec: 12, ch: "form" },
@@ -90,6 +91,8 @@ export const stemsWhyAt = (g) => 20 + g.verbs.length * stemStep(g) + S(0.6);
 export const STEM_T_STEP = S(2.2);
 export const stemTNoteAt = (rows) => 20 + rows.length * STEM_T_STEP + S(0.4);
 // The perfect tense.
+export const WHAT_STEP = S(4.2); // the second sentence
+export const WHAT_NOTE_AT = S(8.6);
 export const KOF_STEP = S(2.4);
 export const kofWhyAt = (g) => 20 + g.verbs.length * KOF_STEP + S(0.3);
 export const TRAP_WHY_AT = S(6.2);
