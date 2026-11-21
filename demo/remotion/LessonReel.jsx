@@ -74,6 +74,23 @@ export function LessonReel({ lesson: id, lang }) {
 
 export const pop = (f, fps, delay = 0, damping = 15) => spring({ frame: f - delay, fps, config: { damping } });
 
+/**
+ * Text with *Dutch words* in italics: in the English versions, Dutch words inside
+ * an English line are marked with asterisks in lessons.js. Plain text stays as it is.
+ */
+export function Rich({ text }) {
+  if (typeof text !== "string" || !text.includes("*")) return text ?? null;
+  return text.split(/(\*[^*]+\*)/).map((p, i) =>
+    p.length > 2 && p.startsWith("*") && p.endsWith("*") ? (
+      <em key={i} style={{ fontStyle: "italic" }}>
+        {p.slice(1, -1)}
+      </em>
+    ) : (
+      p
+    ),
+  );
+}
+
 /** Every scene fades and lifts in, and fades out at its end. */
 function Scene({ len, children }) {
   const f = useCurrentFrame();
@@ -93,8 +110,14 @@ function Heading({ title, sub, center = false }) {
   const b = pop(f, fps, 10);
   return (
     <div style={{ textAlign: center ? "center" : "left", marginBottom: 70 }}>
-      <div style={{ fontSize: 84, fontWeight: 800, letterSpacing: -2, lineHeight: 1.05, opacity: a, transform: `translateY(${(1 - a) * 30}px)` }}>{title}</div>
-      {sub && <div style={{ fontSize: 44, fontWeight: 500, color: C.dim, marginTop: 18, opacity: b }}>{sub}</div>}
+      <div style={{ fontSize: 84, fontWeight: 800, letterSpacing: -2, lineHeight: 1.05, opacity: a, transform: `translateY(${(1 - a) * 30}px)` }}>
+        <Rich text={title} />
+      </div>
+      {sub && (
+        <div style={{ fontSize: 44, fontWeight: 500, color: C.dim, marginTop: 18, opacity: b }}>
+          <Rich text={sub} />
+        </div>
+      )}
     </div>
   );
 }
@@ -352,7 +375,7 @@ function Question({ q, i, n, tense, T, lang }) {
           <Ring start={S(0.6)} len={S(ANSWER_AT - 0.6)} />
         ) : (
           <div style={{ fontSize: 54, fontWeight: 800, color: C.green, opacity: note, transform: `translateY(${(1 - note) * 20}px)` }}>
-            ✓ {T.quizNote[q.note]}
+            ✓ <Rich text={T.quizNote[q.note]} />
           </div>
         )}
       </div>
@@ -469,7 +492,9 @@ function Kofschip({ lesson, T }) {
             </span>
           ))}
         </span>
-        <div style={{ marginTop: 10, whiteSpace: "nowrap" }}>{T.kofHint}</div>
+        <div style={{ marginTop: 10, whiteSpace: "nowrap" }}>
+          <Rich text={T.kofHint} />
+        </div>
       </div>
     </>
   );
@@ -494,7 +519,9 @@ function PastPlural({ lesson, T }) {
           const s = pop(f, fps, 16 + i * 16);
           return (
             <div key={p} style={{ padding: "22px 0", borderTop: i ? "1px solid rgba(255,255,255,0.08)" : "none", opacity: s, transform: `translateY(${(1 - s) * 30}px)` }}>
-              <div style={{ fontSize: 36, color: C.dim, fontWeight: 500 }}>{T.persons[i]}</div>
+              <div style={{ fontSize: 36, color: C.dim, fontWeight: 500 }}>
+                <Rich text={T.persons[i]} />
+              </div>
               <div style={{ fontSize: 80, fontWeight: 800 }}>
                 <PastForm id={id} plural={plural} />
               </div>

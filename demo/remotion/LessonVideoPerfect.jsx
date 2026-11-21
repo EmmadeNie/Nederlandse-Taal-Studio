@@ -5,7 +5,7 @@
 import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { C } from "./Demo";
 import { auxForm, auxOf, cap, enShort, fill, kofschip, participleParts, pastParts, perfectParts, verb } from "./lessons";
-import { FallingT, card, gradientText, pop } from "./LessonReel";
+import { FallingT, Rich, card, gradientText, pop } from "./LessonReel";
 import { Heading, Strike, clamp } from "./LessonVideo";
 import { IRR_STEP, KOF_STEP, S, TRAP_WHY_AT, WHAT_NOTE_AT, WHAT_STEP, ZIJN_STEP, kofWhyAt, zijnTipAt } from "./lessonVideoScenes";
 
@@ -123,7 +123,7 @@ export function PWhat({ L, T }) {
           );
         })}
       </div>
-      <div style={{ marginTop: 32, fontSize: 34, color: C.dim, lineHeight: 1.4, opacity: note, transform: `translateY(${(1 - note) * 16}px)` }}>💡 {fill(T.whatNote)}</div>
+      <div style={{ marginTop: 32, fontSize: 34, color: C.dim, lineHeight: 1.4, opacity: note, transform: `translateY(${(1 - note) * 16}px)` }}>💡 <Rich text={fill(T.whatNote)} /></div>
     </>
   );
 }
@@ -194,7 +194,7 @@ export function PAux({ L, T }) {
           const s = pop(f, fps, 24 + i * S(1.1));
           return (
             <div key={p} style={{ display: "grid", gridTemplateColumns: "340px 1fr 1fr", alignItems: "center", padding: "16px 0", borderTop: "1px solid rgba(255,255,255,0.08)", opacity: s, transform: `translateY(${(1 - s) * 20}px)` }}>
-              <span style={{ fontSize: 30, color: C.dim, fontWeight: 500 }}>{T.persons[p]}</span>
+              <span style={{ fontSize: 30, color: C.dim, fontWeight: 500 }}><Rich text={T.persons[p]} /></span>
               {cols.map((c) => (
                 <span key={c.aux} style={{ fontSize: 50, fontWeight: 800, whiteSpace: "nowrap" }}>
                   <Sentence s={{ verb: c.id, person: p, aux: c.aux, text: `${p} [aux] [part]` }} />
@@ -358,7 +358,7 @@ export function PTrap({ L, T, tense }) {
           </span>
         </div>
       </div>
-      <div style={{ marginTop: 36, fontSize: 36, color: C.dim, lineHeight: 1.4, opacity: why, transform: `translateY(${(1 - why) * 16}px)` }}>💡 {fill(T.trapWhy)}</div>
+      <div style={{ marginTop: 36, fontSize: 36, color: C.dim, lineHeight: 1.4, opacity: why, transform: `translateY(${(1 - why) * 16}px)` }}>💡 <Rich text={fill(T.trapWhy)} /></div>
     </>
   );
 }
@@ -488,7 +488,7 @@ export function PZijn({ L, T }) {
           );
         })}
       </div>
-      <div style={{ marginTop: 32, fontSize: 36, color: C.dim, opacity: tip, transform: `translateY(${(1 - tip) * 16}px)` }}>💡 {fill(T.irregularTip)}</div>
+      <div style={{ marginTop: 32, fontSize: 36, color: C.dim, opacity: tip, transform: `translateY(${(1 - tip) * 16}px)` }}>💡 <Rich text={fill(T.irregularTip)} /></div>
     </>
   );
 }

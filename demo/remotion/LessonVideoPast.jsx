@@ -5,7 +5,7 @@
 import { useCurrentFrame, useVideoConfig } from "remotion";
 import { C } from "./Demo";
 import { cap, enShort, pastForm, pastParts, verb } from "./lessons";
-import { card, gradientText, pop } from "./LessonReel";
+import { Rich, card, gradientText, pop } from "./LessonReel";
 import { Heading } from "./LessonVideo";
 import { S } from "./lessonVideoScenes";
 
@@ -35,13 +35,13 @@ export function PastTable({ L, T }) {
     <div style={{ ...card, padding: "22px 40px 10px" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
         <span style={{ fontSize: 28, fontWeight: 700, color: C.dim, letterSpacing: 1.5, textTransform: "uppercase" }}>{title}</span>
-        <span style={{ ...pill(C.green), opacity: pop(f, fps, 18 + offset * S(0.9)) }}>{label}</span>
+        <span style={{ ...pill(C.green), opacity: pop(f, fps, 18 + offset * S(0.9)) }}><Rich text={label} /></span>
       </div>
       {persons.map((p, i) => {
         const s = pop(f, fps, 18 + (offset + i) * S(0.9));
         return (
           <div key={p} style={{ padding: "12px 0", borderTop: i ? "1px solid rgba(255,255,255,0.08)" : "none", opacity: s, transform: `translateY(${(1 - s) * 20}px)` }}>
-            <div style={{ fontSize: 26, color: C.dim, fontWeight: 500 }}>{T.persons[p]}</div>
+            <div style={{ fontSize: 26, color: C.dim, fontWeight: 500 }}><Rich text={T.persons[p]} /></div>
             <div style={{ fontSize: 56, fontWeight: 800 }}>
               <PastForm id={id} plural={plural} />
             </div>
@@ -52,7 +52,7 @@ export function PastTable({ L, T }) {
   );
   return (
     <>
-      <Heading title={T.tableTitle} sub={`${v.nl} · ${enShort(v.en)}`} />
+      <Heading title={T.tableTitle} sub={`${T.italicDutch ? `*${v.nl}*` : v.nl} · ${enShort(v.en)}`} />
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 36, alignItems: "start", marginTop: -20 }}>
         {col(T.tableSingular, SINGULAR, false, 0, T.endings[0])}
         {col(T.tablePlural, PLURAL, true, SINGULAR.length, T.endings[1])}
@@ -131,7 +131,7 @@ export function PastNotes({ L, T }) {
           const s = pop(f, fps, 14 + i * S(3.2));
           return (
             <div key={i} style={{ ...card, padding: "26px 44px", opacity: s, transform: `translateY(${(1 - s) * 30}px)` }}>
-              <div style={{ fontSize: 36, fontWeight: 800, color: C.orange, marginBottom: 10, lineHeight: 1.25 }}>{c.title}</div>
+              <div style={{ fontSize: 36, fontWeight: 800, color: C.orange, marginBottom: 10, lineHeight: 1.25 }}><Rich text={c.title} /></div>
               <div style={{ display: "flex", gap: 80 }}>
               {c.lines.map(([from, to], j) => (
                 <div key={j} style={{ fontSize: 54, fontWeight: 800, padding: "6px 0", whiteSpace: "nowrap" }}>

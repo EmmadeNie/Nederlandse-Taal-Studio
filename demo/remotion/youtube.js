@@ -166,7 +166,8 @@ function srt(id, lang) {
       cues.push({ from, to, lines });
     });
   }
-  return cues.map((c, i) => `${i + 1}\n${stamp(c.from)} --> ${stamp(c.to)}\n${c.lines.join("\n")}\n`).join("\n");
+  // *Dutch words* are italic on screen; captions are plain text.
+  return cues.map((c, i) => `${i + 1}\n${stamp(c.from)} --> ${stamp(c.to)}\n${c.lines.join("\n").replace(/\*/g, "")}\n`).join("\n");
 }
 
 /** Every verb in the video once, in the order they come up. */
@@ -224,7 +225,9 @@ function description(id, lang) {
     D.footer,
     SITE,
     "",
-  ].join("\n");
+  ]
+    .join("\n")
+    .replace(/\*/g, ""); // *Dutch words* are italic on screen only
 }
 
 mkdirSync(OUT, { recursive: true });

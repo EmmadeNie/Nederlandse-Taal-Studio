@@ -5,6 +5,7 @@
 import { AbsoluteFill } from "remotion";
 import { LogoMark, fontFamily } from "./Demo";
 import { perfectParts } from "./lessons";
+import { Rich } from "./LessonReel";
 
 export const CAROUSEL_SIZE = { width: 1080, height: 1350 };
 
@@ -39,13 +40,13 @@ const TEXT = {
     level: "A2",
     cover: { kicker: "Talking about the past", title: ["Perfectum", "or imperfectum?"], sub: "Two ways to say what happened in Dutch", swipe: "Swipe →" },
     both: { title: "Both are the past", sub: "Both can mean “I worked”", note: "The difference is what you want to tell." },
-    perfect: { label: "Perfectum", title: "What happened?", rule: "hebben / zijn + past participle", use: "An event: what you did or what happened. The most common way to tell what you did." },
-    past: { label: "Imperfectum", title: "What was it like?", rule: "stem + te / de (regular verbs)", use: "Background, habits and stories: how things were, what you used to do." },
+    perfect: { label: "Perfectum", title: "What happened?", rule: "*hebben / zijn* + past participle", use: "An event: what you did or what happened. The most common way to tell what you did." },
+    past: { label: "Imperfectum", title: "What was it like?", rule: "stem + *te / de* (regular verbs)", use: "Background, habits and stories: how things were, what you used to do." },
     story: { title: "Together in a story", sub: "Background and event can go together", tags: ["background", "event"], en: "I was tired, so I went to bed early." },
-    tip: { title: "“Gisteren” works with both", sub: "A time word doesn't decide the tense", note: "The difference in use is a guide, not a hard rule." },
+    tip: { title: "*Gisteren* works with both", sub: "A time word doesn't decide the tense", note: "The difference in use is a guide, not a hard rule." },
     quiz: {
       title: "Your turn!",
-      sub: "Perfectum or imperfectum? Drop your answers in the comments 👇",
+      sub: "*Perfectum* or *imperfectum*? Drop your answers in the comments 👇",
       items: [
         ["Vroeger ___ ik in Utrecht.", "(wonen)", "I used to live in Utrecht."],
         ["Gisteren ___ ik een fiets ___.", "(kopen)", "Yesterday I bought a bike."],
@@ -95,8 +96,14 @@ function Frame({ n, total, children }) {
 function Title({ title, sub }) {
   return (
     <div style={{ marginBottom: 50 }}>
-      <div style={{ fontSize: 84, fontWeight: 800, letterSpacing: -2, lineHeight: 1.05 }}>{title}</div>
-      {sub && <div style={{ fontSize: 40, fontWeight: 500, color: L.dim, marginTop: 18, lineHeight: 1.3 }}>{sub}</div>}
+      <div style={{ fontSize: 84, fontWeight: 800, letterSpacing: -2, lineHeight: 1.05 }}>
+        <Rich text={title} />
+      </div>
+      {sub && (
+        <div style={{ fontSize: 40, fontWeight: 500, color: L.dim, marginTop: 18, lineHeight: 1.3 }}>
+          <Rich text={sub} />
+        </div>
+      )}
     </div>
   );
 }
@@ -166,7 +173,9 @@ export function CarouselSlide({ slide, lang = "en" }) {
       <F>
         <span style={{ ...chip(color), alignSelf: "flex-start", marginBottom: 26 }}>{t.label}</span>
         <Title title={t.title} />
-        <div style={{ fontSize: 42, fontWeight: 800, color, padding: "22px 34px", borderRadius: 24, border: `3px solid ${color}`, alignSelf: "flex-start", marginTop: -20, marginBottom: 40 }}>{t.rule}</div>
+        <div style={{ fontSize: 42, fontWeight: 800, color, padding: "22px 34px", borderRadius: 24, border: `3px solid ${color}`, alignSelf: "flex-start", marginTop: -20, marginBottom: 40 }}>
+          <Rich text={t.rule} />
+        </div>
         <div style={{ ...card, padding: "30px 44px", display: "flex", flexDirection: "column", gap: 16 }}>
           {ex.map((s, i) => (
             <div key={i} style={big}>

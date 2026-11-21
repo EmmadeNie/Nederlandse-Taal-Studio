@@ -10,7 +10,7 @@ import { MUSIC, MUSIC_FILES } from "./manifests";
 import { LESSON_VIDEOS, fill, quizAnswers, verb } from "./lessons";
 import { PastExamples, PastNotes, PastTable, PastThumbCard } from "./LessonVideoPast";
 import { PAux, PWhat, PContrast, PForm, PFormula, PIrregular, PKofschip, PNotes, POrder, POrder2, PTrap, PZijn, PerfectThumbCard } from "./LessonVideoPerfect";
-import { FallingT, Ring, card, gradientText, pop } from "./LessonReel";
+import { FallingT, Rich, Ring, card, gradientText, pop } from "./LessonReel";
 import { ANSWER_AT, S, STEM_T_STEP, stemStep, stemTNoteAt, stemsWhyAt, videoDuration, videoScenes } from "./lessonVideoScenes";
 
 const FADE = 10;
@@ -136,7 +136,7 @@ function Header({ ch, L, T }) {
               }}
             >
               {num}
-              {T.chapters[k]}
+              <Rich text={T.chapters[k]} />
             </span>
           );
         })}
@@ -152,8 +152,14 @@ export function Heading({ title, sub, center = false }) {
   const b = pop(f, fps, 10);
   return (
     <div style={{ textAlign: center ? "center" : "left", marginBottom: 54 }}>
-      <div style={{ fontSize: 72, fontWeight: 800, letterSpacing: -1.5, lineHeight: 1.08, opacity: a, transform: `translateY(${(1 - a) * 24}px)` }}>{title}</div>
-      {sub && <div style={{ fontSize: 38, fontWeight: 500, color: C.dim, marginTop: 14, opacity: b }}>{sub}</div>}
+      <div style={{ fontSize: 72, fontWeight: 800, letterSpacing: -1.5, lineHeight: 1.08, opacity: a, transform: `translateY(${(1 - a) * 24}px)` }}>
+        <Rich text={title} />
+      </div>
+      {sub && (
+        <div style={{ fontSize: 38, fontWeight: 500, color: C.dim, marginTop: 14, opacity: b }}>
+          <Rich text={sub} />
+        </div>
+      )}
     </div>
   );
 }
@@ -196,7 +202,9 @@ function Hook({ L, T }) {
         <div style={{ opacity: l1, transform: `translateY(${(1 - l1) * 40}px)` }}>{T.title[0]}</div>
         <div style={{ ...gradientText, opacity: l2, transform: `translateY(${(1 - l2) * 40}px)` }}>{T.title[1]}</div>
       </div>
-      <div style={{ fontSize: 48, fontWeight: 500, color: C.dim, marginTop: 40, opacity: sub }}>{T.sub}</div>
+      <div style={{ fontSize: 48, fontWeight: 500, color: C.dim, marginTop: 40, opacity: sub }}>
+        <Rich text={T.sub} />
+      </div>
     </div>
   );
 }
@@ -216,8 +224,12 @@ function Agenda({ L, T }) {
               <span style={{ width: 76, height: 76, borderRadius: 22, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 40, fontWeight: 800, background: k === "quiz" ? C.orange : "rgba(79,156,249,0.16)", color: k === "quiz" ? C.bg : C.blue }}>
                 {k === "quiz" ? "?" : i + 1}
               </span>
-              {T.chapters[k]}
-              {k !== "quiz" && <span style={{ fontSize: 36, color: C.dim, fontWeight: 500 }}>{T.chapterSub[k]}</span>}
+              <Rich text={T.chapters[k]} />
+              {k !== "quiz" && (
+                <span style={{ fontSize: 36, color: C.dim, fontWeight: 500 }}>
+                  <Rich text={T.chapterSub[k]} />
+                </span>
+              )}
             </div>
           );
         })}
@@ -278,8 +290,12 @@ function Chapter({ k, L, T }) {
     <div style={{ display: "flex", alignItems: "center", gap: 70, height: "100%" }}>
       <div style={{ fontSize: 340, fontWeight: 800, lineHeight: 1, ...gradientText, transform: `scale(${0.6 + 0.4 * n})`, opacity: n }}>{chaptersOf(L).indexOf(k) + 1}</div>
       <div>
-        <div style={{ fontSize: 104, fontWeight: 800, letterSpacing: -2.5, opacity: t, transform: `translateX(${(1 - t) * 40}px)` }}>{T.chapters[k]}</div>
-        <div style={{ fontSize: 48, color: C.dim, marginTop: 16, opacity: sub }}>{T.chapterSub[k]}</div>
+        <div style={{ fontSize: 104, fontWeight: 800, letterSpacing: -2.5, opacity: t, transform: `translateX(${(1 - t) * 40}px)` }}>
+          <Rich text={T.chapters[k]} />
+        </div>
+        <div style={{ fontSize: 48, color: C.dim, marginTop: 16, opacity: sub }}>
+          <Rich text={T.chapterSub[k]} />
+        </div>
       </div>
     </div>
   );
@@ -334,7 +350,7 @@ function Stems({ g, T }) {
           );
         })}
       </div>
-      {t.why && <div style={{ marginTop: 36, fontSize: 36, color: C.dim, lineHeight: 1.4, opacity: why, transform: `translateY(${(1 - why) * 16}px)` }}>💡 {fill(t.why)}</div>}
+      {t.why && <div style={{ marginTop: 36, fontSize: 36, color: C.dim, lineHeight: 1.4, opacity: why, transform: `translateY(${(1 - why) * 16}px)` }}>💡 <Rich text={fill(t.why)} /></div>}
     </>
   );
 }
@@ -551,8 +567,12 @@ function Summary({ T }) {
           const s = pop(f, fps, 16 + i * S(1.1));
           return (
             <div key={i} style={{ display: "grid", gridTemplateColumns: "520px 1fr", alignItems: "baseline", padding: "16px 0", borderTop: i ? "1px solid rgba(255,255,255,0.08)" : "none", opacity: s, transform: `translateX(${(1 - s) * -30}px)` }}>
-              <div style={{ fontSize: 40, fontWeight: 800, color: C.green }}>{k}</div>
-              <div style={{ fontSize: 42, fontWeight: 600 }}>{fill(v)}</div>
+              <div style={{ fontSize: 40, fontWeight: 800, color: C.green }}>
+                <Rich text={k} />
+              </div>
+              <div style={{ fontSize: 42, fontWeight: 600 }}>
+                <Rich text={fill(v)} />
+              </div>
             </div>
           );
         })}
@@ -569,7 +589,9 @@ function QuizIntro({ T }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", height: "100%" }}>
       <div style={{ fontSize: 180, fontWeight: 800, letterSpacing: -4, ...gradientText, transform: `scale(${0.6 + 0.4 * a})` }}>{T.quizTitle}</div>
-      <div style={{ fontSize: 46, color: C.dim, marginTop: 20, opacity: b }}>{T.quizSub}</div>
+      <div style={{ fontSize: 46, color: C.dim, marginTop: 20, opacity: b }}>
+        <Rich text={T.quizSub} />
+      </div>
     </div>
   );
 }
@@ -611,7 +633,8 @@ function Question({ q, i, n, tense, T, lang }) {
         {f < S(ANSWER_AT) + 6 ? (
           <Ring start={S(0.8)} len={S(ANSWER_AT - 0.8)} />
         ) : (
-          <div style={{ fontSize: 52, fontWeight: 800, color: C.green, opacity: note, transform: `translateY(${(1 - note) * 20}px)` }}>✓ {T.quizNote[q.note]}</div>
+          <div style={{ fontSize: 52, fontWeight: 800, color: C.green, opacity: note, transform: `translateY(${(1 - note) * 20}px)` }}>✓ <Rich text={T.quizNote[q.note]} />
+          </div>
         )}
       </div>
     </div>
