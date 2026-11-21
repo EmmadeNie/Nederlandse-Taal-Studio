@@ -21,7 +21,7 @@ function scenesOf(lesson) {
     ...explain.map((kind) => ({ kind, sec: LEN[kind] })),
     { kind: "quizIntro", sec: LEN.quizIntro },
     ...lesson.quiz.map((q, i) => ({ kind: "question", sec: LEN.question, q, i })),
-    { kind: "outro", sec: LEN.outro },
+    { kind: "outro", sec: lesson.tense === "perfect" ? 4.6 : LEN.outro },
   ];
 }
 
@@ -556,7 +556,7 @@ function Outro({ T }) {
       <LogoMark size={170} />
       <div style={{ fontSize: 100, fontWeight: 800, letterSpacing: -3 }}>Taal Studio</div>
       <div style={{ fontSize: 58, fontWeight: 700, ...gradientText, backgroundImage: `linear-gradient(90deg, ${C.blue}, ${C.green} 60%, ${C.orange})`, opacity: url }}>
-        mijntaalstudio.nl
+        {T.outroLink ?? "mijntaalstudio.nl"}
       </div>
       <div
         style={{
@@ -565,12 +565,16 @@ function Outro({ T }) {
           color: C.bg,
           background: `linear-gradient(90deg, ${C.blue}, ${C.green})`,
           padding: "22px 44px",
-          borderRadius: 999,
+          borderRadius: Array.isArray(T.outro) ? 48 : 999,
+          lineHeight: 1.25,
           opacity: cta,
           transform: `scale(${0.85 + 0.15 * cta})`,
         }}
       >
-        {T.outro}
+        {/* One line, or several (an array) for a longer call to action. */}
+        {[].concat(T.outro).map((line) => (
+          <div key={line}>{line}</div>
+        ))}
       </div>
     </div>
   );
