@@ -8,6 +8,7 @@ import { useAudioData } from "@remotion/media-utils";
 import { Backdrop, C, LogoMark, fontFamily } from "./Demo";
 import { MUSIC, MUSIC_FILES } from "./manifests";
 import { LESSON_VIDEOS, fill, quizAnswers, verb } from "./lessons";
+import { PastExamples, PastNotes, PastTable, PastThumbCard } from "./LessonVideoPast";
 import { PAux, PWhat, PContrast, PForm, PFormula, PIrregular, PKofschip, PNotes, POrder, POrder2, PTrap, PZijn, PerfectThumbCard } from "./LessonVideoPerfect";
 import { FallingT, Ring, card, gradientText, pop } from "./LessonReel";
 import { ANSWER_AT, S, STEM_T_STEP, stemStep, stemTNoteAt, stemsWhyAt, videoDuration, videoScenes } from "./lessonVideoScenes";
@@ -44,8 +45,11 @@ export function LessonVideo({ lesson: id, lang }) {
             {s.kind === "pForm" && <PForm L={L} T={T} lang={lang} />}
             {s.kind === "pAux" && <PAux L={L} T={T} />}
             {s.kind === "pFormula" && <PFormula L={L} T={T} />}
-            {s.kind === "pKofschip" && <PKofschip g={s.g} T={T} />}
-            {s.kind === "pTrap" && <PTrap L={L} T={T} />}
+            {s.kind === "pKofschip" && <PKofschip g={s.g} T={T} tense={L.tense} />}
+            {s.kind === "pTrap" && <PTrap L={L} T={T} tense={L.tense} />}
+            {s.kind === "pastTable" && <PastTable L={L} T={T} />}
+            {s.kind === "pastExamples" && <PastExamples L={L} T={T} />}
+            {s.kind === "pastNotes" && <PastNotes L={L} T={T} />}
             {s.kind === "pNotes" && <PNotes L={L} T={T} />}
             {s.kind === "pIrregular" && <PIrregular g={s.g} T={T} />}
             {s.kind === "pZijn" && <PZijn L={L} T={T} />}
@@ -330,7 +334,7 @@ function Stems({ g, T }) {
           );
         })}
       </div>
-      {t.why && <div style={{ marginTop: 36, fontSize: 36, color: C.dim, lineHeight: 1.4, opacity: why, transform: `translateY(${(1 - why) * 16}px)` }}>💡 {t.why}</div>}
+      {t.why && <div style={{ marginTop: 36, fontSize: 36, color: C.dim, lineHeight: 1.4, opacity: why, transform: `translateY(${(1 - why) * 16}px)` }}>💡 {fill(t.why)}</div>}
     </>
   );
 }
@@ -638,7 +642,7 @@ function Outro({ T }) {
 export function LessonThumb({ lesson: id, lang }) {
   const L = LESSON_VIDEOS[id];
   const T = L.text[lang];
-  const v = L.tense === "perfect" ? null : verb(L.intro);
+  const v = L.tense === "perfect" || L.tense === "past" ? null : verb(L.intro);
   const rows = v && [
     ["ik", v.present.ik],
     ["jij", v.present.jij],
@@ -656,7 +660,8 @@ export function LessonThumb({ lesson: id, lang }) {
           <div style={{ fontSize: 88, fontWeight: 800, letterSpacing: -2.5, lineHeight: 1.02 }}>{T.thumb[0]}</div>
           <div style={{ fontSize: 88, fontWeight: 800, letterSpacing: -2.5, lineHeight: 1.02, ...gradientText }}>{T.thumb[1]}</div>
         </div>
-        {!v && <PerfectThumbCard />}
+        {!v && L.tense === "past" && <PastThumbCard L={L} />}
+        {!v && L.tense === "perfect" && <PerfectThumbCard />}
         {v && <div style={{ ...card, padding: "26px 44px", background: "rgba(255,255,255,0.07)" }}>
           {rows.map(([p, form]) => (
             <div key={p} style={{ fontSize: 84, fontWeight: 800, padding: "6px 0", whiteSpace: "nowrap" }}>

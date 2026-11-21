@@ -9,6 +9,7 @@ import { LessonReel, lessonDuration } from "./LessonReel";
 import { LESSONS, LESSON_VIDEOS } from "./lessons";
 import { LessonThumb, LessonVideo } from "./LessonVideo";
 import { videoDuration } from "./lessonVideoScenes";
+import { CAROUSEL_SIZE, CAROUSEL_SLIDES, CarouselSlide } from "./Carousel";
 
 function Root() {
   return (
@@ -39,6 +40,10 @@ function Root() {
       {Object.keys(LESSON_VIDEOS).flatMap((lesson) =>
         ["nl", "en"].map((lang) => <Still key={`thumb-${lesson}-${lang}`} id={`lesson-thumb-${lesson}-${lang}`} component={LessonThumb} defaultProps={{ lesson, lang }} width={1280} height={720} />),
       )}
+      {/* Instagram carousel (4:5, light): perfectum or imperfectum? One still per slide. */}
+      {CAROUSEL_SLIDES.map((slide, i) => (
+        <Still key={`carousel-${slide}`} id={`carousel-perfectum-imperfectum-en-${i + 1}`} component={CarouselSlide} defaultProps={{ slide, lang: "en" }} {...CAROUSEL_SIZE} />
+      ))}
       {/* The link preview for WhatsApp, LinkedIn & co. */}
       <Still id="og" component={Og} defaultProps={{ lang: "nl" }} width={1200} height={630} />
       {/* Profile picture for Instagram, YouTube & co. */}

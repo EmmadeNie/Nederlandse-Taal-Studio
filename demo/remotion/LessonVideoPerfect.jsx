@@ -4,7 +4,7 @@
 // timings shared with the captions live in lessonVideoScenes.js.
 import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { C } from "./Demo";
-import { auxForm, auxOf, cap, enShort, fill, kofschip, participleParts, perfectParts, verb } from "./lessons";
+import { auxForm, auxOf, cap, enShort, fill, kofschip, participleParts, pastParts, perfectParts, verb } from "./lessons";
 import { FallingT, card, gradientText, pop } from "./LessonReel";
 import { Heading, Strike, clamp } from "./LessonVideo";
 import { IRR_STEP, KOF_STEP, S, TRAP_WHY_AT, WHAT_NOTE_AT, WHAT_STEP, ZIJN_STEP, kofWhyAt, zijnTipAt } from "./lessonVideoScenes";
@@ -17,6 +17,11 @@ export function Sentence({ s }) {
   return perfectParts(s).map((p, i) =>
     p.text ? (
       <span key={i}>{p.text}</span>
+    ) : p.past ? (
+      <span key={i}>
+        {p.past.startsWith(p.stem) ? p.stem : ""}
+        <span style={{ color: C.green }}>{p.past.startsWith(p.stem) ? p.past.slice(p.stem.length) : p.past}</span>
+      </span>
     ) : (
       <span key={i} style={{ color: p.aux ? C.orange : C.green }}>
         {p.aux ?? p.part}
@@ -37,6 +42,20 @@ export function Participle({ id, regular = true }) {
     </>
   );
 }
+
+/** The form 't kofschip decides: the participle (gewerkt) or the past tense (werkte), its ending green. */
+export function KofForm({ id, tense = "perfect" }) {
+  if (tense !== "past") return <Participle id={id} />;
+  const { stem, end } = pastParts(id);
+  return (
+    <>
+      {stem}
+      <span style={{ color: C.green }}>{end}</span>
+    </>
+  );
+}
+/** The ending 't kofschip gives: -t / -d (participle) or -te / -de (past). */
+export const kofEnding = (end, tense) => (tense === "past" ? `-${end}e` : `-${end}`);
 
 /** "'t kofschip" with its consonants lit. */
 export function KofWord({ size = 64 }) {
@@ -104,7 +123,7 @@ export function PWhat({ L, T }) {
           );
         })}
       </div>
-      <div style={{ marginTop: 32, fontSize: 34, color: C.dim, lineHeight: 1.4, opacity: note, transform: `translateY(${(1 - note) * 16}px)` }}>💡 {T.whatNote}</div>
+      <div style={{ marginTop: 32, fontSize: 34, color: C.dim, lineHeight: 1.4, opacity: note, transform: `translateY(${(1 - note) * 16}px)` }}>💡 {fill(T.whatNote)}</div>
     </>
   );
 }
@@ -239,10 +258,10 @@ export function PFormula({ L, T }) {
 }
 
 /** One verb's way to t or d: werk|en → k → gewerkt. */
-function KofRow({ id, d }) {
+function KofRow({ id, d, tense }) {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const { raw, last, end } = kofschip(id);
+  const { raw, last, end } = kofschip(id, tense);
   const inn = pop(f, fps, d);
   const strike = interpolate(f, [d + 10, d + 18], [0, 1], clamp);
   const letter = pop(f, fps, d + 22, 12);
@@ -263,14 +282,14 @@ function KofRow({ id, d }) {
       </span>
       <span style={{ color: C.dim, fontWeight: 500, opacity: out }}>→</span>
       <span style={{ opacity: out, transform: `scale(${0.75 + 0.25 * out})`, transformOrigin: "left center", display: "inline-block" }}>
-        <Participle id={id} />
-        <span style={{ fontSize: 50, color: C.green, marginLeft: 22 }}>-{end} ✓</span>
+        <KofForm id={id} tense={tense} />
+        <span style={{ fontSize: 50, color: C.green, marginLeft: 22 }}>{kofEnding(end, tense)} ✓</span>
       </span>
     </div>
   );
 }
 
-export function PKofschip({ g, T }) {
+export function PKofschip({ g, T, tense }) {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = T.kofschip[g.key];
@@ -281,7 +300,7 @@ export function PKofschip({ g, T }) {
       <Heading title={t.title} sub={t.sub} />
       <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
         {g.verbs.map((id, i) => (
-          <KofRow key={id} id={id} d={24 + i * KOF_STEP} />
+          <KofRow key={id} id={id} d={24 + i * KOF_STEP} tense={tense} />
         ))}
       </div>
       <div style={{ marginTop: 34, display: "flex", alignItems: "center", gap: 30, opacity: Math.min(word, 0.35 + 0.65 * why) }}>
@@ -293,13 +312,14 @@ export function PKofschip({ g, T }) {
 }
 
 /** reizen: the stem has an s, but the verb has a z. Look at reiz, not reis: -d. */
-export function PTrap({ L, T }) {
+export function PTrap({ L, T, tense }) {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const id = L.trap;
   const v = verb(id);
-  const { raw, last, end } = kofschip(id);
-  const { pre, stem } = participleParts(id);
+  const { raw, last, end } = kofschip(id, tense);
+  // What you'd write if you looked at the stem (reis: s → t): gereist / reiste.
+  const wrong = tense === "past" ? `${v.stem}te` : `${participleParts(id).pre}${v.stem}t`;
   const sLast = v.stem.slice(-1);
   const a = pop(f, fps, 16);
   const wrongStrike = interpolate(f, [S(2.6), S(3.1)], [0, 1], clamp);
@@ -320,8 +340,7 @@ export function PTrap({ L, T }) {
           </span>
           <span style={{ color: C.dim, fontWeight: 500 }}>→</span>
           <span style={{ position: "relative", justifySelf: "start", color: C.orange }}>
-            {pre}
-            {stem}t
+            {wrong}
             <Strike p={wrongStrike} />
           </span>
         </div>
@@ -334,8 +353,8 @@ export function PTrap({ L, T }) {
           </span>
           <span style={{ color: C.dim, fontWeight: 500 }}>→</span>
           <span style={{ opacity: ok }}>
-            <Participle id={id} />
-            <span style={{ fontSize: 50, color: C.green, marginLeft: 22 }}>-{end} ✓</span>
+            <KofForm id={id} tense={tense} />
+            <span style={{ fontSize: 50, color: C.green, marginLeft: 22 }}>{kofEnding(end, tense)} ✓</span>
           </span>
         </div>
       </div>

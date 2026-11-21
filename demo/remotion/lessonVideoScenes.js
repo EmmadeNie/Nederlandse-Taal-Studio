@@ -14,7 +14,8 @@ export const ANSWER_AT = 5.6; // a question's countdown runs from 0.8 s to here
 
 export function videoScenes(id) {
   const L = LESSON_VIDEOS[id];
-  return (L.tense === "perfect" ? perfectScenes(L) : presentScenes(L)).map((s, i, all) => ({ ...s, from: all.slice(0, i).reduce((n, x) => n + S(x.sec), 0), len: S(s.sec) }));
+  const scenes = { perfect: perfectScenes, past: pastScenes }[L.tense] ?? presentScenes;
+  return scenes(L).map((s, i, all) => ({ ...s, from: all.slice(0, i).reduce((n, x) => n + S(x.sec), 0), len: S(s.sec) }));
 }
 
 function presentScenes(L) {
@@ -32,6 +33,28 @@ function presentScenes(L) {
     { kind: "chapter", key: "inversion", sec: 3.5, ch: "inversion" },
     { kind: "inversion", sec: 11, ch: "inversion" },
     { kind: "inversionNote", sec: 9, ch: "inversion" },
+    { kind: "summary", sec: 12, ch: "summary" },
+    { kind: "quizIntro", sec: 4, ch: "quiz" },
+    ...L.quiz.map((q, i) => ({ kind: "question", q, i, sec: QUESTION_SEC, ch: "quiz" })),
+    { kind: "outro", sec: 14, ch: "outro" },
+  ];
+}
+
+// The past tense (regular verbs): what it is, the stem, te or de, singular and plural.
+function pastScenes(L) {
+  return [
+    { kind: "hook", sec: 5.5, ch: "intro" },
+    { kind: "agenda", sec: 8, ch: "intro" },
+    { kind: "pWhat", sec: 14, ch: "intro" },
+    { kind: "chapter", key: "stem", sec: 3.5, ch: "stem" },
+    ...L.stems.map((g) => ({ kind: "stems", g, sec: 13, ch: "stem" })),
+    { kind: "chapter", key: "tede", sec: 3.5, ch: "tede" },
+    ...L.kofschip.map((g) => ({ kind: "pKofschip", g, sec: 12, ch: "tede" })),
+    { kind: "pTrap", sec: 12, ch: "tede" },
+    { kind: "chapter", key: "plural", sec: 3.5, ch: "plural" },
+    { kind: "pastTable", sec: 12, ch: "plural" },
+    { kind: "pastExamples", sec: 11, ch: "plural" },
+    { kind: "pastNotes", sec: 11, ch: "plural" },
     { kind: "summary", sec: 12, ch: "summary" },
     { kind: "quizIntro", sec: 4, ch: "quiz" },
     ...L.quiz.map((q, i) => ({ kind: "question", q, i, sec: QUESTION_SEC, ch: "quiz" })),
