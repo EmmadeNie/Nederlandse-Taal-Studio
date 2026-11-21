@@ -7,11 +7,14 @@ import { AbsoluteFill, Audio, Sequence, interpolate, staticFile, useCurrentFrame
 import { useAudioData } from "@remotion/media-utils";
 import { Backdrop, C, LogoMark, fontFamily } from "./Demo";
 import { MUSIC, MUSIC_FILES } from "./manifests";
-import { LESSON_VIDEOS, verb } from "./lessons";
+import { LESSON_VIDEOS, fill, quizAnswers, verb } from "./lessons";
+import { PAux, PWhat, PContrast, PForm, PFormula, PIrregular, PKofschip, PNotes, POrder, POrder2, PTrap, PZijn, PerfectThumbCard } from "./LessonVideoPerfect";
 import { FallingT, Ring, card, gradientText, pop } from "./LessonReel";
-import { ANSWER_AT, HEADER_CHAPTERS, S, STEM_T_STEP, stemStep, stemTNoteAt, stemsWhyAt, videoDuration, videoScenes } from "./lessonVideoScenes";
+import { ANSWER_AT, S, STEM_T_STEP, stemStep, stemTNoteAt, stemsWhyAt, videoDuration, videoScenes } from "./lessonVideoScenes";
 
 const FADE = 10;
+// The chapters in the header: the lesson's own, else the present tense's.
+const chaptersOf = (L) => L.chapters ?? ["stem", "ending", "stemT", "inversion", "quiz"];
 const cap = (s) => s[0].toUpperCase() + s.slice(1);
 
 export function LessonVideo({ lesson: id, lang }) {
@@ -27,9 +30,9 @@ export function LessonVideo({ lesson: id, lang }) {
         <Sequence key={i} from={s.from} durationInFrames={s.len}>
           <Scene len={s.len} header={s.kind !== "hook" && s.kind !== "outro"} ch={s.ch} L={L} T={T}>
             {s.kind === "hook" && <Hook L={L} T={T} />}
-            {s.kind === "agenda" && <Agenda T={T} />}
+            {s.kind === "agenda" && <Agenda L={L} T={T} />}
             {s.kind === "intro" && <Intro L={L} T={T} />}
-            {s.kind === "chapter" && <Chapter k={s.key} T={T} />}
+            {s.kind === "chapter" && <Chapter k={s.key} L={L} T={T} />}
             {s.kind === "stems" && <Stems g={s.g} T={T} />}
             {s.kind === "table" && <Table L={L} T={T} />}
             {s.kind === "examples" && <Examples L={L} T={T} />}
@@ -37,8 +40,20 @@ export function LessonVideo({ lesson: id, lang }) {
             {s.kind === "inversion" && <Inversion L={L} T={T} lang={lang} />}
             {s.kind === "inversionNote" && <InversionNote T={T} />}
             {s.kind === "summary" && <Summary T={T} />}
+            {s.kind === "pWhat" && <PWhat L={L} T={T} />}
+            {s.kind === "pForm" && <PForm L={L} T={T} lang={lang} />}
+            {s.kind === "pAux" && <PAux L={L} T={T} />}
+            {s.kind === "pFormula" && <PFormula L={L} T={T} />}
+            {s.kind === "pKofschip" && <PKofschip g={s.g} T={T} />}
+            {s.kind === "pTrap" && <PTrap L={L} T={T} />}
+            {s.kind === "pNotes" && <PNotes L={L} T={T} />}
+            {s.kind === "pIrregular" && <PIrregular g={s.g} T={T} />}
+            {s.kind === "pZijn" && <PZijn L={L} T={T} />}
+            {s.kind === "pContrast" && <PContrast L={L} T={T} lang={lang} />}
+            {s.kind === "pOrder" && <POrder L={L} T={T} lang={lang} />}
+            {s.kind === "pOrder2" && <POrder2 L={L} T={T} lang={lang} />}
             {s.kind === "quizIntro" && <QuizIntro T={T} />}
-            {s.kind === "question" && <Question q={s.q} i={s.i} n={L.quiz.length} T={T} lang={lang} />}
+            {s.kind === "question" && <Question q={s.q} i={s.i} n={L.quiz.length} tense={L.tense} T={T} lang={lang} />}
             {s.kind === "outro" && <Outro T={T} />}
           </Scene>
         </Sequence>
@@ -99,7 +114,7 @@ function Header({ ch, L, T }) {
         </span>
       </div>
       <div style={{ display: "flex", gap: 10 }}>
-        {HEADER_CHAPTERS.map((k, i) => {
+        {chaptersOf(L).map((k, i) => {
           const on = k === ch;
           const num = k === "quiz" ? "" : `${i + 1}  `;
           return (
@@ -126,7 +141,7 @@ function Header({ ch, L, T }) {
   );
 }
 
-function Heading({ title, sub, center = false }) {
+export function Heading({ title, sub, center = false }) {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const a = pop(f, fps, 2);
@@ -151,11 +166,11 @@ function Form({ form, stem, color = C.green }) {
 }
 
 /** A thick line drawn across a word, left to right (p: 0 → 1). */
-function Strike({ p, color = C.orange }) {
+export function Strike({ p, color = C.orange }) {
   return <span style={{ position: "absolute", left: -4, top: "52%", height: 7, borderRadius: 4, width: `calc(${p * 100}% + 8px)`, background: color }} />;
 }
 
-const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" };
+export const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" };
 
 
 /* ---------- intro ---------- */
@@ -182,7 +197,7 @@ function Hook({ L, T }) {
   );
 }
 
-function Agenda({ T }) {
+function Agenda({ L, T }) {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const hint = pop(f, fps, S(2.5));
@@ -190,7 +205,7 @@ function Agenda({ T }) {
     <>
       <Heading title={T.agendaTitle} />
       <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
-        {HEADER_CHAPTERS.map((k, i) => {
+        {chaptersOf(L).map((k, i) => {
           const s = pop(f, fps, 14 + i * 12);
           return (
             <div key={k} style={{ display: "flex", alignItems: "center", gap: 30, fontSize: 52, fontWeight: 700, opacity: s, transform: `translateX(${(1 - s) * -50}px)` }}>
@@ -249,7 +264,7 @@ function Intro({ L, T }) {
 }
 
 /** A chapter's title card: a big number, the title and what it's about. */
-function Chapter({ k, T }) {
+function Chapter({ k, L, T }) {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const n = pop(f, fps, 0, 11);
@@ -257,7 +272,7 @@ function Chapter({ k, T }) {
   const sub = pop(f, fps, 16);
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 70, height: "100%" }}>
-      <div style={{ fontSize: 340, fontWeight: 800, lineHeight: 1, ...gradientText, transform: `scale(${0.6 + 0.4 * n})`, opacity: n }}>{HEADER_CHAPTERS.indexOf(k) + 1}</div>
+      <div style={{ fontSize: 340, fontWeight: 800, lineHeight: 1, ...gradientText, transform: `scale(${0.6 + 0.4 * n})`, opacity: n }}>{chaptersOf(L).indexOf(k) + 1}</div>
       <div>
         <div style={{ fontSize: 104, fontWeight: 800, letterSpacing: -2.5, opacity: t, transform: `translateX(${(1 - t) * 40}px)` }}>{T.chapters[k]}</div>
         <div style={{ fontSize: 48, color: C.dim, marginTop: 16, opacity: sub }}>{T.chapterSub[k]}</div>
@@ -533,7 +548,7 @@ function Summary({ T }) {
           return (
             <div key={i} style={{ display: "grid", gridTemplateColumns: "520px 1fr", alignItems: "baseline", padding: "16px 0", borderTop: i ? "1px solid rgba(255,255,255,0.08)" : "none", opacity: s, transform: `translateX(${(1 - s) * -30}px)` }}>
               <div style={{ fontSize: 40, fontWeight: 800, color: C.green }}>{k}</div>
-              <div style={{ fontSize: 42, fontWeight: 600 }}>{v}</div>
+              <div style={{ fontSize: 42, fontWeight: 600 }}>{fill(v)}</div>
             </div>
           );
         })}
@@ -555,13 +570,14 @@ function QuizIntro({ T }) {
   );
 }
 
-function Question({ q, i, n, T, lang }) {
+function Question({ q, i, n, tense, T, lang }) {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const v = verb(q.verb);
-  let answer = v.present[q.person];
-  if (q.capital) answer = cap(answer);
-  const [before, after] = q.sentence.split("___");
+  const answers = quizAnswers(q, tense);
+  const pieces = q.sentence.split("___");
+  if (pieces.length !== answers.length + 1) throw new Error(`${q.sentence}: ${answers.length} gap(s) expected`);
+  const two = answers.length > 1;
   const reveal = pop(f, fps, S(ANSWER_AT), 11);
   const note = pop(f, fps, S(ANSWER_AT) + 10);
   const cardIn = pop(f, fps, 0);
@@ -571,13 +587,18 @@ function Question({ q, i, n, T, lang }) {
       <div style={{ fontSize: 34, fontWeight: 700, color: C.dim, letterSpacing: 2, marginBottom: 26 }}>
         QUIZ {i + 1}/{n}
       </div>
-      <div style={{ ...card, width: 1300, padding: "54px 40px", transform: `scale(${0.94 + 0.06 * cardIn})` }}>
-        <div style={{ fontSize: 96, fontWeight: 800, lineHeight: 1.25 }}>
-          {before}
-          <span style={{ display: "inline-block", minWidth: 220, padding: "0 18px", margin: "0 6px", borderRadius: 18, borderBottom: reveal > 0.05 ? "none" : `7px solid ${C.orange}`, background: reveal > 0.05 ? "rgba(47,210,122,0.16)" : "transparent", color: C.green }}>
-            <span style={{ display: "inline-block", transform: `scale(${reveal})`, opacity: reveal }}>{answer || " "}</span>
-          </span>
-          {after}
+      <div style={{ ...card, width: two ? 1600 : 1300, padding: "54px 40px", transform: `scale(${0.94 + 0.06 * cardIn})` }}>
+        <div style={{ fontSize: two ? 76 : 96, fontWeight: 800, lineHeight: 1.3 }}>
+          {pieces.map((piece, k) => (
+            <span key={k}>
+              {piece}
+              {k < answers.length && (
+                <span style={{ display: "inline-block", minWidth: two ? 180 : 220, padding: "0 18px", margin: "0 6px", borderRadius: 18, borderBottom: reveal > 0.05 ? "none" : `7px solid ${C.orange}`, background: reveal > 0.05 ? "rgba(47,210,122,0.16)" : "transparent", color: C.green }}>
+                  <span style={{ display: "inline-block", transform: `scale(${reveal})`, opacity: reveal }}>{answers[k] || " "}</span>
+                </span>
+              )}
+            </span>
+          ))}
         </div>
         <div style={{ fontSize: 44, fontWeight: 700, color: C.orange, marginTop: 24 }}>({v.nl})</div>
         {lang === "en" && gloss && <div style={{ fontSize: 36, color: C.dim, marginTop: 14 }}>{gloss}</div>}
@@ -617,8 +638,8 @@ function Outro({ T }) {
 export function LessonThumb({ lesson: id, lang }) {
   const L = LESSON_VIDEOS[id];
   const T = L.text[lang];
-  const v = verb(L.intro);
-  const rows = [
+  const v = L.tense === "perfect" ? null : verb(L.intro);
+  const rows = v && [
     ["ik", v.present.ik],
     ["jij", v.present.jij],
     ["wij", v.present.wij],
@@ -635,14 +656,15 @@ export function LessonThumb({ lesson: id, lang }) {
           <div style={{ fontSize: 88, fontWeight: 800, letterSpacing: -2.5, lineHeight: 1.02 }}>{T.thumb[0]}</div>
           <div style={{ fontSize: 88, fontWeight: 800, letterSpacing: -2.5, lineHeight: 1.02, ...gradientText }}>{T.thumb[1]}</div>
         </div>
-        <div style={{ ...card, padding: "26px 44px", background: "rgba(255,255,255,0.07)" }}>
+        {!v && <PerfectThumbCard />}
+        {v && <div style={{ ...card, padding: "26px 44px", background: "rgba(255,255,255,0.07)" }}>
           {rows.map(([p, form]) => (
             <div key={p} style={{ fontSize: 84, fontWeight: 800, padding: "6px 0", whiteSpace: "nowrap" }}>
               <span style={{ color: C.dim, fontWeight: 600 }}>{p} </span>
               <Form form={form} stem={v.stem} />
             </div>
           ))}
-        </div>
+        </div>}
       </AbsoluteFill>
     </AbsoluteFill>
   );

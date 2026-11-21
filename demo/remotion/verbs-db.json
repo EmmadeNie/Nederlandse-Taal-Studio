@@ -1,0 +1,218 @@
+[
+ {
+  "id": "word.beginnen",
+  "nl": "beginnen",
+  "en": "to begin",
+  "introducedAtLevel": "A1",
+  "conjugation": {
+   "past": {
+    "plural": "begonnen",
+    "singular": "begon"
+   },
+   "stem": "begin",
+   "present": {
+    "ik": "begin",
+    "hij": "begint",
+    "jij": "begint",
+    "wij": "beginnen"
+   },
+   "auxiliary": "hebben/zijn",
+   "infinitive": "beginnen",
+   "participle": "begonnen",
+   "regularity": {
+    "past": "irregular",
+    "present": "regular",
+    "participle": "irregular"
+   }
+  }
+ },
+ {
+  "id": "word.blijven",
+  "nl": "blijven",
+  "en": "to stay / to remain",
+  "introducedAtLevel": "A1",
+  "conjugation": {
+   "past": {
+    "plural": "bleven",
+    "singular": "bleef"
+   },
+   "stem": "blijf",
+   "present": {
+    "ik": "blijf",
+    "hij": "blijft",
+    "jij": "blijft",
+    "wij": "blijven"
+   },
+   "auxiliary": "zijn",
+   "infinitive": "blijven",
+   "participle": "gebleven",
+   "regularity": {
+    "past": "irregular",
+    "present": "regular",
+    "participle": "irregular"
+   }
+  }
+ },
+ {
+  "id": "word.denken",
+  "nl": "denken",
+  "en": "to think",
+  "introducedAtLevel": "A1",
+  "conjugation": {
+   "past": {
+    "plural": "dachten",
+    "singular": "dacht"
+   },
+   "stem": "denk",
+   "present": {
+    "ik": "denk",
+    "hij": "denkt",
+    "jij": "denkt",
+    "wij": "denken"
+   },
+   "auxiliary": "hebben",
+   "infinitive": "denken",
+   "participle": "gedacht",
+   "regularity": {
+    "past": "irregular",
+    "present": "regular",
+    "participle": "irregular"
+   }
+  }
+ },
+ {
+  "id": "word.drinken",
+  "nl": "drinken",
+  "en": "to drink",
+  "introducedAtLevel": "A0",
+  "conjugation": {
+   "past": {
+    "plural": "dronken",
+    "singular": "dronk"
+   },
+   "stem": "drink",
+   "present": {
+    "ik": "drink",
+    "hij": "drinkt",
+    "jij": "drinkt",
+    "wij": "drinken"
+   },
+   "auxiliary": "hebben",
+   "infinitive": "drinken",
+   "participle": "gedronken",
+   "regularity": {
+    "past": "irregular",
+    "present": "regular",
+    "participle": "irregular"
+   }
+  }
+ },
+ {
+  "id": "word.eten",
+  "nl": "eten",
+  "en": "to eat",
+  "introducedAtLevel": "A0",
+  "conjugation": {
+   "past": {
+    "plural": "aten",
+    "singular": "at"
+   },
+   "stem": "eet",
+   "present": {
+    "ik": "eet",
+    "hij": "eet",
+    "jij": "eet",
+    "wij": "eten"
+   },
+   "auxiliary": "hebben",
+   "infinitive": "eten",
+   "participle": "gegeten",
+   "regularity": {
+    "past": "irregular",
+    "present": "regular",
+    "participle": "irregular"
+   }
+  }
+ },
+ {
+  "id": "word.kopen",
+  "nl": "kopen",
+  "en": "to buy",
+  "introducedAtLevel": "A1",
+  "conjugation": {
+   "past": {
+    "plural": "kochten",
+    "singular": "kocht"
+   },
+   "stem": "koop",
+   "present": {
+    "ik": "koop",
+    "hij": "koopt",
+    "jij": "koopt",
+    "wij": "kopen"
+   },
+   "auxiliary": "hebben",
+   "infinitive": "kopen",
+   "participle": "gekocht",
+   "regularity": {
+    "past": "irregular",
+    "present": "regular",
+    "participle": "irregular"
+   }
+  }
+ },
+ {
+  "id": "word.vertrekken",
+  "nl": "vertrekken",
+  "en": "to leave / to depart",
+  "introducedAtLevel": "A2",
+  "conjugation": {
+   "past": {
+    "plural": "vertrokken",
+    "singular": "vertrok"
+   },
+   "stem": "vertrek",
+   "present": {
+    "ik": "vertrek",
+    "hij": "vertrekt",
+    "jij": "vertrekt",
+    "wij": "vertrekken"
+   },
+   "auxiliary": "zijn",
+   "infinitive": "vertrekken",
+   "participle": "vertrokken",
+   "regularity": {
+    "past": "irregular",
+    "present": "regular",
+    "participle": "irregular"
+   }
+  }
+ },
+ {
+  "id": "word.worden",
+  "nl": "worden",
+  "en": "to become / passive auxiliary",
+  "introducedAtLevel": "A2",
+  "conjugation": {
+   "past": {
+    "plural": "werden",
+    "singular": "werd"
+   },
+   "stem": "word",
+   "present": {
+    "ik": "word",
+    "hij": "wordt",
+    "jij": "wordt",
+    "wij": "worden"
+   },
+   "auxiliary": "zijn",
+   "infinitive": "worden",
+   "participle": "geworden",
+   "regularity": {
+    "past": "irregular",
+    "present": "regular",
+    "participle": "irregular"
+   }
+  }
+ }
+]

@@ -5,8 +5,8 @@
 //   verbs and pronouns with their English.
 // Times and words come from the same timeline and data as the video.
 import { mkdirSync, writeFileSync } from "node:fs";
-import { LESSON_VIDEOS, verb } from "./lessons.js";
-import { ANSWER_AT, FPS, S, stemTNoteAt, stemsWhyAt, videoChapters, videoScenes } from "./lessonVideoScenes.js";
+import { LESSON_VIDEOS, auxForm, auxOf, enShort, fill, perfectText, verb } from "./lessons.js";
+import { ANSWER_AT, FPS, S, TRAP_WHY_AT, WHAT_NOTE_AT, WHAT_STEP, headerChapters, kofWhyAt, stemTNoteAt, stemsWhyAt, videoChapters, videoScenes, zijnTipAt } from "./lessonVideoScenes.js";
 
 const SITE = "https://mijntaalstudio.nl";
 const GRAMMAR = { nl: "/grammatica/", en: "/en/grammar/" };
@@ -16,6 +16,11 @@ const pair = ([nl, en]) => `${nl} = ${en}`;
 const verbPair = (id) => {
   const v = verb(id);
   return `${v.nl} = ${v.en}`;
+};
+// With the perfect: "eten (heeft gegeten) = to eat".
+const perfectPair = (id, aux) => {
+  const v = verb(id);
+  return `${v.nl} (${auxForm(auxOf(id, aux), "hij")} ${v.participle}) = ${enShort(v.en)}`;
 };
 const list = (pairs) => pairs.join(" · ");
 
@@ -32,7 +37,7 @@ function sceneCaptions(s, L, lang) {
     case "hook":
       return [[0, [...head(E.title.join(" ")), list(G.hook.map(pair))]]];
     case "agenda":
-      return [[0, [...head(`${E.agendaTitle}: ${["stem", "ending", "stemT", "inversion", "quiz"].map((k) => E.chapters[k]).join(" · ")}`), list(G.agenda.map(pair))]]];
+      return [[0, [...head(`${E.agendaTitle}: ${headerChapters(s.id).map((k) => E.chapters[k]).join(" · ")}`), list(G.agenda.map(pair))]]];
     case "intro":
       return [[0, [...head(E.introTitle), list([verbPair(L.intro), ...G.intro.map(pair)]), ...head(E.rule.replace(/\s+/g, " "))]]];
     case "chapter":
@@ -62,8 +67,8 @@ function sceneCaptions(s, L, lang) {
       // Two cues of three rows, as the rows come in (16 + i × 1.1 s in LessonVideo.jsx).
       return nl
         ? [
-            [0, [E.summaryTitle, ...E.summary.slice(0, 3).map(([k, v]) => `${k}: ${v}`)]],
-            [16 + 3 * S(1.1), E.summary.slice(3).map(([k, v]) => `${k}: ${v}`)],
+            [0, [E.summaryTitle, ...E.summary.slice(0, 3).map(([k, v]) => `${k}: ${fill(v)}`)]],
+            [16 + 3 * S(1.1), E.summary.slice(3).map(([k, v]) => `${k}: ${fill(v)}`)],
           ]
         : [];
     case "quizIntro":
@@ -76,6 +81,55 @@ function sceneCaptions(s, L, lang) {
     }
     case "outro":
       return nl ? [[0, [`${E.outroTitle} · ${E.outroCta}`]]] : [];
+    // The perfect tense.
+    case "pWhat": {
+      // The English is on screen already; the captions give the words and, in NL, the headings.
+      const plain = (en) => en.replace(/[{}]/g, "");
+      const words = list([...new Set(L.what.map((x) => x.verb))].map(verbPair).concat(G.what.map(pair)));
+      const steps = [[0, [...head(`${E.whatTitle} ${E.whatSub}`), words]]];
+      steps.push([WHAT_STEP, [words, ...head(L.what.map((x) => `${perfectText(x)} = ${plain(x.en)}`).join(" · "))]]);
+      if (nl) steps.push([WHAT_NOTE_AT, [words, E.whatNote]]);
+      return steps;
+    }
+    case "pForm":
+      return [[0, [...head(E.formTitle), list([verbPair(L.intro.verb), ...G.form.map(pair)]), ...head(`${E.formGloss.join(" → ")} · ${E.rule}`)]]];
+    case "pAux": {
+      const ids = Object.values(L.auxTable);
+      return [[0, [...head(`${E.auxTitle}: ${E.auxSub}`), list(ids.map((id) => perfectPair(id)))]]];
+    }
+    case "pFormula":
+      return [[0, [...head(`${E.formulaTitle}: ${E.formulaSub}`), list(L.formula.map((id) => perfectPair(id)))]]];
+    case "pKofschip": {
+      const t = E.kofschip[s.g.key];
+      const words = list(s.g.verbs.map((id) => perfectPair(id)));
+      const steps = [[0, [...head(`${t.title}: ${t.sub}`), words]]];
+      if (nl) steps.push([kofWhyAt(s.g), [words, `'t kofschip ${E.kofWhy}`]]);
+      return steps;
+    }
+    case "pTrap": {
+      const words = perfectPair(L.trap);
+      const steps = [[0, [...head(`${E.trapTitle}: ${E.trapSub}`), words]]];
+      if (nl) steps.push([TRAP_WHY_AT, [words, fill(E.trapWhy)]]);
+      return steps;
+    }
+    case "pNotes":
+      return [[0, [...head(`${E.noteDouble} · ${E.noteNoGe}`), list([...L.notes.double, ...L.notes.noGe].map((id) => perfectPair(id)))]]];
+    case "pIrregular": {
+      const t = E.irregular[s.g.key];
+      return [[0, [...head(`${t.title}: ${t.sub}`), list(s.g.verbs.map((id) => perfectPair(id)))]]];
+    }
+    case "pZijn": {
+      const words = list(L.zijn.flatMap((g) => g.verbs.map((id) => perfectPair(id, "zijn"))));
+      const steps = [[0, [...head(`${E.zijnTitle}: ${E.zijnSub}`), words]]];
+      if (nl) steps.push([zijnTipAt(L), [words, fill(E.irregularTip)]]);
+      return steps;
+    }
+    case "pContrast":
+      return [[0, [...head(`${E.contrastTitle}: ${E.contrastSub}`), list([verbPair(L.contrast[0].verb), ...G.contrast.map(pair)]), ...head(L.contrast.map((c, i) => `${E.contrastGloss[i]} (${E.contrastLabels[c.label]})`).join(" · "))]]];
+    case "pOrder":
+      return [[0, [...head(`${E.orderTitle}: ${E.orderSub}`), list([verbPair(L.order.verb), ...G.order.map(pair)]), ...head(E.orderGloss)]]];
+    case "pOrder2":
+      return [[0, [...head(`${E.order2Title}: ${E.order2Sub}`), list([...new Set(L.order2.map((x) => x.verb))].map(verbPair).concat(G.order2.map(pair))), ...head(E.order2Gloss.join(" · "))]]];
     default:
       return [];
   }
@@ -91,7 +145,7 @@ function srt(id, lang) {
   const L = LESSON_VIDEOS[id];
   const cues = [];
   for (const s of videoScenes(id)) {
-    const steps = sceneCaptions(s, L, lang);
+    const steps = sceneCaptions({ ...s, id }, L, lang);
     steps.forEach(([at, lines], i) => {
       const from = s.from + Math.max(at, 6);
       const to = i + 1 < steps.length ? s.from + steps[i + 1][0] : s.from + s.len - 4;
@@ -102,9 +156,34 @@ function srt(id, lang) {
 }
 
 /** Every verb in the video once, in the order they come up. */
-function verbsOf(L) {
-  const ids = [L.intro, ...L.stems.flatMap((g) => g.verbs), L.table, ...L.examples, ...L.stemT.map((r) => r.verb), L.inversion.verb, ...L.quiz.map((q) => q.verb)];
-  return [...new Set(ids)].map(verb);
+function verbIds(L) {
+  if (L.tense === "perfect")
+    return [
+      L.intro.verb,
+      ...Object.values(L.auxTable),
+      ...L.formula,
+      ...L.kofschip.flatMap((g) => g.verbs),
+      L.trap,
+      ...L.notes.double,
+      ...L.notes.noGe,
+      ...L.irregular.flatMap((g) => g.verbs),
+      ...L.zijn.flatMap((g) => g.verbs),
+      ...L.contrast.map((c) => c.verb),
+      L.order.verb,
+      ...L.order2.map((s) => s.verb),
+      ...L.quiz.map((q) => q.verb),
+    ];
+  return [L.intro, ...L.stems.flatMap((g) => g.verbs), L.table, ...L.examples, ...L.stemT.map((r) => r.verb), L.inversion.verb, ...L.quiz.map((q) => q.verb)];
+}
+
+/** One line per verb: "werken – to work", with the perfect "eten – heeft gegeten – to eat". */
+function verbLines(L) {
+  return [...new Set(verbIds(L))].map((id) => {
+    const v = verb(id);
+    if (L.tense !== "perfect") return `${v.nl} – ${v.en}`;
+    const aux = v.aux.split("/").map((a) => auxForm(a, "hij")).join("/");
+    return `${v.nl} – ${aux} ${v.participle} – ${enShort(v.en)}`;
+  });
 }
 
 function description(id, lang) {
@@ -120,7 +199,7 @@ function description(id, lang) {
     ...videoChapters(id, lang),
     "",
     D.verbs,
-    ...verbsOf(L).map((v) => `${v.nl} – ${v.en}`),
+    ...verbLines(L),
     "",
     D.pronouns,
     ...L.pronouns.map(([nl, en]) => `${nl} – ${en}`),

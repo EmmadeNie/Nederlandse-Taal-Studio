@@ -4,21 +4,21 @@
 import { AbsoluteFill, Audio, Sequence, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { Backdrop, C, FPS, LogoMark, fontFamily } from "./Demo";
 import { MUSIC } from "./manifests";
-import { LESSONS, verb } from "./lessons";
+import { English } from "./LessonVideoPerfect";
+import { LESSONS, auxForm, kofschip, participleParts, perfectParts, quizAnswers, verb } from "./lessons";
 
 const S = (sec) => Math.round(sec * FPS);
 const FADE = 8; // frames each scene fades in and out
 
 // Seconds per scene; the quiz has one card per question.
-const LEN = { hook: 3.2, stems: 7.6, table: 6.6, trap: 4.8, quizIntro: 1.9, question: 5.6, outro: 3.6 };
+const LEN = { hook: 3.2, stems: 7.6, table: 6.6, trap: 4.8, pWhat: 5, pForm: 6.6, pKof: 8.4, pZijn: 7, quizIntro: 1.9, question: 5.6, outro: 3.6 };
 const ANSWER_AT = 3.7; // a question's countdown runs from 0.6 s to here
 
 function scenesOf(lesson) {
+  const explain = lesson.tense === "perfect" ? ["pWhat", "pForm", "pKof", "pZijn"] : ["stems", "table", "trap"];
   return [
     { kind: "hook", sec: LEN.hook },
-    { kind: "stems", sec: LEN.stems },
-    { kind: "table", sec: LEN.table },
-    { kind: "trap", sec: LEN.trap },
+    ...explain.map((kind) => ({ kind, sec: LEN[kind] })),
     { kind: "quizIntro", sec: LEN.quizIntro },
     ...lesson.quiz.map((q, i) => ({ kind: "question", sec: LEN.question, q, i })),
     { kind: "outro", sec: LEN.outro },
@@ -47,8 +47,12 @@ export function LessonReel({ lesson: id, lang }) {
               {s.kind === "stems" && <Stems lesson={lesson} T={T} />}
               {s.kind === "table" && <Table lesson={lesson} T={T} />}
               {s.kind === "trap" && <Trap T={T} />}
+              {s.kind === "pWhat" && <PerfectWhat lesson={lesson} T={T} />}
+              {s.kind === "pForm" && <PerfectForm lesson={lesson} T={T} lang={lang} />}
+              {s.kind === "pKof" && <Kofschip lesson={lesson} T={T} />}
+              {s.kind === "pZijn" && <Zijn lesson={lesson} T={T} />}
               {s.kind === "quizIntro" && <QuizIntro T={T} />}
-              {s.kind === "question" && <Question q={s.q} i={s.i} n={lesson.quiz.length} T={T} lang={lang} />}
+              {s.kind === "question" && <Question q={s.q} i={s.i} n={lesson.quiz.length} tense={lesson.tense} T={T} lang={lang} />}
               {s.kind === "outro" && <Outro T={T} />}
             </Scene>
           </Sequence>
@@ -298,13 +302,13 @@ function QuizIntro({ T }) {
 }
 
 /** A sentence with a gap, the verb as a hint, a 3-2-1 ring, then the answer. */
-function Question({ q, i, n, T, lang }) {
+function Question({ q, i, n, tense, T, lang }) {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const v = verb(q.verb);
-  let answer = v.present[q.person];
-  if (q.capital) answer = answer[0].toUpperCase() + answer.slice(1);
-  const [before, after] = q.sentence.split("___");
+  const answers = quizAnswers(q, tense);
+  const pieces = q.sentence.split("___");
+  if (pieces.length !== answers.length + 1) throw new Error(`${q.sentence}: ${answers.length} gap(s) expected`);
   const reveal = pop(f, fps, S(ANSWER_AT), 11);
   const note = pop(f, fps, S(ANSWER_AT) + 10);
   const cardIn = pop(f, fps, 0);
@@ -316,21 +320,27 @@ function Question({ q, i, n, T, lang }) {
       </div>
       <div style={{ ...card, width: "100%", padding: "60px 40px", transform: `scale(${0.92 + 0.08 * cardIn})` }}>
         <div style={{ fontSize: 64, fontWeight: 800, lineHeight: 1.3 }}>
-          {before}
-          <span
-            style={{
-              display: "inline-block",
-              padding: "0 16px",
-              margin: "0 6px",
-              borderRadius: 18,
-              borderBottom: reveal > 0.05 ? "none" : `6px solid ${C.orange}`,
-              background: reveal > 0.05 ? "rgba(47,210,122,0.16)" : "transparent",
-              color: C.green,
-            }}
-          >
-            <span style={{ display: "inline-block", transform: `scale(${reveal})`, opacity: reveal }}>{answer}</span>
-          </span>
-          {after}
+          {pieces.map((piece, k) => (
+            <span key={k}>
+              {piece}
+              {k < answers.length && (
+                <span
+                  style={{
+                    display: "inline-block",
+                    minWidth: answers.length > 1 ? 150 : 0,
+                    padding: "0 16px",
+                    margin: "0 6px",
+                    borderRadius: 18,
+                    borderBottom: reveal > 0.05 ? "none" : `6px solid ${C.orange}`,
+                    background: reveal > 0.05 ? "rgba(47,210,122,0.16)" : "transparent",
+                    color: C.green,
+                  }}
+                >
+                  <span style={{ display: "inline-block", transform: `scale(${reveal})`, opacity: reveal }}>{answers[k]}</span>
+                </span>
+              )}
+            </span>
+          ))}
         </div>
         <div style={{ fontSize: 44, fontWeight: 700, color: C.orange, marginTop: 28 }}>({v.nl})</div>
         {lang === "en" && gloss && <div style={{ fontSize: 38, color: C.dim, marginTop: 18 }}>{gloss}</div>}
@@ -345,6 +355,159 @@ function Question({ q, i, n, T, lang }) {
         )}
       </div>
     </div>
+  );
+}
+
+/* ---------- the perfect tense ---------- */
+
+const pill = (color) => ({ display: "inline-block", fontSize: 30, fontWeight: 700, color, border: `2px solid ${color}`, borderRadius: 999, padding: "6px 20px", whiteSpace: "nowrap" });
+
+/** Ik heb taart gegeten = I have eaten cake. */
+function PerfectWhat({ lesson, T }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const s = lesson.what;
+  const nl = pop(f, fps, 12);
+  const en = pop(f, fps, S(1.5));
+  const tag = { fontSize: 30, fontWeight: 800, letterSpacing: 1.5, textTransform: "uppercase", color: C.dim };
+  return (
+    <>
+      <Heading title={T.whatTitle} sub={T.whatSub} />
+      <div style={{ ...card, padding: "34px 40px", opacity: nl, transform: `translateY(${(1 - nl) * 30}px)` }}>
+        <div style={tag}>{T.whatLabels[0]}</div>
+        <div style={{ fontSize: 76, fontWeight: 800, lineHeight: 1.15 }}>
+          {perfectParts(s).map((p, i) =>
+            p.text ? (
+              <span key={i}>{p.text}</span>
+            ) : (
+              <span key={i} style={{ color: p.aux ? C.orange : C.green }}>
+                {p.aux ?? p.part}
+              </span>
+            ),
+          )}
+        </div>
+      </div>
+      <div style={{ fontSize: 60, color: C.dim, textAlign: "center", margin: "14px 0", opacity: en }}>=</div>
+      <div style={{ ...card, padding: "34px 40px", opacity: en, transform: `scale(${0.9 + 0.1 * en})` }}>
+        <div style={tag}>{T.whatLabels[1]}</div>
+        <div style={{ fontSize: 76, fontWeight: 800, lineHeight: 1.15 }}>
+          <English text={s.en} />
+        </div>
+      </div>
+    </>
+  );
+}
+
+/** Ik werk. ↓ Ik heb gewerkt, with what heb and gewerkt are. */
+function PerfectForm({ lesson, T, lang }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const s = lesson.form;
+  const v = verb(s.verb);
+  const b = pop(f, fps, S(1.4), 12);
+  const lab = pop(f, fps, S(2.8));
+  const en = (i, o) => lang === "en" && T.formGloss[i] && <div style={{ fontSize: 38, color: C.dim, marginTop: 8, opacity: o }}>{T.formGloss[i]}</div>;
+  const label = { fontSize: 32, fontWeight: 700, color: C.dim, letterSpacing: 1.5, textTransform: "uppercase" };
+  return (
+    <>
+      <Heading title={T.formTitle} sub={T.formSub} />
+      <div style={{ ...card, padding: "30px 40px" }}>
+        <div style={label}>{T.now}</div>
+        <div style={{ fontSize: 88, fontWeight: 800 }}>{`${s.text.split(" ")[0]} ${v.present[s.person]}.`}</div>
+        {en(0, 1)}
+      </div>
+      <div style={{ fontSize: 70, color: C.dim, textAlign: "center", margin: "18px 0", opacity: b }}>↓</div>
+      <div style={{ ...card, padding: "30px 40px", opacity: b, transform: `scale(${0.9 + 0.1 * b})`, borderColor: "rgba(47,210,122,0.4)" }}>
+        <div style={label}>{T.past}</div>
+        <div style={{ fontSize: 88, fontWeight: 800, whiteSpace: "pre" }}>
+          {perfectParts(s).map((p, i) =>
+            p.text ? (
+              <span key={i}>{p.text}</span>
+            ) : (
+              <span key={i} style={{ display: "inline-flex", flexDirection: "column", alignItems: "center", verticalAlign: "top" }}>
+                <span style={{ color: p.aux ? C.orange : C.green }}>{p.aux ?? p.part}</span>
+                <span style={{ ...pill(p.aux ? C.orange : C.green), marginTop: 8, opacity: lab }}>{T.formLabels[p.aux ? 0 : 1]}</span>
+              </span>
+            ),
+          )}
+        </div>
+        {en(1, b)}
+      </div>
+    </>
+  );
+}
+
+/** werk|en → k → gewerkt · bel|en → l → gebeld · reiz|en → z → gereisd. */
+function Kofschip({ lesson, T }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const hint = pop(f, fps, 14);
+  return (
+    <>
+      <Heading title={T.kofTitle} sub={T.kofSub} />
+      <div style={{ display: "flex", flexDirection: "column", gap: 26 }}>
+        {lesson.kofschip.map((id, i) => {
+          const { raw, last, end } = kofschip(id);
+          const { pre, stem } = participleParts(id);
+          const d = 20 + i * S(1.7);
+          const inn = pop(f, fps, d);
+          const out = pop(f, fps, d + 22);
+          const isT = end === "t";
+          return (
+            <div key={id} style={{ ...card, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "22px 36px", fontSize: 64, fontWeight: 800, opacity: inn, transform: `translateX(${(1 - inn) * -60}px)` }}>
+              <span>
+                {raw.slice(0, -last.length)}
+                <span style={{ color: isT ? C.orange : C.blue }}>{last}</span>
+                <span style={{ color: C.dim, fontWeight: 500 }}>en</span>
+              </span>
+              <span style={{ color: C.dim, fontWeight: 500, opacity: out }}>→</span>
+              <span style={{ opacity: out, transform: `scale(${0.7 + 0.3 * out})`, display: "inline-block" }}>
+                <span style={{ color: C.dim }}>{pre}</span>
+                {stem}
+                <span style={{ color: C.green }}>{end}</span>
+              </span>
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ fontSize: 40, color: C.dim, marginTop: 40, textAlign: "center", opacity: hint }}>
+        <span style={{ fontWeight: 800, fontSize: 56 }}>
+          {[..."'t kofschip"].map((ch, i) => (
+            <span key={i} style={{ color: "tkfschp".includes(ch) ? C.orange : C.dim }}>
+              {ch}
+            </span>
+          ))}
+        </span>
+        <div style={{ marginTop: 10, whiteSpace: "nowrap" }}>{T.kofHint}</div>
+      </div>
+    </>
+  );
+}
+
+/** is gegaan · is gekomen · is geworden · is gebleven. */
+function Zijn({ lesson, T }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const is = auxForm("zijn", "hij");
+  return (
+    <>
+      <Heading title={T.zijnTitle} sub={T.zijnSub} />
+      <div style={{ ...card, padding: "10px 40px" }}>
+        {lesson.zijn.map((id, i) => {
+          const v = verb(id);
+          if (!v.aux.split("/").includes("zijn")) throw new Error(`${id} doesn't take zijn`);
+          const s = pop(f, fps, 16 + i * S(1.1));
+          return (
+            <div key={id} style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", padding: "22px 0", borderTop: i ? "1px solid rgba(255,255,255,0.08)" : "none", opacity: s, transform: `translateY(${(1 - s) * 30}px)` }}>
+              <span style={{ fontSize: 44, color: C.dim, fontWeight: 600 }}>{v.nl}</span>
+              <span style={{ fontSize: 72, fontWeight: 800 }}>
+                <span style={{ color: C.orange }}>{is}</span> <span style={{ color: C.green }}>{v.participle}</span>
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </>
   );
 }
 
