@@ -221,7 +221,9 @@ export const LESSONS = {
           z: "z staat niet in 't kofschip: -d",
         },
         gloss: {},
-        outro: "Hele les op ons kanaal ▶",
+        // The end screen: where the full lesson is (Instagram has no channel of its own to point to).
+        outro: ["Hele les + extra oefenen", "op YouTube ▶"],
+        outroLink: "youtube.com/@mijntaalstudio",
       },
       en: {
         title: ["Talking about", "the past"],
@@ -252,7 +254,8 @@ export const LESSONS = {
           "Wij ___ gisteren thuis ___.": "We stayed at home yesterday.",
           "Mijn ouders ___ door Europa ___.": "My parents travelled around Europe.",
         },
-        outro: "Full lesson on our channel ▶",
+        outro: ["Full lesson + extra practice", "on YouTube ▶"],
+        outroLink: "youtube.com/@mijntaalstudio",
       },
     },
   },
