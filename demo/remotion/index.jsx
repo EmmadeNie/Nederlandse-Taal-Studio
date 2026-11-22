@@ -10,6 +10,9 @@ import { LESSONS, LESSON_VIDEOS } from "./lessons";
 import { LessonThumb, LessonVideo } from "./LessonVideo";
 import { videoDuration } from "./lessonVideoScenes";
 import { CAROUSEL_SIZE, CAROUSEL_SLIDES, CarouselSlide } from "./Carousel";
+import { SINTERKLAAS_SLIDES, SinterklaasSlide } from "./Sinterklaas";
+import { SinterklaasStory, STORY_FPS, STORY_SIZE, storyDuration } from "./SinterklaasStory";
+import { SinterklaasThumb, SinterklaasVideo, SINT_VIDEO_FPS, SINT_VIDEO_SIZE, sintVideoDuration } from "./SinterklaasVideo";
 
 function Root() {
   return (
@@ -44,6 +47,15 @@ function Root() {
       {CAROUSEL_SLIDES.map((slide, i) => (
         <Still key={`carousel-${slide}`} id={`carousel-perfectum-imperfectum-en-${i + 1}`} component={CarouselSlide} defaultProps={{ slide, lang: "en" }} {...CAROUSEL_SIZE} />
       ))}
+      {/* Instagram carousel (4:5, light): Sinterklaas in 7 words. */}
+      {SINTERKLAAS_SLIDES.map((slide, i) => (
+        <Still key={`sinterklaas-${slide}`} id={`carousel-sinterklaas-en-${i + 1}`} component={SinterklaasSlide} defaultProps={{ slide }} {...CAROUSEL_SIZE} />
+      ))}
+      {/* Instagram story (9:16): Sinterklaas in 7 words, with voice-over. */}
+      <Composition id="story-sinterklaas-en" component={SinterklaasStory} durationInFrames={storyDuration()} fps={STORY_FPS} {...STORY_SIZE} calculateMetadata={({ props }) => ({ durationInFrames: storyDuration(props.timing) })} />
+      {/* YouTube (16:9): Sinterklaas in 7 words, repeat after me, with the recorded voices. */}
+      <Composition id="video-sinterklaas-en" component={SinterklaasVideo} durationInFrames={sintVideoDuration()} fps={SINT_VIDEO_FPS} {...SINT_VIDEO_SIZE} />
+      <Still id="thumb-sinterklaas-en" component={SinterklaasThumb} width={1280} height={720} />
       {/* The link preview for WhatsApp, LinkedIn & co. */}
       <Still id="og" component={Og} defaultProps={{ lang: "nl" }} width={1200} height={630} />
       {/* Profile picture for Instagram, YouTube & co. */}
