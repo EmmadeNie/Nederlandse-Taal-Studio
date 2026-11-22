@@ -12,13 +12,13 @@ const BY_ID = Object.fromEntries([...DB_VERBS, ...VERBS].map((v) => [v.id, v]));
 
 /**
  * A verb from the app's data: { nl, en, stem, present: { ik, jij, hij, wij },
- * participle, aux ("hebben", "zijn" or "hebben/zijn") }.
+ * past: { singular, plural }, participle, aux ("hebben", "zijn" or "hebben/zijn") }.
  */
 export function verb(id) {
   const v = BY_ID[id];
   if (!v) throw new Error(`Unknown verb ${id}`);
   const c = v.conjugation;
-  return { nl: v.nl, en: v.en, stem: c.stem, present: c.present, participle: c.participle, aux: c.auxiliary };
+  return { nl: v.nl, en: v.en, stem: c.stem, present: c.present, past: c.past, participle: c.participle, aux: c.auxiliary };
 }
 
 export const cap = (s) => s[0].toUpperCase() + s.slice(1);
@@ -44,23 +44,41 @@ export function auxOf(id, want) {
 }
 
 /**
- * A perfect-tense sentence in pieces, the forms from the data:
+ * A sentence in pieces, the forms from the data:
  * { verb, person, text: "Gisteren [aux] ik in de tuin [part]." } →
- * [{ text: "Gisteren " }, { aux: "heb" }, { text: " ik in de tuin " }, { part: "gewerkt" }, { text: "." }]
+ * [{ text: "Gisteren " }, { aux: "heb" }, { text: " ik in de tuin " }, { part: "gewerkt" }, { text: "." }].
+ * [v] is the past tense: { past: "werkte", stem: "werk" } (the ending is what's after the stem).
  */
 export function perfectParts({ verb: id, person, text, aux }) {
-  const a = auxForm(auxOf(id, aux), person);
   return text
-    .split(/(\[aux\]|\[part\])/)
+    .split(/(\[aux\]|\[part\]|\[v\])/)
     .filter(Boolean)
-    .map((t, i) => (t === "[aux]" ? { aux: i ? a : cap(a) } : t === "[part]" ? { part: verb(id).participle } : { text: t }));
+    .map((t, i) => {
+      const first = (s) => (i ? s : cap(s));
+      if (t === "[aux]") return { aux: first(auxForm(auxOf(id, aux), person)) };
+      if (t === "[part]") return { part: verb(id).participle };
+      if (t === "[v]") return { past: first(pastForm(id, person)), stem: first(verb(id).stem) };
+      return { text: t };
+    });
 }
-export const perfectText = (s) => perfectParts(s).map((p) => p.text ?? p.aux ?? p.part).join("");
+export const perfectText = (s) => perfectParts(s).map((p) => p.text ?? p.aux ?? p.part ?? p.past).join("");
 
-/** The words that fill a quiz question's gap(s): the present form, or hebben/zijn and the participle. */
+/** The past tense for a person: ik/jij/hij → the singular, wij (jullie, zij) → the plural. */
+export const pastForm = (id, person) => verb(id).past[person === "wij" ? "plural" : "singular"];
+
+/** A regular past form in its pieces: werkte → { stem: "werk", end: "te" }; wachtten → { stem: "wacht", end: "ten" }. */
+export function pastParts(id, plural = false) {
+  const v = verb(id);
+  const form = v.past[plural ? "plural" : "singular"];
+  if (!form.startsWith(v.stem)) throw new Error(`${id}: ${form} isn't ${v.stem} + te/de`);
+  return { stem: v.stem, end: form.slice(v.stem.length) };
+}
+
+/** The words that fill a quiz question's gap(s): the present form, the past form, or hebben/zijn and the participle. */
 export function quizAnswers(q, tense = "present") {
   const v = verb(q.verb);
   const first = (s) => (q.capital ? cap(s) : s);
+  if (tense === "past") return [first(pastForm(q.verb, q.person))];
   if (tense !== "perfect") return [first(v.present[q.person])];
   return [first(auxForm(auxOf(q.verb, q.aux), q.person)), v.participle];
 }
@@ -69,16 +87,17 @@ export function quizAnswers(q, tense = "present") {
 export const KOFSCHIP = ["t", "k", "f", "s", "ch", "p", "x"];
 
 /**
- * Why a regular participle ends in t or d. Look at the verb without -en, before
- * any spelling change (reizen → reiz: z, so -d): { raw, last, end: "t" | "d" }.
- * Throws when the data's participle doesn't follow the rule.
+ * Why a regular participle ends in t or d (and the past in te or de). Look at the
+ * verb without -en, before any spelling change (reizen → reiz: z, so -d):
+ * { raw, last, end: "t" | "d" }. Throws when the data doesn't follow the rule.
  */
-export function kofschip(id) {
+export function kofschip(id, tense = "perfect") {
   const v = verb(id);
   const raw = v.nl.slice(0, -2);
   const last = raw.endsWith("ch") ? "ch" : raw.slice(-1);
   const end = KOFSCHIP.includes(last) ? "t" : "d";
-  if (!v.participle.endsWith(end)) throw new Error(`${id}: ${v.participle} doesn't end in -${end}`);
+  const form = tense === "past" ? v.past.singular : v.participle;
+  if (!form.endsWith(tense === "past" ? `${end}e` : end)) throw new Error(`${id}: ${form} doesn't follow 't kofschip (-${end})`);
   return { raw, last, end };
 }
 
@@ -93,11 +112,13 @@ export function participleParts(id) {
 
 /**
  * Text with forms from the data: {p:werken} the participle, {s:reizen} the stem,
- * {nl:eten} the infinitive, {a:zijn:hij} hebben/zijn for a person.
+ * {nl:eten} the infinitive, {a:zijn:hij} hebben/zijn for a person,
+ * {v:werken:wij} the past tense for a person.
  */
 export function fill(text) {
-  return text.replace(/\{(p|s|nl|a):([^}:]+)(?::([^}]+))?\}/g, (_, k, w, person) => {
+  return text.replace(/\{(p|s|nl|a|v):([^}:]+)(?::([^}]+))?\}/g, (_, k, w, person) => {
     if (k === "a") return auxForm(w, person);
+    if (k === "v") return pastForm(`word.${w}`, person);
     const v = verb(`word.${w}`);
     return k === "p" ? v.participle : k === "s" ? v.stem : v.nl;
   });
@@ -253,6 +274,75 @@ export const LESSONS = {
           "Ik ___ een nieuwe fiets ___.": "I bought a new bike.",
           "Wij ___ gisteren thuis ___.": "We stayed at home yesterday.",
           "Mijn ouders ___ door Europa ___.": "My parents travelled around Europe.",
+        },
+        outro: ["Full lesson + extra practice", "on YouTube ▶"],
+        outroLink: "youtube.com/@mijntaalstudio",
+      },
+    },
+  },
+
+  // A2: the past tense (imperfectum), regular verbs only (topic.verleden-tijd).
+  imperfectum: {
+    tense: "past",
+    level: "A2",
+    // What it is: like -ed in English.
+    what: { verb: "word.werken", person: "ik", text: "Gisteren [v] ik.", en: "Yesterday I work{ed}." },
+    // 1. te or de: one of each, and the z of reizen.
+    kofschip: ["word.werken", "word.bellen", "word.reizen"],
+    // 2. Plural: +n.
+    table: "word.werken",
+    quiz: [
+      { verb: "word.wonen", person: "ik", sentence: "Vroeger ___ ik in Utrecht.", note: "d" },
+      { verb: "word.reizen", person: "wij", sentence: "Wij ___ elke zomer naar Spanje.", note: "z" },
+      { verb: "word.wachten", person: "ik", sentence: "Ik ___ een uur op de bus.", note: "stemT" },
+    ],
+    text: {
+      nl: {
+        title: ["De verleden tijd", "in één minuut"],
+        sub: "Regelmatige werkwoorden",
+        whatTitle: "Wat is de verleden tijd?",
+        whatSub: "Net als -ed in het Engels",
+        whatLabels: ["Nederlands", "Engels"],
+        kofTitle: "1. te of de?",
+        kofSub: "Letter in 't kofschip? -te. Anders -de.",
+        kofHint: "Kijk naar het werkwoord zonder -en",
+        pluralTitle: "2. Meervoud: + n",
+        pluralSub: "te/de wordt ten/den",
+        persons: ["ik", "jij / u", "hij / zij / het", "wij / jullie / zij"],
+        quizTitle: "Nu jij!",
+        quizSub: "Zet je antwoorden in de comments",
+        quizNote: {
+          d: "n staat niet in 't kofschip: -de",
+          z: "z staat niet in 't kofschip: -den",
+          stemT: "wacht + te: de t blijft",
+        },
+        gloss: {},
+        outro: ["Hele les + extra oefenen", "op YouTube ▶"],
+        outroLink: "youtube.com/@mijntaalstudio",
+      },
+      en: {
+        title: ["The Dutch past tense", "in one minute"],
+        sub: "Regular verbs",
+        whatTitle: "What is the past tense?",
+        whatSub: "Just like -ed in English",
+        whatLabels: ["Dutch", "English"],
+        kofTitle: "1. *te* or *de*?",
+        kofSub: "Letter in *'t kofschip*? *-te*. Otherwise *-de*.",
+        kofHint: "Look at the verb without *-en*",
+        pluralTitle: "2. Plural: + *n*",
+        pluralSub: "*te/de* becomes *ten/den*",
+        persons: ["*ik* · I", "*jij / u* · you", "*hij / zij / het* · he / she / it", "*wij / jullie / zij* · we / you / they"],
+        quizTitle: "Your turn!",
+        quizSub: "Drop your answers in the comments",
+        quizNote: {
+          d: "*n* isn't in *'t kofschip*: *-de*",
+          z: "*z* isn't in *'t kofschip*: *-den*",
+          stemT: "*wacht + te*: the *t* stays",
+        },
+        gloss: {
+          "Vroeger ___ ik in Utrecht.": "I used to live in Utrecht.",
+          "Wij ___ elke zomer naar Spanje.": "We travelled to Spain every summer.",
+          "Ik ___ een uur op de bus.": "I waited for the bus for an hour.",
         },
         outro: ["Full lesson + extra practice", "on YouTube ▶"],
         outroLink: "youtube.com/@mijntaalstudio",
@@ -731,6 +821,217 @@ export const LESSON_VIDEOS = {
         outroCta: "Subscribe for more lessons",
         description: {
           lead: "The Dutch perfect tense (voltooid tegenwoordige tijd, A2) in 5 steps: the form, regular participles with 't kofschip, irregular participles, hebben or zijn, and word order. Then a quiz with 8 questions.",
+          page: "📖 Explanation on the site",
+          cc: "💬 Translations of the Dutch words: turn on captions (CC).",
+          chapters: "Chapters",
+          verbs: "Verbs in this video",
+          pronouns: "Personal pronouns",
+          footer: "Taal Studio · Learn Dutch at your level",
+        },
+      },
+    },
+  },
+
+  // The past tense (A2), regular verbs only, after the grammar page
+  // /grammatica/verleden-tijd/ (topic.verleden-tijd). [v] in a sentence is the
+  // past form from the data.
+  imperfectum: {
+    tense: "past",
+    level: "A2",
+    slug: "verleden-tijd",
+    music: "music/after-sunset.mp3",
+    chapters: ["stem", "tede", "plural", "quiz"],
+    // What it is: like -ed in English; for yesterday, the past, habits and stories.
+    what: [
+      { verb: "word.werken", person: "ik", text: "Gisteren [v] ik tot zes uur.", en: "Yesterday I work{ed} until six." },
+      { verb: "word.spelen", person: "wij", text: "Vroeger [v] wij elke dag buiten.", en: "As kids, we play{ed} outside every day." },
+    ],
+    // 1. The stem, as in the present tense.
+    stems: [{ key: "all", verbs: ["word.werken", "word.spelen", "word.bellen", "word.reizen"] }],
+    // 2. te or de: 't kofschip, and the z of reizen.
+    kofschip: [
+      { key: "t", verbs: ["word.werken", "word.fietsen", "word.koken"] },
+      { key: "d", verbs: ["word.bellen", "word.wonen", "word.spelen"] },
+    ],
+    trap: "word.reizen",
+    // 3. Singular or plural, more examples, and two things to watch.
+    table: "word.werken",
+    examples: ["word.spelen", "word.fietsen", "word.reizen"],
+    stemT: ["word.wachten", "word.praten"],
+    question: { verb: "word.spelen", rest: "buiten" },
+    thumbRows: [
+      ["word.werken", "ik"],
+      ["word.spelen", "jij"],
+      ["word.wonen", "wij"],
+    ],
+    glossary: {
+      hook: [["verleden tijd", "past tense"], ["imperfectum", "simple past"], ["regelmatig", "regular"]],
+      agenda: [["stam", "stem"], ["enkelvoud", "singular"], ["meervoud", "plural"]],
+      what: [["gisteren", "yesterday"], ["vroeger", "in the past, as a child"], ["buiten", "outside"], ["vorige week", "last week"]],
+    },
+    pronouns: [["ik", "I"], ["jij / je", "you"], ["u", "you (polite)"], ["hij / zij / het", "he / she / it"], ["wij / we", "we"], ["jullie", "you (plural)"], ["zij / ze", "they"]],
+    quiz: [
+      { verb: "word.wonen", person: "ik", sentence: "Vroeger ___ ik in Utrecht.", note: "d" },
+      { verb: "word.werken", person: "hij", sentence: "Gisteren ___ hij tot zes uur.", note: "t" },
+      { verb: "word.reizen", person: "wij", sentence: "Wij ___ elke zomer naar Spanje.", note: "z" },
+      { verb: "word.fietsen", person: "wij", sentence: "De kinderen ___ naar school.", note: "plural" },
+      { verb: "word.wachten", person: "ik", sentence: "Ik ___ een uur op de bus.", note: "stemT" },
+      { verb: "word.koken", person: "hij", sentence: "Mijn vader ___ elke avond.", note: "k" },
+      // A question: the form doesn't change (unlike the present tense's "werk jij?").
+      { verb: "word.spelen", person: "jij", sentence: "___ jij vroeger ook piano?", note: "question", capital: true },
+      { verb: "word.praten", person: "wij", sentence: "Jullie ___ te lang met de buren.", note: "stemTPlural" },
+    ],
+    text: {
+      nl: {
+        topic: "Verleden tijd",
+        thumb: ["De verleden tijd", "uitgelegd"],
+        title: ["De verleden tijd", "in 3 stappen"],
+        sub: "Regelmatige werkwoorden (imperfectum) · daarna een quiz",
+        chapters: { intro: "Intro", stem: "De stam", tede: "te of de", plural: "Enkelvoud of meervoud", summary: "Samenvatting", quiz: "Quiz" },
+        agendaTitle: "In deze les",
+        ccHint: "Vertalingen? Zet de ondertiteling (CC) aan",
+        whatTitle: "Wanneer gebruik je de verleden tijd?",
+        whatSub: "Voor gisteren, vroeger, gewoontes en verhalen",
+        whatLabels: ["Nederlands", "Engels"],
+        whatNote: "te/de is net als -ed in het Engels: {v:werken:ik} = worked, {v:spelen:wij} = played.",
+        chapterSub: {
+          stem: "Haal -en van het hele werkwoord",
+          tede: "Kijk naar 't kofschip",
+          plural: "te/de of ten/den",
+        },
+        stems: {
+          all: { title: "Haal -en eraf", sub: "En pas de spelling aan, net als in de tegenwoordige tijd", why: "Lange klank? Twee klinkers: {s:spelen}. Dubbele medeklinker? Eén: {s:bellen}. z wordt s: {s:reizen}." },
+        },
+        kofschip: {
+          t: { title: "Letter uit 't kofschip? Dan -te", sub: "Kijk naar het werkwoord zonder -en" },
+          d: { title: "Een andere letter? Dan -de", sub: "Alles wat niet in 't kofschip staat" },
+        },
+        kofWhy: "= t, k, f, s, ch, p (en x)",
+        trapTitle: "Let op: kijk vóór de spelling verandert",
+        trapSub: "Niet naar de stam, maar naar het werkwoord zonder -en",
+        trapLabels: ["stam", "zonder -en"],
+        trapWhy: "De stam is {s:reizen}, maar {nl:reizen} heeft een z. De z staat niet in 't kofschip, dus -de.",
+        tableTitle: "Meervoud? Zet er een n achter",
+        tableSingular: "Enkelvoud",
+        tablePlural: "Meervoud",
+        endings: ["stam + te/de", "stam + ten/den"],
+        persons: { ik: "ik", jij: "jij / je", u: "u", hij: "hij / zij / het", wij: "wij / we", jullie: "jullie", zij: "zij / ze" },
+        examplesTitle: "Zelfde uitgangen, andere werkwoorden",
+        examplesSub: "te of de: kijk naar 't kofschip",
+        noteTitle: "Let op",
+        noteStemT: "Stam op t? Die t blijft staan",
+        noteQuestion: "Een vraag? De vorm blijft hetzelfde",
+        summaryTitle: "Samenvatting",
+        summary: [
+          ["Wanneer?", "gisteren, vroeger, gewoontes, verhalen"],
+          ["De stam", "hele werkwoord − en: {s:spelen} · {s:bellen} · {s:reizen}"],
+          ["'t kofschip", "t k f s ch p → -te, anders -de"],
+          ["Enkelvoud", "stam + te/de: ik {v:werken:ik}"],
+          ["Meervoud", "stam + ten/den: wij {v:werken:wij}"],
+          ["Stam op t", "die blijft: ik {v:wachten:ik}"],
+        ],
+        quizTitle: "Nu jij!",
+        quizSub: "8 vragen · pauzeer de video als je meer tijd nodig hebt",
+        quizNote: {
+          d: "n staat niet in 't kofschip: -de",
+          t: "k staat in 't kofschip: -te",
+          z: "z staat niet in 't kofschip: -den",
+          plural: "meervoud: -ten",
+          stemT: "wacht + te: de t blijft",
+          k: "k staat in 't kofschip: -te",
+          question: "vraag: de vorm blijft hetzelfde",
+          stemTPlural: "praat + ten: de t blijft",
+        },
+        gloss: {},
+        outroTitle: "Oefen de verleden tijd in de app",
+        outroUrl: "mijntaalstudio.nl/grammatica/verleden-tijd",
+        outroCta: "Abonneer je voor meer lessen",
+        description: {
+          lead: "De verleden tijd (imperfectum, A2) van regelmatige werkwoorden in 3 stappen: de stam, te of de met 't kofschip, en enkelvoud of meervoud. Daarna een quiz met 8 vragen.",
+          page: "📖 Uitleg op de site",
+          cc: "💬 Vertalingen in het Engels: zet de ondertiteling (CC) aan.",
+          chapters: "Hoofdstukken",
+          verbs: "Werkwoorden in deze video",
+          pronouns: "Persoonlijke voornaamwoorden",
+          footer: "Taal Studio · Nederlands leren, op jouw niveau",
+        },
+      },
+      en: {
+        topic: "Past tense",
+        thumb: ["Dutch past tense", "explained"],
+        title: ["The Dutch past tense", "in 3 steps"],
+        sub: "Regular verbs (*imperfectum*) · then a quiz",
+        chapters: { intro: "Intro", stem: "The stem", tede: "*te* or *de*", plural: "Singular or plural", summary: "Summary", quiz: "Quiz" },
+        agendaTitle: "In this lesson",
+        ccHint: "Translations? Turn on captions (CC)",
+        whatTitle: "When do you use the past tense?",
+        whatSub: "For yesterday, the past, habits and stories",
+        whatLabels: ["Dutch", "English"],
+        whatNote: "*te/de* works like -ed in English: *{v:werken:ik}* = worked, *{v:spelen:wij}* = played.",
+        chapterSub: {
+          stem: "Take *-en* off the infinitive",
+          tede: "Look at *'t kofschip*",
+          plural: "*te/de* or *ten/den*",
+        },
+        stems: {
+          all: { title: "Take off *-en*", sub: "And fix the spelling, as in the present tense", why: "Long sound? Two vowels: *{s:spelen}*. Double consonant? One: *{s:bellen}*. *z* becomes *s*: *{s:reizen}*." },
+        },
+        kofschip: {
+          t: { title: "Letter from *'t kofschip*? Then *-te*", sub: "Look at the verb without *-en*" },
+          d: { title: "Any other letter? Then *-de*", sub: "Everything that isn't in *'t kofschip*" },
+        },
+        kofWhy: "= t, k, f, s, ch, p (and x)",
+        trapTitle: "Watch out: look before the spelling changes",
+        trapSub: "Not at the stem, but at the verb without *-en*",
+        trapLabels: ["stem", "without -en"],
+        trapWhy: "The stem is *{s:reizen}*, but *{nl:reizen}* has a *z*. *z* isn't in *'t kofschip*, so *-de*.",
+        tableTitle: "Plural? Add an *n*",
+        italicDutch: true,
+        tableSingular: "Singular",
+        tablePlural: "Plural",
+        endings: ["stem + *te/de*", "stem + *ten/den*"],
+        persons: { ik: "*ik* · I", jij: "*jij / je* · you", u: "*u* · you (polite)", hij: "*hij / zij / het* · he / she / it", wij: "*wij / we* · we", jullie: "*jullie* · you (plural)", zij: "*zij / ze* · they" },
+        examplesTitle: "Same endings, other verbs",
+        examplesSub: "*te* or *de*: look at *'t kofschip*",
+        noteTitle: "Watch out",
+        noteStemT: "Stem ends in *t*? That *t* stays",
+        noteQuestion: "A question? The form stays the same",
+        summaryTitle: "Summary",
+        summary: [
+          ["When?", "yesterday, the past, habits, stories"],
+          ["The stem", "infinitive − *en*: *{s:spelen} · {s:bellen} · {s:reizen}*"],
+          ["*'t kofschip*", "*t k f s ch p* → *-te*, otherwise *-de*"],
+          ["Singular", "stem + *te/de*: *ik {v:werken:ik}*"],
+          ["Plural", "stem + *ten/den*: *wij {v:werken:wij}*"],
+          ["Stem ends in *t*", "it stays: *ik {v:wachten:ik}*"],
+        ],
+        quizTitle: "Your turn!",
+        quizSub: "8 questions · pause the video if you need more time",
+        quizNote: {
+          d: "*n* isn't in *'t kofschip*: *-de*",
+          t: "*k* is in *'t kofschip*: *-te*",
+          z: "*z* isn't in *'t kofschip*: *-den*",
+          plural: "plural: *-ten*",
+          stemT: "*wacht + te*: the *t* stays",
+          k: "*k* is in *'t kofschip*: *-te*",
+          question: "question: the form stays the same",
+          stemTPlural: "*praat + ten*: the *t* stays",
+        },
+        gloss: {
+          "Vroeger ___ ik in Utrecht.": "I used to live in Utrecht.",
+          "Gisteren ___ hij tot zes uur.": "Yesterday he worked until six.",
+          "Wij ___ elke zomer naar Spanje.": "We travelled to Spain every summer.",
+          "De kinderen ___ naar school.": "The children cycled to school.",
+          "Ik ___ een uur op de bus.": "I waited for the bus for an hour.",
+          "Mijn vader ___ elke avond.": "My father cooked every evening.",
+          "___ jij vroeger ook piano?": "Did you play the piano too, when you were young?",
+          "Jullie ___ te lang met de buren.": "You (all) talked to the neighbours for too long.",
+        },
+        outroTitle: "Practise the past tense in the app",
+        outroUrl: "mijntaalstudio.nl/en/grammar/verleden-tijd",
+        outroCta: "Subscribe for more lessons",
+        description: {
+          lead: "The Dutch past tense (imperfectum, A2) of regular verbs in 3 steps: the stem, te or de with 't kofschip, and singular or plural. Then a quiz with 8 questions.",
           page: "📖 Explanation on the site",
           cc: "💬 Translations of the Dutch words: turn on captions (CC).",
           chapters: "Chapters",

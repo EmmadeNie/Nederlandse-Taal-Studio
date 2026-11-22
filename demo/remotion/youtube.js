@@ -5,7 +5,7 @@
 //   verbs and pronouns with their English.
 // Times and words come from the same timeline and data as the video.
 import { mkdirSync, writeFileSync } from "node:fs";
-import { LESSON_VIDEOS, auxForm, auxOf, enShort, fill, perfectText, verb } from "./lessons.js";
+import { LESSON_VIDEOS, auxForm, auxOf, enShort, fill, pastForm, perfectText, verb } from "./lessons.js";
 import { ANSWER_AT, FPS, S, TRAP_WHY_AT, WHAT_NOTE_AT, WHAT_STEP, headerChapters, kofWhyAt, stemTNoteAt, stemsWhyAt, videoChapters, videoScenes, zijnTipAt } from "./lessonVideoScenes.js";
 
 const SITE = "https://mijntaalstudio.nl";
@@ -16,6 +16,11 @@ const pair = ([nl, en]) => `${nl} = ${en}`;
 const verbPair = (id) => {
   const v = verb(id);
   return `${v.nl} = ${v.en}`;
+};
+// With the past tense: "werken (werkte / werkten) = to work".
+const pastPair = (id) => {
+  const v = verb(id);
+  return `${v.nl} (${v.past.singular} / ${v.past.plural}) = ${enShort(v.en)}`;
 };
 // With the perfect: "eten (heeft gegeten) = to eat".
 const perfectPair = (id, aux) => {
@@ -46,7 +51,7 @@ function sceneCaptions(s, L, lang) {
       const t = E.stems[s.g.key];
       const words = list(s.g.verbs.map(verbPair));
       const steps = [[0, [...head(`${t.title}: ${t.sub}`), words]]];
-      if (t.why && nl) steps.push([stemsWhyAt(s.g), [words, t.why]]);
+      if (t.why && nl) steps.push([stemsWhyAt(s.g), [words, fill(t.why)]]);
       return steps;
     }
     case "table":
@@ -88,7 +93,7 @@ function sceneCaptions(s, L, lang) {
       const words = list([...new Set(L.what.map((x) => x.verb))].map(verbPair).concat(G.what.map(pair)));
       const steps = [[0, [...head(`${E.whatTitle} ${E.whatSub}`), words]]];
       steps.push([WHAT_STEP, [words, ...head(L.what.map((x) => `${perfectText(x)} = ${plain(x.en)}`).join(" · "))]]);
-      if (nl) steps.push([WHAT_NOTE_AT, [words, E.whatNote]]);
+      if (nl) steps.push([WHAT_NOTE_AT, [words, fill(E.whatNote)]]);
       return steps;
     }
     case "pForm":
@@ -101,13 +106,13 @@ function sceneCaptions(s, L, lang) {
       return [[0, [...head(`${E.formulaTitle}: ${E.formulaSub}`), list(L.formula.map((id) => perfectPair(id)))]]];
     case "pKofschip": {
       const t = E.kofschip[s.g.key];
-      const words = list(s.g.verbs.map((id) => perfectPair(id)));
+      const words = list(s.g.verbs.map((id) => (L.tense === "past" ? pastPair(id) : perfectPair(id))));
       const steps = [[0, [...head(`${t.title}: ${t.sub}`), words]]];
       if (nl) steps.push([kofWhyAt(s.g), [words, `'t kofschip ${E.kofWhy}`]]);
       return steps;
     }
     case "pTrap": {
-      const words = perfectPair(L.trap);
+      const words = L.tense === "past" ? pastPair(L.trap) : perfectPair(L.trap);
       const steps = [[0, [...head(`${E.trapTitle}: ${E.trapSub}`), words]]];
       if (nl) steps.push([TRAP_WHY_AT, [words, fill(E.trapWhy)]]);
       return steps;
@@ -130,6 +135,15 @@ function sceneCaptions(s, L, lang) {
       return [[0, [...head(`${E.orderTitle}: ${E.orderSub}`), list([verbPair(L.order.verb), ...G.order.map(pair)]), ...head(E.orderGloss)]]];
     case "pOrder2":
       return [[0, [...head(`${E.order2Title}: ${E.order2Sub}`), list([...new Set(L.order2.map((x) => x.verb))].map(verbPair).concat(G.order2.map(pair))), ...head(E.order2Gloss.join(" · "))]]];
+    // The past tense.
+    case "pastTable":
+      return [[0, [pastPair(L.table), ...(nl ? [`${E.tableTitle}: ${E.tableSingular} ${E.endings[0]} · ${E.tablePlural} ${E.endings[1]}`, `${E.tableSingular}: ${list(L.pronouns.slice(0, 4).map(pair))}`, `${E.tablePlural}: ${list(L.pronouns.slice(4).map(pair))}`] : [])]]];
+    case "pastExamples":
+      return [[0, [...head(`${E.examplesTitle}: ${E.examplesSub}`), list(L.examples.map(pastPair))]]];
+    case "pastNotes": {
+      const q = pastForm(L.question.verb, "jij");
+      return [[0, [...head(`${E.noteStemT} · ${E.noteQuestion}`), list([...L.stemT, L.question.verb].map(pastPair)), ...head(`Jij ${q} ${L.question.rest}. → ${q[0].toUpperCase() + q.slice(1)} jij ${L.question.rest}?`)]]];
+    }
     default:
       return [];
   }
@@ -152,11 +166,14 @@ function srt(id, lang) {
       cues.push({ from, to, lines });
     });
   }
-  return cues.map((c, i) => `${i + 1}\n${stamp(c.from)} --> ${stamp(c.to)}\n${c.lines.join("\n")}\n`).join("\n");
+  // *Dutch words* are italic on screen; captions are plain text.
+  return cues.map((c, i) => `${i + 1}\n${stamp(c.from)} --> ${stamp(c.to)}\n${c.lines.join("\n").replace(/\*/g, "")}\n`).join("\n");
 }
 
 /** Every verb in the video once, in the order they come up. */
 function verbIds(L) {
+  if (L.tense === "past")
+    return [...L.what.map((s) => s.verb), ...L.stems.flatMap((g) => g.verbs), ...L.kofschip.flatMap((g) => g.verbs), L.trap, L.table, ...L.examples, ...L.stemT, L.question.verb, ...L.quiz.map((q) => q.verb)];
   if (L.tense === "perfect")
     return [
       L.intro.verb,
@@ -180,6 +197,7 @@ function verbIds(L) {
 function verbLines(L) {
   return [...new Set(verbIds(L))].map((id) => {
     const v = verb(id);
+    if (L.tense === "past") return `${v.nl} – ${v.past.singular} / ${v.past.plural} – ${enShort(v.en)}`;
     if (L.tense !== "perfect") return `${v.nl} – ${v.en}`;
     const aux = v.aux.split("/").map((a) => auxForm(a, "hij")).join("/");
     return `${v.nl} – ${aux} ${v.participle} – ${enShort(v.en)}`;
@@ -207,7 +225,9 @@ function description(id, lang) {
     D.footer,
     SITE,
     "",
-  ].join("\n");
+  ]
+    .join("\n")
+    .replace(/\*/g, ""); // *Dutch words* are italic on screen only
 }
 
 mkdirSync(OUT, { recursive: true });
