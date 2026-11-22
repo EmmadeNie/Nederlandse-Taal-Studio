@@ -10,7 +10,7 @@ import { Rich } from "./LessonReel";
 export const CAROUSEL_SIZE = { width: 1080, height: 1350 };
 
 // The light palette of the stickers (Sticker.jsx), with darker accents for contrast on white.
-const L = {
+export const L = {
   bg: "#f3f4f7",
   card: "#ffffff",
   line: "#e3e6eb",
@@ -72,10 +72,10 @@ function Sentence({ s }) {
   );
 }
 
-const card = { background: L.card, border: `2px solid ${L.line}`, borderRadius: 36, boxShadow: "0 10px 30px rgba(11,13,17,0.06)" };
-const chip = (color) => ({ display: "inline-block", fontSize: 30, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase", color: "#fff", background: color, borderRadius: 999, padding: "10px 26px" });
+export const card = { background: L.card, border: `2px solid ${L.line}`, borderRadius: 36, boxShadow: "0 10px 30px rgba(11,13,17,0.06)" };
+export const chip = (color) => ({ display: "inline-block", fontSize: 30, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase", color: "#fff", background: color, borderRadius: 999, padding: "10px 26px" });
 
-function Frame({ n, total, children }) {
+export function Frame({ n, total, children }) {
   return (
     <AbsoluteFill style={{ background: L.bg, fontFamily, color: L.text }}>
       <div style={{ position: "absolute", left: 80, right: 80, top: 64, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -93,7 +93,7 @@ function Frame({ n, total, children }) {
   );
 }
 
-function Title({ title, sub }) {
+export function Title({ title, sub }) {
   return (
     <div style={{ marginBottom: 50 }}>
       <div style={{ fontSize: 84, fontWeight: 800, letterSpacing: -2, lineHeight: 1.05 }}>
@@ -108,7 +108,7 @@ function Title({ title, sub }) {
   );
 }
 
-const big = { fontSize: 60, fontWeight: 700, lineHeight: 1.25 };
+export const big = { fontSize: 60, fontWeight: 700, lineHeight: 1.25 };
 
 export function CarouselSlide({ slide, lang = "en" }) {
   const T = TEXT[lang];

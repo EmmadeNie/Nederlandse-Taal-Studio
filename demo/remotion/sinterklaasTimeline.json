@@ -1,0 +1,583 @@
+{
+ "total": 383.13,
+ "words": [
+  {
+   "art": null,
+   "nl": "Sinterklaas",
+   "en": "Saint Nicholas",
+   "syl": [
+    "Sin",
+    "ter",
+    "klaas"
+   ],
+   "stress": 2,
+   "tip": "*aa* is a long “ah”, like in *father*."
+  },
+  {
+   "art": "de",
+   "nl": "pakjesavond",
+   "en": "“gifts or parcels evening”",
+   "syl": [
+    "pak",
+    "jes",
+    "a",
+    "vond"
+   ],
+   "stress": 0,
+   "tip": "The *j* sounds like the English *y* in *yes*."
+  },
+  {
+   "art": null,
+   "nl": "je schoen zetten",
+   "en": "to put out your shoe",
+   "syl": [
+    "schoen",
+    "zet",
+    "ten"
+   ],
+   "stress": 0,
+   "tip": "*sch* is *s* + the throaty *ch*. And *oe* sounds like *oo* in *food*."
+  },
+  {
+   "art": "de",
+   "nl": "pepernoten",
+   "en": "small spiced biscuits",
+   "syl": [
+    "pe",
+    "per",
+    "no",
+    "ten"
+   ],
+   "stress": 0,
+   "tip": "A syllable that ends in a vowel has a long vowel: *pe* like *pay*, *no* like *no*."
+  },
+  {
+   "art": "de",
+   "nl": "chocoladeletter",
+   "en": "a chocolate letter",
+   "syl": [
+    "cho",
+    "co",
+    "la",
+    "de",
+    "let",
+    "ter"
+   ],
+   "stress": 2,
+   "tip": "Here *ch* sounds like the English *sh*."
+  },
+  {
+   "art": "de",
+   "nl": "surprise",
+   "en": "a disguised homemade gift",
+   "syl": [
+    "sur",
+    "pri",
+    "se"
+   ],
+   "stress": 1,
+   "tip": "A French word: the *s* at the end sounds like a *z*."
+  },
+  {
+   "art": "het",
+   "nl": "gedicht",
+   "en": "a poem",
+   "syl": [
+    "ge",
+    "dicht"
+   ],
+   "stress": 1,
+   "tip": "*g* and *ch* are the same throaty sound, from the back of your throat."
+  }
+ ],
+ "scenes": [
+  {
+   "kind": "title",
+   "dur": 5.5,
+   "start": 0.0
+  },
+  {
+   "kind": "repeat",
+   "start": 5.5,
+   "voice": 0.35,
+   "dur": 2.22
+  },
+  {
+   "kind": "word",
+   "w": 0,
+   "start": 7.72,
+   "voice": 2.35,
+   "dur": 9.74
+  },
+  {
+   "kind": "line",
+   "w": 0,
+   "nl": "Sinterklaas komt met de stoomboot.",
+   "en": "Sinterklaas comes by steamboat.",
+   "hl": "stoomboot",
+   "start": 17.46,
+   "voice": 0.35,
+   "dur": 6.76
+  },
+  {
+   "kind": "line",
+   "w": 0,
+   "nl": "Sinterklaas rijdt op een wit paard.",
+   "en": "Sinterklaas rides a white horse.",
+   "hl": "paard",
+   "fix": {
+    "at": 2.960000000000001,
+    "wrong": "witte",
+    "right": "wit",
+    "note": "*het* paard → *een wit* paard. No *-e* here! 🐴"
+   },
+   "start": 24.22,
+   "voice": 0.35,
+   "dur": 7.34
+  },
+  {
+   "kind": "line",
+   "w": 0,
+   "nl": "Waar is Sinterklaas nu?",
+   "en": "Where is Sinterklaas now?",
+   "hl": "Sinterklaas",
+   "start": 31.56,
+   "voice": 0.35,
+   "dur": 4.98
+  },
+  {
+   "kind": "word",
+   "w": 1,
+   "start": 36.54,
+   "voice": 2.35,
+   "dur": 6.4
+  },
+  {
+   "kind": "slow",
+   "w": 1,
+   "start": 42.94,
+   "voice": 0.35,
+   "dur": 6.4
+  },
+  {
+   "kind": "word",
+   "w": 1,
+   "start": 49.34,
+   "voice": 2.35,
+   "dur": 5.6
+  },
+  {
+   "kind": "line",
+   "w": 1,
+   "nl": "Vanavond is het pakjesavond!",
+   "en": "Tonight is the night of presents!",
+   "hl": "pakjesavond",
+   "start": 54.94,
+   "voice": 0.35,
+   "dur": 8.185
+  },
+  {
+   "kind": "line",
+   "w": 1,
+   "nl": "Op pakjesavond krijgen we cadeautjes.",
+   "en": "On pakjesavond we get presents.",
+   "hl": "cadeautjes",
+   "start": 63.125,
+   "voice": 0.35,
+   "dur": 10.425
+  },
+  {
+   "kind": "line",
+   "w": 1,
+   "nl": "Wat heb jij gekregen op pakjesavond?",
+   "en": "What did you get on pakjesavond?",
+   "hl": "gekregen",
+   "start": 73.55,
+   "voice": 0.35,
+   "dur": 15.64
+  },
+  {
+   "kind": "word",
+   "w": 2,
+   "start": 89.19,
+   "voice": 2.35,
+   "dur": 13.7
+  },
+  {
+   "kind": "line",
+   "w": 2,
+   "nl": "Mag ik vanavond mijn schoen zetten?",
+   "en": "Can I put out my shoe tonight?",
+   "hl": "schoen zetten",
+   "start": 102.89,
+   "voice": 0.35,
+   "dur": 6.38
+  },
+  {
+   "kind": "line",
+   "w": 2,
+   "nl": "Ik zet mijn schoen bij de open haard.",
+   "en": "I put my shoe by the fireplace.",
+   "hl": "zet",
+   "start": 109.27,
+   "voice": 0.35,
+   "dur": 7.44
+  },
+  {
+   "kind": "line",
+   "w": 2,
+   "nl": "Er zit een wortel in mijn schoen, voor het paard.",
+   "en": "There's a carrot in my shoe, for the horse.",
+   "hl": "wortel",
+   "start": 116.71,
+   "voice": 0.35,
+   "dur": 8.72
+  },
+  {
+   "kind": "word",
+   "w": 3,
+   "start": 125.43,
+   "voice": 2.35,
+   "dur": 17.36
+  },
+  {
+   "kind": "line",
+   "w": 3,
+   "nl": "Wie wil er pepernoten?",
+   "en": "Who wants some pepernoten?",
+   "hl": "pepernoten",
+   "start": 142.79,
+   "voice": 0.35,
+   "dur": 6.46
+  },
+  {
+   "kind": "line",
+   "w": 3,
+   "nl": "Ik koop een zak pepernoten.",
+   "en": "I'm buying a bag of pepernoten.",
+   "hl": "zak",
+   "start": 149.25,
+   "voice": 0.35,
+   "dur": 5.86
+  },
+  {
+   "kind": "line",
+   "w": 3,
+   "nl": "Pepernoten zijn lekker!",
+   "en": "Pepernoten are tasty!",
+   "hl": "lekker",
+   "start": 155.11,
+   "voice": 0.35,
+   "dur": 7.62
+  },
+  {
+   "kind": "line",
+   "w": 3,
+   "nl": "De pepernoten zijn vies! 😄",
+   "en": "…or not: pepernoten are gross!",
+   "hl": "vies",
+   "start": 162.73,
+   "voice": 0.35,
+   "dur": 3.8
+  },
+  {
+   "kind": "word",
+   "w": 4,
+   "start": 166.53,
+   "voice": 2.35,
+   "dur": 14.26
+  },
+  {
+   "kind": "line",
+   "w": 4,
+   "nl": "Mijn chocoladeletter is de E van Emma.",
+   "en": "My chocolate letter is the E for Emma.",
+   "hl": "E",
+   "start": 180.79,
+   "voice": 0.35,
+   "dur": 3.66
+  },
+  {
+   "kind": "line",
+   "w": 4,
+   "nl": "Wat is jouw chocoladeletter?",
+   "en": "What's your chocolate letter?",
+   "hl": "jouw",
+   "start": 184.45,
+   "voice": 0.35,
+   "dur": 2.84
+  },
+  {
+   "kind": "line",
+   "w": 4,
+   "nl": "Mijn chocoladeletter is de L van Lamak.",
+   "en": "My chocolate letter is the L for Lamak.",
+   "hl": "L",
+   "start": 187.29,
+   "voice": 0.35,
+   "dur": 5.44
+  },
+  {
+   "kind": "line",
+   "w": 4,
+   "nl": "Ik eet mijn chocoladeletter op.",
+   "en": "I'm eating my chocolate letter.",
+   "hl": "eet",
+   "start": 192.73,
+   "voice": 0.35,
+   "dur": 5.94
+  },
+  {
+   "kind": "word",
+   "w": 5,
+   "start": 198.67,
+   "voice": 2.35,
+   "dur": 10.52
+  },
+  {
+   "kind": "line",
+   "w": 5,
+   "nl": "Wat een mooie surprise!",
+   "en": "What a lovely surprise!",
+   "hl": "surprise",
+   "start": 209.19,
+   "voice": 0.35,
+   "dur": 4.56
+  },
+  {
+   "kind": "line",
+   "w": 5,
+   "nl": "Ik maak een surprise voor mijn collega.",
+   "en": "I'm making a surprise for my colleague.",
+   "hl": "maak",
+   "start": 213.75,
+   "voice": 0.35,
+   "dur": 5.68
+  },
+  {
+   "kind": "line",
+   "w": 5,
+   "nl": "Wat zit er in de surprise?",
+   "en": "What's inside the surprise?",
+   "hl": "in",
+   "start": 219.43,
+   "voice": 0.35,
+   "dur": 5.82
+  },
+  {
+   "kind": "word",
+   "w": 6,
+   "start": 225.25,
+   "voice": 2.35,
+   "dur": 6.27
+  },
+  {
+   "kind": "line",
+   "w": 6,
+   "nl": "Lees je gedicht maar voor!",
+   "en": "Go on, read your poem out loud!",
+   "hl": "voor",
+   "start": 231.52,
+   "voice": 0.35,
+   "dur": 5.42
+  },
+  {
+   "kind": "line",
+   "w": 6,
+   "nl": "Sinterklaas schrijft een gedicht.",
+   "en": "Sinterklaas writes a poem.",
+   "hl": "schrijft",
+   "start": 236.94,
+   "voice": 0.35,
+   "dur": 6.415
+  },
+  {
+   "kind": "line",
+   "w": 6,
+   "nl": "Het gedicht rijmt niet!",
+   "en": "The poem doesn't rhyme!",
+   "hl": "rijmt",
+   "start": 243.355,
+   "voice": 0.35,
+   "dur": 5.355
+  },
+  {
+   "kind": "verbsIntro",
+   "dur": 6.0,
+   "start": 248.71
+  },
+  {
+   "kind": "verb",
+   "inf": [
+    "aan",
+    "komen"
+   ],
+   "nl": "Sinterklaas komt morgen aan.",
+   "en": "Sinterklaas arrives tomorrow.",
+   "verb": "komt",
+   "part": "aan",
+   "start": 254.71,
+   "voice": 0.35,
+   "dur": 9.48
+  },
+  {
+   "kind": "verbsTip",
+   "dur": 6.0,
+   "start": 264.19
+  },
+  {
+   "kind": "verb",
+   "inf": [
+    "in",
+    "pakken"
+   ],
+   "nl": "Ik pak het cadeautje in.",
+   "en": "I wrap the present.",
+   "verb": "pak",
+   "part": "in",
+   "start": 270.19,
+   "voice": 0.35,
+   "dur": 8.46
+  },
+  {
+   "kind": "verb",
+   "inf": [
+    "uit",
+    "pakken"
+   ],
+   "nl": "Ik pak mijn cadeautje uit!",
+   "en": "I unwrap my present!",
+   "verb": "pak",
+   "part": "uit",
+   "start": 278.65,
+   "voice": 0.35,
+   "dur": 7.24
+  },
+  {
+   "kind": "verb",
+   "inf": [
+    "op",
+    "eten"
+   ],
+   "nl": "Ik eet mijn chocoladeletter op.",
+   "en": "I eat up my chocolate letter.",
+   "verb": "eet",
+   "part": "op",
+   "start": 285.89,
+   "voice": 0.35,
+   "dur": 8.56
+  },
+  {
+   "kind": "quizIntro",
+   "dur": 4.5,
+   "start": 294.45
+  },
+  {
+   "kind": "quiz",
+   "n": 1,
+   "total": 8,
+   "q": "Sinterklaas komt met de ___.",
+   "ans": "stoomboot",
+   "en": "Sinterklaas comes by …",
+   "think": 5.0,
+   "start": 298.95,
+   "reveal": 5.35,
+   "dur": 9.59
+  },
+  {
+   "kind": "quiz",
+   "n": 2,
+   "total": 8,
+   "q": "Mag ik vanavond mijn ___ zetten?",
+   "ans": "schoen",
+   "en": "Can I put out my … tonight?",
+   "think": 5.0,
+   "start": 308.54,
+   "reveal": 5.35,
+   "dur": 9.09
+  },
+  {
+   "kind": "quiz",
+   "n": 3,
+   "total": 8,
+   "q": "Wie wil er ___?",
+   "ans": "pepernoten",
+   "en": "Who wants some …?",
+   "think": 5.0,
+   "start": 317.63,
+   "reveal": 5.35,
+   "dur": 9.63
+  },
+  {
+   "kind": "quiz",
+   "n": 4,
+   "total": 8,
+   "q": "Mijn ___ is de E van Emma.",
+   "ans": "chocoladeletter",
+   "en": "My … is the E for Emma.",
+   "think": 5.0,
+   "start": 327.26,
+   "reveal": 5.35,
+   "dur": 9.71
+  },
+  {
+   "kind": "quiz",
+   "n": 5,
+   "total": 8,
+   "q": "Wat een mooie ___!",
+   "ans": "surprise",
+   "en": "What a lovely …!",
+   "think": 5.0,
+   "start": 336.97,
+   "reveal": 5.35,
+   "dur": 8.59
+  },
+  {
+   "kind": "quiz",
+   "n": 6,
+   "total": 8,
+   "q": "Een Sinterklaasgedicht moet ___.",
+   "ans": "rijmen",
+   "en": "A Sinterklaas poem has to …",
+   "think": 5.0,
+   "start": 345.56,
+   "reveal": 5.35,
+   "dur": 9.27
+  },
+  {
+   "kind": "quiz",
+   "n": 7,
+   "total": 8,
+   "q": "Ik pak mijn cadeautje ___!",
+   "ans": "uit",
+   "en": "I unwrap my present!",
+   "think": 5.0,
+   "start": 354.83,
+   "reveal": 5.35,
+   "dur": 9.91
+  },
+  {
+   "kind": "quiz",
+   "n": 8,
+   "total": 8,
+   "q": "Lees je ___ maar voor!",
+   "ans": "gedicht",
+   "en": "Go on, read your … out loud!",
+   "think": 5.0,
+   "start": 364.74,
+   "reveal": 5.35,
+   "dur": 9.01
+  },
+  {
+   "kind": "outro",
+   "start": 373.75,
+   "voice": 0.35,
+   "dur": 2.38
+  },
+  {
+   "kind": "cta",
+   "dur": 7.0,
+   "start": 376.13
+  }
+ ]
+}
