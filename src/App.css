@@ -1814,9 +1814,32 @@ svg[class^="ph"], button svg, h4 svg, .board-meta-item svg {
   color: var(--b1);
 }
 
+/* Users page: the title with "+ Student", and the Invite button on a student who hasn't signed in yet */
+.users-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.users-invite {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.85rem;
+}
+
 .users-actions {
   width: 1%;
   text-align: right;
+  white-space: nowrap;
+}
+
+.users-actions .users-invite + .users-delete {
+  margin-left: 0.4rem;
 }
 
 .users-delete:hover {
