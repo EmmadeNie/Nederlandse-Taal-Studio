@@ -14,16 +14,16 @@ export const PLAN_OFFERS = [
   { id: "onderweg", price: 10, features: ["read", "look", "practise"] },
   // Compleet goes through the docent; with 8 lessons a month it is included.
   { id: "compleet", price: 50, freeWithLessons: 8, featured: true, features: ["read", "look", "practise", "lessons", "path"] },
-  // Partner: everything in Compleet, plus live help and a say in the programme. A fixed price.
+  // Partner: everything in Compleet, plus monthly lesson advice and a say in the programme. A fixed price.
   {
     id: "partner",
     price: 100,
-    features: ["read", "look", "practise", "lessons", "path", "support", "ideas"],
+    features: ["read", "look", "practise", "lessons", "path", "advice", "ideas"],
   },
 ];
 
 /** Every feature, in the order the cards list them. */
-export const PLAN_FEATURES = ["read", "look", "practise", "lessons", "path", "support", "ideas"];
+export const PLAN_FEATURES = ["read", "look", "practise", "lessons", "path", "advice", "ideas"];
 
 export const PLAN_TEXT = {
   nl: {
@@ -34,7 +34,7 @@ export const PLAN_TEXT = {
       gratis: "Rondkijken",
       onderweg: "Oefenen, waar je ook bent",
       compleet: "Alles, met je eigen docent",
-      partner: "Alles, plus directe hulp en invloed op het programma",
+      partner: "Alles, plus maandelijks lesadvies en invloed op het programma",
     },
     price: (n) => (n ? `€${n}` : "€0"),
     perMonth: "per maand",
@@ -46,7 +46,7 @@ export const PLAN_TEXT = {
       practise: "Flashcards, Invullen en Vervoegen",
       lessons: "Alle lessen met uitleg, werkwoorden en woordenlijsten",
       path: "Een leerpad dat je docent voor je samenstelt",
-      support: "Live hulp bij het bijwerken van je lesbord",
+      advice: "Elke maand lesadvies: wat je hierna leert, passend bij je niveau, en je lesbord daarop bijgewerkt",
       ideas: "Voorrang voor je ideeën: goede suggesties voor functies en lesmateriaal komen als eerste in het programma",
     },
   },
@@ -58,7 +58,7 @@ export const PLAN_TEXT = {
       gratis: "Look around",
       onderweg: "Practise wherever you are",
       compleet: "Everything, with your own teacher",
-      partner: "Everything, plus live support and a say in the programme",
+      partner: "Everything, plus monthly lesson advice and a say in the programme",
     },
     price: (n) => (n ? `€${n}` : "€0"),
     perMonth: "per month",
@@ -70,7 +70,7 @@ export const PLAN_TEXT = {
       practise: "Flashcards, Fill in and Conjugate",
       lessons: "Every lesson with explanations, verbs and word lists",
       path: "A learning path your teacher puts together for you",
-      support: "Live help updating your lesson board",
+      advice: "Monthly lesson advice: what to learn next for your current level, with your lesson board updated to match",
       ideas: "Priority for your ideas: good suggestions for features and lesson material go into the programme first",
     },
   },
