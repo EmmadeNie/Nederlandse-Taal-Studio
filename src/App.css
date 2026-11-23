@@ -2260,7 +2260,15 @@ svg[class^="ph"], button svg, h4 svg, .board-meta-item svg {
   color: var(--error-text);
 }
 
-/* "Lees meer" under the short explanation of a grammar topic */
+/* An open topic card: related words and example sentences as folded rows */
+.topic-folds {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+}
+
+/* "Lees de hele uitleg" under the short explanation of a grammar topic */
 .topic-readmore {
   display: inline-block;
   margin-top: 0.35rem;

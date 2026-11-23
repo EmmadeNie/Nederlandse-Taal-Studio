@@ -97,10 +97,15 @@
 .rich th,
 .rich td {
   position: relative; /* for the column resize handle */
-  border: 1px solid var(--border);
-  padding: 0.35rem 0.7rem;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  padding: 0.4rem 0.75rem 0.4rem 0;
   text-align: left;
   vertical-align: top;
+}
+
+.rich tr:last-child > td {
+  border-bottom: 0;
 }
 
 /* Columns without a width set by dragging stay readable. */
@@ -129,8 +134,17 @@
 }
 
 .rich th {
-  background: var(--surface-2);
-  font-weight: 600;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* In the editor the cells keep a light outline, so you can see where to type. */
+.ProseMirror th,
+.ProseMirror td {
+  outline: 1px dashed color-mix(in srgb, var(--border) 70%, transparent);
 }
 
 .rich th > p,
@@ -193,11 +207,12 @@
   margin-bottom: 0;
 }
 
-/* Example sentence: Dutch, then the English below it */
+/* Example sentence, as in the videos: the Dutch big, the English below it,
+   and an optional third line saying why ("↳ op gaat naar het einde"). */
 .rich div[data-example] {
-  margin: 0.3rem 0 0.8rem;
-  padding: 0.45rem 0.8rem;
-  border-radius: 8px;
+  margin: 0.4rem 0 0.9rem;
+  padding: 0.65rem 0.95rem;
+  border-radius: 10px;
   background: var(--surface-2);
 }
 
@@ -206,13 +221,159 @@
 }
 
 .rich div[data-example] > p:first-child {
-  font-weight: 600;
+  font-size: 1.08rem;
+  font-weight: 700;
+  line-height: 1.4;
 }
 
 .rich div[data-example] > p + p {
   color: var(--text-dim);
   font-style: italic;
   font-size: 0.85rem;
+}
+
+.rich div[data-example] > p:nth-child(n + 3) {
+  margin-top: 0.3rem;
+  color: var(--role-part);
+  font-style: normal;
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+
+.rich div[data-example] > p:nth-child(n + 3)::before {
+  content: "↳ ";
+}
+
+/* ----- House style (like the lesson videos) ----- */
+
+/* Word roles: the verb, the part that moves or changes, a marker. */
+.rich [data-role="werkwoord"] {
+  color: var(--role-verb);
+}
+
+.rich [data-role="deel"] {
+  color: var(--role-part);
+}
+
+.rich [data-role="markeer"] {
+  background: var(--role-mark);
+  color: var(--role-mark-text);
+  padding: 0 0.2em;
+  border-radius: 3px;
+}
+
+/* A small step label above a heading: "Stap 1" over "Hoofdzin en vraag". */
+.rich p[data-kicker] {
+  margin: 1.3rem 0 0;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.rich p[data-kicker] + h2,
+.rich p[data-kicker] + h3 {
+  margin-top: 0.1rem;
+}
+
+/* The building block, big: op + bellen = opbellen. */
+.rich div[data-formula] {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0.4rem 0 0.9rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 10px;
+  background: var(--surface-2);
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+}
+
+.rich div[data-formula] > p {
+  margin: 0;
+}
+
+/* Even oefenen: the question, the answer behind a click. */
+.rich div[data-quiz] {
+  margin: 0.4rem 0 0.9rem;
+  padding: 0.7rem 0.95rem;
+  border: 1px dashed color-mix(in srgb, var(--text-dim) 60%, transparent);
+  border-radius: 10px;
+}
+
+.rich div[data-quiz] > p:first-child {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.rich .quiz-blank {
+  display: inline-block;
+  min-width: 2.6em;
+  margin: 0 0.15em;
+  border-bottom: 2px solid var(--text-dim);
+  vertical-align: baseline;
+}
+
+.rich details.quiz-answer {
+  margin-top: 0.4rem;
+}
+
+.rich details.quiz-answer > summary {
+  cursor: pointer;
+  width: fit-content;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.rich details.quiz-answer > p {
+  margin: 0.35rem 0 0;
+}
+
+/* In the editor: the answer shows, marked as such. */
+.ProseMirror div[data-quiz] > p + p {
+  color: var(--text-dim);
+}
+
+.ProseMirror div[data-quiz] > p + p::before {
+  content: "→ ";
+}
+
+.re-role-choice {
+  display: block;
+  width: 100%;
+  padding: 0.3rem 0.6rem;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.re-role-choice:hover,
+.re-role-choice[aria-pressed="true"] {
+  background: var(--surface-2);
+}
+
+.re-role-choice [data-role="werkwoord"] {
+  color: var(--role-verb);
+}
+
+.re-role-choice [data-role="deel"] {
+  color: var(--role-part);
+}
+
+.re-role-choice [data-role="markeer"] {
+  background: var(--role-mark);
+  color: var(--role-mark-text);
+  padding: 0 0.25em;
+  border-radius: 3px;
 }
 
 /* ----- The editor ----- */

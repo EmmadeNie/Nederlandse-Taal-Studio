@@ -3,24 +3,18 @@ import { getSet } from "../data";
 import { LevelBadge } from "../components/Badges";
 import QuizletExport from "../components/QuizletExport";
 import SetSelect from "./SetSelect";
+import { ListBox } from "./WordList";
 import { LEVELS } from "./util";
 import { THEMES, themeLabel, toLists } from "./wordLists";
-import { GRAMMAR_TAGS, hasSentenceList, sentencesForList, slugLabel } from "./sentenceLists";
+import { GRAMMAR_TAGS, hasSentenceList, sentencesForList, slugLabel, sentenceListLabel } from "./sentenceLists";
 import FlagButton from "../review/FlagButton";
 import { useAuth } from "../auth/context";
 import { updateSet } from "../data/contentApi";
 import { Scissors } from "../icons";
 
-/** Short description of a recipe: "mijn eerste ontmoetingsgesprek" or "communicatie · t/m A1". */
 function Summary({ spec }) {
   const { t } = useI18n();
-  const parts = [
-    spec.set && (getSet(spec.set)?.title || slugLabel(spec.set)),
-    spec.theme && themeLabel(spec.theme),
-    spec.grammarTag && slugLabel(spec.grammarTag),
-    spec.level && (spec.upTo ? t("wl.upToLevel", { level: spec.level }) : spec.level),
-  ].filter(Boolean);
-  return <span className="dim">{parts.join(" · ")}</span>;
+  return <span className="dim">{sentenceListLabel(spec, t)}</span>;
 }
 
 /** File name for the export: "zinnen-mijn-eerste-ontmoetingsgesprek", "zinnen-communicatie-A1". */
@@ -28,7 +22,7 @@ const exportName = (spec) =>
   ["zinnen", spec.set, spec.theme, spec.grammarTag, spec.level].filter(Boolean).join("-");
 
 /** The sentences of a lesson's sentence list, numbered, Dutch with English below. */
-export function SentenceListView({ spec }) {
+export function SentenceListView({ spec, bare = false }) {
   const { t } = useI18n();
   const { role } = useAuth();
   // Docent, list built on a set: take a sentence out of that set (it stays in the library).
@@ -45,10 +39,7 @@ export function SentenceListView({ spec }) {
   const items = sentencesForList(spec);
   // Folded by default, like the word list.
   return (
-    <details className="wl wl-collapsible">
-      <summary className="wl-head">
-        <strong>{t("sl.count", { n: items.length })}</strong> <Summary spec={spec} />
-      </summary>
+    <ListBox bare={bare} head={<><strong>{t("sl.count", { n: items.length })}</strong> <Summary spec={spec} /></>}>
       {items.length === 0 ? (
         <p className="dim lp-empty">{spec.set ? t("sl.emptySet") : t("sl.empty")}</p>
       ) : (
@@ -75,15 +66,15 @@ export function SentenceListView({ spec }) {
         </ol>
       )}
       <QuizletExport words={items} filename={exportName(spec)} downloadKey="qz.downloadSentences" />
-    </details>
+    </ListBox>
   );
 }
 
 /** All sentence lists of a lesson, each folded on its own. */
-export function SentenceListsView({ value }) {
-  return toLists(value)
-    .filter(hasSentenceList)
-    .map((spec, i) => <SentenceListView key={i} spec={spec} />);
+export function SentenceListsView({ value, bare = false }) {
+  const lists = toLists(value).filter(hasSentenceList);
+  // Inside a lesson row: one list needs no fold of its own.
+  return lists.map((spec, i) => <SentenceListView key={i} spec={spec} bare={bare && lists.length === 1} />);
 }
 
 /** Docent: choose a set (dialogue) or theme, grammar and level for a lesson's sentence list. */

@@ -1,22 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "../auth/context";
 import { useI18n } from "../i18n/context";
-import Markdown from "../components/Markdown";
 import { InternalLinkContext, lessonIdFromHref } from "../components/internalLinks";
 import { navigate } from "../hooks/useRoute";
 import { pathFor } from "../routes";
 import RichEditor from "../editor/RichEditor";
-import LessonFiles from "./LessonFiles";
-import { WordListsView } from "./WordList";
-import { hasWordList, toLists } from "./wordLists";
-import { SentenceListsView } from "./SentenceList";
-import { GrammarView } from "./LessonGrammar";
-import { VerbsView } from "./LessonVerbs";
-import { lessonVerbs } from "./verbIds";
-import { grammarCount } from "./grammarTopics";
 import SaveStatus from "./SaveStatus";
 import { useAutosave } from "./useAutosave";
-import { hasSentenceList } from "./sentenceLists";
 import Board, { AddCardForm } from "./Board";
 import FeedbackButton from "../feedback/FeedbackButton";
 import CardPractise from "../flashcards/CardPractise";
@@ -27,7 +17,8 @@ import StepStatus, { StatusLegend, StepImportant } from "./StepStatus";
 import { BoardFilters, CardBody, Chips, Dialog, LinkList, LinksEditor, MetaItem } from "./shared";
 import { ICONS, Star } from "../icons";
 import { LEVELS, linkCount, matchesFilter, stepContent } from "./util";
-import LessonExplanation, { hasEnglishLesson } from "./LessonExplanation";
+import { hasEnglishLesson } from "./LessonExplanation";
+import LessonContent from "./LessonContent";
 import { PlanLocked, usePlan } from "../auth/plan";
 
 /**
@@ -537,42 +528,19 @@ function StepDialog({ step, lanes, note, isDocent, canArrange, nextPos, onClose,
           </div>
         </>
       ) : (
-        <LessonExplanation explanation={content.explanation} explanationEn={content.explanationEn} hasEn={hasEn} lang={lang} />
-      )}
-
-      {grammarCount(content.topicIds) > 0 && (
-        <div className="lp-section">
-          <h4>{t("lg.title")}</h4>
-          <GrammarView ids={content.topicIds} lang={lang} />
-        </div>
-      )}
-
-      {lessonVerbs(content.verbIds).length > 0 && (
-        <div className="lp-section">
-          <ListHeading lesson={step.lesson} forProfileId={isDocent ? step.student_id : undefined} part="verbs">{t("lv.title")}</ListHeading>
-          <VerbsView ids={content.verbIds} />
-        </div>
-      )}
-
-      {toLists(content.wordList).some(hasWordList) && (
-        <div className="lp-section">
-          <ListHeading lesson={step.lesson} forProfileId={isDocent ? step.student_id : undefined} part="words">{t("wl.title")}</ListHeading>
-          <WordListsView value={content.wordList} />
-        </div>
-      )}
-
-      {toLists(content.sentenceList).some(hasSentenceList) && (
-        <div className="lp-section">
-          <ListHeading lesson={step.lesson} forProfileId={isDocent ? step.student_id : undefined} part="sentences">{t("sl.title")}</ListHeading>
-          <SentenceListsView value={content.sentenceList} />
-        </div>
-      )}
-
-      {content.attachments.length > 0 && (
-        <div className="lp-section">
-          <h4>{t("files.title")}</h4>
-          <LessonFiles attachments={content.attachments} canEdit={false} />
-        </div>
+        <LessonContent
+          lesson={step.lesson}
+          forProfileId={isDocent ? step.student_id : undefined}
+          explanation={content.explanation}
+          explanationEn={content.explanationEn}
+          hasEn={hasEn}
+          lang={lang}
+          topicIds={content.topicIds}
+          verbIds={content.verbIds}
+          wordList={content.wordList}
+          sentenceList={content.sentenceList}
+          attachments={content.attachments}
+        />
       )}
 
       {/* Extra links for this one student (the lesson's own links live in the uitleg). */}
