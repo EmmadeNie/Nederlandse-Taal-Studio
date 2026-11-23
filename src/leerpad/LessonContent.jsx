@@ -9,7 +9,7 @@ import { hasWordList, toLists, wordListLabel, wordsForLists } from "./wordLists"
 import { hasSentenceList, sentenceListLabel, sentencesForLists } from "./sentenceLists";
 import { WordListsView } from "./WordList";
 import { SentenceListsView } from "./SentenceList";
-import VerbChips from "../components/VerbChips";
+import { VerbTiles } from "../components/RelatedWords";
 import CardPractise from "../flashcards/CardPractise";
 import FlashcardButton from "../flashcards/FlashcardButton";
 import { deckTitle } from "../flashcards/cards";
@@ -68,8 +68,8 @@ export default function LessonContent({
       count: verbs.length,
       body: () => (
         <>
-          <PanelHead text={t("lc.verbsHint")} tools={flashcards("verbs")} />
-          <VerbChips verbs={verbs} />
+          <PanelHead tools={flashcards("verbs")} />
+          <VerbTiles verbs={verbs} />
         </>
       ),
     },

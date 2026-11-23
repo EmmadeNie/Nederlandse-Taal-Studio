@@ -7,7 +7,6 @@ import FeedbackButton from "../feedback/FeedbackButton";
 import VerbCard from "./VerbCard";
 import { REFLEXIVE_PRONOUN, isReflexive, withPronoun } from "../data/reflexive";
 import Fold from "../leerpad/Fold";
-import VerbChips from "./VerbChips";
 import { ICONS } from "../icons";
 
 /**
@@ -26,7 +25,7 @@ export function RelatedFolds({ ids = [], exclude = [] }) {
     <>
       {verbs.length > 0 && (
         <Fold icon={ICONS.verbs} title={t("rw.verbsCount", { n: verbs.length })} sub={names(verbs)}>
-          <VerbChips verbs={verbs} />
+          <VerbTiles verbs={verbs} />
         </Fold>
       )}
       {others.length > 0 && (

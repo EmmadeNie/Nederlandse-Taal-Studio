@@ -1748,59 +1748,6 @@ span.step-important {
   color: var(--text-dim);
 }
 
-/* Verbs as chips (the part that moves in red, the verb in blue); tap for the conjugation. */
-.verb-chips-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-}
-
-.verb-chip {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 0.35rem 0.7rem;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--surface);
-  color: var(--text);
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.verb-chip:hover {
-  border-color: var(--accent);
-}
-
-.verb-chip.is-open {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent);
-}
-
-.verb-chip-name {
-  font-weight: 700;
-  font-size: 0.95rem;
-}
-
-.verb-chip-en {
-  font-size: 0.72rem;
-  color: var(--text-dim);
-}
-
-.verb-chip-conj {
-  margin-top: 0.6rem;
-  max-width: 340px;
-}
-
-.role-verb {
-  color: var(--role-verb);
-}
-
-.role-part {
-  color: var(--role-part);
-}
-
 /* Tabs in a lesson: one part at a time (Uitleg, Werkwoorden, Woorden, …). */
 .lc-tabs {
   display: flex;
