@@ -1,0 +1,102 @@
+{
+ "total": 32.93,
+ "scenes": [
+  {
+   "kind": "intro",
+   "start": 0.0,
+   "dur": 2.2
+  },
+  {
+   "kind": "moment",
+   "start": 2.2,
+   "dur": 8.57,
+   "voice": 0.5,
+   "title": "de surprise",
+   "caps": [
+    {
+     "at": 0.14,
+     "nl": "De surprise.",
+     "emoji": null
+    },
+    {
+     "at": 1.84,
+     "nl": "De… surprise?",
+     "emoji": "🤔"
+    },
+    {
+     "at": 3.32,
+     "nl": "Sur… sur-prise?",
+     "emoji": null
+    },
+    {
+     "at": 4.92,
+     "nl": "Ja!",
+     "emoji": null
+    },
+    {
+     "at": 5.84,
+     "nl": "Ah, de surprise!",
+     "emoji": "✓"
+    }
+   ]
+  },
+  {
+   "kind": "moment",
+   "start": 10.77,
+   "dur": 7.39,
+   "voice": 0.5,
+   "title": "een wit paard",
+   "caps": [
+    {
+     "at": 0.0,
+     "nl": "Sinterklaas rijdt op een wit paard.",
+     "emoji": null
+    },
+    {
+     "at": 2.96,
+     "nl": "…op een witte paard.",
+     "emoji": null
+    }
+   ],
+   "fix": {
+    "at": 4.4,
+    "wrong": "witte",
+    "right": "wit"
+   }
+  },
+  {
+   "kind": "moment",
+   "start": 18.16,
+   "dur": 11.27,
+   "voice": 0.5,
+   "title": "de pepernoten",
+   "caps": [
+    {
+     "at": 0.14,
+     "nl": "Pepernoten zijn lekker!",
+     "emoji": null
+    },
+    {
+     "at": 1.72,
+     "nl": "Pepernoten zijn lekker…",
+     "emoji": null
+    },
+    {
+     "at": 5.24,
+     "nl": "Nee, niet lekker!",
+     "emoji": "😬"
+    },
+    {
+     "at": 7.24,
+     "nl": "De pepernoten zijn vies!",
+     "emoji": "😄"
+    }
+   ]
+  },
+  {
+   "kind": "outro",
+   "start": 29.43,
+   "dur": 3.5
+  }
+ ]
+}

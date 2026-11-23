@@ -1,5 +1,5 @@
 {
- "total": 383.13,
+ "total": 409.77,
  "words": [
   {
    "art": null,
@@ -92,21 +92,123 @@
  ],
  "scenes": [
   {
+   "kind": "funny",
+   "n": 1,
+   "caps": [
+    [
+     0.14,
+     "De pakjesavond.",
+     null
+    ],
+    [
+     1.4,
+     "De pak… jes… avond??",
+     "😵"
+    ],
+    [
+     2.7,
+     "#!@%",
+     "🙊"
+    ],
+    [
+     3.45,
+     "😂😂😂",
+     null
+    ]
+   ],
+   "start": 0.0,
+   "voice": 0.25,
+   "src": [
+    [
+     45.6,
+     53.07
+    ]
+   ],
+   "dur": 8.07
+  },
+  {
+   "kind": "funny",
+   "n": 2,
+   "caps": [
+    [
+     0.1,
+     "Van… avond… is het…",
+     "🤔"
+    ],
+    [
+     2.0,
+     "…pak-jes-avond??",
+     "🤯"
+    ]
+   ],
+   "start": 8.07,
+   "voice": 0.25,
+   "src": [
+    [
+     53.35,
+     57.6
+    ]
+   ],
+   "dur": 4.85
+  },
+  {
+   "kind": "funny",
+   "n": 3,
+   "caps": [
+    [
+     0.1,
+     "Op pakjesavond krijgen we cadeautjes.",
+     null
+    ],
+    [
+     3.55,
+     "Op pak… jes… avond… krijgen we… wekkerdootjes?",
+     "😵"
+    ],
+    [
+     6.95,
+     "Echt, serieus?!",
+     "😂"
+    ]
+   ],
+   "start": 12.92,
+   "voice": 0.25,
+   "src": [
+    [
+     61.15,
+     69.45
+    ]
+   ],
+   "dur": 8.9
+  },
+  {
    "kind": "title",
    "dur": 5.5,
-   "start": 0.0
+   "start": 21.82
   },
   {
    "kind": "repeat",
-   "start": 5.5,
+   "start": 27.32,
    "voice": 0.35,
+   "src": [
+    [
+     0.82,
+     2.09
+    ]
+   ],
    "dur": 2.22
   },
   {
    "kind": "word",
    "w": 0,
-   "start": 7.72,
+   "start": 29.54,
    "voice": 2.35,
+   "src": [
+    [
+     3.06,
+     9.85
+    ]
+   ],
    "dur": 9.74
   },
   {
@@ -115,8 +217,14 @@
    "nl": "Sinterklaas komt met de stoomboot.",
    "en": "Sinterklaas comes by steamboat.",
    "hl": "stoomboot",
-   "start": 17.46,
+   "start": 39.28,
    "voice": 0.35,
+   "src": [
+    [
+     10.66,
+     16.47
+    ]
+   ],
    "dur": 6.76
   },
   {
@@ -131,8 +239,14 @@
     "right": "wit",
     "note": "*het* paard → *een wit* paard. No *-e* here! 🐴"
    },
-   "start": 24.22,
+   "start": 46.04,
    "voice": 0.35,
+   "src": [
+    [
+     23.66,
+     30.05
+    ]
+   ],
    "dur": 7.34
   },
   {
@@ -141,30 +255,54 @@
    "nl": "Waar is Sinterklaas nu?",
    "en": "Where is Sinterklaas now?",
    "hl": "Sinterklaas",
-   "start": 31.56,
+   "start": 53.38,
    "voice": 0.35,
+   "src": [
+    [
+     30.84,
+     34.87
+    ]
+   ],
    "dur": 4.98
   },
   {
    "kind": "word",
    "w": 1,
-   "start": 36.54,
+   "start": 58.36,
    "voice": 2.35,
+   "src": [
+    [
+     35.96,
+     39.41
+    ]
+   ],
    "dur": 6.4
   },
   {
    "kind": "slow",
    "w": 1,
-   "start": 42.94,
+   "start": 64.76,
    "voice": 0.35,
+   "src": [
+    [
+     39.7,
+     45.15
+    ]
+   ],
    "dur": 6.4
   },
   {
    "kind": "word",
    "w": 1,
-   "start": 49.34,
+   "start": 71.16,
    "voice": 2.35,
-   "dur": 5.6
+   "src": [
+    [
+     45.6,
+     53.07
+    ]
+   ],
+   "dur": 10.42
   },
   {
    "kind": "line",
@@ -172,8 +310,14 @@
    "nl": "Vanavond is het pakjesavond!",
    "en": "Tonight is the night of presents!",
    "hl": "pakjesavond",
-   "start": 54.94,
+   "start": 81.58,
    "voice": 0.35,
+   "src": [
+    [
+     53.32,
+     60.555
+    ]
+   ],
    "dur": 8.185
   },
   {
@@ -182,8 +326,14 @@
    "nl": "Op pakjesavond krijgen we cadeautjes.",
    "en": "On pakjesavond we get presents.",
    "hl": "cadeautjes",
-   "start": 63.125,
+   "start": 89.765,
    "voice": 0.35,
+   "src": [
+    [
+     60.555,
+     70.03
+    ]
+   ],
    "dur": 10.425
   },
   {
@@ -192,15 +342,27 @@
    "nl": "Wat heb jij gekregen op pakjesavond?",
    "en": "What did you get on pakjesavond?",
    "hl": "gekregen",
-   "start": 73.55,
+   "start": 100.19,
    "voice": 0.35,
+   "src": [
+    [
+     73.68,
+     88.37
+    ]
+   ],
    "dur": 15.64
   },
   {
    "kind": "word",
    "w": 2,
-   "start": 89.19,
+   "start": 115.83,
    "voice": 2.35,
+   "src": [
+    [
+     96.32,
+     107.07
+    ]
+   ],
    "dur": 13.7
   },
   {
@@ -209,8 +371,14 @@
    "nl": "Mag ik vanavond mijn schoen zetten?",
    "en": "Can I put out my shoe tonight?",
    "hl": "schoen zetten",
-   "start": 102.89,
+   "start": 129.53,
    "voice": 0.35,
+   "src": [
+    [
+     107.28,
+     112.71
+    ]
+   ],
    "dur": 6.38
   },
   {
@@ -219,8 +387,14 @@
    "nl": "Ik zet mijn schoen bij de open haard.",
    "en": "I put my shoe by the fireplace.",
    "hl": "zet",
-   "start": 109.27,
+   "start": 135.91,
    "voice": 0.35,
+   "src": [
+    [
+     112.94,
+     119.43
+    ]
+   ],
    "dur": 7.44
   },
   {
@@ -229,15 +403,27 @@
    "nl": "Er zit een wortel in mijn schoen, voor het paard.",
    "en": "There's a carrot in my shoe, for the horse.",
    "hl": "wortel",
-   "start": 116.71,
+   "start": 143.35,
    "voice": 0.35,
+   "src": [
+    [
+     119.94,
+     127.71
+    ]
+   ],
    "dur": 8.72
   },
   {
    "kind": "word",
    "w": 3,
-   "start": 125.43,
+   "start": 152.07,
    "voice": 2.35,
+   "src": [
+    [
+     128.26,
+     142.67
+    ]
+   ],
    "dur": 17.36
   },
   {
@@ -246,8 +432,14 @@
    "nl": "Wie wil er pepernoten?",
    "en": "Who wants some pepernoten?",
    "hl": "pepernoten",
-   "start": 142.79,
+   "start": 169.43,
    "voice": 0.35,
+   "src": [
+    [
+     151.6,
+     157.11
+    ]
+   ],
    "dur": 6.46
   },
   {
@@ -256,8 +448,14 @@
    "nl": "Ik koop een zak pepernoten.",
    "en": "I'm buying a bag of pepernoten.",
    "hl": "zak",
-   "start": 149.25,
+   "start": 175.89,
    "voice": 0.35,
+   "src": [
+    [
+     157.16,
+     162.07
+    ]
+   ],
    "dur": 5.86
   },
   {
@@ -266,8 +464,14 @@
    "nl": "Pepernoten zijn lekker!",
    "en": "Pepernoten are tasty!",
    "hl": "lekker",
-   "start": 155.11,
+   "start": 181.75,
    "voice": 0.35,
+   "src": [
+    [
+     162.12,
+     168.79
+    ]
+   ],
    "dur": 7.62
   },
   {
@@ -276,15 +480,27 @@
    "nl": "De pepernoten zijn vies! 😄",
    "en": "…or not: pepernoten are gross!",
    "hl": "vies",
-   "start": 162.73,
+   "start": 189.37,
    "voice": 0.35,
+   "src": [
+    [
+     169.54,
+     172.39
+    ]
+   ],
    "dur": 3.8
   },
   {
    "kind": "word",
    "w": 4,
-   "start": 166.53,
+   "start": 193.17,
    "voice": 2.35,
+   "src": [
+    [
+     172.76,
+     184.07
+    ]
+   ],
    "dur": 14.26
   },
   {
@@ -293,8 +509,14 @@
    "nl": "Mijn chocoladeletter is de E van Emma.",
    "en": "My chocolate letter is the E for Emma.",
    "hl": "E",
-   "start": 180.79,
+   "start": 207.43,
    "voice": 0.35,
+   "src": [
+    [
+     185.62,
+     188.33
+    ]
+   ],
    "dur": 3.66
   },
   {
@@ -303,8 +525,14 @@
    "nl": "Wat is jouw chocoladeletter?",
    "en": "What's your chocolate letter?",
    "hl": "jouw",
-   "start": 184.45,
+   "start": 211.09,
    "voice": 0.35,
+   "src": [
+    [
+     188.48,
+     190.37
+    ]
+   ],
    "dur": 2.84
   },
   {
@@ -313,8 +541,18 @@
    "nl": "Mijn chocoladeletter is de L van Lamak.",
    "en": "My chocolate letter is the L for Lamak.",
    "hl": "L",
-   "start": 187.29,
+   "start": 213.93,
    "voice": 0.35,
+   "src": [
+    [
+     207.04,
+     209.79
+    ],
+    [
+     210.84,
+     212.33
+    ]
+   ],
    "dur": 5.44
   },
   {
@@ -323,15 +561,27 @@
    "nl": "Ik eet mijn chocoladeletter op.",
    "en": "I'm eating my chocolate letter.",
    "hl": "eet",
-   "start": 192.73,
+   "start": 219.37,
    "voice": 0.35,
+   "src": [
+    [
+     212.8,
+     217.79
+    ]
+   ],
    "dur": 5.94
   },
   {
    "kind": "word",
    "w": 5,
-   "start": 198.67,
+   "start": 225.31,
    "voice": 2.35,
+   "src": [
+    [
+     217.88,
+     225.45
+    ]
+   ],
    "dur": 10.52
   },
   {
@@ -340,8 +590,14 @@
    "nl": "Wat een mooie surprise!",
    "en": "What a lovely surprise!",
    "hl": "surprise",
-   "start": 209.19,
+   "start": 235.83,
    "voice": 0.35,
+   "src": [
+    [
+     225.94,
+     229.55
+    ]
+   ],
    "dur": 4.56
   },
   {
@@ -350,8 +606,14 @@
    "nl": "Ik maak een surprise voor mijn collega.",
    "en": "I'm making a surprise for my colleague.",
    "hl": "maak",
-   "start": 213.75,
+   "start": 240.39,
    "voice": 0.35,
+   "src": [
+    [
+     230.42,
+     235.15
+    ]
+   ],
    "dur": 5.68
   },
   {
@@ -360,15 +622,27 @@
    "nl": "Wat zit er in de surprise?",
    "en": "What's inside the surprise?",
    "hl": "in",
-   "start": 219.43,
+   "start": 246.07,
    "voice": 0.35,
+   "src": [
+    [
+     235.25,
+     240.12
+    ]
+   ],
    "dur": 5.82
   },
   {
    "kind": "word",
    "w": 6,
-   "start": 225.25,
+   "start": 251.89,
    "voice": 2.35,
+   "src": [
+    [
+     240.17,
+     243.49
+    ]
+   ],
    "dur": 6.27
   },
   {
@@ -377,8 +651,14 @@
    "nl": "Lees je gedicht maar voor!",
    "en": "Go on, read your poem out loud!",
    "hl": "voor",
-   "start": 231.52,
+   "start": 258.16,
    "voice": 0.35,
+   "src": [
+    [
+     243.94,
+     248.41
+    ]
+   ],
    "dur": 5.42
   },
   {
@@ -387,8 +667,14 @@
    "nl": "Sinterklaas schrijft een gedicht.",
    "en": "Sinterklaas writes a poem.",
    "hl": "schrijft",
-   "start": 236.94,
+   "start": 263.58,
    "voice": 0.35,
+   "src": [
+    [
+     248.5,
+     253.965
+    ]
+   ],
    "dur": 6.415
   },
   {
@@ -397,14 +683,20 @@
    "nl": "Het gedicht rijmt niet!",
    "en": "The poem doesn't rhyme!",
    "hl": "rijmt",
-   "start": 243.355,
+   "start": 269.995,
    "voice": 0.35,
+   "src": [
+    [
+     253.965,
+     258.37
+    ]
+   ],
    "dur": 5.355
   },
   {
    "kind": "verbsIntro",
    "dur": 6.0,
-   "start": 248.71
+   "start": 275.35
   },
   {
    "kind": "verb",
@@ -416,14 +708,20 @@
    "en": "Sinterklaas arrives tomorrow.",
    "verb": "komt",
    "part": "aan",
-   "start": 254.71,
+   "start": 281.35,
    "voice": 0.35,
+   "src": [
+    [
+     268.82,
+     277.35
+    ]
+   ],
    "dur": 9.48
   },
   {
    "kind": "verbsTip",
    "dur": 6.0,
-   "start": 264.19
+   "start": 290.83
   },
   {
    "kind": "verb",
@@ -435,8 +733,14 @@
    "en": "I wrap the present.",
    "verb": "pak",
    "part": "in",
-   "start": 270.19,
+   "start": 296.83,
    "voice": 0.35,
+   "src": [
+    [
+     409.42,
+     416.93
+    ]
+   ],
    "dur": 8.46
   },
   {
@@ -449,8 +753,14 @@
    "en": "I unwrap my present!",
    "verb": "pak",
    "part": "uit",
-   "start": 278.65,
+   "start": 305.29,
    "voice": 0.35,
+   "src": [
+    [
+     416.96,
+     423.25
+    ]
+   ],
    "dur": 7.24
   },
   {
@@ -463,14 +773,20 @@
    "en": "I eat up my chocolate letter.",
    "verb": "eet",
    "part": "op",
-   "start": 285.89,
+   "start": 312.53,
    "voice": 0.35,
+   "src": [
+    [
+     423.28,
+     430.89
+    ]
+   ],
    "dur": 8.56
   },
   {
    "kind": "quizIntro",
    "dur": 4.5,
-   "start": 294.45
+   "start": 321.09
   },
   {
    "kind": "quiz",
@@ -480,7 +796,7 @@
    "ans": "stoomboot",
    "en": "Sinterklaas comes by …",
    "think": 5.0,
-   "start": 298.95,
+   "start": 325.59,
    "reveal": 5.35,
    "dur": 9.59
   },
@@ -492,7 +808,7 @@
    "ans": "schoen",
    "en": "Can I put out my … tonight?",
    "think": 5.0,
-   "start": 308.54,
+   "start": 335.18,
    "reveal": 5.35,
    "dur": 9.09
   },
@@ -504,7 +820,7 @@
    "ans": "pepernoten",
    "en": "Who wants some …?",
    "think": 5.0,
-   "start": 317.63,
+   "start": 344.27,
    "reveal": 5.35,
    "dur": 9.63
   },
@@ -516,7 +832,7 @@
    "ans": "chocoladeletter",
    "en": "My … is the E for Emma.",
    "think": 5.0,
-   "start": 327.26,
+   "start": 353.9,
    "reveal": 5.35,
    "dur": 9.71
   },
@@ -528,7 +844,7 @@
    "ans": "surprise",
    "en": "What a lovely …!",
    "think": 5.0,
-   "start": 336.97,
+   "start": 363.61,
    "reveal": 5.35,
    "dur": 8.59
   },
@@ -540,7 +856,7 @@
    "ans": "rijmen",
    "en": "A Sinterklaas poem has to …",
    "think": 5.0,
-   "start": 345.56,
+   "start": 372.2,
    "reveal": 5.35,
    "dur": 9.27
   },
@@ -552,7 +868,7 @@
    "ans": "uit",
    "en": "I unwrap my present!",
    "think": 5.0,
-   "start": 354.83,
+   "start": 381.47,
    "reveal": 5.35,
    "dur": 9.91
   },
@@ -564,20 +880,26 @@
    "ans": "gedicht",
    "en": "Go on, read your … out loud!",
    "think": 5.0,
-   "start": 364.74,
+   "start": 391.38,
    "reveal": 5.35,
    "dur": 9.01
   },
   {
    "kind": "outro",
-   "start": 373.75,
+   "start": 400.39,
    "voice": 0.35,
+   "src": [
+    [
+     431.84,
+     433.27
+    ]
+   ],
    "dur": 2.38
   },
   {
    "kind": "cta",
    "dur": 7.0,
-   "start": 376.13
+   "start": 402.77
   }
  ]
 }

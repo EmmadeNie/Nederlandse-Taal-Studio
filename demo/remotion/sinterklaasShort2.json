@@ -1,0 +1,129 @@
+{
+ "total": 60.165,
+ "scenes": [
+  {
+   "kind": "moment",
+   "start": 0.0,
+   "dur": 16.0,
+   "voice": 0.15,
+   "n": 0,
+   "caps": [
+    {
+     "at": 0.11,
+     "nl": "De pakjesavond.",
+     "en": "*Pakjesavond*: the evening of presents.",
+     "emoji": null,
+     "src": 45.62
+    },
+    {
+     "at": 3.41,
+     "nl": "De pakjesavond.",
+     "en": null,
+     "emoji": null,
+     "src": 46.97
+    },
+    {
+     "at": 5.19,
+     "nl": "😂😂😂",
+     "en": null,
+     "emoji": null,
+     "src": 48.35
+    },
+    {
+     "at": 10.54,
+     "nl": "Vanavond… is het… pakjesavond?",
+     "en": "Tonight… is… *pakjesavond*?",
+     "emoji": "🤔",
+     "src": 53.3
+    }
+   ],
+   "label": "Bloopers",
+   "hook": true
+  },
+  {
+   "kind": "moment",
+   "start": 16.0,
+   "dur": 24.155,
+   "voice": 4.325,
+   "n": 2,
+   "caps": [
+    {
+     "at": 0.28,
+     "nl": "Op pakjesavond krijgen we cadeautjes.",
+     "en": "On *pakjesavond* we get presents.",
+     "emoji": null,
+     "src": 61.19
+    },
+    {
+     "at": 4.49,
+     "nl": "Op pakjesavond krijgen we cadeautjes.",
+     "en": null,
+     "emoji": null,
+     "src": 64.6
+    },
+    {
+     "at": 8.84,
+     "nl": "Echt, serieus?!",
+     "en": "Really, seriously?!",
+     "emoji": "😂",
+     "src": 68.55
+    },
+    {
+     "at": 11.14,
+     "nl": "Waar is mijn cadeautje?",
+     "en": "Where's my present?",
+     "emoji": "🎁",
+     "src": 70.16
+    },
+    {
+     "at": 15.07,
+     "nl": "Wat heb jij gekregen op pakjesavond?",
+     "en": "What did you get on *pakjesavond*?",
+     "emoji": null,
+     "src": 73.69
+    }
+   ],
+   "word": "de pakjesavond",
+   "en": "the evening of presents (5 December)",
+   "desc": "The night before Sinterklaas's birthday. Families swap presents, often with a homemade *surprise* and a poem."
+  },
+  {
+   "kind": "moment",
+   "start": 40.155,
+   "dur": 16.01,
+   "voice": 4.6,
+   "n": 3,
+   "caps": [
+    {
+     "at": 0.09,
+     "nl": "Er zit een wortel in mijn schoen, voor het paard.",
+     "en": "There's a carrot in my shoe, for the horse.",
+     "emoji": null,
+     "src": 119.95
+    },
+    {
+     "at": 5.29,
+     "nl": "Er zit een wortel in mijn schoen…",
+     "en": null,
+     "emoji": null,
+     "src": 123.33
+    },
+    {
+     "at": 9.35,
+     "nl": "…voor het paard.",
+     "en": null,
+     "emoji": "🥕🐴",
+     "src": 126.59
+    }
+   ],
+   "word": "je schoen zetten",
+   "en": "to put out your shoe",
+   "desc": "Before bed, kids put a shoe by the fireplace, with a carrot for Sinterklaas's horse. In the morning there's a treat inside."
+  },
+  {
+   "kind": "end",
+   "start": 56.165,
+   "dur": 4.0
+  }
+ ]
+}
