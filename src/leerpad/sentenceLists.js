@@ -5,7 +5,7 @@
  * "mijn-eerste-ontmoetingsgesprek", a row in the sets table); its sentences keep the set's order.
  */
 import { GRAMMAR_TAGS, LEVELS, getSet, sentences, setItems } from "../data";
-import { toLists, unique } from "./wordLists";
+import { themeLabel, toLists, unique } from "./wordLists";
 
 export { GRAMMAR_TAGS };
 
@@ -47,3 +47,12 @@ export const slugLabel = (slug) => slug.replace(/-/g, " ");
 
 /** All sentences of a lesson's sentence lists, each once. */
 export const sentencesForLists = (value) => unique(toLists(value).flatMap(sentencesForList));
+
+/** Short description of a recipe: "mijn eerste ontmoetingsgesprek" or "communicatie · t/m A1". */
+export const sentenceListLabel = (spec, t) =>
+  [
+    spec.set && (getSet(spec.set)?.title || slugLabel(spec.set)),
+    spec.theme && themeLabel(spec.theme),
+    spec.grammarTag && slugLabel(spec.grammarTag),
+    spec.level && (spec.upTo ? t("wl.upToLevel", { level: spec.level }) : spec.level),
+  ].filter(Boolean).join(" · ");

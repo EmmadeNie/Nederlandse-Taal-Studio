@@ -48,3 +48,12 @@ export const toLists = (value) => (Array.isArray(value) ? value : value ? [value
 export const wordsForLists = (value) => unique(toLists(value).flatMap(wordsForList));
 
 export const unique = (items) => [...new Map(items.map((x) => [x.id, x])).values()];
+
+/** Short description of a recipe: "dieren · t/m A1". */
+export const wordListLabel = (spec, t) =>
+  [
+    spec.set && (getSet(spec.set)?.title || spec.set.replace(/-/g, " ")),
+    spec.theme && themeLabel(spec.theme),
+    spec.partOfSpeech && t(`pos.${spec.partOfSpeech}`).toLowerCase(),
+    spec.level && (spec.upTo ? t("wl.upToLevel", { level: spec.level }) : spec.level),
+  ].filter(Boolean).join(" · ");

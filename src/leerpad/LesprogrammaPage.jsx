@@ -13,11 +13,9 @@ import ListsEditor from "./ListsEditor";
 import { LabelPicker } from "./Labels";
 import { GrammarPicker, GrammarView } from "./LessonGrammar";
 import { VerbsPicker, VerbsView } from "./LessonVerbs";
-import { lessonVerbs } from "./verbIds";
-import { grammarCount } from "./grammarTopics";
 import SaveStatus from "./SaveStatus";
 import { useAutosave } from "./useAutosave";
-import { hasWordList, toLists } from "./wordLists";
+import { hasWordList } from "./wordLists";
 import { SentenceListEditor, SentenceListsView } from "./SentenceList";
 import { hasSentenceList } from "./sentenceLists";
 import SelectionBar from "./SelectionBar";
@@ -30,7 +28,8 @@ import * as api from "./api";
 import { BoardFilters, CardBody, Chips, Dialog, MetaItem } from "./shared";
 import { CheckSquare, Eye, ICONS } from "../icons";
 import { LEVELS, matchesFilter } from "./util";
-import LessonExplanation, { hasEnglishLesson } from "./LessonExplanation";
+import { hasEnglishLesson } from "./LessonExplanation";
+import LessonContent from "./LessonContent";
 import { PlanLocked, usePlan } from "../auth/plan";
 
 /**
@@ -559,63 +558,63 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
 
       {!editing ? (
         <InternalLinkContext.Provider value={followLink}>
-          <LessonExplanation
+          <LessonContent
+            lesson={lesson}
             explanation={form.explanation}
             explanationEn={form.explanation_en}
             hasEn={hasEn}
             lang={lang}
+            topicIds={lesson.topic_ids}
+            verbIds={lesson.verb_ids}
+            wordList={lesson.word_list}
+            sentenceList={lesson.sentence_list}
+            attachments={lesson.attachments || []}
           />
         </InternalLinkContext.Provider>
       ) : (
-      <div className="lp-section">
-        <h4>
-          {t(editEn ? "lp.explanationEn" : "lp.explanation")}{" "}
-          <button type="button" className="fb-link" onClick={() => setPreview((p) => !p)}>
-            {preview ? t("lp.edit") : t("lp.preview")}
-          </button>
-        </h4>
-        {preview ? (
-          form[explanationKey].trim() ? (
-            <InternalLinkContext.Provider value={followLink}>
-              <Markdown className="lp-explanation">{form[explanationKey]}</Markdown>
-            </InternalLinkContext.Provider>
-          ) : (
-            <p className="dim lp-empty">{t("lp.noExplanation")}</p>
-          )
-        ) : (
-          <RichEditor
-            key={explanationKey}
-            value={form[explanationKey]}
-            onChange={set(explanationKey)}
-            onBlur={saveText}
-            lessons={lessons}
-            excludeLessonId={lesson.id}
-            label={t(editEn ? "lp.explanationEn" : "lp.explanation")}
-          />
-        )}
-      </div>
-      )}
+        <>
+          <div className="lp-section">
+            <h4>
+              {t(editEn ? "lp.explanationEn" : "lp.explanation")}{" "}
+              <button type="button" className="fb-link" onClick={() => setPreview((p) => !p)}>
+                {preview ? t("lp.edit") : t("lp.preview")}
+              </button>
+            </h4>
+            {preview ? (
+              form[explanationKey].trim() ? (
+                <InternalLinkContext.Provider value={followLink}>
+                  <Markdown className="lp-explanation">{form[explanationKey]}</Markdown>
+                </InternalLinkContext.Provider>
+              ) : (
+                <p className="dim lp-empty">{t("lp.noExplanation")}</p>
+              )
+            ) : (
+              <RichEditor
+                key={explanationKey}
+                value={form[explanationKey]}
+                onChange={set(explanationKey)}
+                onBlur={saveText}
+                lessons={lessons}
+                excludeLessonId={lesson.id}
+                label={t(editEn ? "lp.explanationEn" : "lp.explanation")}
+              />
+            )}
+          </div>
 
-      {(editing || grammarCount(lesson.topic_ids) > 0) && (
-        <div className="lp-section">
-          <h4>{t("lg.title")}</h4>
-          {editing && <GrammarPicker value={form.topic_ids} onChange={choose("topic_ids")} />}
-          <GrammarView ids={editing ? form.topic_ids : lesson.topic_ids} lang={editing ? undefined : lang} />
-        </div>
-      )}
+          <div className="lp-section">
+            <h4>{t("lg.title")}</h4>
+            <GrammarPicker value={form.topic_ids} onChange={choose("topic_ids")} />
+            <GrammarView ids={form.topic_ids} excludeWordIds={form.verb_ids} />
+          </div>
 
-      {(editing || lessonVerbs(lesson.verb_ids).length > 0) && (
-        <div className="lp-section">
-          <ListHeading lesson={lesson} practiseOnly={editing} part="verbs">{t("lv.title")}</ListHeading>
-          {editing && <VerbsPicker value={form.verb_ids} onChange={choose("verb_ids")} />}
-          <VerbsView ids={editing ? form.verb_ids : lesson.verb_ids} />
-        </div>
-      )}
+          <div className="lp-section">
+            <ListHeading lesson={lesson} practiseOnly part="verbs">{t("lv.title")}</ListHeading>
+            <VerbsPicker value={form.verb_ids} onChange={choose("verb_ids")} />
+            <VerbsView ids={form.verb_ids} />
+          </div>
 
-      {(editing || toLists(lesson.word_list).some(hasWordList)) && (
-        <div className="lp-section">
-          <ListHeading lesson={lesson} practiseOnly={editing} part="words">{t("wl.title")}</ListHeading>
-          {editing && (
+          <div className="lp-section">
+            <ListHeading lesson={lesson} practiseOnly part="words">{t("wl.title")}</ListHeading>
             <ListsEditor
               value={form.word_list}
               onChange={choose("word_list")}
@@ -624,15 +623,11 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
               addLabel="wl.add"
               removeLabel="wl.remove"
             />
-          )}
-          <WordListsView value={editing ? form.word_list : lesson.word_list} />
-        </div>
-      )}
+            <WordListsView value={form.word_list} />
+          </div>
 
-      {(editing || toLists(lesson.sentence_list).some(hasSentenceList)) && (
-        <div className="lp-section">
-          <ListHeading lesson={lesson} practiseOnly={editing} part="sentences">{t("sl.title")}</ListHeading>
-          {editing && (
+          <div className="lp-section">
+            <ListHeading lesson={lesson} practiseOnly part="sentences">{t("sl.title")}</ListHeading>
             <ListsEditor
               value={form.sentence_list}
               onChange={choose("sentence_list")}
@@ -641,21 +636,20 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
               addLabel="sl.add"
               removeLabel="sl.remove"
             />
-          )}
-          <SentenceListsView value={editing ? form.sentence_list : lesson.sentence_list} />
-        </div>
+            <SentenceListsView value={form.sentence_list} />
+          </div>
+
+          <div className="lp-section">
+            <h4>{t("files.title")}</h4>
+            <LessonFiles
+              lessonId={lesson.id}
+              attachments={lesson.attachments}
+              canEdit
+              onChange={(attachments) => onSaved({ ...lesson, attachments })}
+            />
+          </div>
+        </>
       )}
-
-      <div className="lp-section">
-        <h4>{t("files.title")}</h4>
-        <LessonFiles
-          lessonId={lesson.id}
-          attachments={lesson.attachments}
-          canEdit={editing}
-          onChange={(attachments) => onSaved({ ...lesson, attachments })}
-        />
-      </div>
-
 
       {editing && (
         <div className="lp-section">

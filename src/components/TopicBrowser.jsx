@@ -5,7 +5,7 @@ import { LEVELS, topics } from "../data";
 import { LevelBadge, ReviewBadge } from "./Badges";
 import FeedbackButton from "../feedback/FeedbackButton";
 import TopicExplanation from "./TopicExplanation";
-import RelatedWords from "./RelatedWords";
+import { RelatedFolds } from "./RelatedWords";
 import ExampleSentences from "./ExampleSentences";
 import { useUrlParams } from "../hooks/useUrlParams";
 import { navigate, useRoute } from "../hooks/useRoute";
@@ -93,7 +93,8 @@ export default function TopicBrowser() {
 
 /**
  * One topic: title, one quiet line (level · category), the summary; tap to read
- * the explanation. Tools sit small top right. NL/EN switch per card, always
+ * the short version (then "Lees de hele uitleg"), with related words and
+ * example sentences as folded rows. Tools sit small top right. NL/EN switch per card, always
  * starting in Dutch.
  */
 function TopicCard({ topic, isOpen, cardRef, onToggle }) {
@@ -127,8 +128,11 @@ function TopicCard({ topic, isOpen, cardRef, onToggle }) {
       {isOpen ? (
         <>
           <TopicExplanation text={text} lang={lang} className="explanation" />
-          <RelatedWords ids={topic.relatedWordIds} />
-          <ExampleSentences ids={topic.exampleSentenceIds} />
+          {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- opening a row shouldn't fold the card */}
+          <div className="topic-folds" onClick={(e) => e.stopPropagation()}>
+            <RelatedFolds ids={topic.relatedWordIds} />
+            <ExampleSentences ids={topic.exampleSentenceIds} folded />
+          </div>
         </>
       ) : (
         <span className="topic-more">{t("topics.read")} ›</span>
