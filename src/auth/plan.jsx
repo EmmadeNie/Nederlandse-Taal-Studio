@@ -14,18 +14,19 @@ const openPlans = () => navigate(PATHS.plans);
  *   gratis    look around and read the grammar topics; no lessons, no practising
  *   trial     everything, for now (proefperiode)
  *   compleet  everything
+ *   partner   everything in Compleet; its extras (live help, a say in the programme) are outside the app
  *   onderweg  grammar topics and practising: flashcards, Invullen, Vervoegen (no lessons)
  * The grammar topics are open to every plan: their short version is public anyway
  * (/grammatica/…), and the full one is what a free account adds.
  */
-export const PLANS = ["gratis", "trial", "compleet", "onderweg"];
+export const PLANS = ["gratis", "trial", "compleet", "partner", "onderweg"];
 
 export function usePlan() {
   const { role, profile } = useAuth();
   const plan = role === "leerling" ? profile?.plan || "compleet" : "compleet";
   return {
     plan,
-    canOpenLessons: plan === "trial" || plan === "compleet",
+    canOpenLessons: plan === "trial" || plan === "compleet" || plan === "partner",
     canPractise: plan !== "gratis",
   };
 }
