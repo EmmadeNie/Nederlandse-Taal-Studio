@@ -4,6 +4,7 @@ import { useI18n } from "../i18n/context";
 import { InternalLinkContext } from "./internalLinks";
 import { sanitize, toHtml } from "../editor/richText";
 import { playVideoCard, withVideoCards } from "../editor/videoCards";
+import { withQuizzes } from "../editor/quizBlocks";
 import "../editor/rich.css";
 
 /**
@@ -16,9 +17,10 @@ export default function Markdown({ children, className }) {
   const { lang, t } = useI18n();
   const handle = useContext(InternalLinkContext);
   const playLabel = t("video.play");
+  const answerLabel = t("re.quizShow");
   const html = useMemo(
-    () => withVideoCards(sanitize(toHtml(children || "")), { playLabel }),
-    [children, playLabel]
+    () => withQuizzes(withVideoCards(sanitize(toHtml(children || "")), { playLabel }), { answerLabel }),
+    [children, playLabel, answerLabel]
   );
   if (!html) return null;
 
@@ -26,6 +28,10 @@ export default function Markdown({ children, className }) {
     if (playVideoCard(e.target)) {
       e.preventDefault();
       e.stopPropagation(); // don't fold the box it sits in
+      return;
+    }
+    if (e.target.closest?.("details.quiz-answer")) {
+      e.stopPropagation(); // opening the answer doesn't fold the card around it
       return;
     }
     const a = e.target.closest?.("a");
