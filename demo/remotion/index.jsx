@@ -13,6 +13,7 @@ import { CAROUSEL_SIZE, CAROUSEL_SLIDES, CarouselSlide } from "./Carousel";
 import { SINTERKLAAS_SLIDES, SinterklaasSlide } from "./Sinterklaas";
 import { SinterklaasStory, STORY_FPS, STORY_SIZE, storyDuration } from "./SinterklaasStory";
 import { SinterklaasThumb, SinterklaasVideo, SINT_VIDEO_FPS, SINT_VIDEO_SIZE, sintVideoDuration } from "./SinterklaasVideo";
+import { SeparableThumb, SeparableVerbsVideo, SEP_FPS, SEP_SIZES, separableDuration } from "./SeparableVerbsVideo";
 
 function Root() {
   return (
@@ -56,6 +57,13 @@ function Root() {
       {/* YouTube (16:9): Sinterklaas in 7 words, repeat after me, with the recorded voices. */}
       <Composition id="video-sinterklaas-en" component={SinterklaasVideo} durationInFrames={sintVideoDuration()} fps={SINT_VIDEO_FPS} {...SINT_VIDEO_SIZE} />
       <Still id="thumb-sinterklaas-en" component={SinterklaasThumb} width={1280} height={720} />
+      {/* Separable verbs (A2) with Emma's voice: 16:9 (YouTube, the lesson) and 9:16 (Shorts, Reels). */}
+      {["nl", "en"].flatMap((lang) => [
+        ...Object.entries(SEP_SIZES).map(([fmt, size]) => (
+          <Composition key={`separable-${fmt}-${lang}`} id={`${fmt}-separable-${lang}`} component={SeparableVerbsVideo} defaultProps={{ lang }} durationInFrames={separableDuration()} fps={SEP_FPS} {...size} />
+        )),
+        <Still key={`separable-thumb-${lang}`} id={`thumb-separable-${lang}`} component={SeparableThumb} defaultProps={{ lang }} width={1280} height={720} />,
+      ])}
       {/* The link preview for WhatsApp, LinkedIn & co. */}
       <Still id="og" component={Og} defaultProps={{ lang: "nl" }} width={1200} height={630} />
       {/* Profile picture for Instagram, YouTube & co. */}

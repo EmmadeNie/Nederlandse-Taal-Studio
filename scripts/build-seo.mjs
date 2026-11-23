@@ -256,6 +256,24 @@ const LESSON_VIDEOS = {
       chapters: ["0:00 Intro", "0:24 The stem", "1:12 The ending", "1:39 Stem ending in -t", "1:54 Jij after the verb", "2:17 Summary", "2:29 Quiz"],
     },
   },
+  "scheidbare-werkwoorden": {
+    nl: {
+      id: "TWl9IwI838k",
+      name: "Scheidbare werkwoorden: ik bel je op (A2)",
+      description: "Scheidbare werkwoorden (A2): twee delen, één betekenis. Waar staat het eerste deel in de hoofdzin, wanneer blijven de delen samen, en welke werkwoorden lijken op elkaar? Met 7 werkwoorden uit het dagelijks leven en een quiz met 6 vragen.",
+      uploadDate: "2026-11-23T10:33:36-08:00",
+      seconds: 147,
+      chapters: ["0:00 Intro en de regel", "0:17 Zeven werkwoorden", "0:59 Soms blijven ze samen", "1:14 Let op: zelfde werkwoord", "1:28 Quiz"],
+    },
+    en: {
+      id: "pLESqV-gUz0",
+      name: "Dutch separable verbs (scheidbare werkwoorden): ik bel je op (A2)",
+      description: "Dutch separable verbs (scheidbare werkwoorden, A2): two parts, one meaning. Where the first part goes in a main clause, when the parts stay together, and which verbs look alike. With 7 everyday verbs and a quiz with 6 questions.",
+      uploadDate: "2026-11-23T10:36:03-08:00",
+      seconds: 147,
+      chapters: ["0:00 Intro and the rule", "0:17 Seven verbs", "0:59 When they stay together", "1:14 Watch out: same base verb", "1:28 Quiz"],
+    },
+  },
 };
 for (const [slug, langs] of Object.entries(LESSON_VIDEOS)) {
   for (const [lang, v] of Object.entries(langs)) {

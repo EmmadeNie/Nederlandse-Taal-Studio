@@ -1,0 +1,174 @@
+{
+ "total": 146.606,
+ "voice": true,
+ "scenes": [
+  {
+   "id": "title",
+   "start": 0.0,
+   "dur": 4.5
+  },
+  {
+   "id": "split",
+   "start": 4.5,
+   "dur": 5.5
+  },
+  {
+   "id": "rule",
+   "start": 10.0,
+   "dur": 7.5
+  },
+  {
+   "id": "opstaan",
+   "start": 17.5,
+   "voice": [
+    0.5,
+    2.24
+   ],
+   "dur": 6.01
+  },
+  {
+   "id": "aankleden",
+   "start": 23.51,
+   "voice": [
+    0.5,
+    2.46
+   ],
+   "dur": 6.09
+  },
+  {
+   "id": "opbellen",
+   "start": 29.6,
+   "voice": [
+    0.5,
+    2.48
+   ],
+   "dur": 5.62
+  },
+  {
+   "id": "meenemen",
+   "start": 35.22,
+   "voice": [
+    0.5,
+    2.44
+   ],
+   "dur": 5.78
+  },
+  {
+   "id": "thuiskomen",
+   "start": 41.0,
+   "voice": [
+    0.5,
+    2.39
+   ],
+   "dur": 6.11
+  },
+  {
+   "id": "afwassen",
+   "start": 47.11,
+   "voice": [
+    0.5,
+    2.3
+   ],
+   "dur": 6.35
+  },
+  {
+   "id": "opruimen",
+   "start": 53.46,
+   "voice": [
+    0.5,
+    2.27
+   ],
+   "dur": 5.6
+  },
+  {
+   "id": "together",
+   "start": 59.06,
+   "voice": [
+    0.6,
+    4.63
+   ],
+   "dur": 9.12
+  },
+  {
+   "id": "tip",
+   "start": 68.18,
+   "dur": 6.0
+  },
+  {
+   "id": "beware",
+   "start": 74.18,
+   "voice": [
+    0.6,
+    2.66,
+    5.99,
+    8.03,
+    10.26
+   ],
+   "dur": 14.39
+  },
+  {
+   "id": "quizIntro",
+   "start": 88.57,
+   "dur": 3.5
+  },
+  {
+   "id": "quiz1",
+   "start": 92.07,
+   "reveal": 3.95,
+   "voice": [
+    4.35
+   ],
+   "dur": 7.4
+  },
+  {
+   "id": "quiz2",
+   "start": 99.47,
+   "reveal": 3.95,
+   "voice": [
+    4.35
+   ],
+   "dur": 7.26
+  },
+  {
+   "id": "quiz3",
+   "start": 106.73,
+   "reveal": 3.95,
+   "voice": [
+    4.35
+   ],
+   "dur": 7.45
+  },
+  {
+   "id": "quiz4",
+   "start": 114.18,
+   "reveal": 3.95,
+   "voice": [
+    4.35
+   ],
+   "dur": 7.959
+  },
+  {
+   "id": "quiz5",
+   "start": 122.139,
+   "reveal": 5.55,
+   "voice": [
+    5.95
+   ],
+   "dur": 9.17
+  },
+  {
+   "id": "quiz6",
+   "start": 131.309,
+   "reveal": 5.55,
+   "voice": [
+    5.95
+   ],
+   "dur": 9.297
+  },
+  {
+   "id": "cta",
+   "start": 140.606,
+   "dur": 6.0
+  }
+ ]
+}
