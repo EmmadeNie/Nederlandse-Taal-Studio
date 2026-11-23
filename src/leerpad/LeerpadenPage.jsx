@@ -113,8 +113,9 @@ export default function LeerpadenPage() {
   // Accounts that could belong to a prepared leerling (they signed up with another email).
   const accounts = students?.filter((s) => !s.pending && s.id !== current?.id) ?? [];
 
-  const created = async (profile) => {
+  const created = async (profile, mailError) => {
     setAdding(false);
+    setError(mailError ? t("students.mailCreatedFailed", { name: profile.display_name, error: mailError }) : null);
     const rows = withSlugs(await listStudents());
     setStudents(rows);
     const fresh = rows.find((s) => s.id === profile.id);

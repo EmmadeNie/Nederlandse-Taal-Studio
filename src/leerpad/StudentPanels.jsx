@@ -6,15 +6,21 @@ import {
   deletePendingStudent,
   inviteUrl,
   linkAccountToStudent,
+  sendInviteMail,
   updatePendingStudent,
 } from "./students";
+import { EnvelopeSimple } from "../icons";
 import "./students.css";
 
-/** Docent: prepare a new leerling (name, optional email). */
+/**
+ * Docent: prepare a new leerling (name, optional email). With an email the
+ * invitation can go out by mail right away; onCreated(profile, mailError).
+ */
 export function AddStudentDialog({ onClose, onCreated }) {
   const { t } = useI18n();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [mailNow, setMailNow] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
 
@@ -23,12 +29,23 @@ export function AddStudentDialog({ onClose, onCreated }) {
     if (!name.trim()) return;
     setBusy(true);
     setError(null);
+    let profile;
     try {
-      onCreated(await createStudent(name.trim(), email.trim()));
+      profile = await createStudent(name.trim(), email.trim());
     } catch (err) {
       setError(t(err.message));
       setBusy(false);
+      return;
     }
+    let mailError = null;
+    if (mailNow && profile.email) {
+      try {
+        await sendInviteMail(profile.id);
+      } catch (err) {
+        mailError = t(err.message);
+      }
+    }
+    onCreated(profile, mailError);
   };
 
   return (
@@ -48,10 +65,16 @@ export function AddStudentDialog({ onClose, onCreated }) {
             placeholder={t("login.placeholder")}
           />
         </label>
+        {email.trim() && (
+          <label className="students-check">
+            <input type="checkbox" checked={mailNow} onChange={(e) => setMailNow(e.target.checked)} />{" "}
+            {t("students.mailNow")}
+          </label>
+        )}
         {error && <div className="auth-error">{error}</div>}
         <div className="lp-actions">
           <button type="submit" className="fb-btn-primary" disabled={busy || !name.trim()}>
-            {t("students.add")}
+            {busy && mailNow && email.trim() ? t("students.mailSending") : t("students.add")}
           </button>
           <button type="button" className="fb-btn-secondary" onClick={onClose}>
             {t("common.cancel")}
@@ -67,14 +90,31 @@ export function AddStudentDialog({ onClose, onCreated }) {
  * link), and the docent's tools: edit, link an existing account, delete.
  */
 export function PendingStudentPanel({ student, accounts, isDocent, onChanged, onDeleted }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [copied, setCopied] = useState(false);
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(student.display_name || "");
   const [email, setEmail] = useState(student.email || "");
   const [linkTo, setLinkTo] = useState("");
   const [error, setError] = useState(null);
+  const [mail, setMail] = useState(null); // null | "sending" | "sent"
   const link = student.invite_code ? inviteUrl(student.invite_code) : null;
+  const sentOn = student.invite_sent_at
+    ? new Date(student.invite_sent_at).toLocaleString(locale, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })
+    : null;
+
+  const mailInvite = async () => {
+    setError(null);
+    setMail("sending");
+    try {
+      await sendInviteMail(student.id);
+      setMail("sent");
+      onChanged();
+    } catch (err) {
+      setMail(null);
+      setError(t(err.message));
+    }
+  };
 
   const run = async (fn) => {
     setError(null);
@@ -113,6 +153,24 @@ export function PendingStudentPanel({ student, accounts, isDocent, onChanged, on
           <button className="fb-btn-secondary" onClick={copy}>
             {copied ? t("copy.done") : t("students.copyLink")}
           </button>
+        </div>
+      )}
+
+      {isDocent && student.email && link && (
+        <div className="students-invite">
+          <button
+            className={sentOn ? "fb-btn-secondary" : "fb-btn-primary"}
+            onClick={mailInvite}
+            disabled={mail === "sending"}
+          >
+            <EnvelopeSimple aria-hidden="true" />{" "}
+            {mail === "sending" ? t("students.mailSending") : t(sentOn ? "students.mailAgain" : "students.mailSend")}
+          </button>
+          {mail === "sent" ? (
+            <strong>✓ {t("students.mailSent", { email: student.email })}</strong>
+          ) : (
+            <span className="dim">{sentOn ? t("students.mailSentOn", { date: sentOn }) : t("students.mailNotYet")}</span>
+          )}
         </div>
       )}
 

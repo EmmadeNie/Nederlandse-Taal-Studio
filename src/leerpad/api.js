@@ -118,7 +118,7 @@ export async function lessonUsage(lessonId) {
 export const listStudents = () =>
   supabase
     .from("profiles")
-    .select("id, user_id, display_name, email, invite_code, in_les")
+    .select("id, user_id, display_name, email, invite_code, invite_sent_at, in_les")
     .eq("role", "leerling")
     .order("display_name")
     .then(check);
