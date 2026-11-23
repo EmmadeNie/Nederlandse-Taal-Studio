@@ -5,10 +5,8 @@ import { useUrlParams } from "../hooks/useUrlParams";
 import { navigate, useRoute } from "../hooks/useRoute";
 import { pathFor, slugify } from "../routes";
 import LeerpadBoard from "./LeerpadBoard";
-import { AddStudentDialog, PendingStudentPanel } from "./StudentPanels";
 import { listStudents, setInLes } from "./api";
 import { ChalkboardTeacher, EnvelopeSimple, ICONS } from "../icons";
-import { Dialog } from "./shared";
 
 /** Many students → a search field above the dropdown. */
 const PICKER_THRESHOLD = 8;
@@ -60,8 +58,6 @@ export default function LeerpadenPage() {
   const isDocent = role === "docent";
   const [students, setStudents] = useState(null);
   const [filter, setFilter] = useState("");
-  const [adding, setAdding] = useState(false);
-  const [managing, setManaging] = useState(false); // invite / edit / link / delete a pending student
   const [error, setError] = useState(null);
 
   const load = useCallback(
@@ -110,18 +106,6 @@ export default function LeerpadenPage() {
       {s.pending ? ` (${t("users.pending")})` : ""}
     </option>
   );
-  // Accounts that could belong to a prepared leerling (they signed up with another email).
-  const accounts = students?.filter((s) => !s.pending && s.id !== current?.id) ?? [];
-
-  const created = async (profile, mailError) => {
-    setAdding(false);
-    setError(mailError ? t("students.mailCreatedFailed", { name: profile.display_name, error: mailError }) : null);
-    const rows = withSlugs(await listStudents());
-    setStudents(rows);
-    const fresh = rows.find((s) => s.id === profile.id);
-    if (fresh) choose(fresh);
-  };
-
   const [savingInLes, setSavingInLes] = useState(false);
   const toggleInLes = async () => {
     const next = !current.in_les;
@@ -140,9 +124,10 @@ export default function LeerpadenPage() {
     }
   };
 
+  // Adding and inviting students happens on the Users page.
   const addButton = isDocent && (
-    <button className="fb-btn-secondary" onClick={() => setAdding(true)}>
-      {t("students.addButton")}
+    <button className="fb-btn-secondary" onClick={() => navigate(pathFor("users"))}>
+      {t("lpd.addInUsers")}
     </button>
   );
 
@@ -230,32 +215,19 @@ export default function LeerpadenPage() {
                 {t(current.in_les ? "lpd.inLesOn" : "lpd.inLesOff")}
               </button>
             )}
-            {current.pending && (
-              <button type="button" className="fb-btn-secondary lp-manage-btn" onClick={() => setManaging(true)}>
-                <EnvelopeSimple aria-hidden="true" /> {t("lpd.manage")}
+            {current.pending && isDocent && (
+              <button
+                type="button"
+                className="fb-btn-secondary lp-manage-btn"
+                onClick={() => navigate(`${pathFor("users")}?uitnodigen=${encodeURIComponent(current.id)}`)}
+              >
+                <EnvelopeSimple aria-hidden="true" /> {t("lpd.inviteInUsers")}
               </button>
             )}
           </div>
-          {current.pending && managing && (
-            <Dialog title={t("lpd.manageTitle", { name: current.name })} onClose={() => setManaging(false)} wide>
-              <PendingStudentPanel
-                key={`pending-${current.id}`}
-                student={current}
-                accounts={accounts}
-                isDocent={isDocent}
-                onChanged={load}
-                onDeleted={async () => {
-                  setManaging(false);
-                  await load();
-                  navigate(pathFor("leerpaden"), { replace: true });
-                }}
-              />
-            </Dialog>
-          )}
           <LeerpadBoard key={`board-${current.id}`} studentId={current.id} />
         </>
       )}
-      {adding && <AddStudentDialog onClose={() => setAdding(false)} onCreated={created} />}
     </>
   );
 }

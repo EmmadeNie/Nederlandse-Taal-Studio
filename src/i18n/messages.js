@@ -801,7 +801,12 @@ export const messages = {
     // Users
     "users.count": plural("{n} gebruiker", "{n} gebruikers"),
     "users.hint":
-      "Iedereen kan inloggen met een e-mailadres en wordt dan automatisch leerling. Maak hier iemand reviewer of docent.",
+      "Iedereen kan inloggen met een e-mailadres en wordt dan automatisch leerling. Nodig hier een nieuwe leerling uit (dan staat het leerpad al klaar), of maak iemand reviewer of docent.",
+    "users.invite": "Uitnodigen",
+    "users.inviteAria": "{name} uitnodigen",
+    "users.added": "{name} is toegevoegd.",
+    "users.addedMailed": "{name} is toegevoegd en de uitnodiging is gemaild.",
+    "users.prepareBoard": "Leerpad klaarzetten",
     "users.name": "Naam",
     "users.email": "E-mail",
     "users.since": "Sinds",
@@ -1122,7 +1127,9 @@ export const messages = {
     "lpd.introDocent":
       "Zet lessen uit het lesprogramma erop, voeg zijpaden en extra's toe en houd notities bij. Leerlingen kunnen zelf lanes maken en stappen verslepen.",
     "lpd.introReviewer": "Je kunt meekijken, maar niets aanpassen.",
-    "lpd.none": "Nog geen leerlingen. Iedereen die inlogt wordt automatisch leerling; je ziet ze dan hier.",
+    "lpd.none": "Nog geen leerlingen. Nodig een leerling uit via Gebruikers, of laat iemand inloggen: die wordt automatisch leerling en staat dan hier.",
+    "lpd.addInUsers": "Leerling uitnodigen via Gebruikers",
+    "lpd.inviteInUsers": "Uitnodigen via Gebruikers",
     "lp.searchStep": "Zoek een stap…",
     "lp.notCreated": "Dit leerpad is nog niet aangemaakt.",
     "lp.fromProgram": "+ Les uit lesprogramma",
@@ -1935,7 +1942,12 @@ export const messages = {
 
     "users.count": plural("{n} user", "{n} users"),
     "users.hint":
-      "Anyone can sign in with an email address and automatically becomes a student. Make someone a reviewer or teacher here.",
+      "Anyone can sign in with an email address and automatically becomes a student. Invite a new student here (their learning path is then ready for them), or make someone a reviewer or teacher.",
+    "users.invite": "Invite",
+    "users.inviteAria": "Invite {name}",
+    "users.added": "{name} has been added.",
+    "users.addedMailed": "{name} has been added and the invitation has been emailed.",
+    "users.prepareBoard": "Prepare learning path",
     "users.name": "Name",
     "users.email": "Email",
     "users.since": "Since",
@@ -2248,7 +2260,9 @@ export const messages = {
     "lpd.introDocent":
       "Add lessons from the curriculum, add side paths and extras, and keep notes. Students can make their own lanes and drag steps.",
     "lpd.introReviewer": "You can look, but not change anything.",
-    "lpd.none": "No students yet. Everyone who signs in becomes a student automatically; they'll show up here.",
+    "lpd.none": "No students yet. Invite a student via Users, or let someone sign in: they become a student automatically and show up here.",
+    "lpd.addInUsers": "Invite a student via Users",
+    "lpd.inviteInUsers": "Invite via Users",
     "lp.searchStep": "Search steps…",
     "lp.notCreated": "This learning path hasn't been created yet.",
     "lp.fromProgram": "+ Lesson from curriculum",
