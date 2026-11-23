@@ -32,4 +32,23 @@ export const linkAccountToStudent = (preparedId, accountProfileId) =>
 /** Leerling: after logging in via /uitnodiging/<code>. */
 export const claimInvite = (code) => supabase.rpc("claim_invite", { code }).then(check);
 
+/**
+ * Docent: mail a prepared leerling their invite link (edge function send-invite-mail).
+ * Returns { sentAt } (null in a local dry run); throws with the function's own message.
+ */
+export async function sendInviteMail(studentId) {
+  const { data, error } = await supabase.functions.invoke("send-invite-mail", { body: { student: studentId } });
+  if (error) {
+    let text = error.message;
+    try {
+      text = (await error.context.json()).error || text;
+    } catch {
+      // no JSON body: keep the message
+    }
+    throw new Error(text);
+  }
+  if (!data?.sent && !data?.dryRun) throw new Error("students.mailFailed");
+  return { sentAt: data.sentAt || null };
+}
+
 export const inviteUrl = (code) => `${window.location.origin}/uitnodiging/${code}`;
