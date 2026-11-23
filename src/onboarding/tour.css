@@ -128,6 +128,14 @@
   font-size: 0.88rem;
 }
 
+/* A short tip in the step, in the same soft box as the language switch */
+.tour-hint {
+  padding: 0.55rem 0.7rem;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  font-size: 0.88rem;
+}
+
 .tour-actions {
   display: flex;
   flex-wrap: wrap;
