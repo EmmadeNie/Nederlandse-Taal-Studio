@@ -1,5 +1,5 @@
 {
- "total": 113.749,
+ "total": 146.606,
  "voice": true,
  "scenes": [
   {
@@ -95,13 +95,25 @@
    "dur": 6.0
   },
   {
-   "id": "quizIntro",
+   "id": "beware",
    "start": 74.18,
+   "voice": [
+    0.6,
+    2.66,
+    5.99,
+    8.03,
+    10.26
+   ],
+   "dur": 14.39
+  },
+  {
+   "id": "quizIntro",
+   "start": 88.57,
    "dur": 3.5
   },
   {
    "id": "quiz1",
-   "start": 77.68,
+   "start": 92.07,
    "reveal": 3.95,
    "voice": [
     4.35
@@ -110,7 +122,7 @@
   },
   {
    "id": "quiz2",
-   "start": 85.08,
+   "start": 99.47,
    "reveal": 3.95,
    "voice": [
     4.35
@@ -119,7 +131,7 @@
   },
   {
    "id": "quiz3",
-   "start": 92.34,
+   "start": 106.73,
    "reveal": 3.95,
    "voice": [
     4.35
@@ -128,7 +140,7 @@
   },
   {
    "id": "quiz4",
-   "start": 99.79,
+   "start": 114.18,
    "reveal": 3.95,
    "voice": [
     4.35
@@ -136,8 +148,26 @@
    "dur": 7.959
   },
   {
+   "id": "quiz5",
+   "start": 122.139,
+   "reveal": 5.55,
+   "voice": [
+    5.95
+   ],
+   "dur": 9.17
+  },
+  {
+   "id": "quiz6",
+   "start": 131.309,
+   "reveal": 5.55,
+   "voice": [
+    5.95
+   ],
+   "dur": 9.297
+  },
+  {
    "id": "cta",
-   "start": 107.749,
+   "start": 140.606,
    "dur": 6.0
   }
  ]

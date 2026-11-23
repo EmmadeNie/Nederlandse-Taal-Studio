@@ -22,7 +22,7 @@ const sec = (s) => Math.round(s * SEP_FPS);
 const card = { background: L.card, border: `2px solid ${L.line}`, borderRadius: 32, boxShadow: "0 10px 30px rgba(11,13,17,0.06)" };
 const fill = (s, vars) => s.replace(/\{(\w+)\}/g, (_, k) => vars[k]);
 const VERBS = CONTENT.scenes.filter((s) => s.kind === "verb");
-const QUIZ = CONTENT.scenes.filter((s) => s.kind === "quiz");
+const QUIZ = CONTENT.scenes.filter((s) => s.kind === "quiz" || s.kind === "meaning");
 
 /** Vertical (9:16) or not, and the sizes that go with it. */
 function useFmt() {
@@ -46,7 +46,7 @@ function useIn(at = 0) {
   return { opacity: s, transform: `translateY(${interpolate(s, [0, 1], [30, 0])}px)` };
 }
 
-const sectionOf = (kind) => ({ split: "rule", rule: "rule", verb: "verbs", together: "together", quizIntro: "quiz", quiz: "quiz" })[kind] ?? null;
+const sectionOf = (kind) => ({ split: "rule", rule: "rule", verb: "verbs", together: "together", quizIntro: "quiz", quiz: "quiz", meaning: "quiz" })[kind] ?? null;
 
 function Header({ section, T }) {
   const { v } = useFmt();
@@ -273,13 +273,135 @@ function Together({ s, t, T, lang }) {
   );
 }
 
-function Tip({ T }) {
+/** Text with the *marked* words in red (and italic in English, where they are Dutch). */
+function RedWords({ text, lang }) {
+  return text.split(/(\*[^*]+\*)/).map((p, i) =>
+    p.length > 2 && p.startsWith("*") && p.endsWith("*") ? (
+      <span key={i} style={{ color: RED, fontWeight: 800, fontStyle: lang === "en" ? "italic" : "normal" }}>
+        {p.slice(1, -1)}
+      </span>
+    ) : (
+      p
+    ),
+  );
+}
+
+function Tip({ T, lang }) {
   const z = useFmt();
   const a = useIn(0);
   return (
     <Body>
-      <div style={{ ...a, ...card, padding: z.v ? "56px 56px" : "60px 70px", fontSize: z.v ? 66 : 72, fontWeight: 700, lineHeight: 1.3 }}>
-        💡 <Rich text={T.tip} />
+      <Kicker style={a}>💡 {T.hint}</Kicker>
+      <div style={{ ...a, ...card, padding: z.v ? "56px 56px" : "60px 70px", fontSize: z.v ? 66 : 72, fontWeight: 700, lineHeight: 1.3, borderLeft: `14px solid ${GOLD}` }}>
+        <RedWords text={T.tip} lang={lang} />
+      </div>
+    </Body>
+  );
+}
+
+/** One verb on the "watch out" card; it appears when Emma says it. */
+function BewareRow({ v, at, lang, first }) {
+  const z = useFmt();
+  const s = useIn(at);
+  return (
+    <div style={{ ...s, borderTop: first ? "none" : `2px solid ${L.line}`, padding: z.v ? "16px 0" : "14px 0" }}>
+      <Inf parts={v.inf} size={z.v ? 64 : 60} />
+      <div style={{ fontSize: z.v ? 36 : 34, fontWeight: 600, color: L.dim, marginTop: 2 }}>= {v[lang]}</div>
+    </div>
+  );
+}
+
+function Beware({ s, t, T, lang }) {
+  const z = useFmt();
+  const a = useIn(0);
+  let k = 0;
+  return (
+    <Body>
+      <Kicker style={{ ...a, color: RED }}>{T.beware.kicker}</Kicker>
+      <div style={{ ...a, fontSize: z.v ? 64 : 68, fontWeight: 800, letterSpacing: -1.5, lineHeight: 1.1, marginBottom: z.v ? 40 : 44 }}>{T.beware.title}</div>
+      <div style={{ display: "flex", flexDirection: z.v ? "column" : "row", gap: z.v ? 30 : 40, alignItems: "flex-start" }}>
+        {s.groups.map((g) => (
+          <div key={g.base} style={{ ...a, ...card, flex: 1, alignSelf: "stretch", padding: z.v ? "20px 44px" : "20px 48px" }}>
+            {g.verbs.map((v, i) => (
+              <BewareRow key={v.clip} v={v} lang={lang} first={i === 0} at={sec(t.voice[k++]) - 6} />
+            ))}
+          </div>
+        ))}
+      </div>
+    </Body>
+  );
+}
+
+/** A sentence with the conjugated verb blue and the separated part red. */
+function Coloured({ nl, verb, part }) {
+  const i = nl.lastIndexOf(` ${part}`);
+  const body = nl.slice(0, i);
+  const vi = body.indexOf(` ${verb} `) >= 0 ? body.indexOf(` ${verb} `) + 1 : body.indexOf(verb);
+  return (
+    <>
+      {body.slice(0, vi)}
+      <span style={{ color: BLUE }}>{verb}</span>
+      {body.slice(vi + verb.length)} <span style={{ color: RED }}>{part}</span>
+      {nl.slice(i + part.length + 1)}
+    </>
+  );
+}
+
+/** Quiz: one sentence, pick the English meaning. */
+function Meaning({ s, t, T }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const z = useFmt();
+  const a = useIn(0);
+  const b = useIn(12);
+  const reveal = sec(t.reveal);
+  const shown = f >= reveal;
+  const pop = spring({ frame: f - reveal, fps, config: { damping: 14 } });
+  const left = Math.max(0, Math.ceil((reveal - f) / fps));
+  const progress = interpolate(f, [sec(0.35), reveal], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const n = QUIZ.indexOf(s) + 1;
+  return (
+    <Body>
+      <Kicker style={{ ...a, display: "flex", justifyContent: "space-between" }}>
+        <span>
+          {fill(T.quiz, { n, total: QUIZ.length })} · {T.meaning}
+        </span>
+        {!shown && <span style={{ color: RED, fontSize: 44 }}>{left}</span>}
+      </Kicker>
+      <div style={{ ...a, ...card, padding: z.v ? "44px 50px" : "44px 64px" }}>
+        <div style={{ fontSize: z.v ? 84 : 88, fontWeight: 800, lineHeight: 1.18, letterSpacing: -1.5 }}>
+          <Coloured nl={s.nl} verb={s.verb} part={s.part} />
+        </div>
+      </div>
+      <div style={{ ...b, display: "flex", flexDirection: "column", gap: 20, marginTop: 30 }}>
+        {s.options.map((o, i) => {
+          const right = i === s.answer;
+          return (
+            <div
+              key={i}
+              style={{
+                ...card,
+                padding: z.v ? "24px 36px" : "22px 40px",
+                display: "flex",
+                alignItems: "center",
+                gap: 26,
+                fontSize: z.v ? 46 : 48,
+                fontWeight: 700,
+                opacity: shown && !right ? interpolate(pop, [0, 1], [1, 0.35]) : 1,
+                border: `3px solid ${shown && right ? GREEN : L.line}`,
+                boxShadow: shown && right ? `0 0 0 ${interpolate(pop, [0, 1], [0, 6])}px rgba(26,158,88,0.15)` : card.boxShadow,
+              }}
+            >
+              <span style={{ flex: "none", width: 64, height: 64, borderRadius: 32, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 34, fontWeight: 800, color: "#fff", background: shown && right ? GREEN : L.dim }}>
+                {shown && right ? "✓" : "AB"[i]}
+              </span>
+              {o}
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ height: 14, borderRadius: 7, background: "#e9ebf0", marginTop: 36, overflow: "hidden" }}>
+        <div style={{ height: "100%", width: `${progress * 100}%`, background: shown ? GREEN : RED }} />
       </div>
     </Body>
   );
@@ -414,7 +536,7 @@ export function SeparableThumb({ lang }) {
   );
 }
 
-const SCENES = { title: Title, split: Split, rule: Rule, verb: Verb, together: Together, tip: Tip, quizIntro: QuizIntro, quiz: Quiz, cta: Cta };
+const SCENES = { title: Title, split: Split, rule: Rule, verb: Verb, together: Together, tip: Tip, beware: Beware, quizIntro: QuizIntro, quiz: Quiz, meaning: Meaning, cta: Cta };
 
 export function SeparableVerbsVideo({ lang, voice = "separable_voice.wav" }) {
   const T = CONTENT.text[lang];
@@ -429,7 +551,7 @@ export function SeparableVerbsVideo({ lang, voice = "separable_voice.wav" }) {
         const dur = Math.max(1, sec(t.start + t.dur) - from);
         // Rough speaking windows for the sound bars: each clip until the next one or the scene's tail.
         const marks = t.voice ?? [];
-        const at = marks.map((m, i) => [sec(m), i + 1 < marks.length ? sec(marks[i + 1]) - sec(0.5) : dur - sec(s.kind === "quiz" ? 1.4 : 1.6)]);
+        const at = marks.map((m, i) => [sec(m), i + 1 < marks.length ? sec(marks[i + 1]) - sec(0.5) : dur - sec({ quiz: 1.4, beware: 2.6 }[s.kind] ?? 1.6)]);
         return (
           <Sequence key={s.id} from={from} durationInFrames={dur}>
             <Header section={sectionOf(s.kind)} T={T} />

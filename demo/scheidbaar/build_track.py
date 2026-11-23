@@ -3,8 +3,9 @@
 #
 #   python3 -I build_track.py <content.json> <out_timeline.json> [<rec_48k_mono.wav> <clips.json> <out_voice.wav> [<music_48k_mono.wav>]]
 #
-# The recording (Emma, 23 Nov 2026): two takes in Google Drive, "23 Nov at 18-51.m4a" (the 7 verbs)
-# and "23 Nov at 18-52.m4a" (samen1-2, quiz1-4). Joined with 1 s of silence in between:
+# The recording (Emma, 23 Nov 2026): three takes in Google Drive, "23 Nov at 18-51.m4a" (the 7 verbs),
+# "23 Nov at 18-52.m4a" (samen1-2, quiz1-4) and "23 Nov at 19-07.m4a" (uitkleden, opnemen, aannemen,
+# quiz5-6). Joined in that order with 1 s of silence in between:
 #   npx remotion ffmpeg -i <take>.m4a -ac 1 -ar 48000 -c:a pcm_s16le <take>.wav   (afconvert writes a WAV Python's wave can't read)
 # scheidbaar/clips.json holds the clip times in that joined file (energy-based speech detection,
 # checked against a whisper transcript). Music: raw/music/tomorrows-light.mp3, converted the same way.
@@ -62,6 +63,17 @@ for s in scenes:
     elif k == "together":
         silence(0.6); a = clip(s["clips"][0]); silence(1.6); b = clip(s["clips"][1]); silence(2.2)
         t["voice"] = [round(a - start, 3), round(b - start, 3)]
+    elif k == "beware":
+        silence(0.6); t["voice"] = []
+        for gi, g in enumerate(s["groups"]):
+            if gi: silence(0.8)
+            for v in g["verbs"]:
+                t["voice"].append(round(clip(v["clip"]) - start, 3)); silence(0.8)
+        silence(1.8)
+    elif k == "meaning":
+        silence(0.35 + 5.2); t["reveal"] = round(now() - start, 3)
+        DINGS.append(len(out)); silence(0.4); a = clip(s["clips"][0]); silence(1.6)
+        t["voice"] = [round(a - start, 3)]
     elif k == "quiz":
         silence(0.35 + 3.6); t["reveal"] = round(now() - start, 3)
         DINGS.append(len(out)); silence(0.4); a = clip(s["clips"][0]); silence(1.4)

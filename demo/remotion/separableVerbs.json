@@ -1,59 +1,497 @@
 {
-  "_": "Separable verbs (A2, lesson 'Mijn eerste scheidbare werkwoorden', topic 'Scheidbare werkwoorden: ik bel je op'). The scenes and their text (NL/EN). Read by SeparableVerbsVideo.jsx and by demo/scheidbaar/build_track.py, which times the scenes on Emma's recording. clips: the names of the recorded lines (inf = the infinitive, s = the sentence). In EN text, Dutch words are *italic*.",
+  "_": "Separable verbs (A2, lesson 'Mijn eerste scheidbare werkwoorden', topic 'Scheidbare werkwoorden: ik bel je op'). The scenes and their text (NL/EN). Read by SeparableVerbsVideo.jsx and by demo/scheidbaar/build_track.py, which times the scenes on Emma's recording. clips: the names of the recorded lines (inf = the infinitive, s = the sentence; a clip can be used twice). In EN text, Dutch words are *italic*.",
   "scenes": [
-    { "id": "title", "kind": "title", "dur": 4.5 },
-    { "id": "split", "kind": "split", "dur": 5.5 },
-    { "id": "rule", "kind": "rule", "dur": 7.5 },
-    { "id": "opstaan", "kind": "verb", "inf": ["op", "staan"], "nl": "Ik sta om zeven uur op.", "verb": "sta", "part": "op", "gloss": "to get up", "en": "I get up at seven o'clock.", "clips": ["opstaan.inf", "opstaan.s"] },
-    { "id": "aankleden", "kind": "verb", "inf": ["aan", "kleden"], "nl": "Ik kleed me aan.", "verb": "kleed", "part": "aan", "gloss": "to get dressed", "en": "I get dressed.", "clips": ["aankleden.inf", "aankleden.s"] },
-    { "id": "opbellen", "kind": "verb", "inf": ["op", "bellen"], "nl": "Bel jij je moeder op?", "verb": "Bel", "part": "op", "gloss": "to phone", "en": "Are you calling your mother?", "clips": ["opbellen.inf", "opbellen.s"] },
-    { "id": "meenemen", "kind": "verb", "inf": ["mee", "nemen"], "nl": "Ik neem mijn laptop mee.", "verb": "neem", "part": "mee", "gloss": "to take along", "en": "I'm taking my laptop with me.", "clips": ["meenemen.inf", "meenemen.s"] },
-    { "id": "thuiskomen", "kind": "verb", "inf": ["thuis", "komen"], "nl": "Ik kom om zes uur thuis.", "verb": "kom", "part": "thuis", "gloss": "to come home", "en": "I come home at six o'clock.", "clips": ["thuiskomen.inf", "thuiskomen.s"] },
-    { "id": "afwassen", "kind": "verb", "inf": ["af", "wassen"], "nl": "Wij wassen na het eten af.", "verb": "wassen", "part": "af", "gloss": "to do the dishes", "en": "We do the dishes after dinner.", "clips": ["afwassen.inf", "afwassen.s"] },
-    { "id": "opruimen", "kind": "verb", "inf": ["op", "ruimen"], "nl": "Ik ruim mijn kamer op.", "verb": "ruim", "part": "op", "gloss": "to tidy up", "en": "I tidy my room.", "clips": ["opruimen.inf", "opruimen.s"] },
+    {
+      "id": "title",
+      "kind": "title",
+      "dur": 4.5
+    },
+    {
+      "id": "split",
+      "kind": "split",
+      "dur": 5.5
+    },
+    {
+      "id": "rule",
+      "kind": "rule",
+      "dur": 7.5
+    },
+    {
+      "id": "opstaan",
+      "kind": "verb",
+      "inf": [
+        "op",
+        "staan"
+      ],
+      "nl": "Ik sta om zeven uur op.",
+      "verb": "sta",
+      "part": "op",
+      "gloss": "to get up",
+      "en": "I get up at seven o'clock.",
+      "clips": [
+        "opstaan.inf",
+        "opstaan.s"
+      ]
+    },
+    {
+      "id": "aankleden",
+      "kind": "verb",
+      "inf": [
+        "aan",
+        "kleden"
+      ],
+      "nl": "Ik kleed me aan.",
+      "verb": "kleed",
+      "part": "aan",
+      "gloss": "to get dressed",
+      "en": "I get dressed.",
+      "clips": [
+        "aankleden.inf",
+        "aankleden.s"
+      ]
+    },
+    {
+      "id": "opbellen",
+      "kind": "verb",
+      "inf": [
+        "op",
+        "bellen"
+      ],
+      "nl": "Bel jij je moeder op?",
+      "verb": "Bel",
+      "part": "op",
+      "gloss": "to phone",
+      "en": "Are you calling your mother?",
+      "clips": [
+        "opbellen.inf",
+        "opbellen.s"
+      ]
+    },
+    {
+      "id": "meenemen",
+      "kind": "verb",
+      "inf": [
+        "mee",
+        "nemen"
+      ],
+      "nl": "Ik neem mijn laptop mee.",
+      "verb": "neem",
+      "part": "mee",
+      "gloss": "to take along",
+      "en": "I'm taking my laptop with me.",
+      "clips": [
+        "meenemen.inf",
+        "meenemen.s"
+      ]
+    },
+    {
+      "id": "thuiskomen",
+      "kind": "verb",
+      "inf": [
+        "thuis",
+        "komen"
+      ],
+      "nl": "Ik kom om zes uur thuis.",
+      "verb": "kom",
+      "part": "thuis",
+      "gloss": "to come home",
+      "en": "I come home at six o'clock.",
+      "clips": [
+        "thuiskomen.inf",
+        "thuiskomen.s"
+      ]
+    },
+    {
+      "id": "afwassen",
+      "kind": "verb",
+      "inf": [
+        "af",
+        "wassen"
+      ],
+      "nl": "Wij wassen na het eten af.",
+      "verb": "wassen",
+      "part": "af",
+      "gloss": "to do the dishes",
+      "en": "We do the dishes after dinner.",
+      "clips": [
+        "afwassen.inf",
+        "afwassen.s"
+      ]
+    },
+    {
+      "id": "opruimen",
+      "kind": "verb",
+      "inf": [
+        "op",
+        "ruimen"
+      ],
+      "nl": "Ik ruim mijn kamer op.",
+      "verb": "ruim",
+      "part": "op",
+      "gloss": "to tidy up",
+      "en": "I tidy my room.",
+      "clips": [
+        "opruimen.inf",
+        "opruimen.s"
+      ]
+    },
     {
       "id": "together",
       "kind": "together",
       "rows": [
-        { "nl": "Ik wil mijn moeder opbellen.", "hl": "opbellen", "part": "op", "en": "I want to call my mother." },
-        { "nl": "Ik zeg dat ik mijn moeder opbel.", "hl": "opbel", "part": "op", "en": "I say that I'll call my mother." }
+        {
+          "nl": "Ik wil mijn moeder opbellen.",
+          "hl": "opbellen",
+          "part": "op",
+          "en": "I want to call my mother."
+        },
+        {
+          "nl": "Ik zeg dat ik mijn moeder opbel.",
+          "hl": "opbel",
+          "part": "op",
+          "en": "I say that I'll call my mother."
+        }
       ],
-      "clips": ["samen1", "samen2"]
+      "clips": [
+        "samen1",
+        "samen2"
+      ]
     },
-    { "id": "tip", "kind": "tip", "dur": 6 },
-    { "id": "quizIntro", "kind": "quizIntro", "dur": 3.5 },
-    { "id": "quiz1", "kind": "quiz", "q": "Gaan jullie vanavond ___?", "hint": ["uit", "gaan"], "ans": ["uit"], "en": "Are you going out tonight?", "clips": ["quiz1"] },
-    { "id": "quiz2", "kind": "quiz", "q": "Doe jij ook ___?", "hint": ["mee", "doen"], "ans": ["mee"], "en": "Are you joining in too?", "clips": ["quiz2"] },
-    { "id": "quiz3", "kind": "quiz", "q": "Wij ___ een tas ___.", "hint": ["mee", "nemen"], "ans": ["nemen", "mee"], "en": "We're taking a bag with us.", "clips": ["quiz3"] },
-    { "id": "quiz4", "kind": "quiz", "q": "Ik wil mijn kamer ___.", "hint": ["op", "ruimen"], "ans": ["opruimen"], "en": "I want to tidy my room.", "clips": ["quiz4"] },
-    { "id": "cta", "kind": "cta", "dur": 6 }
+    {
+      "id": "tip",
+      "kind": "tip",
+      "dur": 6
+    },
+    {
+      "id": "beware",
+      "kind": "beware",
+      "groups": [
+        {
+          "base": "kleden",
+          "verbs": [
+            {
+              "inf": [
+                "aan",
+                "kleden"
+              ],
+              "en": "to get dressed",
+              "nl": "je kleren aantrekken",
+              "clip": "aankleden.inf"
+            },
+            {
+              "inf": [
+                "uit",
+                "kleden"
+              ],
+              "en": "to get undressed",
+              "nl": "je kleren uittrekken",
+              "clip": "uitkleden.inf"
+            }
+          ]
+        },
+        {
+          "base": "nemen",
+          "verbs": [
+            {
+              "inf": [
+                "mee",
+                "nemen"
+              ],
+              "en": "to take along",
+              "nl": "bij je hebben als je weggaat",
+              "clip": "meenemen.inf"
+            },
+            {
+              "inf": [
+                "op",
+                "nemen"
+              ],
+              "en": "to answer (the phone)",
+              "nl": "de telefoon beantwoorden",
+              "clip": "opnemen.inf"
+            },
+            {
+              "inf": [
+                "aan",
+                "nemen"
+              ],
+              "en": "to accept",
+              "nl": "accepteren",
+              "clip": "aannemen.inf"
+            }
+          ]
+        }
+      ],
+      "clips": [
+        "aankleden.inf",
+        "uitkleden.inf",
+        "meenemen.inf",
+        "opnemen.inf",
+        "aannemen.inf"
+      ]
+    },
+    {
+      "id": "quizIntro",
+      "kind": "quizIntro",
+      "dur": 3.5
+    },
+    {
+      "id": "quiz1",
+      "kind": "quiz",
+      "q": "Gaan jullie vanavond ___?",
+      "hint": [
+        "uit",
+        "gaan"
+      ],
+      "ans": [
+        "uit"
+      ],
+      "en": "Are you going out tonight?",
+      "clips": [
+        "quiz1"
+      ]
+    },
+    {
+      "id": "quiz2",
+      "kind": "quiz",
+      "q": "Doe jij ook ___?",
+      "hint": [
+        "mee",
+        "doen"
+      ],
+      "ans": [
+        "mee"
+      ],
+      "en": "Are you joining in too?",
+      "clips": [
+        "quiz2"
+      ]
+    },
+    {
+      "id": "quiz3",
+      "kind": "quiz",
+      "q": "Wij ___ een tas ___.",
+      "hint": [
+        "mee",
+        "nemen"
+      ],
+      "ans": [
+        "nemen",
+        "mee"
+      ],
+      "en": "We're taking a bag with us.",
+      "clips": [
+        "quiz3"
+      ]
+    },
+    {
+      "id": "quiz4",
+      "kind": "quiz",
+      "q": "Ik wil mijn kamer ___.",
+      "hint": [
+        "op",
+        "ruimen"
+      ],
+      "ans": [
+        "opruimen"
+      ],
+      "en": "I want to tidy my room.",
+      "clips": [
+        "quiz4"
+      ]
+    },
+    {
+      "id": "quiz5",
+      "kind": "meaning",
+      "nl": "Neem jij de telefoon op?",
+      "verb": "Neem",
+      "part": "op",
+      "options": [
+        "Are you taking the phone with you?",
+        "Are you answering the phone?"
+      ],
+      "answer": 1,
+      "clips": [
+        "quiz5"
+      ]
+    },
+    {
+      "id": "quiz6",
+      "kind": "meaning",
+      "nl": "Ik neem het cadeau aan.",
+      "verb": "neem",
+      "part": "aan",
+      "options": [
+        "I accept the present.",
+        "I take the present with me."
+      ],
+      "answer": 0,
+      "clips": [
+        "quiz6"
+      ]
+    },
+    {
+      "id": "cta",
+      "kind": "cta",
+      "dur": 6
+    }
   ],
   "text": {
     "en": {
       "series": "Separable verbs",
-      "chips": { "rule": "Rule", "verbs": "Verbs", "together": "Together", "quiz": "Quiz" },
-      "title": { "tag": "Dutch grammar", "level": "A2", "lines": ["Verbs that", "split in two ✂️"], "sub": "*Scheidbare werkwoorden*: two parts, one meaning" },
-      "split": { "kicker": "In the dictionary", "sub": "In a sentence, they split up." },
-      "rule": { "kicker": "The main clause", "blocks": ["Ik", "bel", "mijn moeder", "op"], "labels": ["subject", "verb", "the rest", "first part"], "note": "The first part goes to the end." },
-      "verb": { "kicker": "Verb {n} of {total}", "end": "*{part}* goes to the end" },
-      "together": { "kicker": "Sometimes they stay together", "labels": ["After *willen*, *kunnen*, *gaan*…", "In a subclause: after *dat*, *omdat*…"] },
+      "chips": {
+        "rule": "Rule",
+        "verbs": "Verbs",
+        "together": "Together",
+        "quiz": "Quiz"
+      },
+      "title": {
+        "tag": "Dutch grammar",
+        "level": "A2",
+        "lines": [
+          "Verbs that",
+          "split in two ✂️"
+        ],
+        "sub": "*Scheidbare werkwoorden*: two parts, one meaning"
+      },
+      "split": {
+        "kicker": "In the dictionary",
+        "sub": "In a sentence, they split up."
+      },
+      "rule": {
+        "kicker": "The main clause",
+        "blocks": [
+          "Ik",
+          "bel",
+          "mijn moeder",
+          "op"
+        ],
+        "labels": [
+          "subject",
+          "verb",
+          "the rest",
+          "first part"
+        ],
+        "note": "The first part goes to the end."
+      },
+      "verb": {
+        "kicker": "Verb {n} of {total}",
+        "end": "*{part}* goes to the end"
+      },
+      "together": {
+        "kicker": "Sometimes they stay together",
+        "labels": [
+          "With an extra verb, like *willen* (to want), *kunnen* (can) or *gaan* (to be going to)",
+          "In a subclause: after *dat*, *omdat*…"
+        ]
+      },
       "tip": "See a little word like *op*, *aan*, *mee* or *af* at the end of a sentence? It often belongs to the verb.",
-      "quizIntro": { "title": "Quiz time!", "sub": "4 questions. Say the missing word out loud before it appears." },
+      "quizIntro": {
+        "title": "Quiz time!",
+        "sub": "6 questions. Say the answer out loud before it appears."
+      },
       "quiz": "Question {n} of {total}",
-      "cta": { "title": "Keep learning Dutch!", "rows": [["The full lesson + practice in the app", "mijntaalstudio.nl"], ["Subscribe for more Dutch lessons", "youtube.com/@mijntaalstudio"], ["Daily Dutch on Instagram", "@mijntaalstudio"]] }
+      "cta": {
+        "title": "Keep learning Dutch!",
+        "rows": [
+          [
+            "The full lesson + practice in the app",
+            "mijntaalstudio.nl"
+          ],
+          [
+            "Subscribe for more Dutch lessons",
+            "youtube.com/@mijntaalstudio"
+          ],
+          [
+            "Daily Dutch on Instagram",
+            "@mijntaalstudio"
+          ]
+        ]
+      },
+      "hint": "Hint",
+      "beware": {
+        "kicker": "Watch out! ⚠️",
+        "title": "Same base verb, different meaning"
+      },
+      "meaning": "What does it mean?"
     },
     "nl": {
       "series": "Scheidbare werkwoorden",
-      "chips": { "rule": "Regel", "verbs": "Werkwoorden", "together": "Samen", "quiz": "Quiz" },
-      "title": { "tag": "Grammatica", "level": "A2", "lines": ["Scheidbare", "werkwoorden ✂️"], "sub": "Twee delen, één betekenis" },
-      "split": { "kicker": "In het woordenboek", "sub": "In een zin gaan ze uit elkaar." },
-      "rule": { "kicker": "De hoofdzin", "blocks": ["Ik", "bel", "mijn moeder", "op"], "labels": ["onderwerp", "persoonsvorm", "rest", "eerste deel"], "note": "Het eerste deel gaat naar het eind." },
-      "verb": { "kicker": "Werkwoord {n} van {total}", "end": "*{part}* gaat naar het eind" },
-      "together": { "kicker": "Soms blijven ze samen", "labels": ["Na *willen*, *kunnen*, *gaan*…", "In een bijzin: na *dat*, *omdat*…"] },
+      "chips": {
+        "rule": "Regel",
+        "verbs": "Werkwoorden",
+        "together": "Samen",
+        "quiz": "Quiz"
+      },
+      "title": {
+        "tag": "Grammatica",
+        "level": "A2",
+        "lines": [
+          "Scheidbare",
+          "werkwoorden ✂️"
+        ],
+        "sub": "Twee delen, één betekenis"
+      },
+      "split": {
+        "kicker": "In het woordenboek",
+        "sub": "In een zin gaan ze uit elkaar."
+      },
+      "rule": {
+        "kicker": "De hoofdzin",
+        "blocks": [
+          "Ik",
+          "bel",
+          "mijn moeder",
+          "op"
+        ],
+        "labels": [
+          "onderwerp",
+          "persoonsvorm",
+          "rest",
+          "eerste deel"
+        ],
+        "note": "Het eerste deel gaat naar het eind."
+      },
+      "verb": {
+        "kicker": "Werkwoord {n} van {total}",
+        "end": "*{part}* gaat naar het eind"
+      },
+      "together": {
+        "kicker": "Soms blijven ze samen",
+        "labels": [
+          "Met een extra werkwoord, zoals *willen*, *kunnen* of *gaan*",
+          "In een bijzin: na *dat*, *omdat*…"
+        ]
+      },
       "tip": "Zie je een klein woord zoals *op*, *aan*, *mee* of *af* aan het eind van de zin? Dan hoort het vaak bij het werkwoord.",
-      "quizIntro": { "title": "Quiz!", "sub": "4 vragen. Zeg het woord hardop voordat het verschijnt." },
+      "quizIntro": {
+        "title": "Quiz!",
+        "sub": "6 vragen. Zeg het antwoord hardop voordat het verschijnt."
+      },
       "quiz": "Vraag {n} van {total}",
-      "cta": { "title": "Leer verder!", "rows": [["De hele les + oefenen in de app", "mijntaalstudio.nl"], ["Abonneer voor meer Nederlandse lessen", "youtube.com/@mijntaalstudio"], ["Elke dag Nederlands op Instagram", "@mijntaalstudio"]] }
+      "cta": {
+        "title": "Leer verder!",
+        "rows": [
+          [
+            "De hele les + oefenen in de app",
+            "mijntaalstudio.nl"
+          ],
+          [
+            "Abonneer voor meer Nederlandse lessen",
+            "youtube.com/@mijntaalstudio"
+          ],
+          [
+            "Elke dag Nederlands op Instagram",
+            "@mijntaalstudio"
+          ]
+        ]
+      },
+      "hint": "Hint",
+      "beware": {
+        "kicker": "Let op! ⚠️",
+        "title": "Zelfde werkwoord, andere betekenis"
+      },
+      "meaning": "Wat betekent het?"
     }
   }
 }
