@@ -186,6 +186,7 @@ export default function Tour({ page, onClose }) {
             ))}
           </div>
         )}
+        {step.levelChoice && !planned && <p className="tour-hint">{t("tour.levels.grammar")}</p>}
         {index === 0 && (
           // The tour (and the whole app) also in English: switch right here.
           <div className="tour-lang">
