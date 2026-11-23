@@ -143,7 +143,8 @@
           "nl": "Ik wil mijn moeder opbellen.",
           "hl": "opbellen",
           "part": "op",
-          "en": "I want to call my mother."
+          "en": "I want to call my mother.",
+          "extra": "wil"
         },
         {
           "nl": "Ik zeg dat ik mijn moeder opbel.",
@@ -383,7 +384,24 @@
         "labels": [
           "With an extra verb, like *willen* (to want), *kunnen* (can) or *gaan* (to be going to)",
           "In a subclause: after *dat*, *omdat*…"
-        ]
+        ],
+        "extra": {
+          "lead": "With an extra verb, like",
+          "verbs": [
+            [
+              "willen",
+              "to want"
+            ],
+            [
+              "kunnen",
+              "can"
+            ],
+            [
+              "gaan",
+              "to be going to"
+            ]
+          ]
+        }
       },
       "tip": "See a little word like *op*, *aan*, *mee* or *af* at the end of a sentence? It often belongs to the verb.",
       "quizIntro": {
@@ -461,7 +479,21 @@
         "labels": [
           "Met een extra werkwoord, zoals *willen*, *kunnen* of *gaan*",
           "In een bijzin: na *dat*, *omdat*…"
-        ]
+        ],
+        "extra": {
+          "lead": "Met een extra werkwoord, zoals",
+          "verbs": [
+            [
+              "willen"
+            ],
+            [
+              "kunnen"
+            ],
+            [
+              "gaan"
+            ]
+          ]
+        }
       },
       "tip": "Zie je een klein woord zoals *op*, *aan*, *mee* of *af* aan het eind van de zin? Dan hoort het vaak bij het werkwoord.",
       "quizIntro": {

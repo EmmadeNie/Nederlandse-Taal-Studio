@@ -18,6 +18,7 @@ export const separableDuration = () => Math.ceil(TIMELINE.total * SEP_FPS);
 
 const BLUE = L.perfect;
 const GREEN = L.past;
+const ORANGE = L.accent; // extra verbs: willen, kunnen, gaan
 const sec = (s) => Math.round(s * SEP_FPS);
 const card = { background: L.card, border: `2px solid ${L.line}`, borderRadius: 32, boxShadow: "0 10px 30px rgba(11,13,17,0.06)" };
 const fill = (s, vars) => s.replace(/\{(\w+)\}/g, (_, k) => vars[k]);
@@ -239,12 +240,39 @@ function Verb({ s, t, T, lang }) {
 /** A sentence with the joined verb coloured: first part red, the rest blue. */
 function Joined({ row }) {
   const i = row.nl.indexOf(row.hl);
+  const head = row.nl.slice(0, i);
+  // The extra verb (wil, kan, ga…) in orange, as in the label above.
+  const x = row.extra ? head.indexOf(` ${row.extra} `) + 1 : 0;
   return (
     <>
-      {row.nl.slice(0, i)}
+      {x > 0 ? (
+        <>
+          {head.slice(0, x)}
+          <span style={{ color: ORANGE }}>{row.extra}</span>
+          {head.slice(x + row.extra.length)}
+        </>
+      ) : (
+        head
+      )}
       <span style={{ color: RED }}>{row.part}</span>
       <span style={{ color: BLUE }}>{row.hl.slice(row.part.length)}</span>
       {row.nl.slice(i + row.hl.length)}
+    </>
+  );
+}
+
+/** "With an extra verb, like willen to want · kunnen can · gaan to be going to": the Dutch verbs in orange. */
+function ExtraVerbs({ x, lang }) {
+  return (
+    <>
+      {x.lead}{" "}
+      {x.verbs.map(([nl, en], i) => (
+        <span key={nl} style={{ whiteSpace: "nowrap" }}>
+          {i > 0 && (en ? " · " : i === x.verbs.length - 1 ? (lang === "nl" ? " of " : " or ") : ", ")}
+          <span style={{ color: ORANGE, fontWeight: 800, fontStyle: lang === "en" ? "italic" : "normal" }}>{nl}</span>
+          {en && <span style={{ fontWeight: 600 }}> {en}</span>}
+        </span>
+      ))}
     </>
   );
 }
@@ -258,8 +286,8 @@ function Together({ s, t, T, lang }) {
       <Kicker style={a}>{T.together.kicker} 🤝</Kicker>
       {s.rows.map((row, i) => (
         <div key={i} style={{ ...rows[i], marginTop: i ? (z.v ? 50 : 40) : 0 }}>
-          <div style={{ fontSize: z.v ? 40 : 36, fontWeight: 700, color: L.dim, marginBottom: 14 }}>
-            <Rich text={T.together.labels[i]} />
+          <div style={{ fontSize: z.v ? 36 : 36, fontWeight: 700, color: L.dim, marginBottom: 14, lineHeight: 1.35 }}>
+            {i === 0 && T.together.extra ? <ExtraVerbs x={T.together.extra} lang={lang} /> : <Rich text={T.together.labels[i]} />}
           </div>
           <div style={{ ...card, padding: z.v ? "36px 44px" : "36px 56px", borderLeft: `14px solid ${BLUE}` }}>
             <div style={{ fontSize: z.v ? 78 : 74, fontWeight: 800, lineHeight: 1.18, letterSpacing: -1.2 }}>
