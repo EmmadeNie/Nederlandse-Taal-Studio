@@ -122,7 +122,7 @@ blockquote cite{color:var(--dim);font-style:normal;font-size:.9rem}
 .reviews .who{display:flex;align-items:center;gap:.75rem;margin-bottom:.6rem;line-height:1.3}
 .reviews .avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#0b0d11;font-weight:800;flex:none}
 .faq h3{margin-top:1.2rem}
-.plans{align-items:start}
+.plans{align-items:start;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
 .plan{position:relative}
 .plan.featured{border-color:var(--accent);box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .plan .price{margin:.5rem 0 0;color:var(--text)}
@@ -909,7 +909,7 @@ const LINKS = [
   { nl: ["Lesvideo's op YouTube", "Uitleg, voorbeelden en quizzen"], en: ["Lesson videos on YouTube", "Explanations, examples and quizzes"], href: { nl: STUDIO_CHANNEL, en: STUDIO_CHANNEL }, external: true },
   { nl: ["Instagram @mijntaalstudio", "Korte lessen en quizzen"], en: ["Instagram @mijntaalstudio", "Short lessons and quizzes"], href: { nl: INSTAGRAM, en: INSTAGRAM }, external: true },
   { nl: ["Oefen in de app", "Je leerpad, flashcards en oefeningen"], en: ["Practise in the app", "Your learning path, flashcards and exercises"], href: { nl: "/", en: "/" }, main: true },
-  { nl: ["Abonnementen", "Gratis, Onderweg of Compleet"], en: ["Plans", "Free, On the go or Compleet"], href: { nl: `${PATHS.nl.lessons}#${T.nl.plansAnchor}`, en: `${PATHS.en.lessons}#${T.en.plansAnchor}` } },
+  { nl: ["Abonnementen", "Gratis, Onderweg, Compleet of Partner"], en: ["Plans", "Free, On the go, Compleet or Partner"], href: { nl: `${PATHS.nl.lessons}#${T.nl.plansAnchor}`, en: `${PATHS.en.lessons}#${T.en.plansAnchor}` } },
   { nl: ["Les met een docent", "Online of in Rotterdam"], en: ["Lessons with a teacher", "Online or in Rotterdam"], href: { nl: PATHS.nl.lessons, en: PATHS.en.lessons } },
   { nl: ["Reviews ★ 5,0", "Wat leerlingen zeggen"], en: ["Reviews ★ 5.0", "What students say"], href: { nl: PATHS.nl.reviews, en: PATHS.en.reviews } },
 ];
