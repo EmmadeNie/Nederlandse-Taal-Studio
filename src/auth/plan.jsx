@@ -14,7 +14,7 @@ const openPlans = () => navigate(PATHS.plans);
  *   gratis    look around and read the grammar topics; no lessons, no practising
  *   trial     everything, for now (proefperiode)
  *   compleet  everything
- *   partner   everything in Compleet; its extras (live help, a say in the programme) are outside the app
+ *   partner   everything in Compleet; its extras (monthly lesson advice, a say in the programme) are outside the app
  *   onderweg  grammar topics and practising: flashcards, Invullen, Vervoegen (no lessons)
  * The grammar topics are open to every plan: their short version is public anyway
  * (/grammatica/…), and the full one is what a free account adds.
