@@ -4,6 +4,18 @@ import { supabase } from "../lib/supabase";
 import { useI18n } from "../i18n/context";
 import { EnvelopeSimple } from "../icons";
 import DemoVideo from "./DemoVideo";
+import { LINK_FAILED_KEY } from "./emailLink";
+
+/** Set by emailLink.js when the link from the e-mail was used or expired; shown once. */
+function takeLinkFailed() {
+  try {
+    const failed = sessionStorage.getItem(LINK_FAILED_KEY) === "1";
+    sessionStorage.removeItem(LINK_FAILED_KEY);
+    return failed;
+  } catch {
+    return false;
+  }
+}
 
 /**
  * Magic-link login: enter an email, receive a link, click it, done.
@@ -23,9 +35,10 @@ export default function LoginPage({ invited = false, fromTopic = false }) {
   const [error, setError] = useState(null);
   const [code, setCode] = useState("");
   const [checking, setChecking] = useState(false);
+  const [linkFailed] = useState(takeLinkFailed);
   // On a phone the form starts folded behind a button, so the video and the
   // footer fit on the screen; opened, it moves above the video.
-  const [open, setOpen] = useState(invited || fromTopic);
+  const [open, setOpen] = useState(invited || fromTopic || linkFailed);
   const card = useRef(null);
   const openForm = () => {
     setOpen(true);
@@ -75,6 +88,7 @@ export default function LoginPage({ invited = false, fromTopic = false }) {
         <Brand tagline />
         {invited && <p className="auth-invited">{t("invite.loginHint")}</p>}
         {!invited && fromTopic && <p className="auth-invited">{t("login.topicHint")}</p>}
+        {linkFailed && status === "idle" && <p className="auth-error">{t("login.linkFailed")}</p>}
 
         {status === "sent" ? (
           <div className="auth-sent">
