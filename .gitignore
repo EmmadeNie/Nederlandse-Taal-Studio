@@ -29,5 +29,6 @@ dist-ssr
 # Claude Code: personal settings
 .claude/settings.local.json
 
-# Design files (stickers, flyers, videos, music): kept locally, not in the public repo
-/ontwerpen/
+# Design files (stickers, flyers, videos, music): kept in Google Drive, not in the public repo.
+# Locally `ontwerpen` is a symlink to the Drive folder, so no trailing slash (that only matches a directory).
+/ontwerpen
