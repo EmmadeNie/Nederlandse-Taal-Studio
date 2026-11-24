@@ -604,7 +604,7 @@ function LessonDialog({ lesson, lessons, lanes, canEdit, isStudent, onClose, onS
           <div className="lp-section">
             <h4>{t("lg.title")}</h4>
             <GrammarPicker value={form.topic_ids} onChange={choose("topic_ids")} />
-            <GrammarView ids={form.topic_ids} excludeWordIds={form.verb_ids} />
+            <GrammarView ids={form.topic_ids} />
           </div>
 
           <div className="lp-section">

@@ -58,13 +58,14 @@ export default function LessonContent({
       body: () => (
         <>
           <LessonExplanation explanation={explanation} explanationEn={explanationEn} hasEn={hasEn} lang={lang} bare />
-          {grammarCount(topicIds) > 0 && <GrammarView ids={topicIds} lang={lang} excludeWordIds={verbIds} />}
+          {grammarCount(topicIds) > 0 && <GrammarView ids={topicIds} lang={lang} />}
         </>
       ),
     },
     verbs.length > 0 && {
       key: "verbs",
       label: t("lv.title"),
+      hint: t("lc.tipVerbs"),
       count: verbs.length,
       body: () => (
         <>
@@ -76,6 +77,7 @@ export default function LessonContent({
     wordLists.length > 0 && {
       key: "words",
       label: t("lc.tabWords"),
+      hint: t("lc.tipWords"),
       count: wordsForLists(wordList).length,
       body: () => (
         <>
@@ -87,6 +89,7 @@ export default function LessonContent({
     sentenceLists.length > 0 && {
       key: "sentences",
       label: t("sl.title"),
+      hint: t("lc.tipSentences"),
       count: sentencesForLists(sentenceList).length,
       body: () => (
         <>
@@ -161,6 +164,7 @@ function Tabs({ tabs, label }) {
               aria-controls={`${id}-panel`}
               tabIndex={on ? 0 : -1}
               className={`lc-tab ${on ? "is-on" : ""}`}
+              title={tab.hint}
               onClick={() => setCurrent(tab.key)}
               onKeyDown={(e) => move(e, i)}
             >
