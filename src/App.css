@@ -381,21 +381,10 @@
   background: none;
 }
 
-.topic-card .explanation table {
-  border-collapse: collapse;
-  margin: 0.5rem 0 0.75rem 0;
-  font-size: 0.85rem;
-}
-
-.topic-card .explanation th,
-.topic-card .explanation td {
-  border: 1px solid var(--border);
-  padding: 0.35rem 0.6rem;
-  text-align: left;
-}
-
-.topic-card .explanation th {
-  background: var(--bg);
+/* Tables look like in a lesson (rich.css): lines, no boxes; no paragraph gap inside a cell. */
+.topic-card .explanation th > p,
+.topic-card .explanation td > p {
+  margin: 0;
 }
 
 .topic-card .explanation a {
