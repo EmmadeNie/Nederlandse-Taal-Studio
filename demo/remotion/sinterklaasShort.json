@@ -1,0 +1,390 @@
+{
+ "total": 130.765,
+ "scenes": [
+  {
+   "kind": "moment",
+   "start": 0.0,
+   "dur": 22.62,
+   "voice": 0.15,
+   "n": 0,
+   "caps": [
+    {
+     "at": 0.09,
+     "nl": "Weet je wat rijmen betekent?",
+     "en": "Do you know what *rijmen* means?",
+     "emoji": null,
+     "src": 390.1
+    },
+    {
+     "at": 3.69,
+     "nl": "Rijmen?",
+     "en": null,
+     "emoji": "🤔",
+     "src": 392.63
+    },
+    {
+     "at": 5.55,
+     "nl": "Nee, rijmen: het laatste woord van elke zin moet rijmen…",
+     "en": "No, *rijmen*: the last word of every line has to rhyme…",
+     "emoji": null,
+     "src": 394.09
+    },
+    {
+     "at": 12.28,
+     "nl": "…net als Eminem.",
+     "en": "…like Eminem.",
+     "emoji": "🎤",
+     "src": 400.42
+    },
+    {
+     "at": 13.4,
+     "nl": "Oké, oké, oké, oké…",
+     "en": null,
+     "emoji": "😅",
+     "src": 401.54
+    },
+    {
+     "at": 15.8,
+     "nl": "Rijmen… op dezelfde toon?",
+     "en": "Rhyme… the same sound?",
+     "emoji": null,
+     "src": 403.54
+    },
+    {
+     "at": 20.01,
+     "nl": "Ja, oké.",
+     "en": "Yes, okay.",
+     "emoji": "✓",
+     "src": 406.95
+    }
+   ],
+   "label": "Teaching my friend Dutch 😅",
+   "hook": true
+  },
+  {
+   "kind": "moment",
+   "start": 22.62,
+   "dur": 8.58,
+   "voice": 0.6,
+   "n": 1,
+   "caps": [
+    {
+     "at": 0.0,
+     "nl": "Sinterklaas rijdt op een wit paard.",
+     "en": "Sinterklaas rides a white horse.",
+     "emoji": null,
+     "src": 23.68
+    },
+    {
+     "at": 3.91,
+     "nl": "Sinterklaas rijdt op een witte paard.",
+     "en": null,
+     "emoji": null,
+     "src": 26.64
+    }
+   ],
+   "word": "Sinterklaas",
+   "en": "Saint Nicholas",
+   "fix": {
+    "at": 5.39,
+    "wrong": "witte",
+    "right": "wit paard"
+   }
+  },
+  {
+   "kind": "moment",
+   "start": 31.2,
+   "dur": 15.8,
+   "voice": 0.6,
+   "n": 2,
+   "caps": [
+    {
+     "at": 0.13,
+     "nl": "Wat heb jij gekregen op pakjesavond?",
+     "en": "What did you get on *pakjesavond*?",
+     "emoji": null,
+     "src": 78.49
+    },
+    {
+     "at": 2.49,
+     "nl": "Wat heb jij gekregen op die pakjesavond vorig jaar?",
+     "en": "What did you get on that *pakjesavond* last year?",
+     "emoji": null,
+     "src": 80.85
+    },
+    {
+     "at": 8.09,
+     "nl": "Afgelopen jaar.",
+     "en": "Last year.",
+     "emoji": null,
+     "src": 85.61
+    },
+    {
+     "at": 9.38,
+     "nl": "Afgelopen jaar.",
+     "en": null,
+     "emoji": "✓",
+     "src": 86.9
+    },
+    {
+     "at": 11.39,
+     "nl": "Ik doe niet aan Sinterklaas.",
+     "en": "I don't do Sinterklaas.",
+     "emoji": "🤷",
+     "src": 88.51
+    }
+   ],
+   "word": "de pakjesavond",
+   "en": "the evening of presents (5 December)"
+  },
+  {
+   "kind": "moment",
+   "start": 47.0,
+   "dur": 7.49,
+   "voice": 0.6,
+   "n": 3,
+   "caps": [
+    {
+     "at": 0.03,
+     "nl": "Mag ik vanavond mijn schoen zetten?",
+     "en": "Can I put out my shoe tonight?",
+     "emoji": null,
+     "src": 107.29
+    },
+    {
+     "at": 3.88,
+     "nl": "Mag ik vanavond mijn schoen zetten?",
+     "en": null,
+     "emoji": "👟",
+     "src": 110.21
+    }
+   ],
+   "word": "je schoen zetten",
+   "en": "to put out your shoe"
+  },
+  {
+   "kind": "moment",
+   "start": 54.49,
+   "dur": 14.25,
+   "voice": 0.6,
+   "n": 4,
+   "caps": [
+    {
+     "at": 0.0,
+     "nl": "Pepernoten zijn lekker!",
+     "en": "*Pepernoten* are tasty!",
+     "emoji": null,
+     "src": 162.14
+    },
+    {
+     "at": 2.86,
+     "nl": "Pepernoten zijn lekker…",
+     "en": null,
+     "emoji": null,
+     "src": 163.98
+    },
+    {
+     "at": 5.11,
+     "nl": "De pepernoten zijn lekker!",
+     "en": null,
+     "emoji": null,
+     "src": 165.83
+    },
+    {
+     "at": 7.11,
+     "nl": "Nee, niet lekker!",
+     "en": "No, not tasty!",
+     "emoji": "😬",
+     "src": 167.43
+    },
+    {
+     "at": 10.04,
+     "nl": "De pepernoten zijn vies!",
+     "en": "*Pepernoten* are gross!",
+     "emoji": "😄",
+     "src": 169.56
+    }
+   ],
+   "word": "de pepernoten",
+   "en": "small spiced biscuits"
+  },
+  {
+   "kind": "moment",
+   "start": 68.74,
+   "dur": 13.69,
+   "voice": 0.6,
+   "n": 5,
+   "caps": [
+    {
+     "at": 0.0,
+     "nl": "Mijn chocoladeletter is de E van Emma.",
+     "en": "My chocolate letter is the E for Emma.",
+     "emoji": null,
+     "src": 185.64
+    },
+    {
+     "at": 4.4,
+     "nl": "Wat is jouw chocoladeletter?",
+     "en": "What's your chocolate letter?",
+     "emoji": null,
+     "src": 188.5
+    },
+    {
+     "at": 7.85,
+     "nl": "Mijn chocoladeletter is de L van Lamak.",
+     "en": "My chocolate letter is the L for Lamak.",
+     "emoji": "🍫",
+     "src": 207.05
+    }
+   ],
+   "word": "de chocoladeletter",
+   "en": "a chocolate letter"
+  },
+  {
+   "kind": "moment",
+   "start": 82.43,
+   "dur": 10.93,
+   "voice": 0.6,
+   "n": 6,
+   "caps": [
+    {
+     "at": 0.0,
+     "nl": "De surprise.",
+     "en": null,
+     "emoji": null,
+     "src": 217.9
+    },
+    {
+     "at": 2.26,
+     "nl": "De… surprise?",
+     "en": null,
+     "emoji": "🤔",
+     "src": 219.8
+    },
+    {
+     "at": 4.11,
+     "nl": "Sur… sur-prise?",
+     "en": null,
+     "emoji": null,
+     "src": 221.25
+    },
+    {
+     "at": 6.1,
+     "nl": "Ja!",
+     "en": "Yes!",
+     "emoji": null,
+     "src": 222.84
+    },
+    {
+     "at": 7.42,
+     "nl": "Ah, de surprise!",
+     "en": "Ah, the surprise!",
+     "emoji": "✓",
+     "src": 223.76
+    }
+   ],
+   "word": "de surprise",
+   "en": "a homemade gift in disguise"
+  },
+  {
+   "kind": "moment",
+   "start": 93.36,
+   "dur": 17.33,
+   "voice": 0.6,
+   "n": 6,
+   "caps": [
+    {
+     "at": 0.0,
+     "nl": "Oké, oké, oké, oké, oké.",
+     "en": null,
+     "emoji": "😅",
+     "src": 349.07
+    },
+    {
+     "at": 3.06,
+     "nl": "Dus jij houdt van tatoeëren…",
+     "en": "So you love tattoos…",
+     "emoji": null,
+     "src": 351.77
+    },
+    {
+     "at": 4.44,
+     "nl": "…dan zou ik misschien een hele grote naald voor jou maken.",
+     "en": "…then I'd make you a giant needle.",
+     "emoji": "💉",
+     "src": 353.15
+    },
+    {
+     "at": 9.64,
+     "nl": "Oké.",
+     "en": null,
+     "emoji": "😂",
+     "src": 356.53
+    },
+    {
+     "at": 11.38,
+     "nl": "En dan moet je dat openbreken, en dan zit er een cadeautje in.",
+     "en": "Then you break it open, and there's a present inside.",
+     "emoji": "🎁",
+     "src": 357.87
+    }
+   ],
+   "word": "de surprise",
+   "en": "made for you, about something you love"
+  },
+  {
+   "kind": "moment",
+   "start": 110.69,
+   "dur": 10.025,
+   "voice": 0.6,
+   "n": 7,
+   "caps": [
+    {
+     "at": 0.24,
+     "nl": "Het gedicht.",
+     "en": "The poem.",
+     "emoji": null,
+     "src": 240.47
+    },
+    {
+     "at": 4.045,
+     "nl": "Het gedicht rijmt niet!",
+     "en": "The poem doesn't rhyme!",
+     "emoji": "😄",
+     "src": 254.0
+    }
+   ],
+   "word": "het gedicht",
+   "en": "a poem"
+  },
+  {
+   "kind": "moment",
+   "start": 120.715,
+   "dur": 6.05,
+   "voice": 0.6,
+   "n": 8,
+   "caps": [
+    {
+     "at": 0.04,
+     "nl": "Fijne Sinterklaas!",
+     "en": "Happy Sinterklaas!",
+     "emoji": "🎁",
+     "src": 431.85
+    },
+    {
+     "at": 2.44,
+     "nl": "En tot morgen!",
+     "en": "And see you tomorrow!",
+     "emoji": "👋",
+     "src": 438.9
+    }
+   ],
+   "label": "Doei! 👋"
+  },
+  {
+   "kind": "end",
+   "start": 126.765,
+   "dur": 4.0
+  }
+ ]
+}

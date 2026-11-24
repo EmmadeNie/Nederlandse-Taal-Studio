@@ -51,6 +51,18 @@ const TEXT = {
     promoPerfect: ["Perfectum?", "Dat leer je hier"],
     promoCards: ["Nieuwe woorden,", "kaart voor kaart"],
     quiz: ["Snelle quiz:", "wat vul jij in?"],
+    lamak: ["Lessen met Lamak", "zijn nooit saai!"],
+    follow: "Volg @mijntaalstudio voor meer",
+    voiceA: [
+      { from: 0.4, to: 4.6, text: "Dus mocht je dit nou leuk lijken, laat het me weten," },
+      { from: 4.7, to: 7.4, text: "dan kunnen we een kennismakingsgesprek inplannen." },
+    ],
+    voiceB: [
+      { from: 0.2, to: 3.3, text: "Hierin wil ik van jou weten: wat is je doel," },
+      { from: 3.3, to: 6.4, text: "en binnen hoeveel tijd wil je dat bereiken?" },
+      { from: 6.6, to: 11.3, text: "Aan de hand daarvan kijken we hoeveel tijd we nodig hebben" },
+      { from: 11.4, to: 14.4, text: "en hoe vaak we afspreken." },
+    ],
     promoOutro: "Plan je eerste les · link in bio",
     // What Emma says at the start of the reel (seconds in her clip)
     introSubs: [
@@ -77,6 +89,18 @@ const TEXT = {
     promoPerfect: ["The perfect tense?", "You'll nail it"],
     promoCards: ["New words,", "card by card"],
     quiz: ["Quick quiz:", "can you fill it in?"],
+    lamak: ["Lessons with Lamak", "are never boring!"],
+    follow: "Follow @mijntaalstudio for more",
+    voiceA: [
+      { from: 0.4, to: 4.6, text: "So if you like the sound of this, let me know," },
+      { from: 4.7, to: 7.4, text: "and we'll plan an introductory chat." },
+    ],
+    voiceB: [
+      { from: 0.2, to: 3.3, text: "In it, I'd like to know: what is your goal," },
+      { from: 3.3, to: 6.4, text: "and how soon do you want to reach it?" },
+      { from: 6.6, to: 11.3, text: "Based on that, we see how much time we need" },
+      { from: 11.4, to: 14.4, text: "and how often we'll meet." },
+    ],
     promoOutro: "Plan your first lesson · link in bio",
     introSubs: [
       { from: 0.7, to: 3.7, text: "Hi, I am Emma and I tutor" },
@@ -221,7 +245,40 @@ const PROMO_QUIZ = PROMO.map((s) =>
   s.caption === "promoPerfect" ? { ...s, caption: "quiz", freeze: { at: 2.1, seconds: 2.4 } } : s
 );
 
-export const CUTS = { demo: SEGMENTS, promo: PROMO, quiz: PROMO_QUIZ };
+/**
+ * The introduction for YouTube (16:9, ~1.5 min): Emma first, then the board with
+ * her own words about the introductory chat in a small frame, the app, a fun
+ * moment with her learner Lamak, the proof, and "follow for more".
+ * raw/emma_full.mp4 is her whole intro video; raw/lamak.mp4 two takes from the
+ * Sinterklaas video.
+ */
+const VOICE_A = { video: "emma_full.mp4", start: 124.8, seconds: 7.5, subs: "voiceA" };
+const VOICE_B = { video: "emma_full.mp4", start: 132.35, seconds: 14.55, subs: "voiceB" };
+const INTRO = [
+  { kind: "talk", video: "youtube.mp4", seconds: 7.0, caption: "talk", captionTop: true, instant: true, subs: "introSubs" },
+  { ...byCaption("board"), speed: (7.6 - 0.9) / VOICE_A.seconds, voice: VOICE_A },
+  { ...byCaption("plan"), speed: (15.2 - 8.0) / VOICE_B.seconds, voice: VOICE_B },
+  byCaption("theory"),
+  byCaption("conjugate"),
+  byCaption("fill"),
+  byCaption("levels"),
+  { kind: "talk", video: "lamak.mp4", seconds: 17.0, caption: "lamak", aspect: 16 / 9 },
+  byCaption("rank"),
+  byCaption("reviews"),
+  { kind: "outro", seconds: 4.0, text: "follow" },
+];
+
+// The same introduction as a Short (9:16, under a minute).
+const INTRO_SHORT = [
+  { kind: "talk", video: "youtube.mp4", seconds: 7.0, caption: "talk", captionTop: true, instant: true, subs: "introSubs" },
+  { ...byCaption("board"), speed: (7.6 - 0.9) / VOICE_A.seconds, voice: VOICE_A },
+  { ...byCaption("plan"), speed: (15.2 - 8.0) / VOICE_B.seconds, voice: VOICE_B },
+  byCaption("conjugate"),
+  { kind: "talk", video: "lamak.mp4", seconds: 17.0, caption: "lamak", aspect: 16 / 9 },
+  { kind: "outro", seconds: 3.5, text: "follow" },
+];
+
+export const CUTS = { demo: SEGMENTS, promo: PROMO, quiz: PROMO_QUIZ, intro: INTRO, introShort: INTRO_SHORT };
 
 const lengthOf = (s) =>
   Math.round((s.kind === "clip" ? (s.to - s.from) / s.speed + (s.freeze?.seconds ?? 0) : s.seconds) * FPS);
@@ -242,16 +299,20 @@ function recordingTime(seg, sec) {
   return z.at + (sec - before - z.seconds) * seg.speed;
 }
 
-/** Music: fades in and out, and goes quiet while Emma talks. */
+/** Music: fades in and out, and goes quiet while someone talks (Emma, a voice-over, Lamak). */
 function musicVolume(cut, f) {
   const segs = CUTS[cut];
   const end = durationOf(cut);
-  const i = segs.findIndex((s) => s.kind === "talk");
+  const starts = startsOf(segs);
   const fade = interpolate(f, [0, 15, end - 30, end], [0, 0.8, 0.8, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  if (i < 0) return fade;
-  const a = startsOf(segs)[i];
-  const b = a + lengthOf(segs[i]);
-  const duck = interpolate(f, [a - 8, a + 6, b - 14, b], [1, 0.08, 0.08, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  let duck = 1;
+  segs.forEach((s, i) => {
+    if (s.kind !== "talk" && !s.voice) return;
+    const a = starts[i];
+    const b = a + lengthOf(s);
+    const low = s.voice ? 0.12 : 0.08;
+    duck = Math.min(duck, interpolate(f, [a - 8, a + 6, b - 14, b], [1, low, low, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }));
+  });
   return fade * duck;
 }
 
@@ -419,6 +480,7 @@ function Clip({ lang, seg, index }) {
     <>
       <Screen lang={lang} seg={seg} index={index} cam={cam} src={staticFile(`${lang}/${seg.scene}/${frameAt(m.frames, t)}`)} />
       {seg.freeze && <Countdown start={((seg.freeze.at - seg.from) / seg.speed) * fps} len={seg.freeze.seconds * fps} />}
+      {seg.voice && <VoiceOver lang={lang} voice={seg.voice} len={lengthOf(seg)} />}
     </>
   );
 }
@@ -738,9 +800,10 @@ function Talk({ lang, seg }) {
   const { f, enter: swing, leave } = useInOut(len);
   const enter = seg.instant ? 1 : swing; // the reel's first frame already shows Emma
   const L = useLayout();
-  const h = L.reel ? 1300 : L.portrait ? 1180 : Math.min(1000, L.H * 0.86);
-  const w = L.portrait ? 960 : h * 1.5;
-  const top = L.reel ? 220 : L.portrait ? 50 : (L.H - h) / 2;
+  let h = L.reel ? 1300 : L.portrait ? 1180 : Math.min(1000, L.H * 0.86);
+  const w = L.portrait ? (seg.aspect ? 1040 : 960) : h * (seg.aspect ?? 1.5);
+  if (L.portrait && seg.aspect) h = w / seg.aspect;
+  const top = L.portrait && seg.aspect ? (L.H - h) / 2 : L.reel ? 220 : L.portrait ? 50 : (L.H - h) / 2;
   const zoom = interpolate(f, [0, len], [1.0, 1.06]);
   const pop = interpolate(enter, [0, 1], [0.85, 1]) * interpolate(leave, [0, 1], [1.06, 1]);
   return (
@@ -760,13 +823,69 @@ function Talk({ lang, seg }) {
       >
         <OffthreadVideo
           src={staticFile(seg.video)}
+          startFrom={Math.round((seg.start ?? 0) * FPS)}
           volume={(vf) => interpolate(vf, [0, 6, len - 14, len - 2], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })}
-          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: L.portrait ? "36% 30%" : "50% 30%", transform: `scale(${zoom})` }}
+          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: L.portrait ? "36% 30%" : "50% 30%", transform: `scale(${seg.aspect ? 1 : zoom})` }}
         />
       </div>
       <Caption lines={TEXT[lang][seg.caption]} len={len} top={seg.captionTop} />
       {seg.subs && <Subtitles cues={TEXT[lang][seg.subs]} bottom={L.H - top - h + 70} />}
     </AbsoluteFill>
+  );
+}
+
+/** Emma in a small frame in the corner, talking over a clip, with subtitles. */
+function VoiceOver({ lang, voice, len }) {
+  const { enter, leave } = useInOut(len);
+  const L = useLayout();
+  const w = L.portrait ? 420 : 520;
+  const h = w / 1.5;
+  return (
+    <>
+      <div
+        style={{
+          position: "absolute",
+          right: L.portrait ? 40 : 70,
+          top: L.portrait ? 200 : 60,
+          width: w,
+          height: h,
+          borderRadius: 22,
+          overflow: "hidden",
+          boxShadow: "0 24px 70px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.1)",
+          opacity: Math.min(enter * 1.4, 1) * leave,
+          transform: `scale(${interpolate(enter, [0, 1], [0.8, 1])})`,
+          transformOrigin: "right top",
+        }}
+      >
+        <OffthreadVideo
+          src={staticFile(voice.video)}
+          startFrom={Math.round(voice.start * FPS)}
+          volume={(vf) => interpolate(vf, [0, 6, len - 14, len - 2], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })}
+          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 30%" }}
+        />
+      </div>
+      <VoiceSubs cues={TEXT[lang][voice.subs]} right={L.portrait ? 40 : 70} top={(L.portrait ? 200 : 60) + h + 18} opacity={leave} />
+    </>
+  );
+}
+
+/** The voice-over's subtitles, right under Emma's small frame. */
+function VoiceSubs({ cues, right, top, opacity }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const t = f / fps;
+  const cue = cues.find((c) => t >= c.from && t < c.to);
+  if (!cue) return null;
+  const fade = Math.min(
+    interpolate(t, [cue.from, cue.from + 0.12], [0, 1], { extrapolateRight: "clamp" }),
+    interpolate(t, [cue.to - 0.12, cue.to], [1, 0], { extrapolateLeft: "clamp" }),
+  );
+  return (
+    <div style={{ position: "absolute", right, top, width: 820, display: "flex", justifyContent: "flex-end", opacity: fade * opacity }}>
+      <span style={{ padding: "12px 24px 14px", borderRadius: 16, background: "rgba(0,0,0,0.78)", color: "#fff", fontSize: 40, fontWeight: 700, lineHeight: 1.25, textAlign: "right", textWrap: "balance" }}>
+        {cue.text}
+      </span>
+    </div>
   );
 }
 
