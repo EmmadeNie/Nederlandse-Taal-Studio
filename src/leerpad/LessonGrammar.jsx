@@ -4,7 +4,6 @@ import { TOPIC_CATEGORIES, categoryOf } from "../data/topicCategory";
 import { topicText } from "../components/topicLang";
 import { topics } from "../data";
 import TopicExplanation from "../components/TopicExplanation";
-import { RelatedFolds } from "../components/RelatedWords";
 import ExampleSentences from "../components/ExampleSentences";
 import { LevelBadge } from "../components/Badges";
 import { ICONS, X } from "../icons";
@@ -16,23 +15,23 @@ import { EditItemButton } from "../library/ItemEditing";
 
 /**
  * The grammar of a lesson: per topic its title and, folded, the short version
- * ("Lees de hele uitleg" for the rest); related words and example sentences as
- * folded rows. `excludeWordIds`: the lesson's own verbs, not repeated here.
+ * ("Lees de hele uitleg" for the rest), and its example sentences as a folded row.
+ * No related words: the lesson's verbs and words have their own tabs.
  */
-export function GrammarView({ ids, lang, excludeWordIds = [] }) {
+export function GrammarView({ ids, lang }) {
   const list = known(ids);
   if (!list.length) return null;
   return (
     <ul className="lg-list">
       {list.map((topic) => (
-        <GrammarItem key={topic.id} topic={topic} lang={lang} excludeWordIds={excludeWordIds} />
+        <GrammarItem key={topic.id} topic={topic} lang={lang} />
       ))}
     </ul>
   );
 }
 
 /** One topic in a lesson, in the lesson's language. */
-function GrammarItem({ topic, lang: lessonLang, excludeWordIds }) {
+function GrammarItem({ topic, lang: lessonLang }) {
   const { t, lang: appLang } = useI18n();
   const lang = lessonLang || appLang; // the lesson's language, else the switch top right
   const text = topicText(topic, lang);
@@ -54,7 +53,6 @@ function GrammarItem({ topic, lang: lessonLang, excludeWordIds }) {
       <div className="lg-body">
         <TopicExplanation text={text} lang={lang} className="lp-explanation" foldWithoutShort />
       </div>
-      <RelatedFolds ids={topic.relatedWordIds} exclude={excludeWordIds} />
       <ExampleSentences ids={topic.exampleSentenceIds} folded />
     </li>
   );
