@@ -369,7 +369,7 @@
 }
 
 .lp-dialog.is-wide {
-  max-width: 640px;
+  max-width: 720px;
 }
 
 .lp-dialog .fb-dialog-header {
@@ -1553,4 +1553,274 @@ span.step-important {
 .lp-back {
   flex-basis: 100%;
   font-size: 0.85rem;
+}
+
+/* ----- A lesson as the student reads it: intro, Oefenen, then calm rows ----- */
+.lesson-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.lc-intro .lp-explanation {
+  font-size: 0.95rem;
+}
+
+.lc-practise {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  margin-bottom: 0.25rem;
+}
+
+.lc-practise-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.lc-practise .cp-wrap {
+  gap: 0.4rem;
+}
+
+.lc-practise .cp-button {
+  font-size: 0.85rem;
+  padding: 0.35rem 0.85rem;
+  background: var(--surface);
+}
+
+.lc-practise .cp-button.is-recommended {
+  background: var(--accent);
+  font-weight: 600;
+}
+
+/* One row: icon, title + a line about what is inside, a caret; tools at the right. */
+.fold {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  min-width: 0;
+}
+
+.fold-head {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.fold-toggle {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.6rem 0.8rem;
+  background: none;
+  border: 0;
+  border-radius: 10px;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.fold-toggle:hover .fold-text strong {
+  color: var(--accent);
+}
+
+.fold-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.fold-icon {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--surface-2);
+  color: var(--text-dim);
+}
+
+.fold-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.fold-text strong {
+  font-size: 0.92rem;
+}
+
+.fold-sub {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fold-caret {
+  flex: none;
+  color: var(--text-dim);
+  transition: transform 0.15s;
+}
+
+.fold.is-open .fold-caret {
+  transform: rotate(180deg);
+}
+
+.fold-tools {
+  flex: none;
+  padding-right: 0.6rem;
+}
+
+.fold-body {
+  padding: 0.75rem 0.9rem 0.9rem;
+  border-top: 1px solid var(--border);
+  min-width: 0;
+}
+
+.fold-body > .wl + .wl {
+  margin-top: 6px;
+}
+
+.fold-body .example-sentences {
+  margin-top: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fold-caret {
+    transition: none;
+  }
+}
+
+/* A grammar topic in a lesson: always its title; folded = the short version. */
+.lg-list li.lg-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.75rem 0.85rem 0.85rem;
+  border-radius: 10px;
+  background: var(--surface);
+  font-size: 0.92rem;
+}
+
+.lg-head {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+}
+
+.lg-head .fold-text strong {
+  font-size: 1rem;
+}
+
+.lg-head .ie-edit {
+  position: static;
+  flex: none;
+}
+
+.lg-body {
+  min-width: 0;
+}
+
+.lg-body .lp-explanation > :first-child {
+  margin-top: 0;
+}
+
+.lg-item .fold {
+  background: var(--bg);
+}
+
+.topic-fold-summary {
+  margin: 0;
+  color: var(--text-dim);
+}
+
+/* Tabs in a lesson: one part at a time (Uitleg, Werkwoorden, Woorden, …). */
+.lc-tabs {
+  display: flex;
+  gap: 0.15rem;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.lc-tab {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.55rem 0.8rem;
+  margin-bottom: -1px;
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.lc-tab:hover {
+  color: var(--text);
+}
+
+.lc-tab.is-on {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+
+.lc-tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  border-radius: 6px 6px 0 0;
+}
+
+.lc-tab-count {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-dim);
+}
+
+.lc-tab.is-on .lc-tab-count {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.lc-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+  padding-top: 0.35rem;
+}
+
+.lc-panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.lc-panel > .wl + .wl {
+  margin-top: -0.25rem;
 }

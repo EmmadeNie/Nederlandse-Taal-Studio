@@ -122,7 +122,7 @@ blockquote cite{color:var(--dim);font-style:normal;font-size:.9rem}
 .reviews .who{display:flex;align-items:center;gap:.75rem;margin-bottom:.6rem;line-height:1.3}
 .reviews .avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#0b0d11;font-weight:800;flex:none}
 .faq h3{margin-top:1.2rem}
-.plans{align-items:start}
+.plans{align-items:start;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
 .plan{position:relative}
 .plan.featured{border-color:var(--accent);box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .plan .price{margin:.5rem 0 0;color:var(--text)}
@@ -172,6 +172,17 @@ html[lang=en] .rich div[data-callout="voorbeeld"]::before{content:"Example"}
 .rich div[data-example]{margin:.3rem 0 .8rem;padding:.45rem .8rem;border-radius:8px;background:var(--surface-2)}
 .rich div[data-example]>p{margin:0}.rich div[data-example]>p:first-child{font-weight:600}
 .rich div[data-example]>p+p{color:var(--dim);font-style:italic;font-size:.9rem}
+.rich div[data-example]>p:nth-child(n+3){margin-top:.3rem;color:#ff7b72;font-style:normal;font-weight:700;font-size:.85rem}
+.rich div[data-example]>p:nth-child(n+3)::before{content:"↳ "}
+.rich [data-role="werkwoord"]{color:#6aaefb}.rich [data-role="deel"]{color:#ff7b72}
+.rich [data-role="markeer"]{background:#6b5a17;color:#fff4c2;padding:0 .2em;border-radius:3px}
+.rich p[data-kicker]{margin:1.3rem 0 0;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.rich p[data-kicker]+h2,.rich p[data-kicker]+h3{margin-top:.1rem}
+.rich div[data-formula]{width:fit-content;max-width:100%;margin:.4rem 0 .9rem;padding:.45rem .95rem;border-radius:10px;background:var(--surface-2);font-size:1.35rem;font-weight:800}
+.rich div[data-formula]>p{margin:0}
+.rich div[data-quiz]{margin:.4rem 0 .9rem;padding:.7rem .95rem;border:1px dashed var(--border);border-radius:10px}
+.rich div[data-quiz]>p{margin:0}.rich div[data-quiz]>p:first-child{font-weight:600}
+.rich div[data-quiz]>p+p{margin-top:.3rem;color:var(--dim)}.rich div[data-quiz]>p+p::before{content:"→ "}
 .rich table{border-collapse:collapse;width:100%;margin:.6rem 0 1rem;font-size:.95rem}
 .rich th,.rich td{border:1px solid var(--border);padding:.4rem .6rem;text-align:left}
 .cta{margin:2rem 0;padding:1.25rem;border-radius:14px;background:var(--surface);border:1px solid var(--border)}
@@ -243,6 +254,24 @@ const LESSON_VIDEOS = {
       uploadDate: "2026-11-20T06:23:56-08:00",
       seconds: 236,
       chapters: ["0:00 Intro", "0:24 The stem", "1:12 The ending", "1:39 Stem ending in -t", "1:54 Jij after the verb", "2:17 Summary", "2:29 Quiz"],
+    },
+  },
+  "scheidbare-werkwoorden": {
+    nl: {
+      id: "TWl9IwI838k",
+      name: "Scheidbare werkwoorden: ik bel je op (A2)",
+      description: "Scheidbare werkwoorden (A2): twee delen, één betekenis. Waar staat het eerste deel in de hoofdzin, wanneer blijven de delen samen, en welke werkwoorden lijken op elkaar? Met 7 werkwoorden uit het dagelijks leven en een quiz met 6 vragen.",
+      uploadDate: "2026-11-23T10:33:36-08:00",
+      seconds: 147,
+      chapters: ["0:00 Intro en de regel", "0:17 Zeven werkwoorden", "0:59 Soms blijven ze samen", "1:14 Let op: zelfde werkwoord", "1:28 Quiz"],
+    },
+    en: {
+      id: "pLESqV-gUz0",
+      name: "Dutch separable verbs (scheidbare werkwoorden): ik bel je op (A2)",
+      description: "Dutch separable verbs (scheidbare werkwoorden, A2): two parts, one meaning. Where the first part goes in a main clause, when the parts stay together, and which verbs look alike. With 7 everyday verbs and a quiz with 6 questions.",
+      uploadDate: "2026-11-23T10:36:03-08:00",
+      seconds: 147,
+      chapters: ["0:00 Intro and the rule", "0:17 Seven verbs", "0:59 When they stay together", "1:14 Watch out: same base verb", "1:28 Quiz"],
     },
   },
 };
@@ -909,7 +938,7 @@ const LINKS = [
   { nl: ["Lesvideo's op YouTube", "Uitleg, voorbeelden en quizzen"], en: ["Lesson videos on YouTube", "Explanations, examples and quizzes"], href: { nl: STUDIO_CHANNEL, en: STUDIO_CHANNEL }, external: true },
   { nl: ["Instagram @mijntaalstudio", "Korte lessen en quizzen"], en: ["Instagram @mijntaalstudio", "Short lessons and quizzes"], href: { nl: INSTAGRAM, en: INSTAGRAM }, external: true },
   { nl: ["Oefen in de app", "Je leerpad, flashcards en oefeningen"], en: ["Practise in the app", "Your learning path, flashcards and exercises"], href: { nl: "/", en: "/" }, main: true },
-  { nl: ["Abonnementen", "Gratis, Onderweg of Compleet"], en: ["Plans", "Free, On the go or Compleet"], href: { nl: `${PATHS.nl.lessons}#${T.nl.plansAnchor}`, en: `${PATHS.en.lessons}#${T.en.plansAnchor}` } },
+  { nl: ["Abonnementen", "Gratis, Onderweg, Compleet of Partner"], en: ["Plans", "Free, On the go, Compleet or Partner"], href: { nl: `${PATHS.nl.lessons}#${T.nl.plansAnchor}`, en: `${PATHS.en.lessons}#${T.en.plansAnchor}` } },
   { nl: ["Les met een docent", "Online of in Rotterdam"], en: ["Lessons with a teacher", "Online or in Rotterdam"], href: { nl: PATHS.nl.lessons, en: PATHS.en.lessons } },
   { nl: ["Reviews ★ 5,0", "Wat leerlingen zeggen"], en: ["Reviews ★ 5.0", "What students say"], href: { nl: PATHS.nl.reviews, en: PATHS.en.reviews } },
 ];

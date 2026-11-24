@@ -9,6 +9,7 @@
 //   MAIL_FROM        e.g. noreply@mijntaalstudio.nl
 // Locally, MAIL_DRY_RUN=1 returns the e-mail instead of sending it.
 import { createClient } from "jsr:@supabase/supabase-js@2";
+import { sendMail } from "../_shared/mail.ts";
 import { SUBJECT, mailHtml } from "./mail.ts";
 
 const cors = {
@@ -52,21 +53,7 @@ Deno.serve(async (req) => {
 
   if (Deno.env.get("MAIL_DRY_RUN") === "1") return json({ dryRun: true, to: target.email, replyTo: docentEmail, subject: SUBJECT, html });
 
-  const key = Deno.env.get("RESEND_API_KEY");
-  const from = Deno.env.get("MAIL_FROM");
-  if (!key || !from) return json({ error: "Mail versturen is nog niet ingesteld (RESEND_API_KEY / MAIL_FROM)" }, 500);
-
-  const sent = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      from: `Taal Studio <${from}>`,
-      to: [target.email],
-      reply_to: docentEmail,
-      subject: SUBJECT,
-      html,
-    }),
-  });
-  if (!sent.ok) return json({ error: `Mail versturen mislukt (${sent.status}): ${await sent.text()}` }, 502);
+  const failed = await sendMail({ to: target.email, replyTo: docentEmail, subject: SUBJECT, html });
+  if (failed) return json({ error: failed.error }, failed.status);
   return json({ sent: true, to: target.email });
 });

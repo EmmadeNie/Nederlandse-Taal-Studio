@@ -21,6 +21,11 @@
   --brand-sub: #8bbcfb;
   --error-text: #f19a9a;
   --orange-text: #f3c08a;
+  /* House style for lesson content: the verb, the part that moves, a marker. */
+  --role-verb: #6aaefb;
+  --role-part: #ff7b72;
+  --role-mark: #6b5a17;
+  --role-mark-text: #fff4c2;
   --shadow: rgba(0, 0, 0, 0.25);
   --logo-tile: #22262f;
   --logo-card: #4f9cf9;
@@ -53,6 +58,10 @@
   --brand-sub: #2563eb;
   --error-text: #cf222e;
   --orange-text: #b45309;
+  --role-verb: #1d5fd1;
+  --role-part: #c62828;
+  --role-mark: #fde68a;
+  --role-mark-text: #171a21;
   --shadow: rgba(23, 26, 33, 0.12);
   --logo-tile: #e3e9f3;
   --logo-card: #2563eb;

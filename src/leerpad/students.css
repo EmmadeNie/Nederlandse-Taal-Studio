@@ -142,3 +142,10 @@
   border-color: var(--accent);
   color: var(--accent);
 }
+
+.students-check {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+}

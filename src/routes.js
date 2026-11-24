@@ -8,7 +8,7 @@
  *   /leerpaden, /leerpaden/<leerling>
  *   /bibliotheek/<tab>, /bibliotheek/grammatica/<onderwerp>
  *   /feedback, /voorstellen, /voorstellen/<id>, /gebruikers
- *   /abonnement                      the plans (Gratis, Onderweg, Compleet)
+ *   /abonnement                      the plans (Gratis, Onderweg, Compleet, Partner)
  *
  * Filters stay in the query string, e.g. /bibliotheek/zinnen?level=A2.
  */

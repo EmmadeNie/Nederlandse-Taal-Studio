@@ -16,6 +16,7 @@ import { SinterklaasTeaser, TEASER_FPS, TEASER_FRAMES } from "./SinterklaasTease
 import { SinterklaasBloopers, BLOOPERS_FPS, bloopersDuration } from "./SinterklaasBloopers";
 import { SinterklaasShort, SHORT_FPS, shortDuration } from "./SinterklaasShort";
 import { SinterklaasThumb, SinterklaasVideo, SINT_VIDEO_FPS, SINT_VIDEO_SIZE, sintVideoDuration } from "./SinterklaasVideo";
+import { SeparableThumb, SeparableVerbsVideo, SEP_FPS, SEP_SIZES, separableDuration } from "./SeparableVerbsVideo";
 
 function Root() {
   return (
@@ -66,6 +67,13 @@ function Root() {
       <Composition id="short-sinterklaas-en" component={SinterklaasShort} durationInFrames={shortDuration()} fps={SHORT_FPS} width={1080} height={1920} />
       <Composition id="short-sinterklaas-2-en" component={SinterklaasShort} durationInFrames={shortDuration(2)} fps={SHORT_FPS} width={1080} height={1920} defaultProps={{ part: 2 }} />
       <Composition id="story-sinterklaas-teaser" component={SinterklaasTeaser} durationInFrames={TEASER_FRAMES} fps={TEASER_FPS} width={1080} height={1920} />
+      {/* Separable verbs (A2) with Emma's voice: 16:9 (YouTube, the lesson) and 9:16 (Shorts, Reels). */}
+      {["nl", "en"].flatMap((lang) => [
+        ...Object.entries(SEP_SIZES).map(([fmt, size]) => (
+          <Composition key={`separable-${fmt}-${lang}`} id={`${fmt}-separable-${lang}`} component={SeparableVerbsVideo} defaultProps={{ lang }} durationInFrames={separableDuration()} fps={SEP_FPS} {...size} />
+        )),
+        <Still key={`separable-thumb-${lang}`} id={`thumb-separable-${lang}`} component={SeparableThumb} defaultProps={{ lang }} width={1280} height={720} />,
+      ])}
       {/* The link preview for WhatsApp, LinkedIn & co. */}
       <Still id="og" component={Og} defaultProps={{ lang: "nl" }} width={1200} height={630} />
       {/* Profile picture for Instagram, YouTube & co. */}
