@@ -4,7 +4,7 @@
  *   <div data-callout="regel|tip|letop|voorbeeld"> … </div>   a coloured box
  *   <div data-example><p>Nederlandse zin</p><p>English</p><p>waarom</p></div>   NL + EN (+ "↳ waarom")
  * and the house style of the lesson videos:
- *   <span data-role="werkwoord|deel|markeer">   the verb (blue), the part that moves (red), a marker
+ *   <span data-role="werkwoord|deel|markeer">   the verb (blue), the part that moves (orange), a marker
  *   <p data-kicker>Stap 1</p>                     a small label above a heading
  *   <div data-formula><p>op + bellen = opbellen</p></div>   the building block, big
  *   <div data-quiz><p>Ik ___ mijn moeder ___.</p><p>Ik bel mijn moeder op.</p></div>

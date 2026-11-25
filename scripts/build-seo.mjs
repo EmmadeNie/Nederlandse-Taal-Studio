@@ -172,9 +172,9 @@ html[lang=en] .rich div[data-callout="voorbeeld"]::before{content:"Example"}
 .rich div[data-example]{margin:.3rem 0 .8rem;padding:.45rem .8rem;border-radius:8px;background:var(--surface-2)}
 .rich div[data-example]>p{margin:0}.rich div[data-example]>p:first-child{font-weight:600}
 .rich div[data-example]>p+p{color:var(--dim);font-style:italic;font-size:.9rem}
-.rich div[data-example]>p:nth-child(n+3){margin-top:.3rem;color:#ff7b72;font-style:normal;font-weight:700;font-size:.85rem}
+.rich div[data-example]>p:nth-child(n+3){margin-top:.3rem;color:#ffa657;font-style:normal;font-weight:700;font-size:.85rem}
 .rich div[data-example]>p:nth-child(n+3)::before{content:"↳ "}
-.rich [data-role="werkwoord"]{color:#6aaefb}.rich [data-role="deel"]{color:#ff7b72}
+.rich [data-role="werkwoord"]{color:#6aaefb}.rich [data-role="deel"]{color:#ffa657}
 .rich [data-role="markeer"]{background:#6b5a17;color:#fff4c2;padding:0 .2em;border-radius:3px}
 .rich p[data-kicker]{margin:1.3rem 0 0;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
 .rich p[data-kicker]+h2,.rich p[data-kicker]+h3{margin-top:.1rem}
