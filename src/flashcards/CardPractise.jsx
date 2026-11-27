@@ -19,8 +19,8 @@ const verbsIn = (items) => drillable(items.filter((i) => i.partOfSpeech === "ver
  * (lists with verbs that have a conjugation table). Each kind lists its
  * lists with a path; Invullen and Vervoegen also offer all lists together.
  */
-function practiseKinds(lesson, t) {
-  const lists = lessonLists(lesson, t);
+function practiseKinds(lesson, t, lang) {
+  const lists = lessonLists(lesson, t, lang);
   const kinds = [
     {
       key: "flashcards",
@@ -88,7 +88,7 @@ export default function CardPractise({ lesson }) {
   const [open, setOpen] = useState(false);
   const [kindKey, setKindKey] = useState(null);
   if (!lesson?.id) return null;
-  const kinds = practiseKinds(lesson, t);
+  const kinds = practiseKinds(lesson, t, lang);
   if (!kinds.length) return null;
 
   const go = (path) => navigate(pathFor("flashcards", path));

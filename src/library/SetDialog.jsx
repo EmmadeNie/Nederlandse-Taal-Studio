@@ -24,6 +24,8 @@ export default function SetDialog({ set, canEdit, onClose }) {
   const autosave = useAutosave();
   const [title, setTitle] = useState(set.title);
   const sentTitle = useRef(set.title);
+  const [titleEn, setTitleEn] = useState(set.titleEn || "");
+  const sentTitleEn = useRef(set.titleEn || "");
   const [lessons, setLessons] = useState(null);
   const [error, setError] = useState(null);
 
@@ -55,8 +57,16 @@ export default function SetDialog({ set, canEdit, onClose }) {
     return save({ title: v });
   };
 
+  const saveTitleEn = () => {
+    const v = titleEn.trim();
+    if (v === sentTitleEn.current) return autosave.settled();
+    sentTitleEn.current = v;
+    return save({ titleEn: v });
+  };
+
   const close = async () => {
     if (canEdit && !(await saveTitle())) return;
+    if (canEdit && !(await saveTitleEn())) return;
     onClose();
   };
 
@@ -107,6 +117,10 @@ export default function SetDialog({ set, canEdit, onClose }) {
           <label className="fb-field" style={{ flex: "3 1 220px" }}>
             <span>{t("sets.title")}</span>
             <input value={title} onChange={(e) => setTitle(e.target.value)} onBlur={saveTitle} />
+          </label>
+          <label className="fb-field" style={{ flex: "3 1 220px" }}>
+            <span>{t("lp.titleEn")}</span>
+            <input value={titleEn} onChange={(e) => setTitleEn(e.target.value)} onBlur={saveTitleEn} lang="en" />
           </label>
           <label className="fb-field" style={{ flex: "1 1 100px" }}>
             <span>{t("lp.level")}</span>

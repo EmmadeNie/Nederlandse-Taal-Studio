@@ -13,7 +13,7 @@ import { fillWordsOf } from "./conjugate";
  * lesson) leaves out the Mijn flashcards toggle.
  */
 export default function ListHeading({ children, lesson, part, forProfileId, practiseOnly }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   return (
     <h4 className="fc-heading">
       <span>{children}</span>
@@ -50,7 +50,7 @@ export default function ListHeading({ children, lesson, part, forProfileId, prac
             </button>
           )}
           {!practiseOnly && (
-            <FlashcardButton source={{ lesson: lesson.id, part }} title={deckTitle(lesson, part, t)} forProfileId={forProfileId} />
+            <FlashcardButton source={{ lesson: lesson.id, part }} title={deckTitle(lesson, part, t, lang)} forProfileId={forProfileId} />
           )}
         </span>
       )}

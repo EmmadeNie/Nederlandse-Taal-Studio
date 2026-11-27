@@ -1,5 +1,5 @@
 import { useI18n } from "../i18n/context";
-import { getSet } from "../data";
+import { getSet, setTitle } from "../data";
 import { LevelBadge } from "../components/Badges";
 import QuizletExport from "../components/QuizletExport";
 import { LEVELS } from "./util";
@@ -9,9 +9,9 @@ import SetSelect from "./SetSelect";
 
 /** Short description of a recipe: "dieren · t/m A1". */
 function Summary({ spec }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const parts = [
-    spec.set && (getSet(spec.set)?.title || slugLabel(spec.set)),
+    spec.set && (setTitle(getSet(spec.set), lang) || slugLabel(spec.set)),
     spec.theme && themeLabel(spec.theme),
     spec.partOfSpeech && t(`pos.${spec.partOfSpeech}`).toLowerCase(),
     spec.level && (spec.upTo ? t("wl.upToLevel", { level: spec.level }) : spec.level),

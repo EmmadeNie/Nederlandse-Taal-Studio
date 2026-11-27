@@ -3,7 +3,7 @@ import { useAuth } from "../auth/context";
 import { useI18n } from "../i18n/context";
 import { navigate, useRoute } from "../hooks/useRoute";
 import { pathFor } from "../routes";
-import { getSet, sentences, setItems, setsOfType } from "../data";
+import { getSet, sentences, setItems, setsOfType, setTitle } from "../data";
 import { sentencesForLists } from "../leerpad/sentenceLists";
 import { useContentVersion } from "../data/useContent";
 import { supabase } from "../lib/supabase";
@@ -14,12 +14,12 @@ import Practice from "./Practice";
 import Drill from "./Drill";
 import { drillable, fillCount, fillWordsOf, markSentencesOf, tenseForLesson } from "./conjugate";
 import { lessonPronounKind, withPronounsOf } from "./pronouns";
-import { cardOf, deckTitle, itemsOf, lessonLists, parseListKey, partsOf } from "./cards";
+import { cardOf, deckLabel, deckTitle, itemsOf, lessonLists, lessonTitle, parseListKey, partsOf } from "./cards";
 import { loadDecks, removeDeck, setDeckDone, setDeckKindDone, useDecks } from "./store";
 import { PlanLockedPage, usePlan } from "../auth/plan";
 import "./flashcards.css";
 
-const LESSON = "id, title, level, word_list, sentence_list, verb_ids";
+const LESSON = "id, title, title_en, level, word_list, sentence_list, verb_ids";
 
 /** Lessons on a student's leerpad (in leerpad order), or the whole lesprogramma for staff. */
 async function loadMyLessons(profileId, isStudent) {
@@ -44,7 +44,7 @@ async function loadMyLessons(profileId, isStudent) {
  * /flashcards/<deck id> or /flashcards/alles practises.
  */
 export default function FlashcardsPage() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { profile, role } = useAuth();
   const { canPractise } = usePlan(); // Gratis: the lists can be seen, not practised
   const route = useRoute();
@@ -100,6 +100,7 @@ export default function FlashcardsPage() {
     [lessons, extra]
   );
   const cardsOf = (deck) => itemsOf(deck.source, lessonMap).map(cardOf);
+  const labelOf = (deck) => deckLabel(deck, lessonMap, t, lang);
 
   // "Klaar met …" at the end of a round of one list: ticks that kind; with one kind it is "Lijst afronden".
   const finishProps = (deck, kind) => {
@@ -132,7 +133,7 @@ export default function FlashcardsPage() {
         pronounKind={pronounKind}
         level={lesson?.level}
         settingsKey={route.param}
-        title={lesson?.title || t("pd.title")}
+        title={lessonTitle(lesson, lang) || t("pd.title")}
         onExit={() => (window.history.length > 1 ? window.history.back() : navigate(pathFor("flashcards")))}
       />
     );
@@ -153,7 +154,8 @@ export default function FlashcardsPage() {
     const verbs = fill ? [] : verbsOf(items);
     const words = fill ? fillWordsOf(items) : [];
     const markSentences = fill ? markSentencesOf(items) : [];
-    const title = drillLesson ? lessonMap.get(drillLesson)?.title : drill === "alles" ? t("fc.all") : decks.find((d) => d.id === drill)?.title;
+    const drillDeck = decks.find((d) => d.id === drill);
+    const title = drillLesson ? lessonTitle(lessonMap.get(drillLesson), lang) : drill === "alles" ? t("fc.all") : drillDeck && labelOf(drillDeck);
     // Start at the level of the lesson or set (one list only); "alles" starts at all levels.
     const levelOf = (src) => (src.lesson ? lessonMap.get(src.lesson)?.level : src.set ? getSet(src.set)?.level : null);
     const level = drill === "alles" ? null : levelOf(sources[0] || {});
@@ -191,7 +193,7 @@ export default function FlashcardsPage() {
         key={route.param}
         settingsKey={route.param}
         cards={cards}
-        title={directTitle(lesson, directSource, t)}
+        title={directTitle(lesson, directSource, t, lang)}
         onExit={() => (window.history.length > 1 ? window.history.back() : navigate(pathFor("flashcards")))}
       />
     );
@@ -201,7 +203,7 @@ export default function FlashcardsPage() {
   if (route.param && decks && lessons) {
     const chosen = route.param === "alles" ? decks.filter((d) => !d.done_at) : decks.filter((d) => d.id === route.param);
     const unique = new Map(chosen.flatMap(cardsOf).map((c) => [c.id, c]));
-    const title = route.param === "alles" ? t("fc.all") : chosen[0]?.title;
+    const title = route.param === "alles" ? t("fc.all") : chosen[0] && labelOf(chosen[0]);
     if (unique.size) {
       if (!canPractise) return <PlanLockedPage onBack={() => navigate(pathFor("flashcards"))} />;
       return (
@@ -222,7 +224,7 @@ export default function FlashcardsPage() {
 
   const shownLessons = (lessons || [])
     .filter((l) => partsOf(l).length)
-    .filter((l) => !filter || l.title.toLowerCase().includes(filter.toLowerCase()));
+    .filter((l) => !filter || [l.title, l.title_en].some((x) => x?.toLowerCase().includes(filter.toLowerCase())));
   const sets = [...setsOfType("word"), ...setsOfType("sentence")].filter((s) => setItems(s).length);
 
   return (
@@ -266,11 +268,11 @@ export default function FlashcardsPage() {
               )}
             </div>
           )}
-          <DeckList decks={active} cardsOf={cardsOf} t={t} />
+          <DeckList decks={active} cardsOf={cardsOf} labelOf={labelOf} t={t} />
           {done.length > 0 && (
             <details className="fc-done-list">
               <summary>{t("fc.doneList", { n: done.length })}</summary>
-              <DeckList decks={done} cardsOf={cardsOf} t={t} />
+              <DeckList decks={done} cardsOf={cardsOf} labelOf={labelOf} t={t} />
             </details>
           )}
           <button type="button" className="fb-link fc-browse-toggle" onClick={() => setBrowse((b) => !b)}>
@@ -301,7 +303,7 @@ export default function FlashcardsPage() {
               {shownLessons.map((l) => (
                 <li key={l.id}>
                   <div className="fc-lesson-head">
-                    <strong>{l.title}</strong> {l.level && <LevelBadge level={l.level} />}
+                    <strong>{lessonTitle(l, lang)}</strong> {l.level && <LevelBadge level={l.level} />}
                   </div>
                   <div className="fc-parts">
                     {partsOf(l).map(({ part, count }) => (
@@ -309,7 +311,7 @@ export default function FlashcardsPage() {
                         <span>
                           {t(`fc.part.${part}`)} <span className="dim">({count})</span>
                         </span>
-                        <FlashcardButton source={{ lesson: l.id, part }} title={deckTitle(l, part, t)} />
+                        <FlashcardButton source={{ lesson: l.id, part }} title={deckTitle(l, part, t, lang)} />
                       </span>
                     ))}
                   </div>
@@ -325,12 +327,12 @@ export default function FlashcardsPage() {
                 {sets.map((s) => (
                   <li key={s.id} className="fc-part">
                     <span>
-                      <strong>{s.title}</strong>{" "}
+                      <strong>{setTitle(s, lang)}</strong>{" "}
                       <span className="dim">
                         ({t(`sets.count.${s.type}`, { n: setItems(s).length })})
                       </span>
                     </span>
-                    <FlashcardButton source={{ set: s.id }} title={s.title} />
+                    <FlashcardButton source={{ set: s.id }} title={setTitle(s, lang)} />
                   </li>
                 ))}
               </ul>
@@ -365,23 +367,24 @@ const KIND_ICONS = { flashcards: Cards, vervoegen: PencilSimpleLine, invullen: T
  * remove, and below one button per kind of practice that starts it; a kind
  * the student finished shows a tick.
  */
-function DeckList({ decks, cardsOf, t }) {
+function DeckList({ decks, cardsOf, labelOf, t }) {
   return (
     <ul className="fc-decks">
       {decks.map((d) => {
         const kinds = deckKinds(d, cardsOf);
+        const name = labelOf(d);
         const done = new Set(d.done_kinds || []);
         return (
           <li key={d.id} className={`fc-deck-card ${d.done_at ? "is-done" : ""}`}>
             <div className="fc-deck-head">
               <span className="fc-deck-title">
-                {d.title}
+                {name}
                 {d.added_by && d.added_by !== d.profile_id && <span className="fc-from-docent">{t("fc.fromDocent")}</span>}
               </span>
               <button
                 type="button"
                 className="board-icon-btn fc-done-btn"
-                aria-label={d.done_at ? t("fc.undoDoneAria", { name: d.title }) : t("fc.markDoneAria", { name: d.title })}
+                aria-label={d.done_at ? t("fc.undoDoneAria", { name }) : t("fc.markDoneAria", { name })}
                 title={d.done_at ? t("fc.undoDone") : t("fc.markDone")}
                 onClick={() => setDeckDone(d, !d.done_at)}
               >
@@ -390,7 +393,7 @@ function DeckList({ decks, cardsOf, t }) {
               <button
                 type="button"
                 className="board-icon-btn"
-                aria-label={t("fc.removeDeck", { name: d.title })}
+                aria-label={t("fc.removeDeck", { name })}
                 title={t("fc.removeHint")}
                 onClick={() => removeDeck(d)}
               >
@@ -434,8 +437,8 @@ function verbsOf(items) {
 
 
 /** "Werkwoorden vervoegen · Woorden", or with one list: "Werkwoorden vervoegen · Dieren A1". */
-function directTitle(lesson, source, t) {
-  if (source.index == null) return deckTitle(lesson, source.part, t);
-  const list = lessonLists(lesson, t).find((l) => l.part === source.part && l.index === source.index);
-  return list ? `${lesson.title} · ${list.label}` : deckTitle(lesson, source.part, t);
+function directTitle(lesson, source, t, lang) {
+  if (source.index == null) return deckTitle(lesson, source.part, t, lang);
+  const list = lessonLists(lesson, t, lang).find((l) => l.part === source.part && l.index === source.index);
+  return list ? `${lessonTitle(lesson, lang)} · ${list.label}` : deckTitle(lesson, source.part, t, lang);
 }
