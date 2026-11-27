@@ -21,7 +21,7 @@ async function all(table, columns) {
 export async function loadContent() {
   const [items, setRows, vocab] = await Promise.all([
     all("content_items", "id, type, data"),
-    all("sets", "id, type, title, level, item_ids"),
+    all("sets", "id, type, title, title_en, level, item_ids"),
     all("vocabularies", "id, kind, value"),
   ]);
   setVocabularies(vocab);

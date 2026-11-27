@@ -37,7 +37,7 @@ export default function LessonContent({
   sentenceList,
   attachments = [],
 }) {
-  const { t } = useI18n();
+  const { t, lang: uiLang } = useI18n();
   const verbs = lessonVerbs(verbIds);
   const wordLists = toLists(wordList).filter(hasWordList);
   const sentenceLists = toLists(sentenceList).filter(hasSentenceList);
@@ -48,7 +48,7 @@ export default function LessonContent({
   // "Add to Mijn flashcards" for one part of the lesson, top right of its tab.
   const flashcards = (part) =>
     lesson?.id ? (
-      <FlashcardButton source={{ lesson: lesson.id, part }} title={deckTitle(lesson, part, t)} forProfileId={forProfileId} />
+      <FlashcardButton source={{ lesson: lesson.id, part }} title={deckTitle(lesson, part, t, uiLang)} forProfileId={forProfileId} />
     ) : null;
 
   const tabs = [
@@ -81,7 +81,7 @@ export default function LessonContent({
       count: wordsForLists(wordList).length,
       body: () => (
         <>
-          <PanelHead text={wordLists.map((spec) => wordListLabel(spec, t)).join(" + ")} tools={flashcards("words")} />
+          <PanelHead text={wordLists.map((spec) => wordListLabel(spec, t, uiLang)).join(" + ")} tools={flashcards("words")} />
           <WordListsView value={wordList} bare />
         </>
       ),
@@ -93,7 +93,7 @@ export default function LessonContent({
       count: sentencesForLists(sentenceList).length,
       body: () => (
         <>
-          <PanelHead text={sentenceLists.map((spec) => sentenceListLabel(spec, t)).join(" + ")} tools={flashcards("sentences")} />
+          <PanelHead text={sentenceLists.map((spec) => sentenceListLabel(spec, t, uiLang)).join(" + ")} tools={flashcards("sentences")} />
           <SentenceListsView value={sentenceList} bare />
         </>
       ),

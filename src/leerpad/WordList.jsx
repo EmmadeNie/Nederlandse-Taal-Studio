@@ -6,8 +6,8 @@ import { THEMES, WORD_POS, hasWordList, themeLabel, toLists, wordsForList, wordL
 import SetSelect from "./SetSelect";
 
 function Summary({ spec }) {
-  const { t } = useI18n();
-  return <span className="dim">{wordListLabel(spec, t)}</span>;
+  const { t, lang } = useI18n();
+  return <span className="dim">{wordListLabel(spec, t, lang)}</span>;
 }
 
 /** File name for the export: "woorden-dieren", "woorden-A0". */

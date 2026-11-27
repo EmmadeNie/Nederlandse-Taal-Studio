@@ -23,7 +23,7 @@ export function setContent(itemRows, setRows) {
   sets.length = 0;
   version += 1;
   setRows.forEach((row) =>
-    sets.push({ id: row.id, type: row.type, title: row.title, level: row.level, itemIds: row.item_ids })
+    sets.push({ id: row.id, type: row.type, title: row.title, titleEn: row.title_en || "", level: row.level, itemIds: row.item_ids })
   );
 }
 
@@ -32,6 +32,9 @@ export const setsOfType = (type) =>
   sets.filter((s) => s.type === type).sort((a, b) => a.title.localeCompare(b.title, "nl"));
 
 export const getSet = (id) => sets.find((s) => s.id === id) || null;
+
+/** A set's title in the UI language: English when there is one. */
+export const setTitle = (set, lang) => (lang === "en" && set?.titleEn) || set?.title || "";
 
 /** The items of a set, in the set's order (unknown ids skipped). */
 export function setItems(set) {
@@ -83,7 +86,7 @@ export function dropItem(id) {
 }
 
 export function putSet(row) {
-  const set = { id: row.id, type: row.type, title: row.title, level: row.level, itemIds: row.item_ids };
+  const set = { id: row.id, type: row.type, title: row.title, titleEn: row.title_en || "", level: row.level, itemIds: row.item_ids };
   const i = sets.findIndex((x) => x.id === row.id);
   if (i >= 0) sets[i] = set;
   else sets.push(set);

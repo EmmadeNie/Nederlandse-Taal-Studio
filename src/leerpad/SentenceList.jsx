@@ -13,8 +13,8 @@ import { updateSet } from "../data/contentApi";
 import { Scissors } from "../icons";
 
 function Summary({ spec }) {
-  const { t } = useI18n();
-  return <span className="dim">{sentenceListLabel(spec, t)}</span>;
+  const { t, lang } = useI18n();
+  return <span className="dim">{sentenceListLabel(spec, t, lang)}</span>;
 }
 
 /** File name for the export: "zinnen-mijn-eerste-ontmoetingsgesprek", "zinnen-communicatie-A1". */

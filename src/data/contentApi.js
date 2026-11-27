@@ -7,7 +7,7 @@ import { supabase } from "../lib/supabase";
 import { allItems, dropItem, dropSet, putItem, putSet, putVocabulary, typeOfId } from "./index";
 
 const ITEM = "id, type, data";
-const SET = "id, type, title, level, item_ids";
+const SET = "id, type, title, title_en, level, item_ids";
 
 function check({ data, error }) {
   if (error?.code === "23505") throw new Error("val.duplicateId");
@@ -96,10 +96,11 @@ export async function createSet({ id, type, title, level = null, itemIds = [] })
   return row;
 }
 
-/** patch: { title?, level?, itemIds? } */
+/** patch: { title?, titleEn?, level?, itemIds? } */
 export async function updateSet(id, patch) {
   const fields = {};
   if ("title" in patch) fields.title = patch.title;
+  if ("titleEn" in patch) fields.title_en = patch.titleEn?.trim() || null;
   if ("level" in patch) fields.level = patch.level || null;
   if ("itemIds" in patch) fields.item_ids = patch.itemIds;
   const row = await supabase.from("sets").update(fields).eq("id", id).select(SET).single().then(check);

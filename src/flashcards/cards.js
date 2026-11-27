@@ -2,7 +2,7 @@
  * Which cards a deck holds, worked out from the lesson or set it points at
  * (so a deck follows changes to its list).
  */
-import { getSet, inExercises, setItems } from "../data";
+import { getSet, inExercises, setItems, setTitle } from "../data";
 import { hasWordList, toLists, wordsForList, wordsForLists } from "../leerpad/wordLists";
 import { hasSentenceList, sentencesForList, sentencesForLists } from "../leerpad/sentenceLists";
 import { lessonVerbs } from "../leerpad/verbIds";
@@ -63,13 +63,28 @@ export function shuffle(list) {
   return a;
 }
 
-/** Title of a deck made from a lesson part: "Werkwoorden vervoegen · Woorden". */
-export const deckTitle = (lesson, part, t) => `${lesson.title} · ${t(`fc.part.${part}`)}`;
+/** A lesson's title in the UI language: English when there is one (a lesson row or a board card). */
+export const lessonTitle = (lesson, lang) => (lang === "en" && (lesson?.title_en || lesson?.titleEn)) || lesson?.title || "";
+
+/** Title of a deck made from a lesson part: "Werkwoorden vervoegen · Woorden" ("Conjugating verbs · Words"). */
+export const deckTitle = (lesson, part, t, lang) => `${lessonTitle(lesson, lang)} · ${t(`fc.part.${part}`)}`;
+
+/**
+ * A deck's title in the UI language, worked out from the lesson or set it
+ * points at; the title stored when it was added if that is gone.
+ */
+export function deckLabel(deck, lessons, t, lang) {
+  const { source } = deck;
+  if (source?.set) return setTitle(getSet(source.set), lang) || deck.title;
+  const lesson = source?.lesson && lessons.get(source.lesson);
+  if (lesson && source.part) return deckTitle(lesson, source.part, t, lang);
+  return deck.title;
+}
 
 /** A list recipe in words: "Voorzetsels en richtingwoorden · t/m A1". */
-export function listLabel(spec, t) {
+export function listLabel(spec, t, lang) {
   return [
-    spec.set && (getSet(spec.set)?.title || spec.set.replace(/-/g, " ")),
+    spec.set && (setTitle(getSet(spec.set), lang) || spec.set.replace(/-/g, " ")),
     spec.theme && spec.theme.replace(/-/g, " "),
     spec.grammarTag && spec.grammarTag.replace(/-/g, " "),
     spec.partOfSpeech && t(`pos.${spec.partOfSpeech}`).toLowerCase(),
@@ -84,13 +99,13 @@ export function listLabel(spec, t) {
  * verbs, every sentence list. `key` goes in the practice path: "words.0",
  * "verbs", "sentences.1".
  */
-export function lessonLists(lesson, t) {
+export function lessonLists(lesson, t, lang) {
   const lessons = new Map([[lesson.id, lesson]]);
   const out = [];
   toLists(lesson.word_list).forEach((spec, index) => {
     if (!hasWordList(spec)) return;
     const items = itemsOf({ lesson: lesson.id, part: "words", index }, lessons);
-    if (items.length) out.push({ part: "words", index, key: `words.${index}`, label: listLabel(spec, t) || t("fc.part.words"), items });
+    if (items.length) out.push({ part: "words", index, key: `words.${index}`, label: listLabel(spec, t, lang) || t("fc.part.words"), items });
   });
   const verbs = itemsOf({ lesson: lesson.id, part: "verbs" }, lessons);
   if (verbs.length) out.push({ part: "verbs", index: null, key: "verbs", label: t("fc.part.verbs"), items: verbs });
@@ -98,7 +113,7 @@ export function lessonLists(lesson, t) {
     if (!hasSentenceList(spec)) return;
     const items = itemsOf({ lesson: lesson.id, part: "sentences", index }, lessons);
     if (items.length) {
-      out.push({ part: "sentences", index, key: `sentences.${index}`, label: listLabel(spec, t) || t("fc.part.sentences"), items });
+      out.push({ part: "sentences", index, key: `sentences.${index}`, label: listLabel(spec, t, lang) || t("fc.part.sentences"), items });
     }
   });
   return out;
