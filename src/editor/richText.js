@@ -62,6 +62,6 @@ export const sanitize = (html) =>
       "ul", "ol", "li", "blockquote", "hr", "code", "pre",
       "table", "thead", "tbody", "tr", "th", "td", "colgroup", "col", "div",
     ],
-    ALLOWED_ATTR: ["href", "target", "rel", "class", "style", "colspan", "rowspan", "colwidth", "data-callout", "data-example", "data-color"],
+    ALLOWED_ATTR: ["href", "target", "rel", "class", "style", "colspan", "rowspan", "colwidth", "data-callout", "data-example", "data-color", "data-role", "data-kicker", "data-formula", "data-quiz"],
     ALLOW_DATA_ATTR: false,
   });

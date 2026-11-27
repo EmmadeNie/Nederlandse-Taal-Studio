@@ -12,7 +12,11 @@ import { videoDuration } from "./lessonVideoScenes";
 import { CAROUSEL_SIZE, CAROUSEL_SLIDES, CarouselSlide } from "./Carousel";
 import { SINTERKLAAS_SLIDES, SinterklaasSlide } from "./Sinterklaas";
 import { SinterklaasStory, STORY_FPS, STORY_SIZE, storyDuration } from "./SinterklaasStory";
+import { SinterklaasTeaser, TEASER_FPS, TEASER_FRAMES } from "./SinterklaasTeaser";
+import { SinterklaasBloopers, BLOOPERS_FPS, bloopersDuration } from "./SinterklaasBloopers";
+import { SinterklaasShort, SHORT_FPS, shortDuration } from "./SinterklaasShort";
 import { SinterklaasThumb, SinterklaasVideo, SINT_VIDEO_FPS, SINT_VIDEO_SIZE, sintVideoDuration } from "./SinterklaasVideo";
+import { SeparableThumb, SeparableVerbsVideo, SEP_FPS, SEP_SIZES, separableDuration } from "./SeparableVerbsVideo";
 
 function Root() {
   return (
@@ -26,6 +30,8 @@ function Root() {
         <Composition key={`${lang}-reel`} id={`reel-${lang}`} component={Demo} defaultProps={{ lang }} durationInFrames={durationOf()} fps={FPS} width={1080} height={1920} />,
         // Marketing reels for socials (9:16), short: Emma, the app, proof, call to action.
         <Composition key={`${lang}-promo`} id={`promo-${lang}`} component={Demo} defaultProps={{ lang, cut: "promo" }} durationInFrames={durationOf("promo")} fps={FPS} width={1080} height={1920} />,
+        <Composition key={`${lang}-intro-short`} id={`intro-short-${lang}`} component={Demo} defaultProps={{ lang, cut: "introShort" }} durationInFrames={durationOf("introShort")} fps={FPS} width={1080} height={1920} />,
+        <Composition key={`${lang}-intro`} id={`intro-video-${lang}`} component={Demo} defaultProps={{ lang, cut: "intro" }} durationInFrames={durationOf("intro")} fps={FPS} width={1920} height={1080} />,
         <Composition key={`${lang}-quiz`} id={`promo-quiz-${lang}`} component={Demo} defaultProps={{ lang, cut: "quiz" }} durationInFrames={durationOf("quiz")} fps={FPS} width={1080} height={1920} />,
       ])}
       {/* Lesson reels (9:16): the grammar of one lesson, then a quiz. */}
@@ -56,6 +62,18 @@ function Root() {
       {/* YouTube (16:9): Sinterklaas in 7 words, repeat after me, with the recorded voices. */}
       <Composition id="video-sinterklaas-en" component={SinterklaasVideo} durationInFrames={sintVideoDuration()} fps={SINT_VIDEO_FPS} {...SINT_VIDEO_SIZE} />
       <Still id="thumb-sinterklaas-en" component={SinterklaasThumb} width={1280} height={720} />
+      <Composition id="story-sinterklaas-bloopers" component={SinterklaasBloopers} durationInFrames={bloopersDuration()} fps={BLOOPERS_FPS} width={1080} height={1920} />
+      {/* YouTube Short / Reel (9:16): the funniest moment for each Sinterklaas word. */}
+      <Composition id="short-sinterklaas-en" component={SinterklaasShort} durationInFrames={shortDuration()} fps={SHORT_FPS} width={1080} height={1920} />
+      <Composition id="short-sinterklaas-2-en" component={SinterklaasShort} durationInFrames={shortDuration(2)} fps={SHORT_FPS} width={1080} height={1920} defaultProps={{ part: 2 }} />
+      <Composition id="story-sinterklaas-teaser" component={SinterklaasTeaser} durationInFrames={TEASER_FRAMES} fps={TEASER_FPS} width={1080} height={1920} />
+      {/* Separable verbs (A2) with Emma's voice: 16:9 (YouTube, the lesson) and 9:16 (Shorts, Reels). */}
+      {["nl", "en"].flatMap((lang) => [
+        ...Object.entries(SEP_SIZES).map(([fmt, size]) => (
+          <Composition key={`separable-${fmt}-${lang}`} id={`${fmt}-separable-${lang}`} component={SeparableVerbsVideo} defaultProps={{ lang }} durationInFrames={separableDuration()} fps={SEP_FPS} {...size} />
+        )),
+        <Still key={`separable-thumb-${lang}`} id={`thumb-separable-${lang}`} component={SeparableThumb} defaultProps={{ lang }} width={1280} height={720} />,
+      ])}
       {/* The link preview for WhatsApp, LinkedIn & co. */}
       <Still id="og" component={Og} defaultProps={{ lang: "nl" }} width={1200} height={630} />
       {/* Profile picture for Instagram, YouTube & co. */}

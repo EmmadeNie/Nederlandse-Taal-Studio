@@ -3,7 +3,7 @@
  * the words in src/data, stored in lessons.word_list. Like exercises, the
  * list is computed, so new words with a matching theme appear by themselves.
  */
-import { LEVELS, THEMES, getSet, queryWords, queryWordsUpToLevel, setItems } from "../data";
+import { LEVELS, THEMES, getSet, queryWords, queryWordsUpToLevel, setItems, setTitle } from "../data";
 
 export { THEMES };
 export const WORD_POS = ["noun", "verb", "adjective", "adverb", "numeral", "conjunction", "other"];
@@ -48,3 +48,12 @@ export const toLists = (value) => (Array.isArray(value) ? value : value ? [value
 export const wordsForLists = (value) => unique(toLists(value).flatMap(wordsForList));
 
 export const unique = (items) => [...new Map(items.map((x) => [x.id, x])).values()];
+
+/** Short description of a recipe: "dieren · t/m A1". */
+export const wordListLabel = (spec, t, lang) =>
+  [
+    spec.set && (setTitle(getSet(spec.set), lang) || spec.set.replace(/-/g, " ")),
+    spec.theme && themeLabel(spec.theme),
+    spec.partOfSpeech && t(`pos.${spec.partOfSpeech}`).toLowerCase(),
+    spec.level && (spec.upTo ? t("wl.upToLevel", { level: spec.level }) : spec.level),
+  ].filter(Boolean).join(" · ");

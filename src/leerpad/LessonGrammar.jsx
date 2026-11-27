@@ -1,21 +1,23 @@
-import { useState } from "react";
 import { useI18n } from "../i18n/context";
 import CategoryBadge from "../components/CategoryBadge";
 import { TOPIC_CATEGORIES, categoryOf } from "../data/topicCategory";
 import { topicText } from "../components/topicLang";
 import { topics } from "../data";
 import TopicExplanation from "../components/TopicExplanation";
-import RelatedWords from "../components/RelatedWords";
 import ExampleSentences from "../components/ExampleSentences";
 import { LevelBadge } from "../components/Badges";
-import { X } from "../icons";
+import { ICONS, X } from "../icons";
 import { LEVELS } from "./util";
 import { knownTopics as known } from "./grammarTopics";
 import { ItemPicker } from "../library/FieldInput";
 import { EditItemButton } from "../library/ItemEditing";
 
 
-/** The grammar of a lesson: each topic open (its explanation); folded, its title, level and summary. */
+/**
+ * The grammar of a lesson: per topic its title and, folded, the short version
+ * ("Lees de hele uitleg" for the rest), and its example sentences as a folded row.
+ * No related words: the lesson's verbs and words have their own tabs.
+ */
 export function GrammarView({ ids, lang }) {
   const list = known(ids);
   if (!list.length) return null;
@@ -33,28 +35,25 @@ function GrammarItem({ topic, lang: lessonLang }) {
   const { t, lang: appLang } = useI18n();
   const lang = lessonLang || appLang; // the lesson's language, else the switch top right
   const text = topicText(topic, lang);
-  // Open by default: just the explanation. Folded: title, level and summary.
-  const [open, setOpen] = useState(true);
   return (
     <li className="lg-item">
-      {/* Docent: edit this topic (Dutch, or English with the switch top right) right here. */}
-      <EditItemButton item={topic} />
-      <details open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
-        {open ? (
-          <summary className="lg-fold">{t("lg.fold")}</summary>
-        ) : (
-          <summary>
-            <strong lang={lang}>{text.title}</strong> <LevelBadge level={topic.introducedAtLevel} />{" "}
-            <CategoryBadge topic={topic} />
-            <div className="dim lg-summary" lang={lang}>
-              {text.summary}
-            </div>
-          </summary>
-        )}
-        <TopicExplanation text={text} lang={lang} className="lp-explanation" />
-        <RelatedWords ids={topic.relatedWordIds} />
-        <ExampleSentences ids={topic.exampleSentenceIds} />
-      </details>
+      <div className="lg-head">
+        <span className="fold-icon" aria-hidden="true">
+          <ICONS.topics />
+        </span>
+        <span className="fold-text">
+          <strong lang={lang}>{text.title}</strong>
+          <span className="fold-sub">
+            {[topic.introducedAtLevel, t(`cat.${categoryOf(topic)}`)].filter(Boolean).join(" · ")}
+          </span>
+        </span>
+        {/* Docent: edit this topic (Dutch, or English with the switch top right) right here. */}
+        <EditItemButton item={topic} />
+      </div>
+      <div className="lg-body">
+        <TopicExplanation text={text} lang={lang} className="lp-explanation" foldWithoutShort />
+      </div>
+      <ExampleSentences ids={topic.exampleSentenceIds} folded />
     </li>
   );
 }

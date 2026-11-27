@@ -28,6 +28,12 @@ for s in segs:
 for i in range(len(L)):
     if not inside[i]: L[i] *= 0.5
 
+# Bleep over the swear word (48.34–48.99 s in the recording); used wherever that stretch plays.
+B0, B1 = int(48.30 * SR), int(49.02 * SR)
+for i in range(B0, B1):
+    k = min(1.0, (i - B0) / (0.01 * SR), (B1 - i) / (0.01 * SR))
+    L[i] = 0.12 * 32767 * k * math.sin(2 * math.pi * 1000 * (i - B0) / SR)
+
 def cut(lo, hi):
     """Quietest 10 ms point between lo and hi seconds: a safe place to cut inside running speech."""
     win = int(0.01 * SR); best = (1e18, lo)
@@ -61,6 +67,12 @@ S = []
 def word(i, a, b): S.append(dict(kind="word", w=i, a=a, b=b))
 def line(i, a, b, nl, en, hl=None): S.append(dict(kind="line", w=i, a=a, b=b, nl=nl, en=en, hl=hl))
 
+# Cold open: three funny moments before the title, for a quick hook.
+S.append(dict(kind="funny", n=1, a=45.60, b=53.07, caps=[
+    (0.14, "De pakjesavond.", None), (1.40, "De pak… jes… avond??", "😵"), (2.70, "#!@%", "🙊"), (3.45, "😂😂😂", None)]))
+S.append(dict(kind="funny", n=2, a=53.35, b=57.60, caps=[(0.10, "Van… avond… is het…", "🤔"), (2.00, "…pak-jes-avond??", "🤯")]))
+S.append(dict(kind="funny", n=3, a=61.15, b=69.45, caps=[
+    (0.10, "Op pakjesavond krijgen we cadeautjes.", None), (3.55, "Op pak… jes… avond… krijgen we… wekkerdootjes?", "😵"), (6.95, "Echt, serieus?!", "😂")]))
 S.append(dict(kind="title", dur=5.5))
 S.append(dict(kind="repeat", a=0.82, b=2.09))
 word(0, 3.06, 9.85)
@@ -70,7 +82,7 @@ S[-1]["fix"] = dict(at=26.62 - 23.66, wrong="witte", right="wit", note="*het* pa
 line(0, 30.84, 34.87, "Waar is Sinterklaas nu?", "Where is Sinterklaas now?", "Sinterklaas")
 word(1, 35.96, 39.41)
 S.append(dict(kind="slow", w=1, a=39.70, b=45.15))
-word(1, 45.60, 48.25)
+word(1, 45.60, 53.07)
 line(1, 53.32, c_w2, "Vanavond is het pakjesavond!", "Tonight is the night of presents!", "pakjesavond")
 line(1, c_w2, 70.03, "Op pakjesavond krijgen we cadeautjes.", "On pakjesavond we get presents.", "cadeautjes")
 line(1, 73.68, 88.37, "Wat heb jij gekregen op pakjesavond?", "What did you get on pakjesavond?", "gekregen")
@@ -142,11 +154,13 @@ for s in S:
         DINGS.append(len(out)); silence(0.45)
         VOICE.append([len(out)]); clip(s["a"], s["b"]); VOICE[-1].append(len(out)); silence(1.2)
     elif "a" in s or "parts" in s:
-        silence(LEAD + (2.0 if s["kind"] == "word" else 0)); s["voice"] = round(len(out) / SR - s["start"], 3)
-        for j, (a, b) in enumerate(s.pop("parts", None) or [(s["a"], s["b"])]):
+        silence((0.25 if s["kind"] == "funny" else LEAD) + (2.0 if s["kind"] == "word" else 0)); s["voice"] = round(len(out) / SR - s["start"], 3)
+        parts = s.pop("parts", None) or [(s["a"], s["b"])]
+        s["src"] = [list(p) for p in parts]
+        for j, (a, b) in enumerate(parts):
             if j: silence(0.25)
             VOICE.append([len(out)]); clip(a, b); VOICE[-1].append(len(out))
-        silence(TAIL)
+        silence(0.35 if s["kind"] == "funny" else TAIL)
     else:
         silence(s["dur"])
     s["dur"] = round(len(out) / SR - s["start"], 3)

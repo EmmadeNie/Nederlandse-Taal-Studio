@@ -472,16 +472,35 @@ Gebruik alleen deze bouwstenen; al het andere wordt bij weergave weggehaald:
 - Tekst: `<p>`, `<h2>` (kop), `<h3>` (subkop), `<strong>`, `<em>`, `<u>`, `<s>`, `<br>`
 - Lijsten: `<ul>`/`<ol>` met `<li>`
 - Links: `<a href="https://…">` (website) of `<a href="/lesprogramma/<les-id>">` (andere les)
-- Markeerstift: `<mark data-color="#fde68a" style="background-color: #fde68a">…</mark>`
-  (kleuren: #fde68a geel, #bbf7d0 groen, #bfdbfe blauw, #fbcfe8 roze)
-- Tekstkleur: `<span style="color: #f19a9a">…</span>`
-  (kleuren: #8bbcfb blauw, #7fd8a8 groen, #f3c08a oranje, #f19a9a rood, #c4a6f7 paars)
 - Kader: `<div data-callout="regel">…</div>` — soorten: `regel`, `tip`, `letop`, `voorbeeld`;
   binnenin gewone `<p>`, lijsten enz. Het label ("Regel", "Let op") zet de app er zelf boven.
 - Voorbeeldzin: `<div data-example><p>Ik heb gewerkt.</p><p>I have worked.</p></div>`
-  (eerst Nederlands, dan Engels)
+  (eerst Nederlands, dan Engels). Een optionele derde `<p>` zegt waarom, kort; de app zet er
+  "↳" voor: `<p><span data-role="deel">op</span> gaat naar het einde</p>`
 - Tabel (bv. vervoeging): `<table><tbody><tr><th><p>ik</p></th><th><p>jij</p></th></tr>`
   `<tr><td><p>werk</p></td><td><p>werkt</p></td></tr></tbody></table>`
+
+#### Huisstijl (zoals in de lesvideo's)
+
+Gebruik in elke uitleg dezelfde bouwstenen, zodat een leerling ze overal herkent:
+
+- **Woordrollen** in plaats van vrije kleuren. Er zijn er drie, altijd met dezelfde betekenis:
+  - `<span data-role="werkwoord">bel</span>`: het werkwoord (persoonsvorm), blauw
+  - `<span data-role="deel">op</span>`: het stukje dat beweegt of verandert (los deel van een
+    scheidbaar werkwoord, een uitgang zoals -t), rood
+  - `<span data-role="markeer">nieuw woord</span>`: markeerstift, voor iets waar je op moet letten
+- **Formule**: de bouwsteen groot bovenaan, met woordrollen:
+  `<div data-formula><p><span data-role="deel">op</span> + <span data-role="werkwoord">bellen</span> = <span data-role="deel">op</span><span data-role="werkwoord">bellen</span></p></div>`
+- **Stap-label** boven een kop, als de uitleg in stappen gaat: `<p data-kicker>Stap 1</p><h3>Hoofdzin en vraag</h3>`
+- **Even oefenen**: de eerste `<p>` is de vraag (`___` wordt een invullijn), de rest het
+  antwoord, dat pas na "Laat antwoord zien" verschijnt:
+  `<div data-quiz><p>Ik ___ mijn moeder ___. (opbellen)</p><p>Ik bel mijn moeder op.</p></div>`
+
+Richtlijnen: één regel per Regel-kader; per stap hooguit één Tip of Let op; liever twee
+korte voorbeeldzinnen dan een lange alinea; kleur alleen wat de regel laat zien.
+
+Oude tekstkleuren en markeerstiften (`<span style="color: …">`, `<mark data-color=…>`) blijven
+zichtbaar, maar gebruik ze niet meer voor nieuwe uitleg.
 
 Oude uitleg in Markdown blijft werken, maar schrijf nieuwe uitleg in HTML.
 

@@ -7,14 +7,16 @@ import {
   ArrowClockwise,
   ArrowCounterClockwise,
   Columns,
+  Equals,
   Eraser,
-  Highlighter,
   Info,
   LinkSimple,
   ListBullets,
   ListNumbers,
   Palette,
+  Question,
   Rows,
+  Tag,
   Table,
   TextB,
   TextHThree,
@@ -25,7 +27,7 @@ import {
   Trash,
   Translate,
 } from "../icons";
-import { CALLOUT_KINDS, HIGHLIGHTS, TEXT_COLORS, extensions } from "./extensions";
+import { CALLOUT_KINDS, ROLE_KINDS, extensions } from "./extensions";
 import { isEmptyHtml, toHtml } from "./richText";
 import "./rich.css";
 
@@ -83,7 +85,7 @@ function Btn({ on, label, active, disabled, children }) {
 
 function Toolbar({ editor, lessons, excludeLessonId }) {
   const { t } = useI18n();
-  const [menu, setMenu] = useState(null); // "color" | "highlight" | "callout" | null
+  const [menu, setMenu] = useState(null); // "role" | "callout" | null
   const state = useEditorState({
     editor,
     selector: ({ editor: e }) =>
@@ -100,6 +102,8 @@ function Toolbar({ editor, lessons, excludeLessonId }) {
             link: e.isActive("link"),
             table: e.isActive("table"),
             callout: e.isActive("callout"),
+            role: ROLE_KINDS.find((kind) => e.isActive("role", { kind })) || null,
+            kicker: e.isActive("kicker"),
             canUndo: e.can().undo(),
             canRedo: e.can().redo(),
           }
@@ -147,77 +151,41 @@ function Toolbar({ editor, lessons, excludeLessonId }) {
         <Btn label={t("re.strike")} active={state.strike} on={() => chain().toggleStrike().run()}>
           <TextStrikethrough />
         </Btn>
+        {/* The house style: three word roles instead of free colours (old colours still show). */}
         <span className="re-menu">
-          <Btn label={t("re.color")} active={menu === "color"} on={() => setMenu(menu === "color" ? null : "color")}>
+          <Btn label={t("re.role")} active={Boolean(state.role) || menu === "role"} on={() => setMenu(menu === "role" ? null : "role")}>
             <Palette />
           </Btn>
-          {menu === "color" && (
-            <span className="re-pop" role="group" aria-label={t("re.color")}>
-              {TEXT_COLORS.map((c, i) => (
+          {menu === "role" && (
+            <span className="re-pop re-pop-list" role="group" aria-label={t("re.role")}>
+              {ROLE_KINDS.map((kind) => (
                 <button
-                  key={c}
+                  key={kind}
                   type="button"
-                  className="re-swatch"
-                  style={{ background: c }}
-                  aria-label={t(`re.colorName.${i}`)}
-                  title={t(`re.colorName.${i}`)}
+                  className="re-role-choice"
+                  aria-pressed={state.role === kind}
                   onMouseDown={keep}
                   onClick={() => {
-                    chain().setColor(c).run();
+                    chain().toggleRole(kind).run();
                     setMenu(null);
                   }}
-                />
+                >
+                  <span data-role={kind}>{t(`re.role.${kind}`)}</span>
+                </button>
               ))}
-              <button
-                type="button"
-                className="re-btn"
-                onMouseDown={keep}
-                onClick={() => {
-                  chain().unsetColor().run();
-                  setMenu(null);
-                }}
-              >
-                {t("re.noColor")}
-              </button>
-            </span>
-          )}
-        </span>
-        <span className="re-menu">
-          <Btn
-            label={t("re.highlight")}
-            active={menu === "highlight"}
-            on={() => setMenu(menu === "highlight" ? null : "highlight")}
-          >
-            <Highlighter />
-          </Btn>
-          {menu === "highlight" && (
-            <span className="re-pop" role="group" aria-label={t("re.highlight")}>
-              {HIGHLIGHTS.map((c, i) => (
+              {state.role && (
                 <button
-                  key={c}
                   type="button"
-                  className="re-swatch"
-                  style={{ background: c }}
-                  aria-label={t(`re.highlightName.${i}`)}
-                  title={t(`re.highlightName.${i}`)}
+                  className="re-btn"
                   onMouseDown={keep}
                   onClick={() => {
-                    chain().toggleHighlight({ color: c }).run();
+                    chain().unsetRole().unsetColor().unsetHighlight().run();
                     setMenu(null);
                   }}
-                />
-              ))}
-              <button
-                type="button"
-                className="re-btn"
-                onMouseDown={keep}
-                onClick={() => {
-                  chain().unsetHighlight().run();
-                  setMenu(null);
-                }}
-              >
-                {t("re.noHighlight")}
-              </button>
+                >
+                  {t("re.noRole")}
+                </button>
+              )}
             </span>
           )}
         </span>
@@ -272,6 +240,15 @@ function Toolbar({ editor, lessons, excludeLessonId }) {
         </span>
         <Btn label={t("re.example")} on={() => chain().insertExample(t("re.exampleNl"), t("re.exampleEn")).run()}>
           <Translate />
+        </Btn>
+        <Btn label={t("re.kicker")} active={state.kicker} on={() => chain().toggleKicker().run()}>
+          <Tag />
+        </Btn>
+        <Btn label={t("re.formula")} on={() => chain().insertFormula(t("re.formulaText")).run()}>
+          <Equals />
+        </Btn>
+        <Btn label={t("re.quiz")} on={() => chain().insertQuiz(t("re.quizQuestion"), t("re.quizAnswer")).run()}>
+          <Question />
         </Btn>
         <Btn
           label={t("re.table")}

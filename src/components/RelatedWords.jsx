@@ -6,40 +6,38 @@ import { LevelBadge } from "./Badges";
 import FeedbackButton from "../feedback/FeedbackButton";
 import VerbCard from "./VerbCard";
 import { REFLEXIVE_PRONOUN, isReflexive, withPronoun } from "../data/reflexive";
+import Fold from "../leerpad/Fold";
+import { ICONS } from "../icons";
 
 /**
- * The words linked to a grammar topic (relatedWordIds), as tiles: verbs with only
- * the conjugations (irregular forms in orange; click the verb for its full card),
- * other words like on the Woordenschat page, with their translation.
+ * The same words as folded rows, for the calm topic and lesson cards: the verbs
+ * as chips (tap for the conjugation), other words as tiles. `exclude` leaves
+ * out words the lesson already shows (its own verbs).
  */
-export default function RelatedWords({ ids = [] }) {
+export function RelatedFolds({ ids = [], exclude = [] }) {
   const { t } = useI18n();
-  const words = ids.map((id) => getItem(id)).filter(Boolean);
+  const words = ids.filter((id) => !exclude.includes(id)).map((id) => getItem(id)).filter(Boolean);
   if (!words.length) return null;
   const verbs = words.filter((w) => w.partOfSpeech === "verb" && w.conjugation);
   const others = words.filter((w) => !verbs.includes(w));
-
+  const names = (list) => list.map((w) => w.conjugation?.infinitive || w.nl).join(", ");
   return (
-    // Clicks in here shouldn't fold the grammar card it sits in.
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-    <div className="related-words" onClick={(e) => e.stopPropagation()}>
+    <>
       {verbs.length > 0 && (
-        <>
-          <h4>{t("rw.verbs", { n: verbs.length })}</h4>
+        <Fold icon={ICONS.verbs} title={t("rw.verbsCount", { n: verbs.length })} sub={names(verbs)}>
           <VerbTiles verbs={verbs} />
-        </>
+        </Fold>
       )}
       {others.length > 0 && (
-        <>
-          <h4>{t("rw.words", { n: others.length })}</h4>
+        <Fold icon={ICONS.words} title={t("rw.wordsCount", { n: others.length })} sub={names(others)}>
           <div className="rw-words">
             {others.map((w) => (
               <WordTile key={w.id} word={w} />
             ))}
           </div>
-        </>
+        </Fold>
       )}
-    </div>
+    </>
   );
 }
 

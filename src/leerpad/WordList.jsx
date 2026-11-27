@@ -1,39 +1,38 @@
 import { useI18n } from "../i18n/context";
-import { getSet, setTitle } from "../data";
 import { LevelBadge } from "../components/Badges";
 import QuizletExport from "../components/QuizletExport";
 import { LEVELS } from "./util";
-import { THEMES, WORD_POS, hasWordList, themeLabel, toLists, wordsForList } from "./wordLists";
-import { slugLabel } from "./sentenceLists";
+import { THEMES, WORD_POS, hasWordList, themeLabel, toLists, wordsForList, wordListLabel } from "./wordLists";
 import SetSelect from "./SetSelect";
 
-/** Short description of a recipe: "dieren · t/m A1". */
 function Summary({ spec }) {
   const { t, lang } = useI18n();
-  const parts = [
-    spec.set && (setTitle(getSet(spec.set), lang) || slugLabel(spec.set)),
-    spec.theme && themeLabel(spec.theme),
-    spec.partOfSpeech && t(`pos.${spec.partOfSpeech}`).toLowerCase(),
-    spec.level && (spec.upTo ? t("wl.upToLevel", { level: spec.level }) : spec.level),
-  ].filter(Boolean);
-  return <span className="dim">{parts.join(" · ")}</span>;
+  return <span className="dim">{wordListLabel(spec, t, lang)}</span>;
 }
 
 /** File name for the export: "woorden-dieren", "woorden-A0". */
 const exportName = (spec) =>
   ["woorden", spec.set, spec.theme, spec.partOfSpeech, spec.level].filter(Boolean).join("-");
 
+/** A list folded on its own (summary + content), or `bare` inside a lesson row that already folds. */
+export function ListBox({ bare, head, children }) {
+  if (bare) return <div className="wl">{children}</div>;
+  return (
+    <details className="wl wl-collapsible">
+      <summary className="wl-head">{head}</summary>
+      {children}
+    </details>
+  );
+}
+
 /** The words of a lesson's word list, as a table (folded until you open it). */
-export function WordListView({ spec }) {
+export function WordListView({ spec, bare = false }) {
   const { t } = useI18n();
   if (!hasWordList(spec)) return null;
   const words = wordsForList(spec);
   // Collapsed by default: the count and recipe show, click to see the words.
   return (
-    <details className="wl wl-collapsible">
-      <summary className="wl-head">
-        <strong>{t("wl.count", { n: words.length })}</strong> <Summary spec={spec} />
-      </summary>
+    <ListBox bare={bare} head={<><strong>{t("wl.count", { n: words.length })}</strong> <Summary spec={spec} /></>}>
       {words.length === 0 ? (
         <p className="dim lp-empty">{t("wl.empty")}</p>
       ) : (
@@ -66,15 +65,15 @@ export function WordListView({ spec }) {
         </div>
       )}
       <QuizletExport words={words} filename={exportName(spec)} />
-    </details>
+    </ListBox>
   );
 }
 
 /** All word lists of a lesson, each folded on its own. */
-export function WordListsView({ value }) {
-  return toLists(value)
-    .filter(hasWordList)
-    .map((spec, i) => <WordListView key={i} spec={spec} />);
+export function WordListsView({ value, bare = false }) {
+  const lists = toLists(value).filter(hasWordList);
+  // Inside a lesson row: one list needs no fold of its own.
+  return lists.map((spec, i) => <WordListView key={i} spec={spec} bare={bare && lists.length === 1} />);
 }
 
 /** Docent: choose theme, part of speech and level for a lesson's word list. */

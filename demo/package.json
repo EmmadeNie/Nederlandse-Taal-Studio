@@ -15,7 +15,8 @@
     "render:perfectum": "node prepare.mjs && mkdir -p out/lessons && for l in en:EN nl:NL; do remotion render remotion/index.jsx lesson-perfectum-${l%%:*} out/lessons/lesson_perfectum_short_${l#*:}.mp4 --public-dir=raw --crf=18 && remotion render remotion/index.jsx lesson-video-perfectum-${l%%:*} out/lessons/lesson_perfectum_long_${l#*:}.mp4 --public-dir=raw --crf=18 && remotion still remotion/index.jsx lesson-thumb-perfectum-${l%%:*} out/lessons/lesson_perfectum_thumb_${l#*:}.png --public-dir=raw || exit 1; done && npm run youtube",
     "render:imperfectum": "node prepare.mjs && mkdir -p out/lessons && for l in en:EN nl:NL; do remotion render remotion/index.jsx lesson-imperfectum-${l%%:*} out/lessons/lesson_imperfectum_short_${l#*:}.mp4 --public-dir=raw --crf=18 && remotion render remotion/index.jsx lesson-video-imperfectum-${l%%:*} out/lessons/lesson_imperfectum_long_${l#*:}.mp4 --public-dir=raw --crf=18 && remotion still remotion/index.jsx lesson-thumb-imperfectum-${l%%:*} out/lessons/lesson_imperfectum_thumb_${l#*:}.png --public-dir=raw || exit 1; done && npm run youtube",
     "youtube": "esbuild remotion/youtube.js --bundle --platform=node --log-level=warning | node",
-    "publish": "node publish.mjs"
+    "publish": "node publish.mjs",
+    "render:scheidbaar": "node prepare.mjs && mkdir -p out/lessons && for l in en:EN nl:NL; do remotion render remotion/index.jsx video-separable-${l%%:*} out/lessons/lesson_scheidbaar_long_${l#*:}.mp4 --public-dir=raw --crf=18 && remotion render remotion/index.jsx short-separable-${l%%:*} out/lessons/lesson_scheidbaar_short_${l#*:}.mp4 --public-dir=raw --crf=18 && remotion still remotion/index.jsx thumb-separable-${l%%:*} out/lessons/lesson_scheidbaar_thumb_${l#*:}.png --public-dir=raw || exit 1; done"
   },
   "devDependencies": {
     "@remotion/cli": "^4.0.545",

@@ -431,7 +431,33 @@ export function SinterklaasThumb() {
   );
 }
 
-const SCENES = { title: Title, repeat: Repeat, word: Word, slow: Slow, line: Line, verbsIntro: VerbsIntro, verb: Verb, verbsTip: VerbsTip, quizIntro: QuizIntro, quiz: Quiz, outro: Outro, cta: Cta };
+/** Cold open: a funny moment from the recording, captions popping in as they are said. */
+function Funny({ s }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const a = useIn(0);
+  const v = s.voice;
+  return (
+    <Body>
+      <div style={{ ...kicker, ...a }}>😅 Before we start… take {s.n}</div>
+      {s.caps.map(([at, nl, emoji], i) => {
+        const t = sec(v + at);
+        if (f < t) return null;
+        const next = s.caps[i + 1] ? sec(v + s.caps[i + 1][0]) : null;
+        const old = next != null && f >= next;
+        const pop = spring({ frame: f - t, fps, config: { damping: 13 } });
+        return (
+          <div key={i} style={{ ...card, alignSelf: "flex-start", padding: "26px 44px", marginTop: 22, fontSize: 80, fontWeight: 800, letterSpacing: -1.5, opacity: old ? 0.38 : pop, transform: `scale(${old ? 0.94 : interpolate(pop, [0, 1], [0.8, 1])})`, transformOrigin: "left center" }}>
+            {nl} {emoji && <span style={{ color: emoji === "✓" ? L.past : undefined }}>{emoji}</span>}
+          </div>
+        );
+      })}
+      {s.fix && <Fix fix={s.fix} at={sec(v + s.fix.at)} />}
+    </Body>
+  );
+}
+
+const SCENES = { funny: Funny, title: Title, repeat: Repeat, word: Word, slow: Slow, line: Line, verbsIntro: VerbsIntro, verb: Verb, verbsTip: VerbsTip, quizIntro: QuizIntro, quiz: Quiz, outro: Outro, cta: Cta };
 
 export function SinterklaasVideo({ voice = "sinterklaas_voice.wav" }) {
   return (
