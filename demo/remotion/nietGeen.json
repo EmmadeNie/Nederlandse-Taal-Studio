@@ -1,5 +1,5 @@
 {
-  "_": "Niet or geen? English only. Read by ContrastVideo.jsx. dur, card, at and reveal are in seconds. {word} = one of the topic words, in its colour; *x* = a Dutch word inside English text (italic); **x** = an English word in bold (the 'a' in 'I have a car'); [x] = a marker highlight. A scene with cut is not in the full lesson; cuts lists the scenes of the teasers. The full lesson opens with a little story Emma reads (the story scene; voice = her recording under raw/, null until it's there), the teasers with 'spot the mistake'.",
+  "_": "Niet or geen? English only. Read by ContrastVideo.jsx. dur, card, at and reveal are in seconds. {word} = one of the topic words, in its colour; *x* = a Dutch word inside English text (italic); **x** = an English word in bold (the 'a' in 'I have a car'); [x] = a marker highlight. A scene with cut is not in the full lesson; cuts lists the scenes of the teasers. The full lesson opens with a little story and has Emma's voice throughout (voice, under raw/); its timing (scene dur, beats, row at, rowsAt, reveal) comes from niet-geen/build_voice.py. The teasers open with 'spot the mistake' and have music only.",
   "series": "Niet or geen?",
   "level": "A1",
   "words": {
@@ -53,38 +53,37 @@
       "id": "story",
       "kind": "story",
       "kicker": "A little story 📖",
-      "voice": null,
       "beats": [
         {
-          "dur": 4.6,
-          "card": 2.2,
+          "dur": 7.77,
+          "card": 4.32,
           "say": "Meet Sam. Sam just got a new car! 🚗",
           "nl": "Ik heb {een} auto.",
           "en": "I have **a** car."
         },
         {
-          "dur": 4.6,
-          "card": 2.4,
+          "dur": 6.2,
+          "card": 3.65,
           "say": "Sam's friend Lisa? She doesn't have a car.",
           "nl": "Ik heb {geen} auto.",
           "en": "I don't have **a** car."
         },
         {
-          "dur": 4.4,
-          "card": 2.0,
+          "dur": 5.4,
+          "card": 3.05,
           "say": "Sam proudly points at a red car…",
           "nl": "Dit is {mijn} auto!",
           "en": "This is **my** car!"
         },
         {
-          "dur": 4.8,
-          "card": 2.2,
+          "dur": 7.2,
+          "card": 3.8,
           "say": "But wait… Sam's car is blue. 😬",
           "nl": "Oeps. Dit is {niet} mijn auto.",
           "en": "Oops. This is not **my** car."
         },
         {
-          "dur": 3.6,
+          "dur": 5.75,
           "say": "So why {geen} for Lisa, and {niet} for Sam? Let's find out! 👇"
         }
       ]
@@ -92,9 +91,9 @@
     {
       "id": "split",
       "kind": "split",
-      "dur": 10,
+      "dur": 10.74,
       "kicker": "Spot the difference 👀",
-      "punchAt": 6.6,
+      "punchAt": 8.09,
       "punch": "Indefinite → {geen} · Definite → {niet}",
       "cols": [
         {
@@ -103,7 +102,7 @@
           "colour": "orange",
           "at": [
             0.3,
-            1.6
+            1.89
           ],
           "rows": [
             {
@@ -121,8 +120,8 @@
           "sub": "*de* · *het* · *mijn*",
           "colour": "blue",
           "at": [
-            3.4,
-            4.8
+            4.07,
+            5.86
           ],
           "rows": [
             {
@@ -140,7 +139,7 @@
     {
       "id": "geen",
       "kind": "rule",
-      "dur": 10.5,
+      "dur": 10.6,
       "kicker": "Rule 1 · indefinite",
       "title": "{geen} = not a · no · not any",
       "morph": {
@@ -154,24 +153,27 @@
         {
           "label": "with *een*",
           "nl": "Ik heb {geen} fiets.",
-          "en": "I don't have **a** bike."
+          "en": "I don't have **a** bike.",
+          "at": 2.75
         },
         {
           "label": "no article",
-          "nl": "Ik drink {geen} koffie.",
-          "en": "I don't drink coffee."
+          "nl": "Ik heb {geen} koffie.",
+          "en": "I don't have coffee.",
+          "at": 5.15
         },
         {
           "label": "plural",
           "nl": "Wij hebben {geen} kinderen.",
-          "en": "We don't have children."
+          "en": "We don't have children.",
+          "at": 7.5
         }
       ]
     },
     {
       "id": "niet",
       "kind": "rule",
-      "dur": 11,
+      "dur": 16.35,
       "kicker": "Rule 2 · definite + the rest",
       "title": "Everything else: {niet}",
       "step": 1.5,
@@ -179,34 +181,39 @@
         {
           "label": "a verb",
           "nl": "Ik rook {niet}.",
-          "en": "I don't smoke."
+          "en": "I don't smoke.",
+          "at": 4.28
         },
         {
           "label": "an adjective",
           "nl": "Het is {niet} duur.",
-          "en": "It isn't expensive."
+          "en": "It isn't expensive.",
+          "at": 7.34
         },
         {
           "label": "*de* / *het*",
           "nl": "Ik zie de kat {niet}.",
-          "en": "I don't see **the** cat."
+          "en": "I don't see **the** cat.",
+          "at": 9.38
         },
         {
           "label": "*mijn*, *jouw*…",
           "nl": "Dat is {niet} mijn tas.",
-          "en": "That's not **my** bag."
+          "en": "That's not **my** bag.",
+          "at": 11.28
         },
         {
           "label": "a place",
           "nl": "Ik woon {niet} [in Utrecht].",
-          "en": "I don't live in Utrecht."
+          "en": "I don't live in Utrecht.",
+          "at": 13.41
         }
       ]
     },
     {
       "id": "trick",
       "kind": "trick",
-      "dur": 7,
+      "dur": 10.05,
       "kicker": "The trick 💡",
       "q": "Is it a noun with *een* or with no article at all?",
       "rows": [
@@ -218,12 +225,16 @@
           "No",
           "niet"
         ]
+      ],
+      "rowsAt": [
+        4.83,
+        7.19
       ]
     },
     {
       "id": "beware",
       "kind": "rule",
-      "dur": 8,
+      "dur": 19.7,
       "warn": true,
       "kicker": "Watch out ⚠️",
       "title": "Definite (*de*, *het*, *mijn*…)? Then it's {niet}.",
@@ -232,19 +243,21 @@
         {
           "label": "a key · indefinite",
           "nl": "Ik heb {geen} sleutel.",
-          "en": "I don't have **a** key."
+          "en": "I don't have **a** key.",
+          "at": 7.8
         },
         {
           "label": "the key · definite",
           "nl": "Ik heb de sleutel {niet}.",
-          "en": "I don't have **the** key."
+          "en": "I don't have **the** key.",
+          "at": 12.9
         }
       ]
     },
     {
       "id": "beware2",
       "kind": "rule",
-      "dur": 8.5,
+      "dur": 12.7,
       "warn": true,
       "kicker": "Watch out ⚠️",
       "title": "After [*van*, *in*, *op*…]? Always {niet}.",
@@ -253,19 +266,21 @@
         {
           "label": "no article, still *niet*",
           "nl": "Ik hou {niet} [van koffie].",
-          "en": "I don't like coffee."
+          "en": "I don't like coffee.",
+          "at": 6.65
         },
         {
           "label": "with a verb",
           "nl": "Ik hou {niet} [van voetballen].",
-          "en": "I don't like playing football."
+          "en": "I don't like playing football.",
+          "at": 9.3
         }
       ]
     },
     {
       "id": "quiz1",
       "kind": "pick",
-      "dur": 7,
+      "dur": 7.4,
       "reveal": 4.2,
       "nl": "Ik drink ___ alcohol.",
       "options": [
@@ -278,7 +293,7 @@
     {
       "id": "quiz2",
       "kind": "pick",
-      "dur": 7,
+      "dur": 7.5,
       "reveal": 4.2,
       "nl": "Ik vind het ___ leuk.",
       "options": [
@@ -291,7 +306,7 @@
     {
       "id": "quiz3",
       "kind": "pick",
-      "dur": 7.5,
+      "dur": 8.2,
       "reveal": 4.5,
       "nl": "Dat is ___ goed idee.",
       "options": [
@@ -305,7 +320,7 @@
     {
       "id": "cta",
       "kind": "cta",
-      "dur": 6,
+      "dur": 6.6,
       "title": "Keep learning Dutch!",
       "rows": [
         [
@@ -389,5 +404,52 @@
     ],
     "sub": "One question tells you which one."
   },
-  "music": "music/a-stroll.mp3"
+  "music": "music/a-stroll.mp3",
+  "voice": "niet-geen/voice.wav",
+  "talk": [
+    [
+      0.25,
+      31.72
+    ],
+    [
+      32.62,
+      41.66
+    ],
+    [
+      43.51,
+      52.66
+    ],
+    [
+      53.96,
+      69.01
+    ],
+    [
+      70.31,
+      79.06
+    ],
+    [
+      80.36,
+      98.76
+    ],
+    [
+      100.06,
+      111.26
+    ],
+    [
+      116.56,
+      118.46
+    ],
+    [
+      123.96,
+      125.96
+    ],
+    [
+      131.76,
+      134.16
+    ],
+    [
+      135.96,
+      140.56
+    ]
+  ]
 }

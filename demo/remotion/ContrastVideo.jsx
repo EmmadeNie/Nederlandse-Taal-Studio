@@ -294,7 +294,7 @@ function Rule({ s }) {
       {s.morph && <Morph m={s.morph} at={sec(0.6)} />}
       <div style={{ display: "grid", gridTemplateColumns: cols, gap: 18, marginTop: 34 }}>
         {s.rows.map((r, i) => (
-          <Row key={i} r={r} at={rowsAt + i * sec(s.step ?? 1.5)} />
+          <Row key={i} r={r} at={r.at != null ? sec(r.at) : rowsAt + i * sec(s.step ?? 1.5)} />
         ))}
       </div>
     </Body>
@@ -313,7 +313,7 @@ function Trick({ s }) {
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
         {s.rows.map(([q, w], i) => (
-          <TrickRow key={w} q={q} w={w} at={sec(1.4 + i * 1.5)} />
+          <TrickRow key={w} q={q} w={w} at={sec(s.rowsAt?.[i] ?? 1.4 + i * 1.5)} />
         ))}
       </div>
     </Body>
@@ -456,7 +456,7 @@ function Cta({ s }) {
 
 /** The opening of the full lesson: a little story Emma reads, one beat at a time. Each beat
  *  is a line she says (shown as text) and, from `card` seconds on, the Dutch sentence of it.
- *  The first beat is complete on frame 0. With `voice` set, her recording plays under it. */
+ *  The first beat is complete on frame 0. */
 function Story({ s, first }) {
   let at = 0;
   const beats = s.beats.map((b) => {
@@ -473,7 +473,6 @@ function Story({ s, first }) {
           </Fade>
         </Sequence>
       ))}
-      {s.voice && <Audio src={staticFile(s.voice)} />}
     </>
   );
 }
@@ -584,10 +583,16 @@ export function ContrastVideo({ topic, cut = "full" }) {
   const times = planOf(topic, cut);
   const total = contrastDuration(topic, cut);
   const now = times.find((t) => f >= t.from && f < t.from + t.len) ?? times[times.length - 1];
-  // Music softer while Emma reads the story (only once her recording is there).
-  const voiced = times.filter((t) => t.s.voice);
-  const duck = (x) => (voiced.some((t) => x >= t.from && x < t.from + t.len) ? 0.35 : 1);
-  const edge = (x) => 0.6 * duck(x) * interpolate(x, [0, 10, total - 45, total], [0.5, 1, 1, 0], clamp);
+  // The full lesson can have Emma's voice (C.voice, timed by niet-geen/build_voice.py): the music is
+  // soft while she talks (C.talk, in seconds) and comes back up in between, as in the inversion short.
+  const voice = cut === "full" && C.voice;
+  const talk = voice ? C.talk.map(([a, b]) => [sec(a), sec(b)]) : [];
+  const edge = (x) => {
+    const e = interpolate(x, [0, 10, total - 45, total], [0.5, 1, 1, 0], clamp);
+    if (!talk.length) return 0.6 * e;
+    const d = Math.min(...talk.map(([a, b]) => (x < a ? a - x : x > b ? x - b : 0))) / CON_FPS;
+    return interpolate(d, [0.15, 0.6], [0.08, 0.28], clamp) * e;
+  };
   const present = new Set(times.map((t) => SECTION[t.s.kind]));
   return (
     <Topic.Provider value={C}>
@@ -608,6 +613,7 @@ export function ContrastVideo({ topic, cut = "full" }) {
             })}
           </AbsoluteFill>
           <Audio src={staticFile(C.music ?? "music.mp3")} volume={edge} />
+          {voice && <Audio src={staticFile(voice)} />}
         </AbsoluteFill>
       </Fmt.Provider>
     </Topic.Provider>
