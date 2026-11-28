@@ -1,14 +1,15 @@
 // A full lesson video (16:9, a few minutes): the grammar page's explanation in
 // chapters, a summary, a quiz with a countdown, and an outro that leaves room
-// on the right for YouTube's end-screen elements. No voice: everything is on
-// screen, at a pace you can read. Content: LESSON_VIDEOS in lessons.js;
-// timeline: lessonVideoScenes.js; building blocks: LessonReel.jsx.
+// on the right for YouTube's end-screen elements. Everything is on screen, at a
+// pace you can read; a lesson can open with Emma's recorded intro (L.voice).
+// Content: LESSON_VIDEOS in lessons.js; timeline: lessonVideoScenes.js;
+// building blocks: LessonReel.jsx.
 import { AbsoluteFill, Audio, Sequence, interpolate, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { useAudioData } from "@remotion/media-utils";
 import { Backdrop, C, LogoMark, fontFamily } from "./Demo";
 import { MUSIC, MUSIC_FILES } from "./manifests";
-import { LESSON_VIDEOS, fill, quizAnswers, verb } from "./lessons";
-import { PastExamples, PastNotes, PastTable, PastThumbCard } from "./LessonVideoPast";
+import { LESSON_VIDEOS, fill, pastParts, quizAnswers, verb } from "./lessons";
+import { PastExamples, PastNotes, PastSummary, PastTable, PastThumbCard } from "./LessonVideoPast";
 import { PAux, PWhat, PContrast, PForm, PFormula, PIrregular, PKofschip, PNotes, POrder, POrder2, PTrap, PZijn, PerfectThumbCard } from "./LessonVideoPerfect";
 import { FallingT, Rich, Ring, card, gradientText, pop } from "./LessonReel";
 import { ANSWER_AT, S, STEM_T_STEP, stemStep, stemTNoteAt, stemsWhyAt, videoDuration, videoScenes } from "./lessonVideoScenes";
@@ -45,10 +46,11 @@ export function LessonVideo({ lesson: id, lang }) {
             {s.kind === "pForm" && <PForm L={L} T={T} lang={lang} />}
             {s.kind === "pAux" && <PAux L={L} T={T} />}
             {s.kind === "pFormula" && <PFormula L={L} T={T} />}
-            {s.kind === "pKofschip" && <PKofschip g={s.g} T={T} tense={L.tense} />}
+            {s.kind === "pKofschip" && <PKofschip g={s.g} T={T} tense={L.tense} first={s.g === L.kofschip[0]} />}
             {s.kind === "pTrap" && <PTrap L={L} T={T} tense={L.tense} />}
             {s.kind === "pastTable" && <PastTable L={L} T={T} />}
             {s.kind === "pastExamples" && <PastExamples L={L} T={T} />}
+            {s.kind === "pastSummary" && <PastSummary L={L} T={T} />}
             {s.kind === "pastNotes" && <PastNotes L={L} T={T} />}
             {s.kind === "pNotes" && <PNotes L={L} T={T} />}
             {s.kind === "pIrregular" && <PIrregular g={s.g} T={T} />}
@@ -62,15 +64,27 @@ export function LessonVideo({ lesson: id, lang }) {
           </Scene>
         </Sequence>
       ))}
-      {music && <MusicLoop src={staticFile(music)} total={total} />}
+      {music && <MusicLoop src={staticFile(music)} total={total} duck={L.voice ? duckFor(L.voice) : undefined} />}
+      {L.voice && (
+        <Sequence from={S(L.voice.at)}>
+          <Audio src={staticFile(L.voice.src)} />
+        </Sequence>
+      )}
     </AbsoluteFill>
   );
 }
 
 /* ---------- frame ---------- */
 
+/**
+ * With Emma's voice at the start (L.voice): the music soft before it (as in the Reel), very soft
+ * under it, then back up to its usual level over 3 s. A factor for each frame of the video.
+ */
+const duckFor = ({ at, len }) => (frame) =>
+  interpolate(frame, [0, S(at - 0.35), S(at), S(at + len + 0.2), S(at + len + 0.6), S(at + len + 3.6)], [0.3, 0.3, 0.05, 0.05, 0.3, 1], clamp);
+
 /** The track as often as the video needs it, each repeat crossfading into the next. */
-function MusicLoop({ src, total, volume = 1 }) {
+function MusicLoop({ src, total, volume = 1, duck }) {
   const data = useAudioData(src);
   if (!data) return null;
   const len = Math.floor(data.durationInSeconds * S(1));
@@ -82,7 +96,7 @@ function MusicLoop({ src, total, volume = 1 }) {
       const master = interpolate(from + f, [0, 30, total - 90, total], [0, volume, volume, 0], clamp);
       const fadeIn = k ? interpolate(f, [0, xf], [0, 1], clamp) : 1;
       const fadeOut = interpolate(f, [len - xf, len], [1, 0], clamp);
-      return master * Math.min(fadeIn, fadeOut);
+      return master * Math.min(fadeIn, fadeOut) * (duck ? duck(from + f) : 1);
     };
     return (
       <Sequence key={k} from={from} durationInFrames={Math.min(len, total - from)}>
@@ -192,6 +206,7 @@ function Hook({ L, T }) {
   const l1 = pop(f, fps, 10);
   const l2 = pop(f, fps, 16);
   const sub = pop(f, fps, 28);
+  const ex = pop(f, fps, 20);
   return (
     <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", height: "100%" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 28, marginBottom: 50 }}>
@@ -205,6 +220,12 @@ function Hook({ L, T }) {
       <div style={{ fontSize: 48, fontWeight: 500, color: C.dim, marginTop: 40, opacity: sub }}>
         <Rich text={T.sub} />
       </div>
+      {/* An example right away (L.chapterExamples.intro), before the agenda. */}
+      {L.chapterExamples?.intro && (
+        <div style={{ ...card, alignSelf: "flex-start", display: "inline-flex", alignItems: "baseline", gap: 30, marginTop: 44, padding: "22px 44px", fontSize: 76, fontWeight: 800, opacity: ex, transform: `translateX(${(1 - ex) * -60}px)` }}>
+          <ChapterExample ex={L.chapterExamples.intro} />
+        </div>
+      )}
     </div>
   );
 }
@@ -279,13 +300,15 @@ function Intro({ L, T }) {
   );
 }
 
-/** A chapter's title card: a big number, the title and what it's about. */
+/** A chapter's title card: a big number, the title, what it's about and (L.chapterExamples) an example right away. */
 function Chapter({ k, L, T }) {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const n = pop(f, fps, 0, 11);
   const t = pop(f, fps, 8);
   const sub = pop(f, fps, 16);
+  const ex = L.chapterExamples?.[k];
+  const e = pop(f, fps, 14);
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 70, height: "100%" }}>
       <div style={{ fontSize: 340, fontWeight: 800, lineHeight: 1, ...gradientText, transform: `scale(${0.6 + 0.4 * n})`, opacity: n }}>{chaptersOf(L).indexOf(k) + 1}</div>
@@ -296,8 +319,60 @@ function Chapter({ k, L, T }) {
         <div style={{ fontSize: 48, color: C.dim, marginTop: 16, opacity: sub }}>
           <Rich text={T.chapterSub[k]} />
         </div>
+        {ex && (
+          <div style={{ ...card, display: "inline-flex", alignItems: "baseline", gap: 30, marginTop: 44, padding: "22px 44px", fontSize: 76, fontWeight: 800, opacity: e, transform: `translateY(${(1 - e) * 30}px)` }}>
+            <ChapterExample ex={ex} />
+          </div>
+        )}
       </div>
     </div>
+  );
+}
+
+/** werken → werk · werkte, belde · ik werkte → wij werkten: the ending (or what goes) in colour. */
+function ChapterExample({ ex }) {
+  const arrow = <span style={{ color: C.dim, fontWeight: 500 }}>→</span>;
+  const past = (id, plural = false) => {
+    const { stem, end } = pastParts(id, plural);
+    return (
+      <span>
+        {stem}
+        <span style={{ color: C.green }}>{end}</span>
+      </span>
+    );
+  };
+  if (ex.kind === "stem") {
+    const v = verb(ex.verb);
+    return (
+      <>
+        <span>
+          {v.nl.slice(0, -2)}
+          <span style={{ color: C.orange }}>en</span>
+        </span>
+        {arrow}
+        <span style={{ color: C.green }}>{v.stem}</span>
+      </>
+    );
+  }
+  if (ex.kind === "past")
+    return ex.verbs.map((id, i) => (
+      <span key={id}>
+        {i > 0 && <span style={{ color: C.dim, fontWeight: 500, marginRight: 30 }}>·</span>}
+        {past(id)}
+      </span>
+    ));
+  return (
+    <>
+      <span>
+        <span style={{ color: C.dim, fontWeight: 600 }}>ik </span>
+        {past(ex.verb)}
+      </span>
+      {arrow}
+      <span>
+        <span style={{ color: C.dim, fontWeight: 600 }}>wij </span>
+        {past(ex.verb, true)}
+      </span>
+    </>
   );
 }
 
@@ -314,7 +389,8 @@ function Stems({ g, T }) {
     <>
       <Heading title={t.title} sub={t.sub} />
       <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-        {g.verbs.map((id, i) => {
+        {g.morph && g.verbs.map((id, i) => <MorphRow key={id} id={id} d={20 + i * step} />)}
+        {!g.morph && g.verbs.map((id, i) => {
           const v = verb(id);
           const raw = v.nl.slice(0, -2);
           const fix = raw !== v.stem;
@@ -352,6 +428,84 @@ function Stems({ g, T }) {
       </div>
       {t.why && <div style={{ marginTop: 36, fontSize: 36, color: C.dim, lineHeight: 1.4, opacity: why, transform: `translateY(${(1 - why) * 16}px)` }}>💡 <Rich text={fill(t.why)} /></div>}
     </>
+  );
+}
+
+/**
+ * werken → werk ✓, spelen → spel → speel (an e slides in), bellen → bell → bel (an l drops off),
+ * reizen → reiz → reis (the z flips to s), durven → durv → durf. What changes comes from
+ * comparing the verb without -en with the stem in the data.
+ */
+export function MorphRow({ id, d, size = 72, cols = "430px 110px auto 1fr", label: labelSize = 40, lastAt = null }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const v = verb(id);
+  const raw = v.nl.slice(0, -2);
+  const stem = v.stem;
+  let a = 0;
+  while (a < Math.min(raw.length, stem.length) && raw[a] === stem[a]) a++;
+  let b = 0;
+  while (b < Math.min(raw.length, stem.length) - a && raw[raw.length - 1 - b] === stem[stem.length - 1 - b]) b++;
+  const [pre, out, inn, post] = [raw.slice(0, a), raw.slice(a, raw.length - b), stem.slice(a, stem.length - b), raw.slice(raw.length - b)];
+  const fix = out || inn;
+  const row = pop(f, fps, d);
+  const en = interpolate(f, [d + 10, d + 18], [0, 1], clamp);
+  const word = pop(f, fps, d + 20);
+  // The letter(s) that will change light up, then go (drop off) and the new ones come in.
+  const lit = pop(f, fps, d + 32, 12);
+  const go = interpolate(f, [d + 44, d + 58], [0, 1], clamp);
+  const come = pop(f, fps, d + 52, 11);
+  const done = fix ? pop(f, fps, d + 66) : pop(f, fps, d + 26);
+  const label = !fix ? null : !out ? `+ ${inn}` : !inn ? `− ${out}` : `${out} → ${inn}`;
+  const em = 0.6; // about one letter, in em
+  // lastAt: the stem's last letter lights up (highlighter) and moves into a circle, for 't kofschip next.
+  const lastP = lastAt == null ? 0 : pop(f, fps, lastAt, 9);
+  const bump = Math.sin(Math.min(1, lastP) * Math.PI);
+  const lastLetter = stem.slice(-1);
+  const hl = (str) =>
+    lastP > 0 ? (
+      <>
+        {str.slice(0, -1)}
+        <span style={{ display: "inline-block", color: C.bg, background: `rgba(255,216,74,${lastP})`, borderRadius: 12, padding: "0 6px", margin: "0 -6px", transform: `translateY(${-size * 0.2 * bump}px) scale(${1 + 0.25 * bump})` }}>{str.slice(-1)}</span>
+      </>
+    ) : (
+      str
+    );
+  const holder = post ? "post" : inn ? "inn" : "pre";
+  return (
+    <div style={{ ...card, display: "grid", gridTemplateColumns: cols, alignItems: "center", padding: "20px 40px", fontSize: size, fontWeight: 800, opacity: row, transform: `translateX(${(1 - row) * -50}px)` }}>
+      <span>
+        {raw}
+        <span style={{ position: "relative", color: C.orange, opacity: 1 - en * 0.6 }}>
+          en
+          <Strike p={en} />
+        </span>
+      </span>
+      <span style={{ color: C.dim, fontWeight: 500, opacity: word, justifySelf: "center" }}>→</span>
+      <span style={{ opacity: word, whiteSpace: "nowrap", color: done > 0.5 ? C.green : C.text }}>
+        {holder === "pre" ? hl(pre) : pre}
+        {out && (
+          <span style={{ display: "inline-block", width: go > 0 ? `${out.length * em * (1 - go)}em` : "auto", overflow: "visible", whiteSpace: "nowrap", verticalAlign: "bottom" }}>
+            <span style={{ display: "inline-block", color: C.orange, background: `rgba(240,140,60,${0.25 * lit * (1 - go)})`, borderRadius: 12, transform: `translateY(${go * 1.6}em) rotate(${go * 50}deg) scale(${1 + 0.15 * lit * (1 - go)})`, opacity: 1 - go }}>{out}</span>
+          </span>
+        )}
+        {inn && (
+          <span style={{ display: "inline-block", width: come > 0.98 ? "auto" : `${inn.length * em * come}em`, verticalAlign: "bottom" }}>
+            <span style={{ display: "inline-block", color: done > 0.5 ? C.green : C.orange, transform: `translateY(${(1 - come) * -1.2}em) scale(${come})`, opacity: come }}>{holder === "inn" ? hl(inn) : inn}</span>
+          </span>
+        )}
+        {holder === "post" ? hl(post) : post}
+        <span style={{ opacity: done * (1 - lastP) }}> ✓</span>
+      </span>
+      <span style={{ position: "relative", justifySelf: "start", marginLeft: 24, display: "flex", alignItems: "center" }}>
+        {label && (
+          <span style={{ whiteSpace: "nowrap", fontSize: labelSize, fontWeight: 800, color: C.orange, border: `3px solid ${C.orange}`, borderRadius: 999, padding: "6px 24px", opacity: lit * (1 - lastP), transform: `scale(${0.7 + 0.3 * lit})` }}>{label}</span>
+        )}
+        {lastP > 0 && (
+          <span style={{ position: "absolute", left: 0, top: "50%", width: size * 1.3, height: size * 1.3, marginTop: -size * 0.65, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", border: `4px solid #ffd84a`, color: "#ffd84a", fontSize: size * 0.8, opacity: lastP, transform: `scale(${0.5 + 0.5 * lastP})` }}>{lastLetter}</span>
+        )}
+      </span>
+    </div>
   );
 }
 

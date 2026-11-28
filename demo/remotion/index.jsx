@@ -16,6 +16,10 @@ import { SinterklaasTeaser, TEASER_FPS, TEASER_FRAMES } from "./SinterklaasTease
 import { SinterklaasBloopers, BLOOPERS_FPS, bloopersDuration } from "./SinterklaasBloopers";
 import { SinterklaasShort, SHORT_FPS, shortDuration } from "./SinterklaasShort";
 import { SinterklaasThumb, SinterklaasVideo, SINT_VIDEO_FPS, SINT_VIDEO_SIZE, sintVideoDuration } from "./SinterklaasVideo";
+import { PerfectumTeaser, PERF_TEASER_FPS, perfTeaserDuration } from "./PerfectumTeaser";
+import { ImperfectumTeaser, IMPF_TEASER_FPS, impfTeaserDuration } from "./ImperfectumTeaser";
+import { SeparableTeaser, TEASER_SEP_FPS, teaserSepDuration } from "./SeparableTeaser";
+import { ImperfectumReel, IMPERFECTUM_REEL_FPS, imperfectumReelDuration } from "./ImperfectumReel";
 import { SeparableThumb, SeparableVerbsVideo, SEP_FPS, SEP_SIZES, separableDuration } from "./SeparableVerbsVideo";
 
 function Root() {
@@ -40,6 +44,18 @@ function Root() {
           <Composition key={`${lesson}-${lang}`} id={`lesson-${lesson}-${lang}`} component={LessonReel} defaultProps={{ lesson, lang }} durationInFrames={lessonDuration(lesson)} fps={FPS} width={1080} height={1920} />
         )),
       )}
+      {/* The past tense (imperfectum) as a ~40 s Reel / YouTube Short with Emma's voice and a hook (EN only).
+          The opening (title + first example) is complete on frame 0. The cover: npx remotion still remotion/index.jsx
+          reel-imperfectum-en <out>.jpg --props='{"cover":true}' --frame=0 */}
+      <Composition id="reel-imperfectum-en" component={ImperfectumReel} defaultProps={{ lang: "en" }} durationInFrames={imperfectumReelDuration()} fps={IMPERFECTUM_REEL_FPS} width={1080} height={1920} />
+      {/* A ~30 s teaser for the separable verbs with Emma's voice and three exercises (EN). */}
+      <Composition id="teaser-separable-en" component={SeparableTeaser} durationInFrames={teaserSepDuration()} fps={TEASER_SEP_FPS} width={1080} height={1920} />
+      {/* A snappy ~27 s quiz Reel for the past tense: "Which one is right?" (EN, Instagram). */}
+      <Composition id="teaser-imperfectum-en" component={ImperfectumTeaser} durationInFrames={impfTeaserDuration()} fps={IMPF_TEASER_FPS} width={1080} height={1920} />
+      {/* "Heb or ben? 🏠": a ~25 s quiz Reel for the perfect tense (EN): with A Stroll (YouTube) and without music (Instagram). */}
+      <Composition id="teaser-perfectum-en" component={PerfectumTeaser} durationInFrames={perfTeaserDuration()} fps={PERF_TEASER_FPS} width={1080} height={1920} />
+      <Composition id="teaser-perfectum-en-nomusic" component={PerfectumTeaser} defaultProps={{ music: false }} durationInFrames={perfTeaserDuration()} fps={PERF_TEASER_FPS} width={1080} height={1920} />
+      <Composition id="teaser-perfectum-en-sunset" component={PerfectumTeaser} defaultProps={{ music: "music/after-sunset.mp3" }} durationInFrames={perfTeaserDuration()} fps={PERF_TEASER_FPS} width={1080} height={1920} />
       {/* Full lesson videos (16:9) for YouTube and the grammar pages. */}
       {Object.keys(LESSON_VIDEOS).flatMap((lesson) =>
         ["nl", "en"].map((lang) => (

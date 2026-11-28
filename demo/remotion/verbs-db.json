@@ -214,5 +214,32 @@
     "participle": "irregular"
    }
   }
+ },
+ {
+  "id": "word.durven",
+  "nl": "durven",
+  "en": "to dare",
+  "introducedAtLevel": "A2",
+  "conjugation": {
+   "past": {
+    "plural": "durfden",
+    "singular": "durfde"
+   },
+   "stem": "durf",
+   "present": {
+    "ik": "durf",
+    "hij": "durft",
+    "jij": "durft",
+    "wij": "durven"
+   },
+   "auxiliary": "hebben",
+   "infinitive": "durven",
+   "participle": "gedurfd",
+   "regularity": {
+    "past": "regular",
+    "present": "regular",
+    "participle": "regular"
+   }
+  }
  }
 ]

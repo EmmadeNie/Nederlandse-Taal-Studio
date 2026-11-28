@@ -839,26 +839,39 @@ export const LESSON_VIDEOS = {
     tense: "past",
     level: "A2",
     slug: "verleden-tijd",
-    music: "music/after-sunset.mp3",
+    music: "music/a-stroll.mp3",
+    // Emma's intro (the Reel's recording, raw/imperfectum_intro_voice.wav from imperfectum/intro_voice.py):
+    // after `at` seconds of soft music, `len` seconds long, the music ducked under it.
+    voice: { src: "imperfectum_intro_voice.wav", at: 2, len: 9.02 },
     chapters: ["stem", "tede", "plural", "quiz"],
     // What it is: like -ed in English; for yesterday, the past, habits and stories.
     what: [
       { verb: "word.werken", person: "ik", text: "Gisteren [v] ik tot zes uur.", en: "Yesterday I work{ed} until six." },
       { verb: "word.spelen", person: "wij", text: "Vroeger [v] wij elke dag buiten.", en: "As kids, we play{ed} outside every day." },
     ],
-    // 1. The stem, as in the present tense.
-    stems: [{ key: "all", verbs: ["word.werken", "word.spelen", "word.bellen", "word.reizen"] }],
+    // 1. The stem, as in the present tense; morph: the spelling fix is animated letter by letter.
+    stems: [
+      { key: "all", morph: true, verbs: ["word.werken", "word.spelen", "word.bellen"] },
+      { key: "fs", morph: true, verbs: ["word.reizen", "word.durven"] },
+    ],
+    // An example on each chapter's title card, right away.
+    chapterExamples: {
+      // On the opening slide, before the agenda.
+      intro: { kind: "past", verbs: ["word.werken", "word.spelen", "word.wonen"] },
+      stem: { kind: "stem", verb: "word.werken" },
+      tede: { kind: "past", verbs: ["word.werken", "word.bellen"] },
+      plural: { kind: "plural", verb: "word.werken" },
+    },
     // 2. te or de: 't kofschip, and the z of reizen.
     kofschip: [
       { key: "t", verbs: ["word.werken", "word.fietsen", "word.koken"] },
       { key: "d", verbs: ["word.bellen", "word.wonen", "word.spelen"] },
     ],
-    trap: "word.reizen",
-    // 3. Singular or plural, more examples, and two things to watch.
+    // 3. Singular or plural.
     table: "word.werken",
-    examples: ["word.spelen", "word.fietsen", "word.reizen"],
-    stemT: ["word.wachten", "word.praten"],
-    question: { verb: "word.spelen", rest: "buiten" },
+    // The summary: the whole process live, once with -te and once with -de (and a spelling fix).
+    summaryVerbs: ["word.werken", "word.wonen"],
+
     thumbRows: [
       ["word.werken", "ik"],
       ["word.spelen", "jij"],
@@ -873,13 +886,9 @@ export const LESSON_VIDEOS = {
     quiz: [
       { verb: "word.wonen", person: "ik", sentence: "Vroeger ___ ik in Utrecht.", note: "d" },
       { verb: "word.werken", person: "hij", sentence: "Gisteren ___ hij tot zes uur.", note: "t" },
-      { verb: "word.reizen", person: "wij", sentence: "Wij ___ elke zomer naar Spanje.", note: "z" },
       { verb: "word.fietsen", person: "wij", sentence: "De kinderen ___ naar school.", note: "plural" },
-      { verb: "word.wachten", person: "ik", sentence: "Ik ___ een uur op de bus.", note: "stemT" },
-      { verb: "word.koken", person: "hij", sentence: "Mijn vader ___ elke avond.", note: "k" },
       // A question: the form doesn't change (unlike the present tense's "werk jij?").
       { verb: "word.spelen", person: "jij", sentence: "___ jij vroeger ook piano?", note: "question", capital: true },
-      { verb: "word.praten", person: "wij", sentence: "Jullie ___ te lang met de buren.", note: "stemTPlural" },
     ],
     text: {
       nl: {
@@ -900,13 +909,16 @@ export const LESSON_VIDEOS = {
           plural: "te/de of ten/den",
         },
         stems: {
-          all: { title: "Haal -en eraf", sub: "En pas de spelling aan, net als in de tegenwoordige tijd", why: "Lange klank? Twee klinkers: {s:spelen}. Dubbele medeklinker? Eén: {s:bellen}. z wordt s: {s:reizen}." },
+          all: { title: "Haal -en eraf", sub: "En pas de spelling aan, net als in de tegenwoordige tijd", why: "Lange klank? Twee klinkers: {s:spelen}. Dubbele medeklinker? Eén: {s:bellen}." },
+          fs: { title: "z wordt s, v wordt f", sub: "Een Nederlands woord eindigt (bijna) nooit op z of v", why: "{nl:reizen} → {s:reizen}, {nl:durven} → {s:durven}." },
         },
         kofschip: {
           t: { title: "Letter uit 't kofschip? Dan -te", sub: "Kijk naar het werkwoord zonder -en" },
           d: { title: "Een andere letter? Dan -de", sub: "Alles wat niet in 't kofschip staat" },
         },
         kofWhy: "= t, k, f, s, ch, p (en x)",
+        ketchup: ["Lastig te onthouden, 't kofschip?", "Tip voor expats: denk aan"],
+        ketchupSame: "Dezelfde letters: s · f · t · k · ch · p",
         trapTitle: "Let op: kijk vóór de spelling verandert",
         trapSub: "Niet naar de stam, maar naar het werkwoord zonder -en",
         trapLabels: ["stam", "zonder -en"],
@@ -922,6 +934,8 @@ export const LESSON_VIDEOS = {
         noteStemT: "Stam op t? Die t blijft staan",
         noteQuestion: "Een vraag? De vorm blijft hetzelfde",
         summaryTitle: "Samenvatting",
+        summarySub: "Praat je over het verleden?",
+        summarySteps: ["Haal -en eraf", "In 't kofschip?", "Enkelvoud · meervoud"],
         summary: [
           ["Wanneer?", "gisteren, vroeger, gewoontes, verhalen"],
           ["De stam", "hele werkwoord − en: {s:spelen} · {s:bellen} · {s:reizen}"],
@@ -931,7 +945,7 @@ export const LESSON_VIDEOS = {
           ["Stam op t", "die blijft: ik {v:wachten:ik}"],
         ],
         quizTitle: "Nu jij!",
-        quizSub: "8 vragen · pauzeer de video als je meer tijd nodig hebt",
+        quizSub: "4 vragen · pauzeer de video als je meer tijd nodig hebt",
         quizNote: {
           d: "n staat niet in 't kofschip: -de",
           t: "k staat in 't kofschip: -te",
@@ -947,7 +961,7 @@ export const LESSON_VIDEOS = {
         outroUrl: "mijntaalstudio.nl/grammatica/verleden-tijd",
         outroCta: "Abonneer je voor meer lessen",
         description: {
-          lead: "De verleden tijd (imperfectum, A2) van regelmatige werkwoorden in 3 stappen: de stam, te of de met 't kofschip, en enkelvoud of meervoud. Daarna een quiz met 8 vragen.",
+          lead: "De verleden tijd (imperfectum, A2) van regelmatige werkwoorden in 3 stappen: de stam, te of de met 't kofschip, en enkelvoud of meervoud. Daarna een quiz met 4 vragen.",
           page: "📖 Uitleg op de site",
           cc: "💬 Vertalingen in het Engels: zet de ondertiteling (CC) aan.",
           chapters: "Hoofdstukken",
@@ -974,13 +988,16 @@ export const LESSON_VIDEOS = {
           plural: "*te/de* or *ten/den*",
         },
         stems: {
-          all: { title: "Take off *-en*", sub: "And fix the spelling, as in the present tense", why: "Long sound? Two vowels: *{s:spelen}*. Double consonant? One: *{s:bellen}*. *z* becomes *s*: *{s:reizen}*." },
+          all: { title: "Take off *-en*", sub: "And fix the spelling, as in the present tense", why: "Long sound? Two vowels: *{s:spelen}*. Double consonant? One: *{s:bellen}*." },
+          fs: { title: "*z* becomes *s*, *v* becomes *f*", sub: "A Dutch word (almost) never ends in *z* or *v*", why: "*{nl:reizen}* → *{s:reizen}*, *{nl:durven}* → *{s:durven}*." },
         },
         kofschip: {
           t: { title: "Letter from *'t kofschip*? Then *-te*", sub: "Look at the verb without *-en*" },
           d: { title: "Any other letter? Then *-de*", sub: "Everything that isn't in *'t kofschip*" },
         },
         kofWhy: "= t, k, f, s, ch, p (and x)",
+        ketchup: ["Hard to remember *'t kofschip*?", "Expat tip: think of"],
+        ketchupSame: "Same letters: *s · f · t · k · ch · p*",
         trapTitle: "Watch out: look before the spelling changes",
         trapSub: "Not at the stem, but at the verb without *-en*",
         trapLabels: ["stem", "without -en"],
@@ -997,6 +1014,8 @@ export const LESSON_VIDEOS = {
         noteStemT: "Stem ends in *t*? That *t* stays",
         noteQuestion: "A question? The form stays the same",
         summaryTitle: "Summary",
+        summarySub: "Talking about the past?",
+        summarySteps: ["Take off *-en*", "In *'t kofschip*?", "Singular · plural"],
         summary: [
           ["When?", "yesterday, the past, habits, stories"],
           ["The stem", "infinitive − *en*: *{s:spelen} · {s:bellen} · {s:reizen}*"],
@@ -1006,7 +1025,7 @@ export const LESSON_VIDEOS = {
           ["Stem ends in *t*", "it stays: *ik {v:wachten:ik}*"],
         ],
         quizTitle: "Your turn!",
-        quizSub: "8 questions · pause the video if you need more time",
+        quizSub: "4 questions · pause the video if you need more time",
         quizNote: {
           d: "*n* isn't in *'t kofschip*: *-de*",
           t: "*k* is in *'t kofschip*: *-te*",
@@ -1031,7 +1050,7 @@ export const LESSON_VIDEOS = {
         outroUrl: "mijntaalstudio.nl/en/grammar/verleden-tijd",
         outroCta: "Subscribe for more lessons",
         description: {
-          lead: "The Dutch past tense (imperfectum, A2) of regular verbs in 3 steps: the stem, te or de with 't kofschip, and singular or plural. Then a quiz with 8 questions.",
+          lead: "The Dutch past tense (imperfectum, A2) of regular verbs in 3 steps: the stem, te or de with 't kofschip, and singular or plural. Then a quiz with 4 questions.",
           page: "📖 Explanation on the site",
           cc: "💬 Translations of the Dutch words: turn on captions (CC).",
           chapters: "Chapters",
