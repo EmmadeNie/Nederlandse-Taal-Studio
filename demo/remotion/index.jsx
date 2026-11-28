@@ -1,4 +1,6 @@
 import { Composition, Still, registerRoot } from "remotion";
+import { DoubleInfinitiveShort, DI_SHORT_FPS, diShortDuration } from "./DoubleInfinitiveShort";
+import { DoubleInfinitiveThumb, DoubleInfinitiveVideo, DI_VIDEO_FPS, diVideoDuration } from "./DoubleInfinitiveVideo";
 import { Demo, durationOf, FPS } from "./Demo";
 import { MANIFESTS } from "./manifests";
 import { Og } from "./Og";
@@ -16,6 +18,7 @@ import { SinterklaasTeaser, TEASER_FPS, TEASER_FRAMES } from "./SinterklaasTease
 import { SinterklaasBloopers, BLOOPERS_FPS, bloopersDuration } from "./SinterklaasBloopers";
 import { SinterklaasShort, SHORT_FPS, shortDuration } from "./SinterklaasShort";
 import { SinterklaasThumb, SinterklaasVideo, SINT_VIDEO_FPS, SINT_VIDEO_SIZE, sintVideoDuration } from "./SinterklaasVideo";
+import { DubbeleInfinitiefReel, DI_REEL_FPS, diReelDuration } from "./DubbeleInfinitiefReel";
 import { SeparableThumb, SeparableVerbsVideo, SEP_FPS, SEP_SIZES, separableDuration } from "./SeparableVerbsVideo";
 
 function Root() {
@@ -40,6 +43,14 @@ function Root() {
           <Composition key={`${lesson}-${lang}`} id={`lesson-${lesson}-${lang}`} component={LessonReel} defaultProps={{ lesson, lang }} durationInFrames={lessonDuration(lesson)} fps={FPS} width={1080} height={1920} />
         )),
       )}
+      {/* The double infinitive (B1) as a ~45 s Reel / YouTube Short with Emma's intro and a hook for advanced
+          speakers (EN only). The cover: npx remotion still remotion/index.jsx reel-dubbele-infinitief-en <out>.jpg
+          --props='{"cover":true}' --frame=0 --public-dir=raw */}
+      <Composition id="reel-dubbele-infinitief-en" component={DubbeleInfinitiefReel} defaultProps={{ lang: "en" }} durationInFrames={diReelDuration()} fps={DI_REEL_FPS} width={1080} height={1920} />
+      {/* The double infinitive (B1), the full lesson (16:9) and its thumbnail. */}
+      <Composition id="lesson-video-dubbele-infinitief-en" component={DoubleInfinitiveVideo} durationInFrames={diVideoDuration()} fps={DI_VIDEO_FPS} width={1920} height={1080} />
+      <Composition id="short-dubbele-infinitief-en" component={DoubleInfinitiveShort} durationInFrames={diShortDuration()} fps={DI_SHORT_FPS} width={1080} height={1920} />
+      <Still id="lesson-thumb-dubbele-infinitief-en" component={DoubleInfinitiveThumb} width={1280} height={720} />
       {/* Full lesson videos (16:9) for YouTube and the grammar pages. */}
       {Object.keys(LESSON_VIDEOS).flatMap((lesson) =>
         ["nl", "en"].map((lang) => (

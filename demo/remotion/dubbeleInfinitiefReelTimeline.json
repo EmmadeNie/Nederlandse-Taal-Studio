@@ -1,0 +1,47 @@
+{
+ "total": 45.45,
+ "voice": false,
+ "scenes": [
+  {
+   "id": "hook",
+   "start": 0.0,
+   "voice": [
+    0.4,
+    3.15,
+    6.3
+   ],
+   "ends": [
+    2.8,
+    5.95,
+    8.7
+   ],
+   "dur": 10.5
+  },
+  {
+   "id": "rule",
+   "start": 10.5,
+   "dur": 7.6
+  },
+  {
+   "id": "groups",
+   "start": 18.1,
+   "dur": 9.0
+  },
+  {
+   "id": "stack",
+   "start": 27.1,
+   "dur": 8.4
+  },
+  {
+   "id": "quiz",
+   "start": 35.5,
+   "reveal": 3.35,
+   "dur": 5.95
+  },
+  {
+   "id": "cta",
+   "start": 41.45,
+   "dur": 4.0
+  }
+ ]
+}
