@@ -2,6 +2,9 @@
 # and the timing into remotion/nietGeen.json (scene dur, story beats, split, row times, quiz reveal).
 #
 #   python3 -I niet-geen/build_voice.py remotion/nietGeen.json niet-geen/clips.json raw/niet-geen/rec.wav raw/niet-geen/voice.wav
+#   python3 -I niet-geen/build_voice.py remotion/nietGeen.json niet-geen/clips_reel.json raw/niet-geen/rec_reel.wav raw/niet-geen/voice_reel.wav reel
+#
+# The last argument is the cut (default: the full lesson); its voice goes into voice[cut] = {file, talk}.
 #
 # Convert the recording first: npx remotion ffmpeg -i rec.m4a -ac 1 -ar 48000 -c:a pcm_s16le rec.wav
 # Each scene of the full lesson plays one continuous chunk of the recording (clips.json says which,
@@ -10,6 +13,7 @@
 import sys, wave, array, math, json
 
 content_path, clips_path, rec_path, out_wav = sys.argv[1:5]
+cut = sys.argv[5] if len(sys.argv) > 5 else "full"
 C = json.load(open(content_path))
 clips = {k: v for k, v in json.load(open(clips_path)).items() if not k.startswith("_")}
 SR = 48000
@@ -37,7 +41,8 @@ def put(at, a, b):
 
 r3 = lambda x: round(x, 2)
 total = 0.0
-for s in [s for s in C["scenes"] if not s.get("cut")]:
+byId = {s["id"]: s for s in C["scenes"]}
+for s in [s for s in C["scenes"] if not s.get("cut")] if cut == "full" else [byId[i] for i in C["cuts"][cut]]:
     c = clips.get(s["id"])
     if c and "chunk" in c:
         a, b = c["chunk"]; lead = c["lead"]
@@ -68,8 +73,7 @@ for s in [s for s in C["scenes"] if not s.get("cut")]:
         total += s["dur"]
 out.extend([0] * max(0, int(total * SR) - len(out)))
 
-C["voice"] = "niet-geen/voice.wav"
-C["talk"] = talk
+C.setdefault("voice", {})[cut] = {"file": "niet-geen/" + out_wav.split("/")[-1], "talk": talk}
 open(content_path, "w").write(json.dumps(C, ensure_ascii=False, indent=2) + "\n")
 o = wave.open(out_wav, "w"); o.setnchannels(1); o.setsampwidth(2); o.setframerate(SR); o.writeframes(out.tobytes()); o.close()
 print(f"{out_wav}: {total:.1f} s")

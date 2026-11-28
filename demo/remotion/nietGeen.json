@@ -1,5 +1,5 @@
 {
-  "_": "Niet or geen? English only. Read by ContrastVideo.jsx. dur, card, at and reveal are in seconds. {word} = one of the topic words, in its colour; *x* = a Dutch word inside English text (italic); **x** = an English word in bold (the 'a' in 'I have a car'); [x] = a marker highlight. A scene with cut is not in the full lesson; cuts lists the scenes of the teasers. The full lesson opens with a little story and has Emma's voice throughout (voice, under raw/); its timing (scene dur, beats, row at, rowsAt, reveal) comes from niet-geen/build_voice.py. The teasers open with 'spot the mistake' and have music only.",
+  "_": "Niet or geen? English only. Read by ContrastVideo.jsx. dur, card, at and reveal are in seconds. {word} = one of the topic words, in its colour; *x* = a Dutch word inside English text (italic); **x** = an English word in bold (the 'a' in 'I have a car'); [x] = a marker highlight. A scene with cut is not in the full lesson; cuts lists the scenes of the teasers. The full lesson opens with a little story and has Emma's voice throughout (voice, under raw/); its timing (scene dur, beats, row at, rowsAt, reveal) comes from niet-geen/build_voice.py. The teasers open with 'spot the mistake' and have music only. The reel cut is a ~45 s Short of its own: a hook, the phone story, the difference in one shot, one watch-out, one quiz question. voice is per cut: {file, talk}.",
   "series": "Niet or geen?",
   "level": "A1",
   "words": {
@@ -383,6 +383,145 @@
           "mijntaalstudio.nl"
         ]
       ]
+    },
+    {
+      "id": "hookPhone",
+      "kind": "punch",
+      "cut": "reel",
+      "dur": 3.6,
+      "kicker": "Niet or geen? 🤔",
+      "big": "Ik heb {geen} telefoon.\nDit is {niet} mijn telefoon.",
+      "sub": "Why *geen*… and why *niet*?"
+    },
+    {
+      "id": "storyPhone",
+      "kind": "story",
+      "cut": "reel",
+      "kicker": "A little story 📖",
+      "words": [
+        "niet",
+        "geen"
+      ],
+      "beats": [
+        {
+          "dur": 4.2,
+          "card": 1.8,
+          "say": "At a party, someone hands me a phone… 📱",
+          "nl": "Is dit jouw telefoon?",
+          "en": "Is this **your** phone?"
+        },
+        {
+          "dur": 3.8,
+          "card": 1.0,
+          "say": "Me: “Nope!”",
+          "nl": "Nee, dit is {niet} mijn telefoon.",
+          "en": "No, this is not **my** phone."
+        },
+        {
+          "dur": 4.2,
+          "card": 1.8,
+          "say": "Mine? I don't even have one! 😅",
+          "nl": "Ik heb {geen} telefoon.",
+          "en": "I don't have **a** phone."
+        }
+      ]
+    },
+    {
+      "id": "splitPhone",
+      "kind": "split",
+      "cut": "reel",
+      "dur": 9.5,
+      "kicker": "Spot the difference 👀",
+      "punchAt": 6.4,
+      "punch": "Indefinite → {geen} · Definite → {niet}",
+      "cols": [
+        {
+          "head": "indefinite",
+          "sub": "*een* · no article",
+          "colour": "orange",
+          "at": [
+            0.3,
+            1.5
+          ],
+          "rows": [
+            {
+              "nl": "Ik heb {een} telefoon.",
+              "en": "I have **a** phone."
+            },
+            {
+              "nl": "Ik heb {geen} telefoon.",
+              "en": "I don't have **a** phone."
+            }
+          ]
+        },
+        {
+          "head": "definite",
+          "sub": "*de* · *het* · *mijn*",
+          "colour": "blue",
+          "at": [
+            3.2,
+            4.5
+          ],
+          "rows": [
+            {
+              "nl": "Dit is {mijn} telefoon.",
+              "en": "This is **my** phone."
+            },
+            {
+              "nl": "Dit is {niet} mijn telefoon.",
+              "en": "This is not **my** phone."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bewarePhone",
+      "kind": "rule",
+      "cut": "reel",
+      "dur": 6,
+      "warn": true,
+      "kicker": "Watch out ⚠️",
+      "title": "After [*van*, *in*, *op*…]? Always {niet}.",
+      "rows": [
+        {
+          "label": "no article, still *niet*",
+          "nl": "Ik hou {niet} [van koffie].",
+          "en": "I don't like coffee."
+        }
+      ]
+    },
+    {
+      "id": "quizPhone",
+      "kind": "pick",
+      "cut": "reel",
+      "dur": 7,
+      "reveal": 4.2,
+      "nl": "Ik heb ___ tijd.",
+      "options": [
+        "niet",
+        "geen"
+      ],
+      "answer": "geen",
+      "en": "I don't have time.",
+      "why": "*tijd*, no article → {geen}"
+    },
+    {
+      "id": "ctaPhone",
+      "kind": "cta",
+      "cut": "reel",
+      "dur": 4.5,
+      "title": "Want the full lesson? 😉",
+      "rows": [
+        [
+          "Full lesson: tap the video link below 👇",
+          "Niet or geen?"
+        ],
+        [
+          "Subscribe for more Dutch lessons 🔔",
+          "youtube.com/@mijntaalstudio"
+        ]
+      ]
     }
   ],
   "cuts": {
@@ -399,6 +538,14 @@
       "spot3",
       "punch",
       "storyCta"
+    ],
+    "reel": [
+      "hookPhone",
+      "storyPhone",
+      "splitPhone",
+      "bewarePhone",
+      "quizPhone",
+      "ctaPhone"
     ]
   },
   "cover": {
@@ -409,51 +556,55 @@
     "sub": "One question tells you which one."
   },
   "music": "music/a-stroll.mp3",
-  "voice": "niet-geen/voice.wav",
-  "talk": [
-    [
-      0.25,
-      31.72
-    ],
-    [
-      32.62,
-      41.66
-    ],
-    [
-      43.51,
-      52.66
-    ],
-    [
-      53.96,
-      69.01
-    ],
-    [
-      70.31,
-      79.06
-    ],
-    [
-      80.36,
-      98.76
-    ],
-    [
-      100.06,
-      111.26
-    ],
-    [
-      116.56,
-      118.46
-    ],
-    [
-      123.96,
-      125.96
-    ],
-    [
-      131.76,
-      134.16
-    ],
-    [
-      135.96,
-      140.56
-    ]
-  ]
+  "voice": {
+    "full": {
+      "file": "niet-geen/voice.wav",
+      "talk": [
+        [
+          0.25,
+          31.72
+        ],
+        [
+          32.62,
+          41.66
+        ],
+        [
+          43.51,
+          52.66
+        ],
+        [
+          53.96,
+          69.01
+        ],
+        [
+          70.31,
+          79.06
+        ],
+        [
+          80.36,
+          98.76
+        ],
+        [
+          100.06,
+          111.26
+        ],
+        [
+          116.56,
+          118.46
+        ],
+        [
+          123.96,
+          125.96
+        ],
+        [
+          131.76,
+          134.16
+        ],
+        [
+          135.96,
+          140.56
+        ]
+      ]
+    }
+  }
 }

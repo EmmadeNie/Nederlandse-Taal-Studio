@@ -352,7 +352,7 @@ function Pick({ s, quiz }) {
     <Body>
       <Kicker style={{ ...a, display: "flex", justifyContent: "space-between" }}>
         <span>
-          Quiz {quiz.n}/{quiz.total} · Fill the gap
+          {quiz.total > 1 ? `Quiz ${quiz.n}/${quiz.total}` : "Your turn ✏️"} · Fill the gap
         </span>
         {!shown && <span style={{ color: RED, fontSize: 48 }}>{left}</span>}
       </Kicker>
@@ -394,9 +394,9 @@ function Pick({ s, quiz }) {
 }
 
 /** Teaser: the rule in one go, then on to the full lesson. */
-function Punch({ s }) {
+function Punch({ s, first }) {
   const z = useFmt();
-  const a = useIn(0);
+  const a = useIn(first ? -60 : 0);
   const b = useIn(sec(1.4));
   return (
     <Body>
@@ -408,7 +408,9 @@ function Punch({ s }) {
           </div>
         ))}
       </div>
-      <div style={{ ...b, fontSize: 52, fontWeight: 700, color: L.dim, marginTop: 50, lineHeight: 1.3 }}>{s.sub}</div>
+      <div style={{ ...b, fontSize: 52, fontWeight: 700, color: L.dim, marginTop: 50, lineHeight: 1.3 }}>
+        <Text text={s.sub} italic />
+      </div>
     </Body>
   );
 }
@@ -597,10 +599,10 @@ export function ContrastVideo({ topic, cut = "full" }) {
   const times = planOf(topic, cut);
   const total = contrastDuration(topic, cut);
   const now = times.find((t) => f >= t.from && f < t.from + t.len) ?? times[times.length - 1];
-  // The full lesson can have Emma's voice (C.voice, timed by niet-geen/build_voice.py): the music is
-  // soft while she talks (C.talk, in seconds) and comes back up in between, as in the inversion short.
-  const voice = cut === "full" && C.voice;
-  const talk = voice ? C.talk.map(([a, b]) => [sec(a), sec(b)]) : [];
+  // A cut can have Emma's voice (C.voice[cut], timed by niet-geen/build_voice.py): the music is soft
+  // while she talks (talk, in seconds) and comes back up in between, as in the inversion short.
+  const voice = C.voice?.[cut]?.file;
+  const talk = voice ? C.voice[cut].talk.map(([a, b]) => [sec(a), sec(b)]) : [];
   const edge = (x) => {
     const e = interpolate(x, [0, 10, total - 45, total], [0.5, 1, 1, 0], clamp);
     if (!talk.length) return 0.6 * e;
