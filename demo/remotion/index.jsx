@@ -24,6 +24,7 @@ import { SeparableTeaser, TEASER_SEP_FPS, teaserSepDuration } from "./SeparableT
 import { ImperfectumReel, IMPERFECTUM_REEL_FPS, imperfectumReelDuration } from "./ImperfectumReel";
 import { DubbeleInfinitiefReel, DI_REEL_FPS, diReelDuration } from "./DubbeleInfinitiefReel";
 import { SeparableThumb, SeparableVerbsVideo, SEP_FPS, SEP_SIZES, separableDuration } from "./SeparableVerbsVideo";
+import { CON_FPS, CON_SIZE, CON_WIDE, CONTRAST_TOPICS, ContrastCover, ContrastThumb, ContrastVideo, contrastDuration } from "./ContrastVideo";
 import { InversionCover, InversionShort, InversionThumb, INV_FPS, INV_SIZE, INV_WIDE, inversionDuration } from "./InversionShort";
 
 function Root() {
@@ -103,6 +104,16 @@ function Root() {
         )),
         <Composition key={`separable-reel-${lang}`} id={`reel-separable-${lang}`} component={SeparableVerbsVideo} defaultProps={{ lang, cut: "reel" }} durationInFrames={separableDuration("reel")} fps={SEP_FPS} {...SEP_SIZES.short} />,
         <Still key={`separable-thumb-${lang}`} id={`thumb-separable-${lang}`} component={SeparableThumb} defaultProps={{ lang }} width={1280} height={720} />,
+      ])}
+      {/* Which word? niet/geen, huis/thuis (EN only, music only): the lesson as a Short/Reel (9:16)
+          and for YouTube (16:9), a ~25 s teaser (9:16), the teaser as an Instagram story, cover and thumbnail. */}
+      {Object.keys(CONTRAST_TOPICS).flatMap((topic) => [
+        <Composition key={`${topic}-short`} id={`short-${topic}-en`} component={ContrastVideo} defaultProps={{ topic }} durationInFrames={contrastDuration(topic)} fps={CON_FPS} {...CON_SIZE} />,
+        <Composition key={`${topic}-wide`} id={`wide-${topic}-en`} component={ContrastVideo} defaultProps={{ topic }} durationInFrames={contrastDuration(topic)} fps={CON_FPS} {...CON_WIDE} />,
+        <Composition key={`${topic}-teaser`} id={`teaser-${topic}-en`} component={ContrastVideo} defaultProps={{ topic, cut: "teaser" }} durationInFrames={contrastDuration(topic, "teaser")} fps={CON_FPS} {...CON_SIZE} />,
+        <Composition key={`${topic}-story`} id={`story-${topic}-en`} component={ContrastVideo} defaultProps={{ topic, cut: "story" }} durationInFrames={contrastDuration(topic, "story")} fps={CON_FPS} {...CON_SIZE} />,
+        <Still key={`${topic}-cover`} id={`cover-${topic}-en`} component={ContrastCover} defaultProps={{ topic }} {...CON_SIZE} />,
+        <Still key={`${topic}-thumb`} id={`thumb-${topic}-en`} component={ContrastThumb} defaultProps={{ topic }} width={1280} height={720} />,
       ])}
       {/* Inversie (EN only): A = music only, B = with Emma's voice; each as a Short/Reel (9:16),
           for desktop (16:9) and as a ~30 s story; plus the cover and the YouTube thumbnail. */}

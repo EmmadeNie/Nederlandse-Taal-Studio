@@ -1,0 +1,297 @@
+{
+  "_": "Huis or thuis? English only, music only (no voice yet). Read by ContrastVideo.jsx. dur and reveal are in seconds. {word} = one of the topic words, in its colour; *x* = a Dutch word inside English text (italic). A scene with cut is only in that cut; cuts lists the scenes of the teasers.",
+  "series": "Huis or thuis?",
+  "level": "A1",
+  "words": {
+    "huis": "blue",
+    "thuis": "green",
+    "naar huis": "orange"
+  },
+  "chips": {
+    "spot": "Spot it",
+    "rule": "Rule",
+    "trick": "Trick",
+    "quiz": "Quiz"
+  },
+  "scenes": [
+    {
+      "id": "spot1",
+      "kind": "spot",
+      "dur": 6,
+      "reveal": 3,
+      "wrong": "Ik ga naar thuis.",
+      "right": "Ik ga {naar huis}.",
+      "en": "I'm going home.",
+      "why": "On your way? Then it's {naar huis}"
+    },
+    {
+      "id": "spot2",
+      "kind": "spot",
+      "dur": 6,
+      "reveal": 3,
+      "wrong": "Ik ben huis.",
+      "right": "Ik ben {thuis}.",
+      "en": "I'm home.",
+      "why": "Already there? Then it's {thuis}"
+    },
+    {
+      "id": "spot3",
+      "kind": "spot",
+      "dur": 6,
+      "reveal": 3,
+      "wrong": "Ons thuis heeft een tuin.",
+      "right": "Ons {huis} heeft een tuin.",
+      "en": "Our house has a garden.",
+      "why": "The building? Then it's {huis}"
+    },
+    {
+      "id": "title",
+      "kind": "title",
+      "dur": 4.5,
+      "kicker": "One word in English…",
+      "big": "English says “home”.",
+      "sub": "Dutch uses three different words. 🏠",
+      "words": [
+        "huis",
+        "thuis",
+        "naar huis"
+      ]
+    },
+    {
+      "id": "huis",
+      "kind": "rule",
+      "dur": 7.5,
+      "kicker": "1 · The building 🏠",
+      "title": "{huis} = a house",
+      "step": 1.6,
+      "rows": [
+        {
+          "label": "the building",
+          "nl": "Mijn {huis} is klein.",
+          "en": "My house is small."
+        },
+        {
+          "label": "the building",
+          "nl": "Ze kopen een {huis}.",
+          "en": "They're buying a house."
+        }
+      ]
+    },
+    {
+      "id": "thuis",
+      "kind": "rule",
+      "dur": 10,
+      "kicker": "2 · You're there 🛋️",
+      "title": "{thuis} = at home",
+      "morph": {
+        "pre": "",
+        "add": "t",
+        "base": "huis",
+        "post": "",
+        "note": "Add a *t*: you're at home."
+      },
+      "step": 1.6,
+      "rows": [
+        {
+          "label": "being there",
+          "nl": "Ik ben {thuis}.",
+          "en": "I'm home."
+        },
+        {
+          "label": "being there",
+          "nl": "Ik werk vandaag {thuis}.",
+          "en": "I'm working from home today."
+        }
+      ]
+    },
+    {
+      "id": "naarHuis",
+      "kind": "rule",
+      "dur": 7.5,
+      "kicker": "3 · On your way 🚲",
+      "title": "{naar huis} = going home",
+      "step": 1.6,
+      "rows": [
+        {
+          "label": "going there",
+          "nl": "Ik ga {naar huis}.",
+          "en": "I'm going home."
+        },
+        {
+          "label": "going there",
+          "nl": "Ik fiets {naar huis}.",
+          "en": "I'm cycling home."
+        }
+      ]
+    },
+    {
+      "id": "trick",
+      "kind": "trick",
+      "dur": 8,
+      "kicker": "The trick 💡",
+      "q": "Ask yourself:",
+      "rows": [
+        [
+          "Are you there?",
+          "thuis"
+        ],
+        [
+          "On your way?",
+          "naar huis"
+        ],
+        [
+          "The building?",
+          "huis"
+        ]
+      ]
+    },
+    {
+      "id": "more",
+      "kind": "rule",
+      "dur": 8,
+      "kicker": "Good to know 💡",
+      "title": "Two more with {thuis}",
+      "step": 1.8,
+      "rows": [
+        {
+          "label": "arriving: *thuiskomen*",
+          "nl": "Ik kom om zes uur {thuis}.",
+          "en": "I get home at six."
+        },
+        {
+          "label": "a classic",
+          "nl": "Voel je {thuis}!",
+          "en": "Make yourself at home!"
+        }
+      ]
+    },
+    {
+      "id": "quiz1",
+      "kind": "pick",
+      "dur": 7,
+      "reveal": 4.2,
+      "nl": "Ik blijf vandaag ___.",
+      "options": [
+        "huis",
+        "thuis",
+        "naar huis"
+      ],
+      "answer": "thuis",
+      "en": "I'm staying home today."
+    },
+    {
+      "id": "quiz2",
+      "kind": "pick",
+      "dur": 7,
+      "reveal": 4.2,
+      "nl": "Na het werk fiets ik ___.",
+      "options": [
+        "thuis",
+        "naar huis",
+        "huis"
+      ],
+      "answer": "naar huis",
+      "en": "After work I cycle home."
+    },
+    {
+      "id": "quiz3",
+      "kind": "pick",
+      "dur": 7,
+      "reveal": 4.2,
+      "nl": "Hun ___ is heel oud.",
+      "options": [
+        "naar huis",
+        "huis",
+        "thuis"
+      ],
+      "answer": "huis",
+      "en": "Their house is very old."
+    },
+    {
+      "id": "cta",
+      "kind": "cta",
+      "dur": 6,
+      "title": "Feel at home in Dutch! 💛",
+      "rows": [
+        [
+          "Practise this in the app",
+          "mijntaalstudio.nl"
+        ],
+        [
+          "Subscribe for more Dutch lessons",
+          "youtube.com/@mijntaalstudio"
+        ],
+        [
+          "Daily Dutch on Instagram",
+          "@mijntaalstudio"
+        ]
+      ]
+    },
+    {
+      "id": "punch",
+      "kind": "punch",
+      "dur": 5,
+      "cut": "teaser",
+      "kicker": "The rule",
+      "big": "There? {thuis}.\nOn your way? {naar huis}.\nThe building? {huis}.",
+      "sub": "Full lesson with a quiz 👇"
+    },
+    {
+      "id": "ytCta",
+      "kind": "cta",
+      "dur": 4,
+      "cut": "teaser",
+      "title": "Never mix up *huis* and *thuis* again? 😉",
+      "rows": [
+        [
+          "Full lesson: tap the video link below 👇",
+          "Huis or thuis?"
+        ],
+        [
+          "Subscribe for more Dutch lessons 🔔",
+          "youtube.com/@mijntaalstudio"
+        ]
+      ]
+    },
+    {
+      "id": "storyCta",
+      "kind": "cta",
+      "dur": 5,
+      "cut": "story",
+      "title": "Never mix up *huis* and *thuis* again? 😉",
+      "rows": [
+        [
+          "Watch the full lesson: tap the link 👇",
+          "YouTube · Taal Studio"
+        ],
+        [
+          "Practise Dutch in the app 📱",
+          "mijntaalstudio.nl"
+        ]
+      ]
+    }
+  ],
+  "cuts": {
+    "teaser": [
+      "spot1",
+      "spot2",
+      "spot3",
+      "punch",
+      "ytCta"
+    ],
+    "story": [
+      "spot1",
+      "spot2",
+      "spot3",
+      "punch",
+      "storyCta"
+    ]
+  },
+  "cover": {
+    "lines": [
+      "Huis or thuis?",
+      "English has one word."
+    ],
+    "sub": "Dutch has three."
+  }
+}
