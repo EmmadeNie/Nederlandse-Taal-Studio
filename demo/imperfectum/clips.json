@@ -1,0 +1,11 @@
+{
+ "_": "Emma's ketchup intro, 28 Nov 2026 (Google Drive: My Drive/28 Nov at 12-21.m4a -> raw/imperfectum/ketchup.wav). \"What does soft ketchup have to do with Dutch grammar?\" / \"Well, more than you think.\" Times from speech detection, words checked with whisper (ggml-small). The 25 Nov take (intro2.wav): intro.1 [1.34, 4.06], intro.2 [4.6, 7.46], intro.3 [7.98, 10.62].",
+ "intro.1": [
+  0.8,
+  4.08
+ ],
+ "intro.2": [
+  4.4,
+  6.58
+ ]
+}

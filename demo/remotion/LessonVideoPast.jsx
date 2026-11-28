@@ -2,12 +2,12 @@
 // lessons.js) that the perfect tense doesn't have: singular and plural, more
 // examples, and two things to watch. The stem, 't kofschip and the trap reuse
 // the perfect tense's scenes with tense="past". Every form comes from the data.
-import { useCurrentFrame, useVideoConfig } from "remotion";
+import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { C } from "./Demo";
-import { cap, enShort, pastForm, pastParts, verb } from "./lessons";
+import { cap, enShort, kofschip, pastForm, pastParts, verb } from "./lessons";
 import { Rich, card, gradientText, pop } from "./LessonReel";
-import { Heading } from "./LessonVideo";
-import { S } from "./lessonVideoScenes";
+import { Heading, Strike, clamp } from "./LessonVideo";
+import { PAST_SUM_STEP, PAST_SUM_VERB, S } from "./lessonVideoScenes";
 
 const pill = (color) => ({ display: "inline-block", fontSize: 26, fontWeight: 700, color, border: `2px solid ${color}`, borderRadius: 999, padding: "4px 18px", whiteSpace: "nowrap" });
 
@@ -162,5 +162,68 @@ export function PastThumbCard({ L }) {
         );
       })}
     </div>
+  );
+}
+
+/**
+ * The summary as the process, live: "Talking about the past?" Then, for each verb, one step after
+ * the other: werken → take off -en → werk → is k in 't kofschip? yes → -te → ik werkte · wij werkten.
+ */
+export function PastSummary({ L, T }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  return (
+    <>
+      <Heading title={T.summaryTitle} sub={T.summarySub} />
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, marginTop: -20 }}>
+        {L.summaryVerbs.map((id, c) => {
+          const d = 16 + c * PAST_SUM_VERB;
+          const v = verb(id);
+          const { raw, last, end } = kofschip(id, "past");
+          const isT = end === "t";
+          const at = (k) => d + k * PAST_SUM_STEP;
+          const p = [0, 1, 2, 3].map((k) => pop(f, fps, at(k)));
+          const strike = interpolate(f, [at(1) - 6, at(1) + 4], [0, 1], clamp);
+          const lit = pop(f, fps, at(2) - 4, 9);
+          const bump = Math.sin(Math.min(1, lit) * Math.PI);
+          const label = { fontSize: 28, fontWeight: 700, color: C.dim, letterSpacing: 1, textTransform: "uppercase", marginBottom: 4 };
+          const row = (k) => ({ padding: "14px 0", borderTop: k ? "1px solid rgba(255,255,255,0.08)" : "none", opacity: p[k], transform: `translateX(${(1 - p[k]) * -30}px)` });
+          return (
+            <div key={id} style={{ ...card, padding: "18px 44px", opacity: p[0] }}>
+              <div style={{ ...row(0), fontSize: 64, fontWeight: 800 }}>
+                {raw}
+                <span style={{ position: "relative", color: C.orange, opacity: 1 - strike * 0.6 }}>
+                  en
+                  <Strike p={strike} />
+                </span>
+              </div>
+              <div style={row(1)}>
+                <div style={label}><Rich text={T.summarySteps[0]} /></div>
+                <div style={{ fontSize: 56, fontWeight: 800 }}>
+                  {v.stem.slice(0, -last.length)}
+                  <span style={{ display: "inline-block", color: lit > 0.05 ? (isT ? C.orange : C.blue) : C.text, transform: `translateY(${-12 * bump}px) scale(${1 + 0.2 * bump})` }}>{v.stem.slice(-last.length)}</span>
+                </div>
+              </div>
+              <div style={row(2)}>
+                <div style={label}><Rich text={T.summarySteps[1]} /></div>
+                <div style={{ fontSize: 52, fontWeight: 800, color: isT ? C.orange : C.blue }}>
+                  {last} {isT ? "✓" : "✗"} <span style={{ color: C.dim, fontWeight: 500 }}>→</span> <span style={{ color: C.green }}><em>-{end}e</em></span>
+                </div>
+              </div>
+              <div style={row(3)}>
+                <div style={label}><Rich text={T.summarySteps[2]} /></div>
+                <div style={{ fontSize: 52, fontWeight: 800, whiteSpace: "nowrap" }}>
+                  <span style={{ color: C.dim, fontWeight: 600 }}>ik </span>
+                  <PastForm id={id} />
+                  <span style={{ color: C.dim, fontWeight: 500 }}> · </span>
+                  <span style={{ color: C.dim, fontWeight: 600 }}>wij </span>
+                  <PastForm id={id} plural />
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </>
   );
 }

@@ -1,4 +1,6 @@
 import { Composition, Still, registerRoot } from "remotion";
+import { DoubleInfinitiveShort, DI_SHORT_FPS, diShortDuration } from "./DoubleInfinitiveShort";
+import { DoubleInfinitiveThumb, DoubleInfinitiveVideo, DI_VIDEO_FPS, diVideoDuration } from "./DoubleInfinitiveVideo";
 import { Demo, durationOf, FPS } from "./Demo";
 import { MANIFESTS } from "./manifests";
 import { Og } from "./Og";
@@ -16,8 +18,14 @@ import { SinterklaasTeaser, TEASER_FPS, TEASER_FRAMES } from "./SinterklaasTease
 import { SinterklaasBloopers, BLOOPERS_FPS, bloopersDuration } from "./SinterklaasBloopers";
 import { SinterklaasShort, SHORT_FPS, shortDuration } from "./SinterklaasShort";
 import { SinterklaasThumb, SinterklaasVideo, SINT_VIDEO_FPS, SINT_VIDEO_SIZE, sintVideoDuration } from "./SinterklaasVideo";
+import { PerfectumTeaser, PERF_TEASER_FPS, perfTeaserDuration } from "./PerfectumTeaser";
+import { ImperfectumTeaser, IMPF_TEASER_FPS, impfTeaserDuration } from "./ImperfectumTeaser";
+import { SeparableTeaser, TEASER_SEP_FPS, teaserSepDuration } from "./SeparableTeaser";
+import { ImperfectumReel, IMPERFECTUM_REEL_FPS, imperfectumReelDuration } from "./ImperfectumReel";
+import { DubbeleInfinitiefReel, DI_REEL_FPS, diReelDuration } from "./DubbeleInfinitiefReel";
 import { SeparableThumb, SeparableVerbsVideo, SEP_FPS, SEP_SIZES, separableDuration } from "./SeparableVerbsVideo";
 import { CON_FPS, CON_SIZE, CON_WIDE, CONTRAST_TOPICS, ContrastCover, ContrastThumb, ContrastVideo, contrastDuration } from "./ContrastVideo";
+import { InversionCover, InversionShort, InversionThumb, INV_FPS, INV_SIZE, INV_WIDE, inversionDuration } from "./InversionShort";
 
 function Root() {
   return (
@@ -41,6 +49,26 @@ function Root() {
           <Composition key={`${lesson}-${lang}`} id={`lesson-${lesson}-${lang}`} component={LessonReel} defaultProps={{ lesson, lang }} durationInFrames={lessonDuration(lesson)} fps={FPS} width={1080} height={1920} />
         )),
       )}
+      {/* The past tense (imperfectum) as a ~40 s Reel / YouTube Short with Emma's voice and a hook (EN only).
+          The opening (title + first example) is complete on frame 0. The cover: npx remotion still remotion/index.jsx
+          reel-imperfectum-en <out>.jpg --props='{"cover":true}' --frame=0 */}
+      <Composition id="reel-imperfectum-en" component={ImperfectumReel} defaultProps={{ lang: "en" }} durationInFrames={imperfectumReelDuration()} fps={IMPERFECTUM_REEL_FPS} width={1080} height={1920} />
+      {/* A ~30 s teaser for the separable verbs with Emma's voice and three exercises (EN). */}
+      <Composition id="teaser-separable-en" component={SeparableTeaser} durationInFrames={teaserSepDuration()} fps={TEASER_SEP_FPS} width={1080} height={1920} />
+      {/* A snappy ~27 s quiz Reel for the past tense: "Which one is right?" (EN, Instagram). */}
+      <Composition id="teaser-imperfectum-en" component={ImperfectumTeaser} durationInFrames={impfTeaserDuration()} fps={IMPF_TEASER_FPS} width={1080} height={1920} />
+      {/* "Heb or ben? 🏠": a ~25 s quiz Reel for the perfect tense (EN): with A Stroll (YouTube) and without music (Instagram). */}
+      <Composition id="teaser-perfectum-en" component={PerfectumTeaser} durationInFrames={perfTeaserDuration()} fps={PERF_TEASER_FPS} width={1080} height={1920} />
+      <Composition id="teaser-perfectum-en-nomusic" component={PerfectumTeaser} defaultProps={{ music: false }} durationInFrames={perfTeaserDuration()} fps={PERF_TEASER_FPS} width={1080} height={1920} />
+      <Composition id="teaser-perfectum-en-sunset" component={PerfectumTeaser} defaultProps={{ music: "music/after-sunset.mp3" }} durationInFrames={perfTeaserDuration()} fps={PERF_TEASER_FPS} width={1080} height={1920} />
+      {/* The double infinitive (B1) as a ~45 s Reel / YouTube Short with Emma's intro and a hook for advanced
+          speakers (EN only). The cover: npx remotion still remotion/index.jsx reel-dubbele-infinitief-en <out>.jpg
+          --props='{"cover":true}' --frame=0 --public-dir=raw */}
+      <Composition id="reel-dubbele-infinitief-en" component={DubbeleInfinitiefReel} defaultProps={{ lang: "en" }} durationInFrames={diReelDuration()} fps={DI_REEL_FPS} width={1080} height={1920} />
+      {/* The double infinitive (B1), the full lesson (16:9) and its thumbnail. */}
+      <Composition id="lesson-video-dubbele-infinitief-en" component={DoubleInfinitiveVideo} durationInFrames={diVideoDuration()} fps={DI_VIDEO_FPS} width={1920} height={1080} />
+      <Composition id="short-dubbele-infinitief-en" component={DoubleInfinitiveShort} durationInFrames={diShortDuration()} fps={DI_SHORT_FPS} width={1080} height={1920} />
+      <Still id="lesson-thumb-dubbele-infinitief-en" component={DoubleInfinitiveThumb} width={1280} height={720} />
       {/* Full lesson videos (16:9) for YouTube and the grammar pages. */}
       {Object.keys(LESSON_VIDEOS).flatMap((lesson) =>
         ["nl", "en"].map((lang) => (
@@ -87,6 +115,19 @@ function Root() {
         <Still key={`${topic}-cover`} id={`cover-${topic}-en`} component={ContrastCover} defaultProps={{ topic }} {...CON_SIZE} />,
         <Still key={`${topic}-thumb`} id={`thumb-${topic}-en`} component={ContrastThumb} defaultProps={{ topic }} width={1280} height={720} />,
       ])}
+      {/* Inversie (EN only): A = music only, B = with Emma's voice; each as a Short/Reel (9:16),
+          for desktop (16:9) and as a ~30 s story; plus the cover and the YouTube thumbnail. */}
+      {[["", false], ["-voice", true]].flatMap(([tag, voice]) => [
+        <Composition key={`inv-short${tag}`} id={`short-inversion${tag}-en`} component={InversionShort} defaultProps={{ lang: "en", voice }} durationInFrames={inversionDuration(voice)} fps={INV_FPS} {...INV_SIZE} />,
+        <Composition key={`inv-wide${tag}`} id={`wide-inversion${tag}-en`} component={InversionShort} defaultProps={{ lang: "en", voice }} durationInFrames={inversionDuration(voice)} fps={INV_FPS} {...INV_WIDE} />,
+        <Composition key={`inv-story${tag}`} id={`story-inversion${tag}-en`} component={InversionShort} defaultProps={{ lang: "en", voice, cut: "story" }} durationInFrames={inversionDuration(voice, "story")} fps={INV_FPS} {...INV_SIZE} />,
+      ])}
+      <Composition id="teaser-inversion-voice-en" component={InversionShort} defaultProps={{ lang: "en", voice: true, cut: "teaser" }} durationInFrames={inversionDuration(true, "teaser")} fps={INV_FPS} {...INV_SIZE} />
+      <Composition id="reel-teaser-inversion-voice-en" component={InversionShort} defaultProps={{ lang: "en", voice: true, cut: "reelTeaser" }} durationInFrames={inversionDuration(true, "reelTeaser")} fps={INV_FPS} {...INV_SIZE} />
+      <Composition id="story-teaser-inversion-voice-en" component={InversionShort} defaultProps={{ lang: "en", voice: true, cut: "storyTeaser" }} durationInFrames={inversionDuration(true, "storyTeaser")} fps={INV_FPS} {...INV_SIZE} />
+      <Composition id="teaser-inversion-en" component={InversionShort} defaultProps={{ lang: "en", cut: "teaser" }} durationInFrames={inversionDuration(false, "teaser")} fps={INV_FPS} {...INV_SIZE} />
+      <Still id="cover-inversion-en" component={InversionCover} defaultProps={{ lang: "en" }} {...INV_SIZE} />
+      <Still id="thumb-inversion-en" component={InversionThumb} defaultProps={{ lang: "en" }} width={1280} height={720} />
       {/* The link preview for WhatsApp, LinkedIn & co. */}
       <Still id="og" component={Og} defaultProps={{ lang: "nl" }} width={1200} height={630} />
       {/* Profile picture for Instagram, YouTube & co. */}

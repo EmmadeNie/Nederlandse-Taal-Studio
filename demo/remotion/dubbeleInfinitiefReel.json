@@ -1,0 +1,82 @@
+{
+  "_": "The ~44 s Reel / YouTube Short of the double infinitive (dubbele infinitief, B1; site topic topic.dubbele-infinitief-b1, /en/grammar/dubbele-infinitief-b1/). Aimed at people who already speak Dutch fairly well: the hook is the classic slip 'ik heb gemoeten wachten'. The opening (title + the wrong sentence) is complete on frame 0 and Emma's English intro starts at ~0.4 s (subtitled, the only recorded voice); then the rule, four verb groups, a verb stack for fun, one quiz question and the call to action. Read by DubbeleInfinitiefReel.jsx and by demo/dubbele-infinitief/build_track.py, which times the scenes on Emma's recording. Sentence markup: [x] = the conjugated verb, usually hebben/zijn (orange), {x} = an infinitive (green), ~x~ = a wrong form (struck through). In EN text, Dutch words are *italic*.",
+  "scenes": [
+    {
+      "id": "hook",
+      "kind": "hook",
+      "wrong": "Ik [heb] ~gemoeten~ {wachten}.",
+      "right": "Ik [heb] {moeten} {wachten}.",
+      "en": "I had to wait.",
+      "clips": ["intro.1", "intro.2", "intro.3"]
+    },
+    {
+      "id": "rule",
+      "kind": "rule",
+      "dur": 7.6,
+      "example": "Ik [heb] op de bus {moeten} {wachten}.",
+      "en": "I had to wait for the bus.",
+      "alone": "Dat [heb] ik nooit {gewild}.",
+      "aloneEn": "I never wanted that."
+    },
+    {
+      "id": "groups",
+      "kind": "groups",
+      "dur": 9.0,
+      "rows": [
+        { "label": "*moeten · kunnen · willen · mogen*", "s": "Ik [heb] niet {kunnen} {slapen}.", "en": "I couldn't sleep." },
+        { "label": "*gaan · komen · blijven*", "s": "Wij [zijn] {gaan} {wandelen}.", "en": "We went for a walk.", "note": "*gaan* → *zijn*" },
+        { "label": "*zien · horen · voelen*", "s": "Ik [heb] je {horen} {schreeuwen}.", "en": "I heard you scream." },
+        { "label": "*laten · helpen · leren*", "s": "Zij [heeft] mij {laten} {wachten}.", "en": "She kept me waiting." }
+      ]
+    },
+    {
+      "id": "stack",
+      "kind": "stack",
+      "dur": 8.4,
+      "rows": [
+        { "s": "Ik [kan] het {zien}.", "en": "I can see it." },
+        { "s": "Ik [heb] het {kunnen} {zien}.", "en": "I was able to see it." },
+        { "s": "Ik [had] het {moeten} {kunnen} {zien}.", "en": "I should have been able to see it." },
+        { "s": "Ik [zou] het {hebben} {moeten} {kunnen} {zien}.", "en": "Same thing, one verb more." }
+      ]
+    },
+    {
+      "id": "quiz",
+      "kind": "quiz",
+      "sentence": "Ik heb hem nooit ___ lachen.",
+      "answer": "zien",
+      "wrong": "gezien",
+      "verb": "zien",
+      "en": "I've never seen him laugh."
+    },
+    { "id": "cta", "kind": "cta", "dur": 4.0 }
+  ],
+  "text": {
+    "en": {
+      "level": "B1+",
+      "title": ["Double infinitive:", "*gemoeten* or *moeten*?"],
+      "hook": "Two infinitives. No *ge-*. 🤯",
+      "coverLine": "Lived here for years and still say this? 😬",
+      "say": [
+        "You've lived in the Netherlands for years…",
+        "and you still say *ik heb gemoeten wachten*?",
+        "Let's fix that. And have some fun with it."
+      ],
+      "ruleKicker": "The rule",
+      "ruleLine": "*moeten* + another verb",
+      "ruleSub": "Perfect tense? *moeten* stays an infinitive",
+      "formula": ["*hebben/zijn*", "…", "infinitive", "infinitive"],
+      "alone": "💡 No second verb? Then it's *ge-*:",
+      "groupsKicker": "Not just *moeten*",
+      "stackKicker": "How far can Dutch go? 😅",
+      "stackEnd": "Four verbs at the end. Perfectly normal Dutch.",
+      "quizKicker": "Your turn! ✏️",
+      "quizNote": "✓ *zien*, not *gezien*",
+      "ctaTitle": "Want to practise?",
+      "ctaRows": [
+        ["Explanation + exercises (B1)", "mijntaalstudio.nl"],
+        ["More Dutch grammar? Follow", "@mijntaalstudio"]
+      ]
+    }
+  }
+}

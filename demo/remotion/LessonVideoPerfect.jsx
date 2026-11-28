@@ -7,7 +7,7 @@ import { C } from "./Demo";
 import { auxForm, auxOf, cap, enShort, fill, kofschip, participleParts, pastParts, perfectParts, verb } from "./lessons";
 import { FallingT, Rich, card, gradientText, pop } from "./LessonReel";
 import { Heading, Strike, clamp } from "./LessonVideo";
-import { IRR_STEP, KOF_STEP, S, TRAP_WHY_AT, WHAT_NOTE_AT, WHAT_STEP, ZIJN_STEP, kofWhyAt, zijnTipAt } from "./lessonVideoScenes";
+import { IRR_STEP, KOF_STEP, S, TRAP_WHY_AT, WHAT_NOTE_AT, WHAT_STEP, ZIJN_STEP, ketchupAt, kofWhyAt, zijnTipAt } from "./lessonVideoScenes";
 
 const pill = (color) => ({ display: "inline-block", fontSize: 26, fontWeight: 700, color, border: `2px solid ${color}`, borderRadius: 999, padding: "4px 18px", whiteSpace: "nowrap" });
 const gloss = { fontSize: 30, color: C.dim, fontWeight: 500, marginTop: 6 };
@@ -66,6 +66,28 @@ export function KofWord({ size = 64 }) {
           {ch}
         </span>
       ))}
+    </span>
+  );
+}
+
+/**
+ * "soft ketchup", the expats' 't kofschip: the same consonants (s, f, t, k, ch, p) lit. With `mark`
+ * (0 → 1) a yellow highlighter sweeps across it, left to right, and each letter turns dark on it.
+ */
+export function KetchupWord({ size = 64, mark = 0 }) {
+  const letters = [..."soft ketchup"];
+  return (
+    <span style={{ position: "relative", display: "inline-block", fontSize: size, fontWeight: 800, letterSpacing: 1, whiteSpace: "nowrap" }}>
+      {mark > 0 && <span style={{ position: "absolute", left: -12, top: "14%", height: "80%", width: `calc(${mark * 100}% + 24px)`, background: MARKER, borderRadius: 12, transform: "rotate(-1.2deg)" }} />}
+      {letters.map((ch, i) => {
+        const on = mark > (i + 0.5) / letters.length;
+        const lit = "sftkchp".includes(ch);
+        return (
+          <span key={i} style={{ position: "relative", color: on ? (lit ? C.bg : "rgba(11,13,17,0.5)") : lit ? C.orange : C.dim }}>
+            {ch}
+          </span>
+        );
+      })}
     </span>
   );
 }
@@ -258,19 +280,23 @@ export function PFormula({ L, T }) {
 }
 
 /** One verb's way to t or d: werk|en → k → gewerkt. */
-function KofRow({ id, d, tense }) {
+function KofRow({ id, d, tense, ketchup }) {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const { raw, last, end } = kofschip(id, tense);
   const inn = pop(f, fps, d);
   const strike = interpolate(f, [d + 10, d + 18], [0, 1], clamp);
+  // The last letter lights up (a bump and a highlight) before it moves into the circle.
+  const hi = pop(f, fps, d + 16, 9);
   const letter = pop(f, fps, d + 22, 12);
   const out = pop(f, fps, d + 38);
   const isT = end === "t";
+  const tone = isT ? C.orange : C.blue;
   return (
-    <div style={{ ...card, display: "grid", gridTemplateColumns: "360px 90px 150px 90px 1fr", alignItems: "center", padding: "18px 40px", fontSize: 68, fontWeight: 800, opacity: inn, transform: `translateX(${(1 - inn) * -50}px)` }}>
+    <div style={{ ...card, display: "grid", gridTemplateColumns: ketchup ? "300px 64px 120px 450px 64px 1fr" : "360px 90px 150px 90px 1fr", alignItems: "center", padding: "18px 40px", fontSize: 68, fontWeight: 800, opacity: inn, transform: `translateX(${(1 - inn) * -50}px)` }}>
       <span>
-        {raw}
+        {raw.slice(0, -last.length)}
+        <span style={{ display: "inline-block", color: hi > 0.05 ? tone : C.text, background: `rgba(${isT ? "240,140,60" : "79,156,249"},${0.22 * hi})`, borderRadius: 12, padding: "0 4px", margin: "0 -4px", transform: `translateY(${-14 * Math.sin(Math.min(1, hi) * Math.PI)}px) scale(${1 + 0.18 * Math.sin(Math.min(1, hi) * Math.PI)})` }}>{last}</span>
         <span style={{ position: "relative", color: C.orange, opacity: 1 - strike * 0.6 }}>
           en
           <Strike p={strike} />
@@ -280,6 +306,11 @@ function KofRow({ id, d, tense }) {
       <span style={{ justifySelf: "center", width: 112, height: 112, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", background: isT ? "rgba(240,140,60,0.18)" : "rgba(255,255,255,0.06)", border: `3px solid ${isT ? C.orange : "rgba(255,255,255,0.25)"}`, color: isT ? C.orange : C.text, opacity: letter, transform: `scale(${0.6 + 0.4 * letter})` }}>
         {last}
       </span>
+      {ketchup && (
+        <span style={{ justifySelf: "center", opacity: letter }}>
+          <KetchupMini letter={last} size={46} p={pop(f, fps, d + 30, 9)} />
+        </span>
+      )}
       <span style={{ color: C.dim, fontWeight: 500, opacity: out }}>→</span>
       <span style={{ opacity: out, transform: `scale(${0.75 + 0.25 * out})`, transformOrigin: "left center", display: "inline-block" }}>
         <KofForm id={id} tense={tense} />
@@ -289,25 +320,91 @@ function KofRow({ id, d, tense }) {
   );
 }
 
-export function PKofschip({ g, T, tense }) {
+export function PKofschip({ g, T, tense, first }) {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = T.kofschip[g.key];
   const word = pop(f, fps, 12);
   const why = pop(f, fps, kofWhyAt(g));
+  const ketchup = first && T.ketchup ? pop(f, fps, ketchupAt(g), 9) : 0;
+  const mark = interpolate(f, [ketchupAt(g) + 12, ketchupAt(g) + 28], [0, 1], clamp);
+  const same = pop(f, fps, ketchupAt(g) + 34);
   return (
     <>
       <Heading title={t.title} sub={t.sub} />
       <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
         {g.verbs.map((id, i) => (
-          <KofRow key={id} id={id} d={24 + i * KOF_STEP} tense={tense} />
+          <KofRow key={id} id={id} d={24 + i * KOF_STEP} tense={tense} ketchup={!!T.ketchup} />
         ))}
       </div>
-      <div style={{ marginTop: 34, display: "flex", alignItems: "center", gap: 30, opacity: Math.min(word, 0.35 + 0.65 * why) }}>
-        <KofWord size={56} />
-        <span style={{ fontSize: 36, color: C.dim, opacity: why }}>{T.kofWhy}</span>
+      <div style={{ marginTop: 34, display: "flex", alignItems: "center", gap: 30 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 30, opacity: Math.min(word, 0.35 + 0.65 * why) }}>
+          <KofWord size={56} />
+          <span style={{ fontSize: 36, color: C.dim, opacity: why }}>{T.kofWhy}</span>
+        </div>
+        {first && T.ketchup && <KetchupCard p={ketchup} mark={mark} same={same} T={T} size={58} small={26} />}
       </div>
     </>
+  );
+}
+
+/**
+ * "soft ketchup" with one letter looked up: the stem's last letter (s, f, t, k, ch, p) lights up in
+ * it with the highlighter (every place it occurs); a letter that isn't in it (l, n, z…) leaves the
+ * word dim and gets a ✗. p: 0 → 1, the highlight popping in.
+ */
+export function KetchupMini({ letter, size = 40, p = 1 }) {
+  const word = [..."soft ketchup"];
+  const hit = (i) => (letter === "ch" ? i === 8 || i === 9 : word[i] === letter && "sftkp".includes(letter));
+  const found = word.some((_, i) => hit(i));
+  const bump = Math.sin(Math.min(1, p) * Math.PI);
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: size * 0.3, fontSize: size, fontWeight: 800, whiteSpace: "nowrap" }}>
+      <span style={{ letterSpacing: 1 }}>
+        {word.map((ch, i) =>
+          hit(i) ? (
+            <span key={i} style={{ display: "inline-block", color: p > 0.3 ? C.bg : C.orange, background: `rgba(255,216,74,${p})`, borderRadius: size * 0.18, padding: `0 ${size * 0.06}px`, transform: `translateY(${-size * 0.25 * bump}px) scale(${1 + 0.3 * bump})` }}>
+              {ch}
+            </span>
+          ) : (
+            <span key={i} style={{ color: "rgba(154,163,178,0.55)" }}>{ch}</span>
+          ),
+        )}
+      </span>
+      <span style={{ fontSize: size * 0.8 }}>🍅</span>
+      {!found && <span style={{ color: C.blue, fontSize: size * 0.9, opacity: p }}>✗</span>}
+    </span>
+  );
+}
+
+export const TOMATO = "#ff5a4f";
+export const MARKER = "#ffd84a";
+
+/**
+ * The expats' tip, introduced: "Hard to remember 't kofschip? Expat tip: think of" → soft ketchup 🍅
+ * (bounces in, then the highlighter sweeps across it) → "Same letters: s · f · t · k · ch · p".
+ * p: the card (0 → 1), mark: the highlighter (0 → 1), same: the last line (0 → 1).
+ */
+export function KetchupCard({ p, mark = 1, same = 1, T, size = 72, small = 30 }) {
+  return (
+    <div style={{ marginLeft: "auto", padding: "16px 34px", borderRadius: 28, background: "rgba(255,90,79,0.12)", border: `3px solid ${TOMATO}`, boxShadow: `0 0 ${40 * p}px rgba(255,90,79,0.35)`, opacity: Math.min(1, p * 1.5), transform: `scale(${0.6 + 0.4 * p}) rotate(${(1 - p) * -6}deg)`, transformOrigin: "center" }}>
+      <div style={{ fontSize: small, fontWeight: 600, color: C.text, lineHeight: 1.35 }}>
+        <Rich text={T.ketchup[0]} />
+        <br />
+        <span style={{ color: C.dim }}>
+          <Rich text={T.ketchup[1]} />
+        </span>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 18, marginTop: 6, whiteSpace: "nowrap" }}>
+        <KetchupWord size={size} mark={mark} />
+        <span style={{ fontSize: size * 0.85 }}>🍅</span>
+      </div>
+      {T.ketchupSame && (
+        <div style={{ fontSize: small * 0.9, fontWeight: 600, color: C.dim, marginTop: 4, opacity: same }}>
+          <Rich text={T.ketchupSame} />
+        </div>
+      )}
+    </div>
   );
 }
 

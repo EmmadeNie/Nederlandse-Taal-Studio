@@ -138,6 +138,8 @@ function sceneCaptions(s, L, lang) {
     // The past tense.
     case "pastTable":
       return [[0, [pastPair(L.table), ...(nl ? [`${E.tableTitle}: ${E.tableSingular} ${E.endings[0]} · ${E.tablePlural} ${E.endings[1]}`, `${E.tableSingular}: ${list(L.pronouns.slice(0, 4).map(pair))}`, `${E.tablePlural}: ${list(L.pronouns.slice(4).map(pair))}`] : [])]]];
+    case "pastSummary":
+      return [[0, [...head(`${E.summaryTitle}: ${E.summarySub}`), list(L.summaryVerbs.map(pastPair))]]];
     case "pastExamples":
       return [[0, [...head(`${E.examplesTitle}: ${E.examplesSub}`), list(L.examples.map(pastPair))]]];
     case "pastNotes": {
@@ -173,7 +175,7 @@ function srt(id, lang) {
 /** Every verb in the video once, in the order they come up. */
 function verbIds(L) {
   if (L.tense === "past")
-    return [...L.what.map((s) => s.verb), ...L.stems.flatMap((g) => g.verbs), ...L.kofschip.flatMap((g) => g.verbs), L.trap, L.table, ...L.examples, ...L.stemT, L.question.verb, ...L.quiz.map((q) => q.verb)];
+    return [...L.what.map((s) => s.verb), ...L.stems.flatMap((g) => g.verbs), ...L.kofschip.flatMap((g) => g.verbs), L.trap, L.table, ...(L.examples ?? []), ...(L.stemT ?? []), L.question?.verb, ...(L.summaryVerbs ?? []), ...L.quiz.map((q) => q.verb)].filter(Boolean);
   if (L.tense === "perfect")
     return [
       L.intro.verb,
