@@ -53,6 +53,10 @@
       "id": "story",
       "kind": "story",
       "kicker": "A little story 📖",
+      "words": [
+        "niet",
+        "geen"
+      ],
       "beats": [
         {
           "dur": 7.77,

@@ -456,16 +456,30 @@ function Cta({ s }) {
 
 /** The opening of the full lesson: a little story Emma reads, one beat at a time. Each beat
  *  is a line she says (shown as text) and, from `card` seconds on, the Dutch sentence of it.
- *  The first beat is complete on frame 0. */
+ *  The topic's words (s.words) stay big at the top the whole time, so frame 0 already says
+ *  what the lesson is about. The first beat is complete on frame 0. */
 function Story({ s, first }) {
+  const z = useFmt();
   let at = 0;
   const beats = s.beats.map((b) => {
     const t = { b, from: sec(at), len: sec(b.dur) };
     at += b.dur;
     return t;
   });
+  const size = z.v ? 120 : 96;
   return (
     <>
+      {s.words && (
+        <div style={{ position: "absolute", left: z.body.left, right: z.body.right, top: z.body.top + (z.v ? 30 : -10), display: "flex", alignItems: "center", gap: 26 }}>
+          {s.words.map((w, i) => (
+            <span key={w} style={{ display: "flex", alignItems: "center", gap: 26 }}>
+              {i > 0 && <span style={{ fontSize: size * 0.5, fontWeight: 800, color: L.dim }}>or</span>}
+              <Word w={w} size={size} />
+            </span>
+          ))}
+          <span style={{ fontSize: size * 0.75, fontWeight: 800 }}>?</span>
+        </div>
+      )}
       {beats.map(({ b, from, len }, i) => (
         <Sequence key={i} from={from} durationInFrames={len}>
           <Fade len={len} first={first && i === 0}>
