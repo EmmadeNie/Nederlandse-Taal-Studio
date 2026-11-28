@@ -1,0 +1,111 @@
+{
+ "_": "Emma's recording for the inversie short (24 Nov 2026, Google Drive: '24 Nov at 16-32.m4a', only the Dutch sentences, no quiz). Converted with: npx remotion ffmpeg -i <take>.m4a -ac 1 -ar 48000 -c:a pcm_s16le raw/inversie/rec.wav. Clip times in seconds (energy-based speech detection, checked with whisper). The teaser lines (t1w = wrong, t1r = right…) come from a second take, '24 Nov at 19-43.m4a', joined after the first with 1 s of silence into raw/inversie/rec_all.wav (offset 65.384 s).",
+ "m1w": [
+  1.3,
+  2.68
+ ],
+ "m1r": [
+  4.2,
+  5.84
+ ],
+ "m2w": [
+  7.62,
+  9.58
+ ],
+ "m2r": [
+  11.2,
+  13.64
+ ],
+ "m3w": [
+  15.42,
+  17.54
+ ],
+ "m3r": [
+  19.14,
+  21.46
+ ],
+ "normal": [
+  24.32,
+  25.94
+ ],
+ "rule1": [
+  27.1,
+  28.78
+ ],
+ "rule2": [
+  30.2,
+  31.9
+ ],
+ "ikwerk": [
+  33.08,
+  33.66
+ ],
+ "werkik": [
+  34.36,
+  34.9
+ ],
+ "time": [
+  36.84,
+  38.38
+ ],
+ "place": [
+  39.44,
+  41.44
+ ],
+ "other": [
+  42.32,
+  44.3
+ ],
+ "linker": [
+  45.08,
+  47.06
+ ],
+ "question": [
+  48.02,
+  48.82
+ ],
+ "jijwoont": [
+  50.12,
+  50.8
+ ],
+ "woonjij": [
+  51.82,
+  52.54
+ ],
+ "clause": [
+  53.98,
+  56.12
+ ],
+ "clause2": [
+  57.26,
+  59.84
+ ],
+ "beware": [
+  61.18,
+  63.72
+ ],
+ "t1w": [
+  67.844,
+  69.944
+ ],
+ "t1r": [
+  71.004,
+  72.944
+ ],
+ "t2w": [
+  73.984,
+  76.024
+ ],
+ "t2r": [
+  76.784,
+  79.124
+ ],
+ "t3w": [
+  79.664,
+  81.444
+ ],
+ "t3r": [
+  82.364,
+  84.544
+ ]
+}

@@ -17,6 +17,7 @@ import { SinterklaasBloopers, BLOOPERS_FPS, bloopersDuration } from "./Sinterkla
 import { SinterklaasShort, SHORT_FPS, shortDuration } from "./SinterklaasShort";
 import { SinterklaasThumb, SinterklaasVideo, SINT_VIDEO_FPS, SINT_VIDEO_SIZE, sintVideoDuration } from "./SinterklaasVideo";
 import { SeparableThumb, SeparableVerbsVideo, SEP_FPS, SEP_SIZES, separableDuration } from "./SeparableVerbsVideo";
+import { InversionCover, InversionShort, InversionThumb, INV_FPS, INV_SIZE, INV_WIDE, inversionDuration } from "./InversionShort";
 
 function Root() {
   return (
@@ -74,6 +75,19 @@ function Root() {
         )),
         <Still key={`separable-thumb-${lang}`} id={`thumb-separable-${lang}`} component={SeparableThumb} defaultProps={{ lang }} width={1280} height={720} />,
       ])}
+      {/* Inversie (EN only): A = music only, B = with Emma's voice; each as a Short/Reel (9:16),
+          for desktop (16:9) and as a ~30 s story; plus the cover and the YouTube thumbnail. */}
+      {[["", false], ["-voice", true]].flatMap(([tag, voice]) => [
+        <Composition key={`inv-short${tag}`} id={`short-inversion${tag}-en`} component={InversionShort} defaultProps={{ lang: "en", voice }} durationInFrames={inversionDuration(voice)} fps={INV_FPS} {...INV_SIZE} />,
+        <Composition key={`inv-wide${tag}`} id={`wide-inversion${tag}-en`} component={InversionShort} defaultProps={{ lang: "en", voice }} durationInFrames={inversionDuration(voice)} fps={INV_FPS} {...INV_WIDE} />,
+        <Composition key={`inv-story${tag}`} id={`story-inversion${tag}-en`} component={InversionShort} defaultProps={{ lang: "en", voice, cut: "story" }} durationInFrames={inversionDuration(voice, "story")} fps={INV_FPS} {...INV_SIZE} />,
+      ])}
+      <Composition id="teaser-inversion-voice-en" component={InversionShort} defaultProps={{ lang: "en", voice: true, cut: "teaser" }} durationInFrames={inversionDuration(true, "teaser")} fps={INV_FPS} {...INV_SIZE} />
+      <Composition id="reel-teaser-inversion-voice-en" component={InversionShort} defaultProps={{ lang: "en", voice: true, cut: "reelTeaser" }} durationInFrames={inversionDuration(true, "reelTeaser")} fps={INV_FPS} {...INV_SIZE} />
+      <Composition id="story-teaser-inversion-voice-en" component={InversionShort} defaultProps={{ lang: "en", voice: true, cut: "storyTeaser" }} durationInFrames={inversionDuration(true, "storyTeaser")} fps={INV_FPS} {...INV_SIZE} />
+      <Composition id="teaser-inversion-en" component={InversionShort} defaultProps={{ lang: "en", cut: "teaser" }} durationInFrames={inversionDuration(false, "teaser")} fps={INV_FPS} {...INV_SIZE} />
+      <Still id="cover-inversion-en" component={InversionCover} defaultProps={{ lang: "en" }} {...INV_SIZE} />
+      <Still id="thumb-inversion-en" component={InversionThumb} defaultProps={{ lang: "en" }} width={1280} height={720} />
       {/* The link preview for WhatsApp, LinkedIn & co. */}
       <Still id="og" component={Og} defaultProps={{ lang: "nl" }} width={1200} height={630} />
       {/* Profile picture for Instagram, YouTube & co. */}

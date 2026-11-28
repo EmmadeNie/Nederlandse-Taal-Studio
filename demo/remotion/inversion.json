@@ -1,0 +1,580 @@
+{
+  "_": "Inversie, a short (9:16) for Shorts and Reels, in English (no Dutch version). Read by InversionShort.jsx. dur is in seconds. Sentences use {role:words}: 1 = what stands on place 1 (orange), v = the finite verb (blue), s = the subject (red). In EN text, Dutch words are *italic*. vo (voice version): [clip, at] = the recorded clip (demo/inversie/clips.json) and when it starts in the scene; at 0 = right after the clip before it. cuts.story = the scenes of the ~30 s story, cuts.teaser = the ~35 s YouTube Short that sends viewers to the long video; a scene with cut: story is only in that cut. A vo entry with a negative at starts that many seconds after the clip before it.",
+  "scenes": [
+    {
+      "id": "mistake1",
+      "kind": "mistake",
+      "dur": 4,
+      "wrong": "Morgen {s:ik} {v:werk} thuis.",
+      "right": "{1:Morgen} {v:werk} {s:ik} thuis.",
+      "vo": [
+        [
+          "m1w",
+          0.4
+        ],
+        [
+          "m1r",
+          0
+        ]
+      ]
+    },
+    {
+      "id": "mistake2",
+      "kind": "mistake",
+      "dur": 4,
+      "wrong": "Gisteren {s:ik} {v:heb} pizza gegeten.",
+      "right": "{1:Gisteren} {v:heb} {s:ik} pizza gegeten.",
+      "vo": [
+        [
+          "m2w",
+          0.4
+        ],
+        [
+          "m2r",
+          0
+        ]
+      ]
+    },
+    {
+      "id": "mistake3",
+      "kind": "mistake",
+      "dur": 4.5,
+      "wrong": "Omdat het koud is, {s:ik} {v:draag} een jas.",
+      "right": "{1:Omdat het koud is,} {v:draag} {s:ik} een jas.",
+      "vo": [
+        [
+          "m3w",
+          0.4
+        ],
+        [
+          "m3r",
+          0
+        ]
+      ]
+    },
+    {
+      "id": "why",
+      "kind": "why",
+      "dur": 10,
+      "normal": "{s:Ik} {v:werk} morgen thuis.",
+      "vo": [
+        [
+          "normal",
+          0.6
+        ]
+      ]
+    },
+    {
+      "id": "rule",
+      "kind": "rule",
+      "dur": 7,
+      "rows": [
+        [
+          {
+            "t": "Ik",
+            "r": "s"
+          },
+          {
+            "t": "werk",
+            "r": "v"
+          },
+          {
+            "t": "morgen"
+          },
+          {
+            "t": "thuis"
+          }
+        ],
+        [
+          {
+            "t": "Morgen",
+            "r": "1"
+          },
+          {
+            "t": "werk",
+            "r": "v"
+          },
+          {
+            "t": "ik",
+            "r": "s"
+          },
+          {
+            "t": "thuis"
+          }
+        ]
+      ],
+      "vo": [
+        [
+          "rule1",
+          0.9
+        ],
+        [
+          "rule2",
+          2.8
+        ]
+      ]
+    },
+    {
+      "id": "switch",
+      "kind": "switch",
+      "dur": 11.5,
+      "vo": [
+        [
+          "ikwerk",
+          4.9
+        ],
+        [
+          "werkik",
+          0
+        ]
+      ]
+    },
+    {
+      "id": "time",
+      "kind": "case",
+      "dur": 4.5,
+      "nl": "{1:Vanavond} {v:kook} {s:ik}.",
+      "en": "Tonight I'm cooking.",
+      "vo": [
+        [
+          "time",
+          0.7
+        ]
+      ]
+    },
+    {
+      "id": "place",
+      "kind": "case",
+      "dur": 4.5,
+      "nl": "{1:In Utrecht} {v:woont} {s:mijn zus}.",
+      "en": "My sister lives in Utrecht.",
+      "vo": [
+        [
+          "place",
+          0.7
+        ]
+      ]
+    },
+    {
+      "id": "other",
+      "kind": "case",
+      "dur": 4.5,
+      "nl": "{1:Die film} {v:heb} {s:ik} al gezien.",
+      "en": "I've already seen that film.",
+      "vo": [
+        [
+          "other",
+          0.7
+        ]
+      ]
+    },
+    {
+      "id": "linker",
+      "kind": "case",
+      "dur": 4.5,
+      "nl": "{1:Daarom} {v:blijf} {s:ik} thuis.",
+      "en": "That's why I'm staying home.",
+      "vo": [
+        [
+          "linker",
+          0.7
+        ]
+      ]
+    },
+    {
+      "id": "question",
+      "kind": "case",
+      "dur": 4.5,
+      "nl": "{1:Waar} {v:woon} {s:jij}?",
+      "en": "Where do you live?",
+      "note": true,
+      "vo": [
+        [
+          "question",
+          0.7
+        ],
+        [
+          "jijwoont",
+          0
+        ],
+        [
+          "woonjij",
+          0
+        ]
+      ]
+    },
+    {
+      "id": "clause",
+      "kind": "clause",
+      "dur": 6,
+      "nl": "{1:Als het regent,} {v:blijf} {s:ik} thuis.",
+      "en": "If it rains, I stay home.",
+      "showNote": true,
+      "vo": [
+        [
+          "clause",
+          0.7
+        ]
+      ]
+    },
+    {
+      "id": "clause2",
+      "label": "clause",
+      "kind": "clause",
+      "dur": 6,
+      "nl": "{1:Omdat ik moe ben,} {v:ga} {s:ik} vroeg slapen.",
+      "en": "Because I'm tired, I'm going to bed early.",
+      "pairs": [
+        [
+          "regent,",
+          "blijf"
+        ],
+        [
+          "ben,",
+          "ga"
+        ]
+      ],
+      "vo": [
+        [
+          "clause2",
+          0.7
+        ]
+      ]
+    },
+    {
+      "id": "beware",
+      "kind": "beware",
+      "dur": 6,
+      "right": "Ik blijf thuis, want {s:ik} {v:ben} moe.",
+      "wrong": "want ben ik moe",
+      "en": "I'm staying home, because I'm tired.",
+      "vo": [
+        [
+          "beware",
+          1.4
+        ]
+      ]
+    },
+    {
+      "id": "quiz1",
+      "kind": "pick",
+      "dur": 6.5,
+      "reveal": 4,
+      "options": [
+        "Vandaag ik werk thuis.",
+        "{1:Vandaag} {v:werk} {s:ik} thuis."
+      ],
+      "answer": 1,
+      "en": "Today I'm working from home."
+    },
+    {
+      "id": "quiz2",
+      "kind": "pick",
+      "dur": 6.5,
+      "reveal": 4,
+      "options": [
+        "{1:Toen ik klein was,} {v:woonde} {s:ik} in Spanje.",
+        "Toen ik klein was, ik woonde in Spanje."
+      ],
+      "answer": 0,
+      "en": "When I was little, I lived in Spain."
+    },
+    {
+      "id": "cta",
+      "kind": "cta",
+      "dur": 5
+    },
+    {
+      "id": "storyCta",
+      "kind": "cta",
+      "dur": 6,
+      "cut": "story"
+    },
+    {
+      "id": "spot1",
+      "kind": "spot",
+      "dur": 5,
+      "cut": "teaser",
+      "reveal": 2.5,
+      "wrong": "Zaterdag {s:ik} {v:ga} naar de markt.",
+      "right": "{1:Zaterdag} {v:ga} {s:ik} naar de markt.",
+      "why": "*Zaterdag* is position 1, so the verb comes next.",
+      "en": "On Saturday I'm going to the market.",
+      "vo": [
+        [
+          "t1w",
+          0.3
+        ],
+        [
+          "t1r",
+          -1.2
+        ]
+      ],
+      "tail": 1.0
+    },
+    {
+      "id": "spot2",
+      "kind": "spot",
+      "dur": 5,
+      "cut": "teaser",
+      "reveal": 2.5,
+      "wrong": "In de zomer {s:wij} {v:fietsen} veel.",
+      "right": "{1:In de zomer} {v:fietsen} {s:wij} veel.",
+      "why": "*In de zomer* is position 1, so the verb comes next.",
+      "en": "In summer we cycle a lot.",
+      "vo": [
+        [
+          "t2w",
+          0.3
+        ],
+        [
+          "t2r",
+          -1.2
+        ]
+      ],
+      "tail": 1.0
+    },
+    {
+      "id": "spot3",
+      "kind": "spot",
+      "dur": 5.5,
+      "cut": "teaser",
+      "reveal": 2.5,
+      "wrong": "Als ik tijd heb, {s:ik} {v:bel} je.",
+      "right": "{1:Als ik tijd heb,} {v:bel} {s:ik} je.",
+      "why": "The whole subclause is position 1, so the verb comes next.",
+      "en": "If I have time, I'll call you.",
+      "vo": [
+        [
+          "t3w",
+          0.3
+        ],
+        [
+          "t3r",
+          -1.2
+        ]
+      ],
+      "tail": 1.0
+    },
+    {
+      "id": "punch",
+      "kind": "punch",
+      "dur": 4,
+      "cut": "teaser"
+    },
+    {
+      "id": "ytCta",
+      "kind": "cta",
+      "dur": 4,
+      "cut": "teaser"
+    },
+    {
+      "id": "storyTeaserCta",
+      "kind": "cta",
+      "dur": 5,
+      "cut": "storyTeaser"
+    },
+    {
+      "id": "igCta",
+      "kind": "cta",
+      "dur": 4,
+      "cut": "reelTeaser"
+    }
+  ],
+  "text": {
+    "en": {
+      "series": "Inversion",
+      "chips": {
+        "why": "Why",
+        "rule": "Rule",
+        "when": "When",
+        "quiz": "Quiz"
+      },
+      "why": {
+        "q": "Why does everyone get this wrong? 🤔",
+        "normal": "Because the normal order is:",
+        "feels": "So inversion feels like the",
+        "exception": "exception",
+        "but": "But you use it almost *more often* than not. It's really the",
+        "norm": "norm"
+      },
+      "rule": {
+        "kicker": "The golden rule",
+        "title": "The verb is always in position 2.",
+        "legend": [
+          [
+            "v",
+            "verb"
+          ],
+          [
+            "s",
+            "subject"
+          ]
+        ]
+      },
+      "case": {
+        "kicker": "Start with…",
+        "labels": {
+          "time": "a time ⏰",
+          "place": "a place 📍",
+          "other": "another part of the sentence",
+          "linker": "*daarom*, *toen* or *dan*",
+          "question": "a question word ❓",
+          "clause": "a whole subclause 🤯"
+        },
+        "tNote": "the -t drops: *woont* → *woon jij*"
+      },
+      "clause": {
+        "labels": [
+          "position 1",
+          "position 2"
+        ],
+        "note": "The whole subclause is position 1. So the main clause after it gets inversion.",
+        "trick": "Trick: verb, comma, verb"
+      },
+      "beware": {
+        "kicker": "Watch out! ⚠️",
+        "title": "No inversion after *en*, *maar*, *want* and *of*."
+      },
+      "quiz": {
+        "kicker": "Quiz {n}/{total} · Which one is right?"
+      },
+      "cta": {
+        "title": "Keep learning Dutch!",
+        "rows": [
+          [
+            "Practise inversion in the app",
+            "mijntaalstudio.nl"
+          ],
+          [
+            "Subscribe for more Dutch lessons",
+            "youtube.com/@mijntaalstudio"
+          ],
+          [
+            "Daily Dutch on Instagram",
+            "@mijntaalstudio"
+          ]
+        ]
+      },
+      "cover": {
+        "lines": [
+          "Dutch inversion",
+          "trips everyone up."
+        ],
+        "sub": "Because it's not the exception."
+      },
+      "switch": {
+        "kicker": "In short",
+        "q": "Starting your sentence with something other than the subject?",
+        "big": "Just switch the {s:subject} and the {v:verb}! 🔄",
+        "name": "This is what we call *inversie*.",
+        "items": [
+          [
+            "a time ⏰",
+            "Morgen…"
+          ],
+          [
+            "a place 📍",
+            "In Utrecht…"
+          ],
+          [
+            "a manner 🚲",
+            "Met de fiets…"
+          ],
+          [
+            "something else ✨",
+            "Die film…"
+          ]
+        ]
+      },
+      "storyCta": {
+        "title": "Watch the full lesson on YouTube! 🎬",
+        "rows": [
+          [
+            "Tap the link below 👇",
+            "youtu.be/Mk-rUxARmIw"
+          ],
+          [
+            "Subscribe for more Dutch lessons 🔔",
+            "youtube.com/@mijntaalstudio"
+          ]
+        ]
+      },
+      "ytCta": {
+        "title": "Never get Dutch inversion wrong again? 😉",
+        "rows": [
+          [
+            "Full lesson: tap the video link below 👇",
+            "Dutch inversion: Morgen werk ik thuis"
+          ],
+          [
+            "Subscribe for more Dutch lessons 🔔",
+            "youtube.com/@mijntaalstudio"
+          ]
+        ]
+      },
+      "spot": {
+        "kicker": "Spot the mistake 🔍",
+        "ask": "What's wrong?"
+      },
+      "punch": {
+        "kicker": "The rule",
+        "big": "The {v:verb} is always in position 2.",
+        "sub": "Start with something else? Switch the subject and the verb. Full lesson 👇"
+      },
+      "storyTeaserCta": {
+        "title": "Never get Dutch inversion wrong again? 😉",
+        "rows": [
+          [
+            "Watch the full lesson: tap the link below 👇",
+            "youtu.be/Mk-rUxARmIw"
+          ],
+          [
+            "Subscribe for more Dutch lessons 🔔",
+            "youtube.com/@mijntaalstudio"
+          ]
+        ]
+      },
+      "igCta": {
+        "title": "Never get Dutch inversion wrong again? 😉",
+        "rows": [
+          [
+            "Full lesson on YouTube 🎬",
+            "Link in bio 👆"
+          ],
+          [
+            "Practise Dutch in the app 📱",
+            "mijntaalstudio.nl"
+          ]
+        ]
+      }
+    }
+  },
+  "cuts": {
+    "story": [
+      "mistake1",
+      "mistake3",
+      "switch",
+      "clause",
+      "storyCta"
+    ],
+    "teaser": [
+      "spot1",
+      "spot2",
+      "spot3",
+      "ytCta"
+    ],
+    "storyTeaser": [
+      "spot1",
+      "spot2",
+      "spot3",
+      "storyTeaserCta"
+    ],
+    "reelTeaser": [
+      "spot1",
+      "spot2",
+      "spot3",
+      "igCta"
+    ]
+  }
+}
