@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { supabase } from "../lib/supabase";
+import { track } from "../lib/activity";
 import { useAuth } from "./context";
 import { useI18n } from "../i18n/context";
 import { Dialog } from "../leerpad/shared";
@@ -6,7 +8,15 @@ import { navigate } from "../hooks/useRoute";
 import { PATHS } from "../routes";
 
 /** Opens Mijn abonnement (the plans side by side). */
-const openPlans = () => navigate(PATHS.plans);
+const openPlans = () => {
+  track("plan_locked_see_plans");
+  navigate(PATHS.plans);
+};
+
+/** Someone ran into something their plan does not include (for the activity log). */
+function useTrackLocked(kind) {
+  useEffect(() => track("plan_locked", { data: { kind } }), [kind]);
+}
 
 /**
  * Subscriptions (set by hand by the docent, see *_plans.sql). Only leerlingen
@@ -45,6 +55,7 @@ function LockedText() {
 
 export function PlanLocked({ onClose }) {
   const { t } = useI18n();
+  useTrackLocked("dialog");
   return (
     <Dialog title={t("plan.locked.title")} onClose={onClose}>
       <LockedText />
@@ -70,6 +81,7 @@ export function PlanLocked({ onClose }) {
 /** The same, as a page (an exercise opened by its address). */
 export function PlanLockedPage({ onBack }) {
   const { t } = useI18n();
+  useTrackLocked("page");
   return (
     <div className="plan-locked-page">
       <h3>{t("plan.locked.title")}</h3>

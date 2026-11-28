@@ -7,6 +7,7 @@ import { TENSES, drillable, gapIsRight, gapQuestions, gapRound, isRight, isRight
 import { LEVELS, sentences } from "../data";
 import { pronounKindsIn, pronounQuestions } from "./pronouns";
 import FlagButton from "../review/FlagButton";
+import { track } from "../lib/activity";
 
 const SIZES = [10, 20];
 const rank = (level) => (LEVELS.includes(level) ? LEVELS.indexOf(level) : LEVELS.length);
@@ -137,6 +138,19 @@ export default function Drill({
   const moreInputs = useRef([]);
   const timer = useRef(null);
 
+  // Activity log: which drill is done, and finished rounds (answers are logged in check).
+  useEffect(() => {
+    track("drill_start", { targetType: "drill", targetId: settingsKey, data: { kind, title, lesson: lesson?.id } });
+    // Once per drill.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => {
+    if (queue.length || !total) return;
+    track("drill_round_done", { targetType: "drill", targetId: settingsKey, data: { kind, questions: total, wrong: wrong.size } });
+    // Only when the round runs out.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queue.length]);
+
   const current = queue[0];
   useEffect(() => input.current?.focus(), [current, result]);
   useEffect(() => () => clearTimeout(timer.current), []);
@@ -203,7 +217,14 @@ export default function Drill({
       const empty = current.gapAnswers.slice(1).findIndex((_, i) => !(more[i] || "").trim());
       if (empty >= 0) return moreInputs.current[empty]?.focus();
     }
-    if (several ? isRightGaps(current, [typed, ...more]) : isRight(current, typed)) {
+    const right = several ? isRightGaps(current, [typed, ...more]) : isRight(current, typed);
+    track("drill_answer", {
+      targetType: "question",
+      targetId: current.id,
+      // Wrong answers keep what was typed: shows the common mistakes.
+      data: { kind, right, typed: right ? undefined : [typed, ...more].join(" / ").slice(0, 100), list: settingsKey, tense: fill || pron ? undefined : tense },
+    });
+    if (right) {
       setResult("right");
       timer.current = setTimeout(() => {
         remember();

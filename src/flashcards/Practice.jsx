@@ -5,6 +5,7 @@ import { VerbTile } from "../components/RelatedWords";
 import { CaretLeft } from "../icons";
 import { requeue, shuffle } from "./cards";
 import FlagButton from "../review/FlagButton";
+import { track } from "../lib/activity";
 
 const DIRECTIONS = ["nl-en", "en-nl", "mix"];
 const SIZES = [10, 20, 0]; // 0 = all at once
@@ -109,9 +110,31 @@ export default function Practice({ cards, title, onExit, onFinish, finishLabel, 
     setFlipped(false);
   };
 
+  // Activity log: which list is practised, every answer, and finished rounds.
+  useEffect(() => {
+    track("flashcard_start", { targetType: "flashcards", targetId: settingsKey, data: { title, cards: cards.length } });
+    // Once per practice session.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => {
+    if (queue.length || !total) return;
+    track("flashcard_round_done", {
+      targetType: "flashcards",
+      targetId: settingsKey,
+      data: { round: round + 1, rounds, cards: total, hard: hard.size },
+    });
+    // Only when the pile runs out.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queue.length]);
+
   const current = queue[0];
   const answer = (knew) => {
     if (!current || !flipped) return;
+    track("flashcard_answer", {
+      targetType: "card",
+      targetId: current.card.id,
+      data: { knew, dir: current.dir, list: settingsKey },
+    });
     setHistory((h) => [...h, { queue, hard, misses }]);
     setFlipped(false);
     if (knew) {

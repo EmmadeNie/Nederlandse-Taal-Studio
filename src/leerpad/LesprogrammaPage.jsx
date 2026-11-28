@@ -6,6 +6,7 @@ import Markdown from "../components/Markdown";
 import { InternalLinkContext } from "../components/internalLinks";
 import { navigate, useRoute } from "../hooks/useRoute";
 import { PATHS, pathFor } from "../routes";
+import { track } from "../lib/activity";
 import RichEditor from "../editor/RichEditor";
 import LessonFiles from "./LessonFiles";
 import { WordListEditor, WordListsView } from "./WordList";
@@ -105,6 +106,18 @@ export default function LesprogrammaPage() {
     });
 
   const openLesson = lessons.find((l) => l.id === openId);
+
+  // Activity log: which lesson is opened from the lesprogramma (also when the plan locks it).
+  useEffect(() => {
+    if (!openLesson) return;
+    track("lesson_open", {
+      targetType: "lesson",
+      targetId: openLesson.id,
+      data: { from: "lesprogramma", locked: !canOpenLessons || undefined },
+    });
+    // Once per opened lesson, not on every edit of it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openLesson?.id]);
 
   const toggleCard = (card, e, laneCards) => {
     setSelected((prev) => {

@@ -4,6 +4,7 @@ import { useI18n } from "../i18n/context";
 import { InternalLinkContext, lessonIdFromHref } from "../components/internalLinks";
 import { navigate } from "../hooks/useRoute";
 import { pathFor } from "../routes";
+import { track } from "../lib/activity";
 import RichEditor from "../editor/RichEditor";
 import SaveStatus from "./SaveStatus";
 import { useAutosave } from "./useAutosave";
@@ -136,6 +137,18 @@ export default function LeerpadBoard({ studentId }) {
   };
 
   const openStep = steps.find((s) => s.id === openId);
+
+  // Activity log: which lesson is opened from a leerpad (also when the plan locks it).
+  useEffect(() => {
+    if (!openStep) return;
+    track("lesson_open", {
+      targetType: openStep.lesson_id ? "lesson" : "step",
+      targetId: openStep.lesson_id || openStep.id,
+      data: { from: "leerpad", step_id: openStep.id, locked: !canOpenLessons || undefined, student_id: isOwner ? undefined : studentId },
+    });
+    // Once per opened card, not on every edit of it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openStep?.id]);
 
   if (loading) return <p className="dim">{t("common.loading")}</p>;
 

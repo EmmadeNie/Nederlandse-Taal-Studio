@@ -13,6 +13,7 @@ import { VerbTiles } from "../components/RelatedWords";
 import CardPractise from "../flashcards/CardPractise";
 import FlashcardButton from "../flashcards/FlashcardButton";
 import { deckTitle } from "../flashcards/cards";
+import { track } from "../lib/activity";
 
 /**
  * A lesson as a student reads it (lesprogramma and leerpad): the practise
@@ -114,7 +115,11 @@ export default function LessonContent({
           <CardPractise lesson={lesson} />
         </div>
       )}
-      <Tabs tabs={tabs} label={t("lc.tabsLabel")} />
+      <Tabs
+        tabs={tabs}
+        label={t("lc.tabsLabel")}
+        onSelect={(tab) => track("lesson_tab", { targetType: lesson?.id ? "lesson" : null, targetId: lesson?.id, data: { tab } })}
+      />
     </div>
   );
 }
@@ -131,8 +136,13 @@ function PanelHead({ text, tools }) {
 }
 
 /** Tabs (one panel at a time); arrow keys move between them. One tab needs no tab bar. */
-function Tabs({ tabs, label }) {
+function Tabs({ tabs, label, onSelect }) {
   const [current, setCurrent] = useState(tabs[0]?.key);
+  const choose = (key) => {
+    if (key === current) return;
+    setCurrent(key);
+    onSelect?.(key);
+  };
   const id = useId();
   const refs = useRef({});
   if (!tabs.length) return null;
@@ -144,7 +154,7 @@ function Tabs({ tabs, label }) {
     if (next == null) return;
     e.preventDefault();
     const tab = tabs[(next + tabs.length) % tabs.length];
-    setCurrent(tab.key);
+    choose(tab.key);
     refs.current[tab.key]?.focus();
   };
 
@@ -165,7 +175,7 @@ function Tabs({ tabs, label }) {
               tabIndex={on ? 0 : -1}
               className={`lc-tab ${on ? "is-on" : ""}`}
               title={tab.hint}
-              onClick={() => setCurrent(tab.key)}
+              onClick={() => choose(tab.key)}
               onKeyDown={(e) => move(e, i)}
             >
               {tab.label}
