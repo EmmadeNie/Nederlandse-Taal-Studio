@@ -77,6 +77,8 @@ for s in [s for s in C["scenes"] if not s.get("cut")] if cut == "full" else [byI
             a2, b2 = c["also"]; at2 = end + c.get("gap", 1.0)
             put(total + at2, a2, b2); s["also"]["at"] = r3(at2); end = at2 + (b2 - a2)
             if "wow" in s: s["wow"]["at"] = r3(end + 0.3); end += 0.3 + 1.2
+        elif "wow" in s:  # a line under the answer, right after Emma reads it
+            s["wow"]["at"] = r3(end + 0.3); end += 0.3 + 1.2
         s["dur"] = r3(end + c.get("tail", 1.4))
         total += s["dur"]
     else:

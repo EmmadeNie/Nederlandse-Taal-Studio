@@ -389,19 +389,20 @@ function Pick({ s, quiz }) {
           )}
         </div>
       )}
-      {s.also && <Also also={s.also} wow={s.wow} />}
+      {(s.also || s.wow) && <Also also={s.also} wow={s.wow} />}
     </Body>
   );
 }
 
-/** After a quiz answer: a second right answer (also.at seconds in), and maybe a line under it (wow). */
+/** After a quiz answer: a second right answer (also.at seconds in), and/or a line under it (wow). */
 function Also({ also, wow }) {
   const z = useFmt();
-  const a = useIn(sec(also.at));
+  const a = useIn(sec(also?.at ?? 0));
   const w = useIn(sec(wow?.at ?? 0));
   // Always laid out (invisible until its time), so the quiz above doesn't jump when it appears.
   return (
     <>
+      {also && (
       <div style={{ ...a, ...card, padding: "26px 40px 24px", marginTop: 30, display: "flex", alignItems: "flex-start", gap: 22, border: `3px solid ${GREEN}` }}>
         <span style={{ fontSize: 52, lineHeight: 1.25 }}>✅</span>
         <div>
@@ -419,6 +420,7 @@ function Also({ also, wow }) {
           )}
         </div>
       </div>
+      )}
       {wow && <div style={{ ...w, fontSize: z.v ? 64 : 60, fontWeight: 800, letterSpacing: -1.5, marginTop: 30, textAlign: "center" }}>{wow.text}</div>}
     </>
   );
@@ -453,8 +455,12 @@ function Cta({ s }) {
   const colours = s.rows.length === 2 ? [L.perfect, RED] : [GREEN, L.perfect, RED];
   const rows = s.rows.map(([label, link], i) => (
     <div key={i} style={{ ...b, ...card, padding: "24px 36px", marginTop: i ? 20 : 0 }}>
-      <div style={{ fontSize: 36, fontWeight: 700 }}>{label}</div>
-      <div style={{ fontSize: 44, fontWeight: 800, color: colours[i], marginTop: 4 }}>{link}</div>
+      <div style={{ fontSize: 36, fontWeight: 700 }}>
+        <Text text={label} italic />
+      </div>
+      <div style={{ fontSize: 44, fontWeight: 800, color: colours[i], marginTop: 4 }}>
+        <Text text={link} italic />
+      </div>
     </div>
   ));
   const title = (

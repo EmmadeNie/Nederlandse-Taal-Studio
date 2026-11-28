@@ -496,7 +496,7 @@
       "id": "quizPhone",
       "kind": "pick",
       "cut": "reel",
-      "dur": 11.55,
+      "dur": 7.15,
       "reveal": 4.2,
       "nl": "Ik heb ___ tijd.",
       "options": [
@@ -505,16 +505,24 @@
       ],
       "answer": "geen",
       "en": "I don't have time.",
-      "why": "*tijd*, no article → {geen}",
-      "also": {
-        "at": 6.65,
-        "kicker": "Also right",
-        "nl": "Ik heb [de] tijd {niet}.",
-        "en": "I don't have **the** time.",
-        "note": "*de tijd* is definite → {niet}"
-      },
+      "why": "*tijd*, no article → {geen}"
+    },
+    {
+      "id": "quizPhone2",
+      "kind": "pick",
+      "cut": "reel",
+      "dur": 8.8,
+      "reveal": 4.2,
+      "nl": "Ik heb de tijd ___.",
+      "options": [
+        "geen",
+        "niet"
+      ],
+      "answer": "niet",
+      "en": "I don't have **the** time.",
+      "why": "*de tijd* is definite → {niet}",
       "wow": {
-        "at": 8.75,
+        "at": 6.2,
         "text": "Interesting, huh? 🤓"
       }
     },
@@ -522,12 +530,12 @@
       "id": "ctaPhone",
       "kind": "cta",
       "cut": "reel",
-      "dur": 4.5,
+      "dur": 5.5,
       "title": "Want the full lesson? 😉",
       "rows": [
         [
-          "Full lesson: tap the video link below 👇",
-          "Niet or geen?"
+          "*Niet* with a verb? *Ik rook niet.*",
+          "→ in the full lesson 👇"
         ],
         [
           "Subscribe for more Dutch lessons 🔔",
@@ -557,6 +565,7 @@
       "splitPhone",
       "bewarePhone",
       "quizPhone",
+      "quizPhone2",
       "ctaPhone"
     ]
   },
@@ -646,8 +655,8 @@
           51.65
         ],
         [
-          52.55,
-          54.35
+          57.15,
+          58.95
         ]
       ]
     }
