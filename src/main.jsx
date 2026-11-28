@@ -10,6 +10,7 @@ import { migrateLegacyUrl } from './routes'
 import { IconContext } from '@phosphor-icons/react'
 import { watchForNewVersion } from './lib/freshness'
 import { consumeEmailLink } from './auth/emailLink'
+import { startActivityTracking } from './lib/activity'
 
 // Old ?page=… links (e.g. on Trello cards) become paths before anything renders.
 migrateLegacyUrl()
@@ -21,6 +22,8 @@ watchForNewVersion()
 consumeEmailLink().finally(render)
 
 function render() {
+// Page views etc. for the activity log; after the login link is gone from the URL.
+startActivityTracking()
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     {/* Phosphor icons scale with the surrounding text */}

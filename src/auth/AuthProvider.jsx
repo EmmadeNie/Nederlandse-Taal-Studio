@@ -3,6 +3,7 @@ import { supabase } from "../lib/supabase";
 import { startFeedbackSync, stopFeedbackSync } from "../feedback/store";
 import { AuthContext } from "./context";
 import { useI18n } from "../i18n/context";
+import { flushActivity, setActivityAuth, track } from "../lib/activity";
 
 /**
  * Holds the Supabase session and the user's profile (name + role).
@@ -31,6 +32,7 @@ export function AuthProvider({ children }) {
     // and the redirect back from a magic link.
     const { data: sub } = supabase.auth.onAuthStateChange((_event, next) => {
       setSession(next);
+      setActivityAuth(next);
       if (!next) {
         setProfile(null);
         stopFeedbackSync();
@@ -92,7 +94,11 @@ export function AuthProvider({ children }) {
   /** After an invite is claimed the account points at another profile. */
   const reloadProfile = () => loadProfile(session.user.id);
 
-  const signOut = () => supabase.auth.signOut();
+  const signOut = async () => {
+    track("sign_out");
+    await flushActivity();
+    return supabase.auth.signOut();
+  };
 
   const value = {
     session,
