@@ -59,7 +59,7 @@
       "id": "geen",
       "kind": "rule",
       "dur": 10.5,
-      "kicker": "Rule 1",
+      "kicker": "Rule 1 · indefinite",
       "title": "{geen} = not a · no · not any",
       "morph": {
         "pre": "Ik heb ",
@@ -90,7 +90,7 @@
       "id": "niet",
       "kind": "rule",
       "dur": 11,
-      "kicker": "Rule 2",
+      "kicker": "Rule 2 · definite + the rest",
       "title": "Everything else: {niet}",
       "step": 1.5,
       "rows": [
@@ -144,18 +144,39 @@
       "dur": 8,
       "warn": true,
       "kicker": "Watch out ⚠️",
-      "title": "*de* or *het* in front? Then it's {niet}.",
+      "title": "Definite (*de*, *het*, *mijn*…)? Then it's {niet}.",
       "step": 1.8,
       "rows": [
         {
-          "label": "a key",
+          "label": "a key · indefinite",
           "nl": "Ik heb {geen} sleutel.",
           "en": "I don't have a key."
         },
         {
-          "label": "the key",
+          "label": "the key · definite",
           "nl": "Ik heb de sleutel {niet}.",
           "en": "I don't have the key."
+        }
+      ]
+    },
+    {
+      "id": "beware2",
+      "kind": "rule",
+      "dur": 8.5,
+      "warn": true,
+      "kicker": "Watch out ⚠️",
+      "title": "After *van*, *in*, *op*…? Always {niet}.",
+      "step": 1.8,
+      "rows": [
+        {
+          "label": "no article, still *niet*",
+          "nl": "Ik hou {niet} van koffie.",
+          "en": "I don't like coffee."
+        },
+        {
+          "label": "with a verb",
+          "nl": "Ik hou {niet} van voetballen.",
+          "en": "I don't like playing football."
         }
       ]
     },
