@@ -1,0 +1,21 @@
+{
+ "moet": 1.34,
+ "heb_moeten": 1.56,
+ "gewild": 1.52,
+ "willen_helpen_nooit": 1.66,
+ "willen_helpen": 1.32,
+ "gaan_wandelen_a": 1.4,
+ "kunnen_slapen": 1.74,
+ "horen_schreeuwen": 1.72,
+ "laten_wachten": 1.64,
+ "gaan_wandelen": 1.58,
+ "vandaag": 2.36,
+ "gister": 2.6,
+ "kan_zien": 1.1,
+ "kunnen_zien": 1.52,
+ "moeten_kunnen_zien": 2.04,
+ "q1": 2.24,
+ "q2": 1.64,
+ "q3": 1.84,
+ "q4": 2.06
+}

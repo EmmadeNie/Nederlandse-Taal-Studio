@@ -1,4 +1,6 @@
 import { Composition, Still, registerRoot } from "remotion";
+import { DoubleInfinitiveShort, DI_SHORT_FPS, diShortDuration } from "./DoubleInfinitiveShort";
+import { DoubleInfinitiveThumb, DoubleInfinitiveVideo, DI_VIDEO_FPS, diVideoDuration } from "./DoubleInfinitiveVideo";
 import { Demo, durationOf, FPS } from "./Demo";
 import { MANIFESTS } from "./manifests";
 import { Og } from "./Og";
@@ -20,6 +22,7 @@ import { PerfectumTeaser, PERF_TEASER_FPS, perfTeaserDuration } from "./Perfectu
 import { ImperfectumTeaser, IMPF_TEASER_FPS, impfTeaserDuration } from "./ImperfectumTeaser";
 import { SeparableTeaser, TEASER_SEP_FPS, teaserSepDuration } from "./SeparableTeaser";
 import { ImperfectumReel, IMPERFECTUM_REEL_FPS, imperfectumReelDuration } from "./ImperfectumReel";
+import { DubbeleInfinitiefReel, DI_REEL_FPS, diReelDuration } from "./DubbeleInfinitiefReel";
 import { SeparableThumb, SeparableVerbsVideo, SEP_FPS, SEP_SIZES, separableDuration } from "./SeparableVerbsVideo";
 
 function Root() {
@@ -56,6 +59,14 @@ function Root() {
       <Composition id="teaser-perfectum-en" component={PerfectumTeaser} durationInFrames={perfTeaserDuration()} fps={PERF_TEASER_FPS} width={1080} height={1920} />
       <Composition id="teaser-perfectum-en-nomusic" component={PerfectumTeaser} defaultProps={{ music: false }} durationInFrames={perfTeaserDuration()} fps={PERF_TEASER_FPS} width={1080} height={1920} />
       <Composition id="teaser-perfectum-en-sunset" component={PerfectumTeaser} defaultProps={{ music: "music/after-sunset.mp3" }} durationInFrames={perfTeaserDuration()} fps={PERF_TEASER_FPS} width={1080} height={1920} />
+      {/* The double infinitive (B1) as a ~45 s Reel / YouTube Short with Emma's intro and a hook for advanced
+          speakers (EN only). The cover: npx remotion still remotion/index.jsx reel-dubbele-infinitief-en <out>.jpg
+          --props='{"cover":true}' --frame=0 --public-dir=raw */}
+      <Composition id="reel-dubbele-infinitief-en" component={DubbeleInfinitiefReel} defaultProps={{ lang: "en" }} durationInFrames={diReelDuration()} fps={DI_REEL_FPS} width={1080} height={1920} />
+      {/* The double infinitive (B1), the full lesson (16:9) and its thumbnail. */}
+      <Composition id="lesson-video-dubbele-infinitief-en" component={DoubleInfinitiveVideo} durationInFrames={diVideoDuration()} fps={DI_VIDEO_FPS} width={1920} height={1080} />
+      <Composition id="short-dubbele-infinitief-en" component={DoubleInfinitiveShort} durationInFrames={diShortDuration()} fps={DI_SHORT_FPS} width={1080} height={1920} />
+      <Still id="lesson-thumb-dubbele-infinitief-en" component={DoubleInfinitiveThumb} width={1280} height={720} />
       {/* Full lesson videos (16:9) for YouTube and the grammar pages. */}
       {Object.keys(LESSON_VIDEOS).flatMap((lesson) =>
         ["nl", "en"].map((lang) => (
