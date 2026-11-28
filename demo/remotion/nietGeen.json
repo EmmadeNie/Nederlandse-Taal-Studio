@@ -1,5 +1,5 @@
 {
-  "_": "Niet or geen? English only. Read by ContrastVideo.jsx. dur, card, at and reveal are in seconds. {word} = one of the topic words, in its colour; *x* = a Dutch word inside English text (italic); **x** = an English word in bold (the 'a' in 'I have a car'). A scene with cut is not in the full lesson; cuts lists the scenes of the teasers. The full lesson opens with a little story Emma reads (the story scene; voice = her recording under raw/, null until it's there), the teasers with 'spot the mistake'.",
+  "_": "Niet or geen? English only. Read by ContrastVideo.jsx. dur, card, at and reveal are in seconds. {word} = one of the topic words, in its colour; *x* = a Dutch word inside English text (italic); **x** = an English word in bold (the 'a' in 'I have a car'); [x] = a marker highlight. A scene with cut is not in the full lesson; cuts lists the scenes of the teasers. The full lesson opens with a little story Emma reads (the story scene; voice = her recording under raw/, null until it's there), the teasers with 'spot the mistake'.",
   "series": "Niet or geen?",
   "level": "A1",
   "words": {
@@ -198,7 +198,7 @@
         },
         {
           "label": "a place",
-          "nl": "Ik woon {niet} in Utrecht.",
+          "nl": "Ik woon {niet} [in Utrecht].",
           "en": "I don't live in Utrecht."
         }
       ]
@@ -247,17 +247,17 @@
       "dur": 8.5,
       "warn": true,
       "kicker": "Watch out ⚠️",
-      "title": "After *van*, *in*, *op*…? Always {niet}.",
+      "title": "After [*van*, *in*, *op*…]? Always {niet}.",
       "step": 1.8,
       "rows": [
         {
           "label": "no article, still *niet*",
-          "nl": "Ik hou {niet} van koffie.",
+          "nl": "Ik hou {niet} [van koffie].",
           "en": "I don't like coffee."
         },
         {
           "label": "with a verb",
-          "nl": "Ik hou {niet} van voetballen.",
+          "nl": "Ik hou {niet} [van voetballen].",
           "en": "I don't like playing football."
         }
       ]

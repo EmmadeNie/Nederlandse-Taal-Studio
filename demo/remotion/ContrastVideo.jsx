@@ -66,14 +66,20 @@ function useIn(at = 0) {
 }
 
 /** Text with {topic words} in their colour, *Dutch words* in italics and **English words** in
- *  bold (the "a" in "I have a car"). In English lines (italic = true) the topic words are
- *  italic too, as they are Dutch. */
+ *  bold (the "a" in "I have a car"); [words] get a marker highlight (the "van koffie" that
+ *  makes it niet). In English lines (italic = true) the topic words are italic too, as they are Dutch. */
 function Text({ text, italic = false }) {
   const C = useTopic();
   return text
-    .split(/(\{[^}]+\}|\*\*[^*]+\*\*|\*[^*]+\*)/)
+    .split(/(\{[^}]+\}|\[[^\]]+\]|\*\*[^*]+\*\*|\*[^*]+\*)/)
     .filter(Boolean)
     .map((p, i) => {
+      if (p.startsWith("[") && p.endsWith("]"))
+        return (
+          <span key={i} style={{ background: "#ffe7a3", borderRadius: 12, padding: "0 10px", margin: "0 -4px", boxDecorationBreak: "clone", WebkitBoxDecorationBreak: "clone" }}>
+            <Text text={p.slice(1, -1)} italic={italic} />
+          </span>
+        );
       if (p.length > 4 && p.startsWith("**") && p.endsWith("**"))
         return (
           <strong key={i} style={{ fontWeight: 800, color: L.text }}>
