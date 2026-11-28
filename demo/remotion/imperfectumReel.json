@@ -1,0 +1,67 @@
+{
+  "_": "The ~40 s Reel / YouTube Short of the past tense (imperfectum, regular verbs; the long lesson is LESSON_VIDEOS.imperfectum in lessons.js). The opening (Emma, 28 Nov) is 't kofschip = soft ketchup, complete on frame 0, with Emma's short intro in English after 2 s of music (not on screen, the only recorded voice); then quickly the title screen (title + two examples + Why?, no voice; beats = when the examples and the question come), then the stem (take off -en, spelling animated), the rule ('t kofschip + soft ketchup), two verbs, one quiz question and the call to action. Read by ImperfectumReel.jsx and by demo/imperfectum/build_track.py, which times the scenes on Emma's recording. clips: the names of the recorded lines (see imperfectum/clips.json and ontwerpen/Video's/Lessen/lesson_imperfectum_reel_inspreektekst.txt). Sentences: [v] is the past form from the app's data. In EN text, Dutch words are *italic*.",
+  "scenes": [
+    { "id": "open", "kind": "open", "clips": ["intro.1", "intro.2"], "gap": 1.0, "ketchup": [0.1, 1.0] },
+    {
+      "id": "hook",
+      "kind": "hook",
+      "lines": [
+        { "verb": "word.werken", "person": "ik", "text": "Ik [v] tot zes uur.", "en": "I worked until six." },
+        { "verb": "word.bellen", "person": "ik", "text": "Daarna [v] ik mijn moeder.", "en": "Then I called my mother." }
+      ],
+      "beats": [0.0, 0.6], "dur": 4.2
+    },
+    { "id": "stem", "kind": "stem", "verbs": ["word.werken", "word.spelen", "word.bellen"], "step": 1.9, "lastAt": 7.4, "dur": 10.2 },
+    { "id": "rule", "kind": "rule", "clips": ["rule.word", "rule.letters"] },
+    {
+      "id": "fietsen",
+      "kind": "verb",
+      "verb": "word.fietsen",
+      "s": { "verb": "word.fietsen", "person": "ik", "text": "Ik [v] naar mijn werk.", "en": "I cycled to work." },
+      "clips": ["fietsen.inf", "fietsen.s"]
+    },
+    {
+      "id": "wonen",
+      "kind": "verb",
+      "verb": "word.wonen",
+      "s": { "verb": "word.wonen", "person": "ik", "text": "Vroeger [v] ik in Utrecht.", "en": "I used to live in Utrecht." },
+      "clips": ["wonen.inf", "wonen.s"]
+    },
+    {
+      "id": "quiz",
+      "kind": "quiz",
+      "verb": "word.koken",
+      "person": "hij",
+      "sentence": "Mijn vader ___ elke avond.",
+      "en": "My father cooked every evening.",
+      "clips": ["quiz"]
+    },
+    { "id": "cta", "kind": "cta", "dur": 4.0, "clips": ["cta"] }
+  ],
+  "text": {
+    "en": {
+      "level": "A2",
+      "title": ["Dutch past tense:", "*-te* or *-de*?"],
+      "hook": "*werkte*, but *belde*. Why? 🍅",
+      "stemKicker": "Step 1 · the stem",
+      "stemTitle": "Take off *-en*",
+      "stemSub": "and fix the spelling",
+      "stemLast": "👉 Now look at the last letter",
+      "ruleKicker": "Step 2 · *-te* or *-de*",
+      "ruleSub": "Look at the verb without *-en*",
+      "ketchup": ["Hard to remember *'t kofschip*?", "Expat tip: think of"],
+      "ketchupSame": "Same letters: *s · f · t · k · ch · p*", "openSame": "Same letters!", "openOr": "or for our internationals we suggest:",
+      "ruleIn": "Last letter in it?",
+      "ruleOut": "Any other letter?",
+      "verbKicker": "Verb {n} of {total}",
+      "isIn": "*{last}* is in soft ketchup",
+      "isOut": "*{last}* isn't in soft ketchup",
+      "quizKicker": "Your turn! ✏️",
+      "ctaTitle": "Want the full lesson?",
+      "ctaRows": [
+        ["3 steps + 4 quiz questions on YouTube", "youtube.com/@mijntaalstudio"],
+        ["Practise in the app", "mijntaalstudio.nl"]
+      ]
+    }
+  }
+}

@@ -44,23 +44,26 @@ function presentScenes(L) {
 function pastScenes(L) {
   return [
     { kind: "hook", sec: 5.5, ch: "intro" },
-    { kind: "agenda", sec: 8, ch: "intro" },
-    { kind: "pWhat", sec: 14, ch: "intro" },
-    { kind: "chapter", key: "stem", sec: 3.5, ch: "stem" },
-    ...L.stems.map((g) => ({ kind: "stems", g, sec: 13, ch: "stem" })),
-    { kind: "chapter", key: "tede", sec: 3.5, ch: "tede" },
-    ...L.kofschip.map((g) => ({ kind: "pKofschip", g, sec: 12, ch: "tede" })),
-    { kind: "pTrap", sec: 12, ch: "tede" },
-    { kind: "chapter", key: "plural", sec: 3.5, ch: "plural" },
-    { kind: "pastTable", sec: 12, ch: "plural" },
-    { kind: "pastExamples", sec: 11, ch: "plural" },
-    { kind: "pastNotes", sec: 11, ch: "plural" },
-    { kind: "summary", sec: 12, ch: "summary" },
-    { kind: "quizIntro", sec: 4, ch: "quiz" },
+    { kind: "agenda", sec: 7, ch: "intro" },
+    { kind: "pWhat", sec: 12, ch: "intro" },
+    { kind: "chapter", key: "stem", sec: chapterSec(L), ch: "stem" },
+    ...L.stems.map((g) => ({ kind: "stems", g, sec: g.morph ? stemsWhyAt(g) / FPS + 3 : 13, ch: "stem" })),
+    { kind: "chapter", key: "tede", sec: chapterSec(L), ch: "tede" },
+    // The first group also shows "soft ketchup" after the why, if the lesson has it.
+    ...L.kofschip.map((g, i) => ({ kind: "pKofschip", g, sec: !i && L.text.en.ketchup ? 14.5 : 11, ch: "tede" })),
+    ...(L.trap ? [{ kind: "pTrap", sec: 11, ch: "tede" }] : []),
+    { kind: "chapter", key: "plural", sec: chapterSec(L), ch: "plural" },
+    { kind: "pastTable", sec: 10.5, ch: "plural" },
+    // The summary is the whole process once more, live: verb → stem → 't kofschip → ik / wij.
+    { kind: "pastSummary", sec: PAST_SUMMARY_SEC, ch: "summary" },
+    { kind: "quizIntro", sec: 3.5, ch: "quiz" },
     ...L.quiz.map((q, i) => ({ kind: "question", q, i, sec: QUESTION_SEC, ch: "quiz" })),
-    { kind: "outro", sec: 14, ch: "outro" },
+    { kind: "outro", sec: 10, ch: "outro" },
   ];
 }
+
+// A chapter card with an example on it (L.chapterExamples) stays a second longer, to read it.
+const chapterSec = (L) => (L.chapterExamples ? 4.5 : 3.5);
 
 // The perfect tense: the form, regular, irregular, hebben or zijn, word order.
 function perfectScenes(L) {
@@ -109,7 +112,8 @@ export function videoChapters(id, lang) {
 
 // When a scene's explanation line appears (frames into the scene). Shared by
 // LessonVideo.jsx and the captions, so a caption changes when the screen does.
-export const stemStep = (g) => (g.key === "basic" ? S(1.4) : S(2.3));
+// g.morph: the stem is fixed letter by letter (spel → speel, bell → bel, reiz → reis), which takes longer.
+export const stemStep = (g) => (g.morph ? S(2.7) : g.key === "basic" ? S(1.4) : S(2.3));
 export const stemsWhyAt = (g) => 20 + g.verbs.length * stemStep(g) + S(0.6);
 export const STEM_T_STEP = S(2.2);
 export const stemTNoteAt = (rows) => 20 + rows.length * STEM_T_STEP + S(0.4);
@@ -117,7 +121,12 @@ export const stemTNoteAt = (rows) => 20 + rows.length * STEM_T_STEP + S(0.4);
 export const WHAT_STEP = S(4.2); // the second sentence
 export const WHAT_NOTE_AT = S(8.6);
 export const KOF_STEP = S(2.4);
+// The past tense's summary: two verbs, each in 4 steps.
+export const PAST_SUM_STEP = S(1.15);
+export const PAST_SUM_VERB = 4 * PAST_SUM_STEP + S(0.6);
+export const PAST_SUMMARY_SEC = (16 + 2 * PAST_SUM_VERB) / FPS + 3;
 export const kofWhyAt = (g) => 20 + g.verbs.length * KOF_STEP + S(0.3);
+export const ketchupAt = (g) => kofWhyAt(g) + S(1.2);
 export const TRAP_WHY_AT = S(6.2);
 export const IRR_STEP = S(1.1);
 export const irregularTipAt = (g) => 16 + g.verbs.length * IRR_STEP + S(0.6);
