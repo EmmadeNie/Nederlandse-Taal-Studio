@@ -38,6 +38,9 @@ const FORMATS = {
 const Fmt = createContext(FORMATS.short);
 const useFmt = () => useContext(Fmt);
 
+/** A scene's length in seconds: dur, or for a story the sum of its beats. */
+const sceneDur = (s) => s.dur ?? s.beats.reduce((n, b) => n + b.dur, 0);
+
 /** The scenes of a cut, each with its start and length in frames. */
 const plans = {};
 function planOf(topic, cut) {
@@ -47,7 +50,7 @@ function planOf(topic, cut) {
     let at = 0;
     return ids.map((id) => {
       const s = C.scenes.find((x) => x.id === id);
-      const t = { s, from: at, len: sec(s.dur) };
+      const t = { s, from: at, len: sec(sceneDur(s)) };
       at += t.len;
       return t;
     });
@@ -62,14 +65,21 @@ function useIn(at = 0) {
   return { opacity: s, transform: `translateY(${interpolate(s, [0, 1], [30, 0])}px)` };
 }
 
-/** Text with {topic words} in their colour and *Dutch words* in italics. In English lines
- *  (italic = true) the topic words are italic too, as they are Dutch. */
+/** Text with {topic words} in their colour, *Dutch words* in italics and **English words** in
+ *  bold (the "a" in "I have a car"). In English lines (italic = true) the topic words are
+ *  italic too, as they are Dutch. */
 function Text({ text, italic = false }) {
   const C = useTopic();
   return text
-    .split(/(\{[^}]+\}|\*[^*]+\*)/)
+    .split(/(\{[^}]+\}|\*\*[^*]+\*\*|\*[^*]+\*)/)
     .filter(Boolean)
     .map((p, i) => {
+      if (p.length > 4 && p.startsWith("**") && p.endsWith("**"))
+        return (
+          <strong key={i} style={{ fontWeight: 800, color: L.text }}>
+            {p.slice(2, -2)}
+          </strong>
+        );
       if (p.startsWith("{") && p.endsWith("}")) {
         const w = p.slice(1, -1);
         return (
@@ -89,7 +99,7 @@ function Word({ w, size, style }) {
   return <span style={{ display: "inline-block", fontSize: size, fontWeight: 800, fontStyle: "italic", color: "#fff", background: colourOf(C, w), borderRadius: 999, padding: `${size * 0.12}px ${size * 0.45}px`, whiteSpace: "nowrap", ...style }}>{w}</span>;
 }
 
-function Header({ section }) {
+function Header({ section, present }) {
   const C = useTopic();
   const z = useFmt();
   return (
@@ -99,7 +109,9 @@ function Header({ section }) {
         Taal Studio <span style={{ color: L.dim, fontWeight: 600 }}>· {C.series}</span>
       </div>
       <div style={{ display: z.chips ? "flex" : "none", gap: 10 }}>
-        {Object.entries(C.chips).map(([id, label]) => {
+        {Object.entries(C.chips)
+          .filter(([id]) => present.has(id))
+          .map(([id, label]) => {
           const on = id === section;
           return (
             <span key={id} style={{ fontSize: 24, fontWeight: 800, padding: "8px 18px", borderRadius: 999, color: on ? "#fff" : L.dim, background: on ? RED : "#e9ebf0" }}>
@@ -170,7 +182,9 @@ function Spot({ s, pos }) {
               <div style={sentence}>
                 <Text text={s.right} />
               </div>
-              <Gloss>{s.en}</Gloss>
+              <Gloss>
+                <Text text={s.en} />
+              </Gloss>
             </div>
           </div>
           <div style={{ ...d, fontSize: 46, fontWeight: 800, marginTop: 30, lineHeight: 1.3 }}>
@@ -248,7 +262,9 @@ function Row({ r, at }) {
         <span style={{ flex: "none", fontSize: 28, fontWeight: 800, color: L.dim, background: "#e9ebf0", borderRadius: 999, padding: "4px 16px" }}>
           <Text text={r.label} italic />
         </span>
-        <span style={{ fontSize: 34, color: L.dim, fontStyle: "italic" }}>{r.en}</span>
+        <span style={{ fontSize: 34, color: L.dim, fontStyle: "italic" }}>
+          <Text text={r.en} />
+        </span>
       </div>
     </div>
   );
@@ -357,7 +373,9 @@ function Pick({ s, quiz }) {
       <Bar progress={interpolate(f, [sec(0.3), reveal], [1, 0], clamp)} colour={shown ? GREEN : RED} />
       {shown && (
         <div style={after}>
-          <Gloss style={{ marginTop: 28 }}>{s.en}</Gloss>
+          <Gloss style={{ marginTop: 28 }}>
+            <Text text={s.en} />
+          </Gloss>
           {s.why && (
             <div style={{ fontSize: 42, fontWeight: 800, marginTop: 14 }}>
               ↳ <Text text={s.why} italic />
@@ -430,6 +448,112 @@ function Cta({ s }) {
   );
 }
 
+/** The opening of the full lesson: a little story Emma reads, one beat at a time. Each beat
+ *  is a line she says (shown as text) and, from `card` seconds on, the Dutch sentence of it.
+ *  The first beat is complete on frame 0. With `voice` set, her recording plays under it. */
+function Story({ s, first }) {
+  let at = 0;
+  const beats = s.beats.map((b) => {
+    const t = { b, from: sec(at), len: sec(b.dur) };
+    at += b.dur;
+    return t;
+  });
+  return (
+    <>
+      {beats.map(({ b, from, len }, i) => (
+        <Sequence key={i} from={from} durationInFrames={len}>
+          <Fade len={len} first={first && i === 0}>
+            <Beat s={s} b={b} still={first && i === 0} />
+          </Fade>
+        </Sequence>
+      ))}
+      {s.voice && <Audio src={staticFile(s.voice)} />}
+    </>
+  );
+}
+
+function Beat({ s, b, still }) {
+  const z = useFmt();
+  const a = useIn(still ? -60 : 0);
+  const c = useIn(still ? -60 : sec(b.card ?? 1.6));
+  return (
+    <Body>
+      <Kicker style={a}>{s.kicker}</Kicker>
+      <div style={{ ...a, fontSize: z.v ? 64 : 62, fontWeight: 800, letterSpacing: -1.5, lineHeight: 1.2 }}>
+        <Text text={b.say} italic />
+      </div>
+      {b.nl && (
+        <div style={{ ...c, ...card, padding: "36px 44px 30px", marginTop: 44, alignSelf: z.v ? "stretch" : "flex-start", minWidth: z.v ? 0 : 900 }}>
+          <div style={{ fontSize: z.v ? 84 : 80, fontWeight: 800, letterSpacing: -1.5, lineHeight: 1.2 }}>
+            <Text text={b.nl} />
+          </div>
+          <Gloss style={{ fontSize: 44 }}>
+            <Text text={b.en} />
+          </Gloss>
+        </div>
+      )}
+    </Body>
+  );
+}
+
+/** Both examples in one shot: indefinite (een → geen) next to definite (mijn → niet mijn). */
+function Split({ s }) {
+  const z = useFmt();
+  const a = useIn(0);
+  const end = useIn(sec(s.punchAt));
+  return (
+    <Body>
+      <Kicker style={a}>{s.kicker}</Kicker>
+      <div style={{ display: "grid", gridTemplateColumns: z.v ? "1fr" : "1fr 1fr", gap: z.v ? 26 : 36 }}>
+        {s.cols.map((col, i) => (
+          <SplitCol key={i} col={col} at={col.at.map(sec)} />
+        ))}
+      </div>
+      <div style={{ ...end, fontSize: z.v ? 58 : 60, fontWeight: 800, letterSpacing: -1.2, marginTop: 36, textAlign: "center", display: "flex", flexDirection: z.v ? "column" : "row", justifyContent: "center", gap: z.v ? 6 : 28 }}>
+        {s.punch.split(" · ").map((p, i) => (
+          <span key={i}>
+            {i > 0 && !z.v && <span style={{ color: L.dim, marginRight: 28 }}>·</span>}
+            <Text text={p} italic />
+          </span>
+        ))}
+      </div>
+    </Body>
+  );
+}
+
+function SplitCol({ col, at }) {
+  const z = useFmt();
+  const head = useIn(at[0]);
+  const neg = useIn(at[1]);
+  const colour = COLOURS[col.colour];
+  const sentence = { fontSize: z.v ? 66 : 62, fontWeight: 800, letterSpacing: -1.2, lineHeight: 1.2 };
+  const gloss = { fontSize: 38, marginTop: 6 };
+  return (
+    <div style={{ ...head, ...card, padding: z.v ? "26px 40px 28px" : "30px 40px 34px", borderTop: `10px solid ${colour}` }}>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 18, marginBottom: 14 }}>
+        <span style={{ fontSize: 36, fontWeight: 800, color: "#fff", background: colour, borderRadius: 999, padding: "6px 22px", textTransform: "uppercase", letterSpacing: 1 }}>{col.head}</span>
+        <span style={{ fontSize: 34, fontWeight: 700, color: L.dim }}>
+          <Text text={col.sub} italic />
+        </span>
+      </div>
+      <div style={sentence}>
+        <Text text={col.rows[0].nl} />
+      </div>
+      <Gloss style={gloss}>
+        <Text text={col.rows[0].en} />
+      </Gloss>
+      <div style={{ ...neg, marginTop: 18 }}>
+        <div style={sentence}>
+          <Text text={col.rows[1].nl} />
+        </div>
+        <Gloss style={gloss}>
+          <Text text={col.rows[1].en} />
+        </Gloss>
+      </div>
+    </div>
+  );
+}
+
 /** Every scene fades in and out quickly; the very first one is complete on frame 0. */
 function Fade({ len, first, children }) {
   const f = useCurrentFrame();
@@ -437,8 +561,8 @@ function Fade({ len, first, children }) {
   return <AbsoluteFill style={{ opacity: o }}>{children}</AbsoluteFill>;
 }
 
-const SCENES = { spot: Spot, title: Title, rule: Rule, trick: Trick, pick: Pick, punch: Punch, cta: Cta };
-const SECTION = { spot: "spot", title: "rule", rule: "rule", punch: "rule", trick: "trick", pick: "quiz" };
+const SCENES = { story: Story, split: Split, spot: Spot, title: Title, rule: Rule, trick: Trick, pick: Pick, punch: Punch, cta: Cta };
+const SECTION = { story: "story", split: "rule", spot: "spot", title: "rule", rule: "rule", punch: "rule", trick: "trick", pick: "quiz" };
 
 /** n of total among the scenes of the same kind (spot, pick) in this cut. */
 const countOf = (times, s) => {
@@ -454,12 +578,16 @@ export function ContrastVideo({ topic, cut = "full" }) {
   const times = planOf(topic, cut);
   const total = contrastDuration(topic, cut);
   const now = times.find((t) => f >= t.from && f < t.from + t.len) ?? times[times.length - 1];
-  const edge = (x) => 0.6 * interpolate(x, [0, 10, total - 45, total], [0.5, 1, 1, 0], clamp);
+  // Music softer while Emma reads the story (only once her recording is there).
+  const voiced = times.filter((t) => t.s.voice);
+  const duck = (x) => (voiced.some((t) => x >= t.from && x < t.from + t.len) ? 0.35 : 1);
+  const edge = (x) => 0.6 * duck(x) * interpolate(x, [0, 10, total - 45, total], [0.5, 1, 1, 0], clamp);
+  const present = new Set(times.map((t) => SECTION[t.s.kind]));
   return (
     <Topic.Provider value={C}>
       <Fmt.Provider value={fmt}>
         <AbsoluteFill style={{ background: L.bg, fontFamily, color: L.text }}>
-          <Header section={SECTION[now.s.kind]} />
+          <Header section={SECTION[now.s.kind]} present={present} />
           <AbsoluteFill style={fmt.scale ? { transform: `scale(${fmt.scale})`, transformOrigin: `50% ${fmt.body.top}px` } : undefined}>
             {times.map(({ s, from, len }) => {
               const Scene = SCENES[s.kind];
@@ -467,13 +595,13 @@ export function ContrastVideo({ topic, cut = "full" }) {
               return (
                 <Sequence key={s.id} from={from} durationInFrames={len}>
                   <Fade len={len} first={from === 0}>
-                    <Scene s={s} pos={n} quiz={n} />
+                    <Scene s={s} pos={n} quiz={n} first={from === 0} />
                   </Fade>
                 </Sequence>
               );
             })}
           </AbsoluteFill>
-          <Audio src={staticFile("music.mp3")} volume={edge} />
+          <Audio src={staticFile(C.music ?? "music.mp3")} volume={edge} />
         </AbsoluteFill>
       </Fmt.Provider>
     </Topic.Provider>

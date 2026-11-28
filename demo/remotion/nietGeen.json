@@ -1,12 +1,15 @@
 {
-  "_": "Niet or geen? English only, music only (no voice yet). Read by ContrastVideo.jsx. dur and reveal are in seconds. {word} = one of the topic words, in its colour; *x* = a Dutch word inside English text (italic). A scene with cut is only in that cut; cuts lists the scenes of the teasers.",
+  "_": "Niet or geen? English only. Read by ContrastVideo.jsx. dur, card, at and reveal are in seconds. {word} = one of the topic words, in its colour; *x* = a Dutch word inside English text (italic); **x** = an English word in bold (the 'a' in 'I have a car'). A scene with cut is not in the full lesson; cuts lists the scenes of the teasers. The full lesson opens with a little story Emma reads (the story scene; voice = her recording under raw/, null until it's there), the teasers with 'spot the mistake'.",
   "series": "Niet or geen?",
   "level": "A1",
   "words": {
     "niet": "blue",
-    "geen": "orange"
+    "geen": "orange",
+    "een": "orange",
+    "mijn": "blue"
   },
   "chips": {
+    "story": "Story",
     "spot": "Spot it",
     "rule": "Rule",
     "trick": "Trick",
@@ -20,8 +23,9 @@
       "reveal": 3,
       "wrong": "Ik heb niet een auto.",
       "right": "Ik heb {geen} auto.",
-      "en": "I don't have a car.",
-      "why": "*niet een* → {geen}"
+      "en": "I don't have **a** car.",
+      "why": "*niet een* → {geen}",
+      "cut": "teaser"
     },
     {
       "id": "spot2",
@@ -31,7 +35,8 @@
       "wrong": "Ik ben geen moe.",
       "right": "Ik ben {niet} moe.",
       "en": "I'm not tired.",
-      "why": "*moe* isn't a noun, so {niet}"
+      "why": "*moe* isn't a noun, so {niet}",
+      "cut": "teaser"
     },
     {
       "id": "spot3",
@@ -41,18 +46,95 @@
       "wrong": "Ik heb niet honger.",
       "right": "Ik heb {geen} honger.",
       "en": "I'm not hungry.",
-      "why": "*honger* is a noun, so {geen}"
+      "why": "*honger* is a noun, so {geen}",
+      "cut": "teaser"
     },
     {
-      "id": "title",
-      "kind": "title",
-      "dur": 4.5,
-      "kicker": "So which one?",
-      "big": "Both mean “not”.",
-      "sub": "One simple question tells you which one you need. 🤔",
-      "words": [
-        "niet",
-        "geen"
+      "id": "story",
+      "kind": "story",
+      "kicker": "A little story 📖",
+      "voice": null,
+      "beats": [
+        {
+          "dur": 4.6,
+          "card": 2.2,
+          "say": "Meet Sam. Sam just got a new car! 🚗",
+          "nl": "Ik heb {een} auto.",
+          "en": "I have **a** car."
+        },
+        {
+          "dur": 4.6,
+          "card": 2.4,
+          "say": "Sam's friend Lisa? She doesn't have a car.",
+          "nl": "Ik heb {geen} auto.",
+          "en": "I don't have **a** car."
+        },
+        {
+          "dur": 4.4,
+          "card": 2.0,
+          "say": "Sam proudly points at a red car…",
+          "nl": "Dit is {mijn} auto!",
+          "en": "This is **my** car!"
+        },
+        {
+          "dur": 4.8,
+          "card": 2.2,
+          "say": "But wait… Sam's car is blue. 😬",
+          "nl": "Oeps. Dit is {niet} mijn auto.",
+          "en": "Oops. This is not **my** car."
+        },
+        {
+          "dur": 3.6,
+          "say": "So why {geen} for Lisa, and {niet} for Sam? Let's find out! 👇"
+        }
+      ]
+    },
+    {
+      "id": "split",
+      "kind": "split",
+      "dur": 10,
+      "kicker": "Spot the difference 👀",
+      "punchAt": 6.6,
+      "punch": "Indefinite → {geen} · Definite → {niet}",
+      "cols": [
+        {
+          "head": "indefinite",
+          "sub": "*een* · no article",
+          "colour": "orange",
+          "at": [
+            0.3,
+            1.6
+          ],
+          "rows": [
+            {
+              "nl": "Ik heb {een} auto.",
+              "en": "I have **a** car."
+            },
+            {
+              "nl": "Ik heb {geen} auto.",
+              "en": "I don't have **a** car."
+            }
+          ]
+        },
+        {
+          "head": "definite",
+          "sub": "*de* · *het* · *mijn*",
+          "colour": "blue",
+          "at": [
+            3.4,
+            4.8
+          ],
+          "rows": [
+            {
+              "nl": "Dit is {mijn} auto.",
+              "en": "This is **my** car."
+            },
+            {
+              "nl": "Dit is {niet} mijn auto.",
+              "en": "This is not **my** car."
+            }
+          ]
+        }
       ]
     },
     {
@@ -72,7 +154,7 @@
         {
           "label": "with *een*",
           "nl": "Ik heb {geen} fiets.",
-          "en": "I don't have a bike."
+          "en": "I don't have **a** bike."
         },
         {
           "label": "no article",
@@ -107,12 +189,12 @@
         {
           "label": "*de* / *het*",
           "nl": "Ik zie de kat {niet}.",
-          "en": "I don't see the cat."
+          "en": "I don't see **the** cat."
         },
         {
           "label": "*mijn*, *jouw*…",
           "nl": "Dat is {niet} mijn tas.",
-          "en": "That's not my bag."
+          "en": "That's not **my** bag."
         },
         {
           "label": "a place",
@@ -150,12 +232,12 @@
         {
           "label": "a key · indefinite",
           "nl": "Ik heb {geen} sleutel.",
-          "en": "I don't have a key."
+          "en": "I don't have **a** key."
         },
         {
           "label": "the key · definite",
           "nl": "Ik heb de sleutel {niet}.",
-          "en": "I don't have the key."
+          "en": "I don't have **the** key."
         }
       ]
     },
@@ -217,7 +299,7 @@
         "geen"
       ],
       "answer": "geen",
-      "en": "That's not a good idea.",
+      "en": "That's not **a** good idea.",
       "why": "*een goed idee* → {geen} *goed idee*"
     },
     {
@@ -306,5 +388,6 @@
       "Stop guessing."
     ],
     "sub": "One question tells you which one."
-  }
+  },
+  "music": "music/a-stroll.mp3"
 }
