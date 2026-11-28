@@ -1,6 +1,18 @@
 {
-  "_": "Separable verbs (A2, lesson 'Mijn eerste scheidbare werkwoorden', topic 'Scheidbare werkwoorden: ik bel je op'). The scenes and their text (NL/EN). Read by SeparableVerbsVideo.jsx and by demo/scheidbaar/build_track.py, which times the scenes on Emma's recording. clips: the names of the recorded lines (inf = the infinitive, s = the sentence; a clip can be used twice). In EN text, Dutch words are *italic*.",
+  "_": "Separable verbs (A2, lesson 'Mijn eerste scheidbare werkwoorden', topic 'Scheidbare werkwoorden: ik bel je op'). The scenes and their text (NL/EN). Read by SeparableVerbsVideo.jsx and by demo/scheidbaar/build_track.py, which times the scenes on Emma's recording. clips: the names of the recorded lines (inf = the infinitive, s = the sentence; a clip can be used twice). In EN text, Dutch words are *italic*. Scenes with \"only\": \"reel\" are only in the Reel cut (see \"reel\").",
   "scenes": [
+    {
+      "id": "hook",
+      "kind": "hook",
+      "nl": "Bel jij je moeder op?",
+      "verb": "Bel",
+      "part": "op",
+      "en": "Are you calling your mother?",
+      "clips": [
+        "opbellen.s"
+      ],
+      "only": "reel"
+    },
     {
       "id": "title",
       "kind": "title",
@@ -431,7 +443,24 @@
         "kicker": "Watch out! ⚠️",
         "title": "Same base verb, different meaning"
       },
-      "meaning": "What does it mean?"
+      "meaning": "What does it mean?",
+      "hook": {
+        "kicker": "Why does *op* go to the end? 🤔"
+      },
+      "quizSolo": "Your turn! ✏️",
+      "ctaReel": {
+        "title": "Want the full lesson?",
+        "rows": [
+          [
+            "7 verbs + a quiz on YouTube",
+            "youtube.com/@mijntaalstudio"
+          ],
+          [
+            "Practise in the app",
+            "mijntaalstudio.nl"
+          ]
+        ]
+      }
     },
     "nl": {
       "series": "Scheidbare werkwoorden",
@@ -523,7 +552,42 @@
         "kicker": "Let op! ⚠️",
         "title": "Zelfde werkwoord, andere betekenis"
       },
-      "meaning": "Wat betekent het?"
+      "meaning": "Wat betekent het?",
+      "hook": {
+        "kicker": "Waarom staat *op* aan het eind? 🤔"
+      },
+      "quizSolo": "Jouw beurt! ✏️",
+      "ctaReel": {
+        "title": "De hele les?",
+        "rows": [
+          [
+            "7 werkwoorden + een quiz op YouTube",
+            "youtube.com/@mijntaalstudio"
+          ],
+          [
+            "Oefenen in de app",
+            "mijntaalstudio.nl"
+          ]
+        ]
+      }
+    }
+  },
+  "reel": {
+    "_": "The Reel / YouTube Short cut (~42 s): the title card (fully visible from the first frame), then Emma's voice within 3 s with the hook, the rule, three verbs, one quiz question. dur overrides the scene's own length in this cut.",
+    "scenes": [
+      "title",
+      "hook",
+      "rule",
+      "opstaan",
+      "meenemen",
+      "opruimen",
+      "quiz3",
+      "cta"
+    ],
+    "dur": {
+      "rule": 6,
+      "cta": 4.5,
+      "title": 2.3
     }
   }
 }
