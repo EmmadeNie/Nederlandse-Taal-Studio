@@ -239,14 +239,6 @@ const VIDEOS = {
  */
 const LESSON_VIDEOS = {
   "werkwoorden-vervoegen": {
-    nl: {
-      id: "LM6VWwwWMN8",
-      name: "Werkwoorden vervoegen in de tegenwoordige tijd: regelmatige werkwoorden (A1)",
-      description: "Regelmatige werkwoorden in de tegenwoordige tijd (A1), in 4 stappen: de stam, de uitgang, een stam op -t en jij achter het werkwoord. Daarna een quiz met 8 vragen.",
-      uploadDate: "2026-11-20T06:21:16-08:00",
-      seconds: 236,
-      chapters: ["0:00 Intro", "0:24 De stam", "1:12 De uitgang", "1:39 Stam op -t", "1:54 Jij achter het werkwoord", "2:17 Samenvatting", "2:29 Quiz"],
-    },
     en: {
       id: "MMWpaC7vw_4",
       name: "Dutch verbs in the present tense: regular verbs (A1)",
@@ -257,14 +249,6 @@ const LESSON_VIDEOS = {
     },
   },
   "scheidbare-werkwoorden": {
-    nl: {
-      id: "TWl9IwI838k",
-      name: "Scheidbare werkwoorden: ik bel je op (A2)",
-      description: "Scheidbare werkwoorden (A2): twee delen, één betekenis. Waar staat het eerste deel in de hoofdzin, wanneer blijven de delen samen, en welke werkwoorden lijken op elkaar? Met 7 werkwoorden uit het dagelijks leven en een quiz met 6 vragen.",
-      uploadDate: "2026-11-23T10:33:36-08:00",
-      seconds: 147,
-      chapters: ["0:00 Intro en de regel", "0:17 Zeven werkwoorden", "0:59 Soms blijven ze samen", "1:14 Let op: zelfde werkwoord", "1:28 Quiz"],
-    },
     en: {
       id: "pLESqV-gUz0",
       name: "Dutch separable verbs (scheidbare werkwoorden): ik bel je op (A2)",
