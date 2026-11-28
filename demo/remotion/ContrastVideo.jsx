@@ -389,7 +389,38 @@ function Pick({ s, quiz }) {
           )}
         </div>
       )}
+      {s.also && <Also also={s.also} wow={s.wow} />}
     </Body>
+  );
+}
+
+/** After a quiz answer: a second right answer (also.at seconds in), and maybe a line under it (wow). */
+function Also({ also, wow }) {
+  const z = useFmt();
+  const a = useIn(sec(also.at));
+  const w = useIn(sec(wow?.at ?? 0));
+  // Always laid out (invisible until its time), so the quiz above doesn't jump when it appears.
+  return (
+    <>
+      <div style={{ ...a, ...card, padding: "26px 40px 24px", marginTop: 30, display: "flex", alignItems: "flex-start", gap: 22, border: `3px solid ${GREEN}` }}>
+        <span style={{ fontSize: 52, lineHeight: 1.25 }}>✅</span>
+        <div>
+          <div style={{ fontSize: 34, fontWeight: 800, color: GREEN, textTransform: "uppercase", letterSpacing: 1 }}>{also.kicker}</div>
+          <div style={{ fontSize: z.v ? 64 : 60, fontWeight: 800, letterSpacing: -1.2, lineHeight: 1.2 }}>
+            <Text text={also.nl} />
+          </div>
+          <Gloss style={{ marginTop: 6 }}>
+            <Text text={also.en} />
+          </Gloss>
+          {also.note && (
+            <div style={{ fontSize: 40, fontWeight: 800, marginTop: 10 }}>
+              ↳ <Text text={also.note} italic />
+            </div>
+          )}
+        </div>
+      </div>
+      {wow && <div style={{ ...w, fontSize: z.v ? 64 : 60, fontWeight: 800, letterSpacing: -1.5, marginTop: 30, textAlign: "center" }}>{wow.text}</div>}
+    </>
   );
 }
 

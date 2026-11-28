@@ -388,10 +388,10 @@
       "id": "hookPhone",
       "kind": "punch",
       "cut": "reel",
-      "dur": 3.6,
-      "kicker": "Niet or geen? 🤔",
+      "dur": 10.55,
+      "kicker": "Niet or geen?",
       "big": "Ik heb {geen} telefoon.\nDit is {niet} mijn telefoon.",
-      "sub": "Why *geen*… and why *niet*?"
+      "sub": "So when do you use *niet*, and when *geen*? 🤔"
     },
     {
       "id": "storyPhone",
@@ -404,22 +404,22 @@
       ],
       "beats": [
         {
-          "dur": 4.2,
-          "card": 1.8,
+          "dur": 4.65,
+          "card": 3.05,
           "say": "At a party, someone hands me a phone… 📱",
           "nl": "Is dit jouw telefoon?",
           "en": "Is this **your** phone?"
         },
         {
-          "dur": 3.8,
-          "card": 1.0,
+          "dur": 3.5,
+          "card": 0.95,
           "say": "Me: “Nope!”",
           "nl": "Nee, dit is {niet} mijn telefoon.",
           "en": "No, this is not **my** phone."
         },
         {
-          "dur": 4.2,
-          "card": 1.8,
+          "dur": 3.4,
+          "card": 1.5,
           "say": "Mine? I don't even have one! 😅",
           "nl": "Ik heb {geen} telefoon.",
           "en": "I don't have **a** phone."
@@ -430,9 +430,9 @@
       "id": "splitPhone",
       "kind": "split",
       "cut": "reel",
-      "dur": 9.5,
+      "dur": 16.4,
       "kicker": "Spot the difference 👀",
-      "punchAt": 6.4,
+      "punchAt": 12.45,
       "punch": "Indefinite → {geen} · Definite → {niet}",
       "cols": [
         {
@@ -440,8 +440,8 @@
           "sub": "*een* · no article",
           "colour": "orange",
           "at": [
-            0.3,
-            1.5
+            2.4,
+            4.65
           ],
           "rows": [
             {
@@ -459,8 +459,8 @@
           "sub": "*de* · *het* · *mijn*",
           "colour": "blue",
           "at": [
-            3.2,
-            4.5
+            7.3,
+            9.7
           ],
           "rows": [
             {
@@ -479,7 +479,7 @@
       "id": "bewarePhone",
       "kind": "rule",
       "cut": "reel",
-      "dur": 6,
+      "dur": 7.4,
       "warn": true,
       "kicker": "Watch out ⚠️",
       "title": "After [*van*, *in*, *op*…]? Always {niet}.",
@@ -487,7 +487,8 @@
         {
           "label": "no article, still *niet*",
           "nl": "Ik hou {niet} [van koffie].",
-          "en": "I don't like coffee."
+          "en": "I don't like coffee.",
+          "at": 5.2
         }
       ]
     },
@@ -495,7 +496,7 @@
       "id": "quizPhone",
       "kind": "pick",
       "cut": "reel",
-      "dur": 7,
+      "dur": 11.55,
       "reveal": 4.2,
       "nl": "Ik heb ___ tijd.",
       "options": [
@@ -504,7 +505,18 @@
       ],
       "answer": "geen",
       "en": "I don't have time.",
-      "why": "*tijd*, no article → {geen}"
+      "why": "*tijd*, no article → {geen}",
+      "also": {
+        "at": 6.65,
+        "kicker": "Also right",
+        "nl": "Ik heb [de] tijd {niet}.",
+        "en": "I don't have **the** time.",
+        "note": "*de tijd* is definite → {niet}"
+      },
+      "wow": {
+        "at": 8.75,
+        "text": "Interesting, huh? 🤓"
+      }
     },
     {
       "id": "ctaPhone",
@@ -603,6 +615,39 @@
         [
           135.96,
           140.56
+        ]
+      ]
+    },
+    "reel": {
+      "file": "niet-geen/voice_reel.wav",
+      "talk": [
+        [
+          0.05,
+          10.15
+        ],
+        [
+          10.75,
+          21.6
+        ],
+        [
+          22.3,
+          33.85
+        ],
+        [
+          34.55,
+          37.7
+        ],
+        [
+          38.7,
+          45.1
+        ],
+        [
+          50.0,
+          51.65
+        ],
+        [
+          52.55,
+          54.35
         ]
       ]
     }

@@ -45,10 +45,15 @@ byId = {s["id"]: s for s in C["scenes"]}
 for s in [s for s in C["scenes"] if not s.get("cut")] if cut == "full" else [byId[i] for i in C["cuts"][cut]]:
     c = clips.get(s["id"])
     if c and "chunk" in c:
-        a, b = c["chunk"]; lead = c["lead"]
-        at = lambda r: r3(lead + r - a)  # recording time -> time in the scene
-        dur = lead + (b - a) + c["tail"]
-        put(total + lead, a, b)
+        # One chunk [a, b], or several [[a, b], [c, d]] played one after the other with `gap` between.
+        chunks = c["chunk"] if isinstance(c["chunk"][0], list) else [c["chunk"]]
+        lead = c["lead"]; place = []; t = lead
+        for a, b in chunks:
+            place.append((a, b, t)); put(total + t, a, b); t += b - a + c.get("gap", 0.5)
+        dur = t - c.get("gap", 0.5) + c["tail"]
+        def at(r):  # recording time -> time in the scene
+            a, b, t0 = next((p for p in reversed(place) if r >= p[0]), place[0])
+            return r3(t0 + r - a)
         if s["kind"] == "story":
             starts = [0.0] + [at(x["at"]) for x in c["beats"][1:]] + [dur]
             for i, (beat, x) in enumerate(zip(s["beats"], c["beats"])):
@@ -67,7 +72,12 @@ for s in [s for s in C["scenes"] if not s.get("cut")] if cut == "full" else [byI
     elif c and "answer" in c:
         a, b = c["answer"]
         put(total + s["reveal"] - 0.1, a, b)
-        s["dur"] = r3(s["reveal"] - 0.1 + (b - a) + 1.4)
+        end = s["reveal"] - 0.1 + (b - a)
+        if "also" in c:  # a second right answer, read after the first
+            a2, b2 = c["also"]; at2 = end + c.get("gap", 1.0)
+            put(total + at2, a2, b2); s["also"]["at"] = r3(at2); end = at2 + (b2 - a2)
+            if "wow" in s: s["wow"]["at"] = r3(end + 0.3); end += 0.3 + 1.2
+        s["dur"] = r3(end + c.get("tail", 1.4))
         total += s["dur"]
     else:
         total += s["dur"]
