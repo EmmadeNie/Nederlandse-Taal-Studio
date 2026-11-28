@@ -83,11 +83,13 @@ function Root() {
       <Composition id="short-sinterklaas-en" component={SinterklaasShort} durationInFrames={shortDuration()} fps={SHORT_FPS} width={1080} height={1920} />
       <Composition id="short-sinterklaas-2-en" component={SinterklaasShort} durationInFrames={shortDuration(2)} fps={SHORT_FPS} width={1080} height={1920} defaultProps={{ part: 2 }} />
       <Composition id="story-sinterklaas-teaser" component={SinterklaasTeaser} durationInFrames={TEASER_FRAMES} fps={TEASER_FPS} width={1080} height={1920} />
-      {/* Separable verbs (A2) with Emma's voice: 16:9 (YouTube, the lesson) and 9:16 (Shorts, Reels). */}
+      {/* Separable verbs (A2) with Emma's voice: the whole lesson in 16:9 (YouTube, the lesson) and
+          9:16, and a ~40 s cut with a hook for Instagram Reels and YouTube Shorts. */}
       {["nl", "en"].flatMap((lang) => [
         ...Object.entries(SEP_SIZES).map(([fmt, size]) => (
           <Composition key={`separable-${fmt}-${lang}`} id={`${fmt}-separable-${lang}`} component={SeparableVerbsVideo} defaultProps={{ lang }} durationInFrames={separableDuration()} fps={SEP_FPS} {...size} />
         )),
+        <Composition key={`separable-reel-${lang}`} id={`reel-separable-${lang}`} component={SeparableVerbsVideo} defaultProps={{ lang, cut: "reel" }} durationInFrames={separableDuration("reel")} fps={SEP_FPS} {...SEP_SIZES.short} />,
         <Still key={`separable-thumb-${lang}`} id={`thumb-separable-${lang}`} component={SeparableThumb} defaultProps={{ lang }} width={1280} height={720} />,
       ])}
       {/* The link preview for WhatsApp, LinkedIn & co. */}
