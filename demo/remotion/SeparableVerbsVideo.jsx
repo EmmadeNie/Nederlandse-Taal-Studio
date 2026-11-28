@@ -11,10 +11,12 @@ import { L } from "./Carousel";
 import { RED, GOLD } from "./Sinterklaas";
 import CONTENT from "./separableVerbs.json";
 import TIMELINE from "./separableTimeline.json";
+import TIMELINE_REEL from "./separableTimelineReel.json";
 
 export const SEP_FPS = 30;
 export const SEP_SIZES = { video: { width: 1920, height: 1080 }, short: { width: 1080, height: 1920 } };
-export const separableDuration = () => Math.ceil(TIMELINE.total * SEP_FPS);
+/** The full lesson (16:9 and 9:16) or the ~40 s Reel / YouTube Short cut ("reel"). */
+export const separableDuration = (cut) => Math.ceil((cut === "reel" ? TIMELINE_REEL : TIMELINE).total * SEP_FPS);
 
 const BLUE = L.perfect;
 const GREEN = L.past;
@@ -22,8 +24,12 @@ const ORANGE = L.accent; // extra verbs: willen, kunnen, gaan
 const sec = (s) => Math.round(s * SEP_FPS);
 const card = { background: L.card, border: `2px solid ${L.line}`, borderRadius: 32, boxShadow: "0 10px 30px rgba(11,13,17,0.06)" };
 const fill = (s, vars) => s.replace(/\{(\w+)\}/g, (_, k) => vars[k]);
-const VERBS = CONTENT.scenes.filter((s) => s.kind === "verb");
-const QUIZ = CONTENT.scenes.filter((s) => s.kind === "quiz" || s.kind === "meaning");
+/** The scenes of a cut, in order: the full lesson, or the Reel (content "reel", with its own lengths). */
+const BY_ID = Object.fromEntries(CONTENT.scenes.map((s) => [s.id, s]));
+const scenesOf = (cut) => (cut === "reel" ? CONTENT.reel.scenes.map((id) => BY_ID[id]) : CONTENT.scenes.filter((s) => s.only !== "reel"));
+// Numbering ("Verb 2 of 7", "Question 1 of 6") counts the scenes in the cut being shown.
+const verbsIn = (list) => list.filter((s) => s.kind === "verb");
+const quizIn = (list) => list.filter((s) => s.kind === "quiz" || s.kind === "meaning");
 
 /** Vertical (9:16) or not, and the sizes that go with it. */
 function useFmt() {
@@ -47,11 +53,12 @@ function useIn(at = 0) {
   return { opacity: s, transform: `translateY(${interpolate(s, [0, 1], [30, 0])}px)` };
 }
 
-const sectionOf = (kind) => ({ split: "rule", rule: "rule", verb: "verbs", together: "together", quizIntro: "quiz", quiz: "quiz", meaning: "quiz" })[kind] ?? null;
+const sectionOf = (kind) => ({ hook: "rule", split: "rule", rule: "rule", verb: "verbs", together: "together", quizIntro: "quiz", quiz: "quiz", meaning: "quiz" })[kind] ?? null;
 
-function Header({ section, T }) {
+function Header({ section, T, sections }) {
   const { v } = useFmt();
-  const chips = Object.entries(T.chips);
+  // Only the parts this cut has (the Reel has no "Together").
+  const chips = Object.entries(T.chips).filter(([id]) => !sections || sections.has(id));
   const chipRow = (
     <div style={{ display: "flex", gap: 10 }}>
       {chips.map(([id, label]) => {
@@ -121,11 +128,13 @@ function Inf({ parts, size, gap = 0, plus = 0 }) {
   );
 }
 
-function Title({ T }) {
+function Title({ T, cut }) {
   const { v, title } = useFmt();
-  const a = useIn(0);
-  const b = useIn(14);
-  const c = useIn(30);
+  // In the Reel the title is complete from the first frame (the feed and the cover show it), no fade-in.
+  const d = cut === "reel" ? -60 : 0;
+  const a = useIn(d);
+  const b = useIn(d + 14);
+  const c = useIn(d + 30);
   return (
     <Body>
       <div style={{ ...a, display: "flex", gap: 16, marginBottom: 44 }}>
@@ -196,7 +205,7 @@ function Rule({ T }) {
   );
 }
 
-function Verb({ s, t, T, lang }) {
+function Verb({ s, t, T, lang, list }) {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const z = useFmt();
@@ -210,10 +219,11 @@ function Verb({ s, t, T, lang }) {
   const body = s.nl.slice(0, i);
   const end = s.nl.slice(i + s.part.length + 1);
   const vi = body.indexOf(` ${s.verb} `) >= 0 ? body.indexOf(` ${s.verb} `) + 1 : body.indexOf(s.verb);
-  const n = VERBS.indexOf(s) + 1;
+  const verbs = verbsIn(list);
+  const n = verbs.indexOf(s) + 1;
   return (
     <Body>
-      <Kicker style={a}>{fill(T.verb.kicker, { n, total: VERBS.length })}</Kicker>
+      <Kicker style={a}>{fill(T.verb.kicker, { n, total: verbs.length })}</Kicker>
       <div style={{ ...a, display: "flex", alignItems: "baseline", flexWrap: "wrap", columnGap: 30, marginBottom: z.v ? 44 : 50 }}>
         <span style={{ display: "inline-block", transform: `scale(${1 + 0.06 * Math.sin(Math.min(1, pop) * Math.PI)})`, transformOrigin: "left center" }}>
           <Inf parts={s.inf} size={z.inf} />
@@ -376,7 +386,7 @@ function Coloured({ nl, verb, part }) {
 }
 
 /** Quiz: one sentence, pick the English meaning. */
-function Meaning({ s, t, T }) {
+function Meaning({ s, t, T, list }) {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const z = useFmt();
@@ -387,12 +397,13 @@ function Meaning({ s, t, T }) {
   const pop = spring({ frame: f - reveal, fps, config: { damping: 14 } });
   const left = Math.max(0, Math.ceil((reveal - f) / fps));
   const progress = interpolate(f, [sec(0.35), reveal], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const n = QUIZ.indexOf(s) + 1;
+  const quiz = quizIn(list);
+  const n = quiz.indexOf(s) + 1;
   return (
     <Body>
       <Kicker style={{ ...a, display: "flex", justifyContent: "space-between" }}>
         <span>
-          {fill(T.quiz, { n, total: QUIZ.length })} · {T.meaning}
+          {quiz.length > 1 ? fill(T.quiz, { n, total: quiz.length }) : T.quizSolo} · {T.meaning}
         </span>
         {!shown && <span style={{ color: RED, fontSize: 44 }}>{left}</span>}
       </Kicker>
@@ -449,7 +460,7 @@ function QuizIntro({ T }) {
   );
 }
 
-function Quiz({ s, t, T, lang }) {
+function Quiz({ s, t, T, lang, list }) {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const z = useFmt();
@@ -460,11 +471,12 @@ function Quiz({ s, t, T, lang }) {
   const left = Math.max(0, Math.ceil((reveal - f) / fps));
   const progress = interpolate(f, [sec(0.35), reveal], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const pieces = s.q.split("___");
-  const n = QUIZ.indexOf(s) + 1;
+  const quiz = quizIn(list);
+  const n = quiz.indexOf(s) + 1;
   return (
     <Body>
       <Kicker style={{ ...a, display: "flex", justifyContent: "space-between" }}>
-        <span>{fill(T.quiz, { n, total: QUIZ.length })}</span>
+        <span>{quiz.length > 1 ? fill(T.quiz, { n, total: quiz.length }) : T.quizSolo}</span>
         {!shown && <span style={{ color: RED, fontSize: 44 }}>{left}</span>}
       </Kicker>
       <div style={{ ...a, ...card, padding: z.v ? "52px 50px" : "60px 64px" }}>
@@ -504,12 +516,14 @@ function Quiz({ s, t, T, lang }) {
   );
 }
 
-function Cta({ T }) {
+function Cta({ T, cut }) {
   const z = useFmt();
   const a = useIn(0);
   const b = useIn(14);
-  const colors = [GREEN, BLUE, RED];
-  const rows = T.cta.rows.map(([label, link], i) => (
+  const C = cut === "reel" ? T.ctaReel : T.cta;
+  // In the Reel the YouTube row comes first (red); in the lesson the app (green).
+  const colors = cut === "reel" ? [RED, GREEN] : [GREEN, BLUE, RED];
+  const rows = C.rows.map(([label, link], i) => (
     <div key={i} style={{ ...b, ...card, padding: "24px 36px", marginTop: i ? 20 : 0 }}>
       <div style={{ fontSize: 36, fontWeight: 700 }}>{label}</div>
       <div style={{ fontSize: z.v ? 44 : 46, fontWeight: 800, color: colors[i], marginTop: 4 }}>{link}</div>
@@ -521,7 +535,7 @@ function Cta({ T }) {
         <div style={{ ...a, alignSelf: "center" }}>
           <LogoMark size={200} delay={-60} />
         </div>
-        <div style={{ ...a, fontSize: 88, fontWeight: 800, letterSpacing: -3, margin: "40px 0 40px", textAlign: "center" }}>{T.cta.title}</div>
+        <div style={{ ...a, fontSize: 88, fontWeight: 800, letterSpacing: -3, margin: "40px 0 40px", textAlign: "center" }}>{C.title}</div>
         {rows}
       </Body>
     );
@@ -532,7 +546,7 @@ function Cta({ T }) {
           <LogoMark size={260} delay={-60} />
         </div>
         <div style={{ flex: 1 }}>
-          <div style={{ ...a, fontSize: 96, fontWeight: 800, letterSpacing: -3, marginBottom: 36 }}>{T.cta.title}</div>
+          <div style={{ ...a, fontSize: 96, fontWeight: 800, letterSpacing: -3, marginBottom: 36 }}>{C.title}</div>
           {rows}
         </div>
       </div>
@@ -564,15 +578,49 @@ export function SeparableThumb({ lang }) {
   );
 }
 
-const SCENES = { title: Title, split: Split, rule: Rule, verb: Verb, together: Together, tip: Tip, beware: Beware, quizIntro: QuizIntro, quiz: Quiz, meaning: Meaning, cta: Cta };
+/**
+ * The Reel's opening: the sentence is on screen from the very first frame (no fade-in, so the
+ * feed and the cover never show an empty card), Emma says it, the separated part bounces, and
+ * the question "why does op go to the end?" follows.
+ */
+function Hook({ s, t, T, lang }) {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const z = useFmt();
+  const said = sec(t.voice[0]);
+  const bounce = spring({ frame: f - said - 18, fps, config: { damping: 8, stiffness: 180 } });
+  const q = useIn(said + 30);
+  return (
+    <Body>
+      <div style={{ ...card, padding: z.v ? "60px 56px" : "60px 70px", borderLeft: `14px solid ${RED}` }}>
+        <div style={{ fontSize: z.v ? 112 : 120, fontWeight: 800, lineHeight: 1.12, letterSpacing: -3 }}>
+          {s.nl.slice(0, s.nl.indexOf(s.verb))}
+          <span style={{ color: BLUE }}>{s.verb}</span>
+          {s.nl.slice(s.nl.indexOf(s.verb) + s.verb.length, s.nl.lastIndexOf(` ${s.part}`))}{" "}
+          <span style={{ color: RED, display: "inline-block", transform: `translateY(${interpolate(bounce, [0, 0.5, 1], [0, -40, 0])}px) scale(${interpolate(bounce, [0, 0.5, 1], [1, 1.25, 1])})` }}>{s.part}</span>
+          {s.nl.slice(s.nl.lastIndexOf(` ${s.part}`) + s.part.length + 1)}
+        </div>
+      </div>
+      <div style={{ ...q, fontSize: z.v ? 66 : 64, fontWeight: 800, marginTop: z.v ? 60 : 50, lineHeight: 1.25 }}>
+        <RedWords text={T.hook.kicker} lang={lang} />
+      </div>
+    </Body>
+  );
+}
 
-export function SeparableVerbsVideo({ lang, voice = "separable_voice.wav" }) {
+const SCENES = { hook: Hook, title: Title, split: Split, rule: Rule, verb: Verb, together: Together, tip: Tip, beware: Beware, quizIntro: QuizIntro, quiz: Quiz, meaning: Meaning, cta: Cta };
+
+/** The lesson video (16:9 or 9:16) or, with cut="reel", the ~40 s Reel / YouTube Short. */
+export function SeparableVerbsVideo({ lang, cut, voice }) {
   const T = CONTENT.text[lang];
-  const timing = Object.fromEntries(TIMELINE.scenes.map((t) => [t.id, t]));
+  const TL = cut === "reel" ? TIMELINE_REEL : TIMELINE;
+  const list = scenesOf(cut);
+  const timing = Object.fromEntries(TL.scenes.map((t) => [t.id, t]));
+  const sections = new Set(list.map((s) => sectionOf(s.kind)).filter(Boolean));
   return (
     <AbsoluteFill style={{ background: L.bg, fontFamily, color: L.text }}>
-      {TIMELINE.voice && <Audio src={staticFile(voice)} />}
-      {CONTENT.scenes.map((s) => {
+      {TL.voice && <Audio src={staticFile(voice ?? (cut === "reel" ? "separable_voice_reel.wav" : "separable_voice.wav"))} />}
+      {list.map((s) => {
         const t = timing[s.id];
         const Scene = SCENES[s.kind];
         const from = sec(t.start);
@@ -582,8 +630,8 @@ export function SeparableVerbsVideo({ lang, voice = "separable_voice.wav" }) {
         const at = marks.map((m, i) => [sec(m), i + 1 < marks.length ? sec(marks[i + 1]) - sec(0.5) : dur - sec({ quiz: 1.4, beware: 2.6 }[s.kind] ?? 1.6)]);
         return (
           <Sequence key={s.id} from={from} durationInFrames={dur}>
-            <Header section={sectionOf(s.kind)} T={T} />
-            <Scene s={s} t={t} T={T} lang={lang} />
+            <Header section={sectionOf(s.kind)} T={T} sections={sections} />
+            <Scene s={s} t={t} T={T} lang={lang} list={list} cut={cut} />
             <Speaking at={at} />
           </Sequence>
         );
