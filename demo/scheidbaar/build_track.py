@@ -1,7 +1,11 @@
 # Lay out the scenes of the separable-verbs video (remotion/separableVerbs.json)
 # on Emma's recording: writes the voice track and remotion/separableTimeline.json.
 #
-#   python3 -I build_track.py <content.json> <out_timeline.json> [<rec_48k_mono.wav> <clips.json> <out_voice.wav> [<music_48k_mono.wav>]]
+#   python3 -I build_track.py [--reel] <content.json> <out_timeline.json> [<rec_48k_mono.wav> <clips.json> <out_voice.wav> [<music_48k_mono.wav>]]
+#
+# --reel lays out the short cut for Instagram Reels / YouTube Shorts instead: the scenes listed in
+# the content's "reel" (with its dur overrides), into remotion/separableTimelineReel.json and
+# raw/separable_voice_reel.wav. Without it, the scenes marked "only": "reel" are left out.
 #
 # The recording (Emma, 23 Nov 2026): three takes in Google Drive, "23 Nov at 18-51.m4a" (the 7 verbs),
 # "23 Nov at 18-52.m4a" (samen1-2, quiz1-4) and "23 Nov at 19-07.m4a" (uitkleden, opnemen, aannemen,
@@ -15,9 +19,16 @@
 # clip lengths, so the video can be previewed before the voice is there.
 import sys, wave, array, math, json
 
+REEL = "--reel" in sys.argv
+if REEL: sys.argv.remove("--reel")
 content_path, out_json = sys.argv[1:3]
 REC = len(sys.argv) > 3
-scenes = json.load(open(content_path))["scenes"]
+CONTENT = json.load(open(content_path))
+if REEL:
+    by_id = {s["id"]: s for s in CONTENT["scenes"]}
+    scenes = [{**by_id[i], **({"dur": CONTENT["reel"]["dur"][i]} if i in CONTENT["reel"]["dur"] else {})} for i in CONTENT["reel"]["scenes"]]
+else:
+    scenes = [s for s in CONTENT["scenes"] if s.get("only") != "reel"]
 SR = 48000
 
 if REC:
@@ -57,7 +68,11 @@ timeline = []
 for s in scenes:
     start = now(); t = dict(id=s["id"], start=round(start, 3))
     k = s["kind"]
-    if k == "verb":
+    if k == "hook":
+        # Emma's voice almost at once, then time to read "why does op go to the end?".
+        silence(0.25); a = clip(s["clips"][0]); silence(2.4)
+        t["voice"] = [round(a - start, 3)]
+    elif k == "verb":
         silence(0.5); a = clip(s["clips"][0]); silence(0.7); b = clip(s["clips"][1]); silence(1.6)
         t["voice"] = [round(a - start, 3), round(b - start, 3)]
     elif k == "together":

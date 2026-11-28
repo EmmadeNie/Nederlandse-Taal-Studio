@@ -1,0 +1,65 @@
+{
+ "total": 41.83,
+ "voice": true,
+ "scenes": [
+  {
+   "id": "title",
+   "start": 0.0,
+   "dur": 2.3
+  },
+  {
+   "id": "hook",
+   "start": 2.3,
+   "voice": [
+    0.25
+   ],
+   "dur": 4.19
+  },
+  {
+   "id": "rule",
+   "start": 6.49,
+   "dur": 6.0
+  },
+  {
+   "id": "opstaan",
+   "start": 12.49,
+   "voice": [
+    0.5,
+    2.24
+   ],
+   "dur": 6.01
+  },
+  {
+   "id": "meenemen",
+   "start": 18.5,
+   "voice": [
+    0.5,
+    2.44
+   ],
+   "dur": 5.78
+  },
+  {
+   "id": "opruimen",
+   "start": 24.28,
+   "voice": [
+    0.5,
+    2.27
+   ],
+   "dur": 5.6
+  },
+  {
+   "id": "quiz3",
+   "start": 29.88,
+   "reveal": 3.95,
+   "voice": [
+    4.35
+   ],
+   "dur": 7.45
+  },
+  {
+   "id": "cta",
+   "start": 37.33,
+   "dur": 4.5
+  }
+ ]
+}
