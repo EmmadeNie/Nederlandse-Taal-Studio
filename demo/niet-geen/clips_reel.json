@@ -1,0 +1,84 @@
+{
+  "_": "Emma's recording of the phone Reel (28 Nov 2026, Drive 'Telephone – 28 Nov at 14-25', raw/niet-geen/rec_reel.wav, 63 s), cut per scene of the reel cut. Same fields as clips.json; chunk can be several parts [[a, b], [c, d]] with gap between. She opens with the question, says the Dutch lines of the story herself, asks the question again after the split, and reads both quiz answers (geen tijd, de tijd niet), each the answer of its own question. No voice for the CTA.",
+  "hookPhone": {
+    "chunk": [
+      0.65,
+      10.75
+    ],
+    "lead": 0.05,
+    "tail": 0.4
+  },
+  "storyPhone": {
+    "chunk": [
+      12.55,
+      23.4
+    ],
+    "lead": 0.2,
+    "tail": 0.5,
+    "beats": [
+      {
+        "at": 12.55,
+        "card": 15.4
+      },
+      {
+        "at": 17.0,
+        "card": 17.95
+      },
+      {
+        "at": 20.5,
+        "card": 22.0
+      }
+    ]
+  },
+  "splitPhone": {
+    "chunk": [
+      [
+        25.8,
+        37.35
+      ],
+      [
+        40.5,
+        43.65
+      ]
+    ],
+    "gap": 0.7,
+    "lead": 0.2,
+    "tail": 0.8,
+    "cols": [
+      [
+        28.0,
+        30.25
+      ],
+      [
+        32.9,
+        35.3
+      ]
+    ],
+    "punch": 40.5
+  },
+  "bewarePhone": {
+    "chunk": [
+      45.95,
+      52.35
+    ],
+    "lead": 0.2,
+    "tail": 0.8,
+    "rows": [
+      50.95
+    ]
+  },
+  "quizPhone": {
+    "answer": [
+      53.9,
+      55.55
+    ],
+    "tail": 1.4
+  },
+  "quizPhone2": {
+    "answer": [
+      59.8,
+      61.6
+    ],
+    "tail": 1.4
+  }
+}

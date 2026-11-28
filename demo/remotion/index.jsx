@@ -112,6 +112,8 @@ function Root() {
         <Composition key={`${topic}-wide`} id={`wide-${topic}-en`} component={ContrastVideo} defaultProps={{ topic }} durationInFrames={contrastDuration(topic)} fps={CON_FPS} {...CON_WIDE} />,
         <Composition key={`${topic}-teaser`} id={`teaser-${topic}-en`} component={ContrastVideo} defaultProps={{ topic, cut: "teaser" }} durationInFrames={contrastDuration(topic, "teaser")} fps={CON_FPS} {...CON_SIZE} />,
         <Composition key={`${topic}-story`} id={`story-${topic}-en`} component={ContrastVideo} defaultProps={{ topic, cut: "story" }} durationInFrames={contrastDuration(topic, "story")} fps={CON_FPS} {...CON_SIZE} />,
+        // A ~45 s Reel / Short of its own (niet/geen: the phone story), where the topic has one.
+        ...(CONTRAST_TOPICS[topic].cuts.reel ? [<Composition key={`${topic}-reel`} id={`reel-${topic}-en`} component={ContrastVideo} defaultProps={{ topic, cut: "reel" }} durationInFrames={contrastDuration(topic, "reel")} fps={CON_FPS} {...CON_SIZE} />] : []),
         <Still key={`${topic}-cover`} id={`cover-${topic}-en`} component={ContrastCover} defaultProps={{ topic }} {...CON_SIZE} />,
         <Still key={`${topic}-thumb`} id={`thumb-${topic}-en`} component={ContrastThumb} defaultProps={{ topic }} width={1280} height={720} />,
       ])}

@@ -1,0 +1,14 @@
+{
+  "_": "Emma's recording of the niet/geen lesson (28 Nov 2026, raw/niet-geen/rec.wav, 2:42), cut per scene of the full lesson. Times are seconds in the recording, found with silencedetect (noise ~-72 dB, voice ~-22 dB). chunk = the part of the recording that plays in the scene, continuous (her own pauses stay); lead = seconds from the scene start to the chunk; tail = seconds after it. The other fields say when something appears, as a time in the recording: beats (story: when the beat starts, card = when the Dutch sentence comes), cols (split: each column and its negation), punch, rows (rule and trick rows). A quiz has answer: Emma reads it right when the answer drops in. Read by build_voice.py.",
+  "story": { "chunk": [1.38, 32.85], "lead": 0.25, "tail": 0.6, "beats": [{ "at": 1.38, "card": 5.45 }, { "at": 8.9, "card": 12.55 }, { "at": 15.1, "card": 18.15 }, { "at": 20.5, "card": 24.3 }, { "at": 27.7 }] },
+  "split": { "chunk": [36.06, 45.1], "lead": 0.3, "tail": 1.4, "cols": [[36.06, 37.65], [39.83, 41.62]], "punch": 43.85 },
+  "geen": { "chunk": [52.7, 61.85], "lead": 0.45, "tail": 1.0, "rows": [55.0, 57.4, 59.75] },
+  "niet": { "chunk": [70.4, 85.45], "lead": 0.3, "tail": 1.0, "rows": [74.38, 77.44, 79.48, 81.38, 83.51] },
+  "trick": { "chunk": [87.75, 96.5], "lead": 0.3, "tail": 1.0, "rows": [92.28, 94.64] },
+  "beware": { "chunk": [98.7, 117.1], "lead": 0.3, "tail": 1.0, "rows": [106.2, 111.3] },
+  "beware2": { "chunk": [121.0, 132.2], "lead": 0.3, "tail": 1.2, "rows": [127.35, 130.0] },
+  "quiz1": { "answer": [139.7, 141.6] },
+  "quiz2": { "answer": [144.0, 146.0] },
+  "quiz3": { "answer": [149.85, 152.25] },
+  "cta": { "chunk": [156.0, 160.6], "lead": 0.4, "tail": 1.6 }
+}
